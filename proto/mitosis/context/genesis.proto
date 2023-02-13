@@ -1,0 +1,12 @@
+syntax = "proto3";
+package manythings.mitosis.context;
+
+import "gogoproto/gogo.proto";
+import "mitosis/context/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/context/types";
+
+// GenesisState defines the context module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
