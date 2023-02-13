@@ -8,5 +8,4 @@ option go_package = "github.com/many-things/mitosis/x/context/types";
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
-  
 }

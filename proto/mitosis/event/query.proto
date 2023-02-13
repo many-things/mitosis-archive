@@ -1,9 +1,9 @@
 syntax = "proto3";
 package manythings.mitosis.event;
 
+import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "mitosis/event/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
