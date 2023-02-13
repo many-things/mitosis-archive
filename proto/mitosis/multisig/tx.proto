@@ -1,0 +1,7 @@
+syntax = "proto3";
+package manythings.mitosis.multisig;
+
+option go_package = "github.com/many-things/mitosis/x/multisig/types";
+
+// Msg defines the Msg service.
+service Msg {}

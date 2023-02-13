@@ -1,0 +1,12 @@
+syntax = "proto3";
+package manythings.mitosis.multisig;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
