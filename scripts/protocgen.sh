@@ -34,6 +34,6 @@ cd ..
 
 # move proto files to the right places
 cp -r gen/go/github.com/many-things/mitosis/* ./
-rm -rf gen/go
+rm -rf gen
 
 go mod tidy -compat=1.20
