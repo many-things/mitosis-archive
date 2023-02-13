@@ -24,7 +24,19 @@ var (
 )
 
 const (
-// this line is used by starport scaffolding # simapp/module/const
+	opWeightMsgStartKeygen = "op_weight_msg_start_keygen"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgStartKeygen int = 100
+
+	opWeightMsgSubmitPubkey = "op_weight_msg_submit_pubkey"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgSubmitPubkey int = 100
+
+	opWeightMsgSubmitSignature = "op_weight_msg_submit_signature"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgSubmitSignature int = 100
+
+	// this line is used by starport scaffolding # simapp/module/const
 )
 
 // GenerateGenesisState creates a randomized GenState of the module
@@ -57,6 +69,39 @@ func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
+
+	var weightMsgStartKeygen int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgStartKeygen, &weightMsgStartKeygen, nil,
+		func(_ *rand.Rand) {
+			weightMsgStartKeygen = defaultWeightMsgStartKeygen
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgStartKeygen,
+		multisigsimulation.SimulateMsgStartKeygen(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgSubmitPubkey int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgSubmitPubkey, &weightMsgSubmitPubkey, nil,
+		func(_ *rand.Rand) {
+			weightMsgSubmitPubkey = defaultWeightMsgSubmitPubkey
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgSubmitPubkey,
+		multisigsimulation.SimulateMsgSubmitPubkey(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgSubmitSignature int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgSubmitSignature, &weightMsgSubmitSignature, nil,
+		func(_ *rand.Rand) {
+			weightMsgSubmitSignature = defaultWeightMsgSubmitSignature
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgSubmitSignature,
+		multisigsimulation.SimulateMsgSubmitSignature(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
 

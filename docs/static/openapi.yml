@@ -75034,7 +75034,11 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  manythings.mitosis.event.IncomingEvent:
+    type: object
   manythings.mitosis.event.MsgVoteEventResponse:
+    type: object
+  manythings.mitosis.event.OutgoingEvent:
     type: object
   manythings.mitosis.event.Params:
     type: object
@@ -75046,6 +75050,12 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  manythings.mitosis.multisig.MsgStartKeygenResponse:
+    type: object
+  manythings.mitosis.multisig.MsgSubmitPubkeyResponse:
+    type: object
+  manythings.mitosis.multisig.MsgSubmitSignatureResponse:
+    type: object
   manythings.mitosis.multisig.Params:
     type: object
     description: Params defines the parameters for the module.
