@@ -106,6 +106,9 @@ import (
 	contextmodule "github.com/many-things/mitosis/x/context"
 	contextmodulekeeper "github.com/many-things/mitosis/x/context/keeper"
 	contextmoduletypes "github.com/many-things/mitosis/x/context/types"
+	eventmodule "github.com/many-things/mitosis/x/event"
+	eventmodulekeeper "github.com/many-things/mitosis/x/event/keeper"
+	eventmoduletypes "github.com/many-things/mitosis/x/event/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/many-things/mitosis/app/params"
@@ -165,6 +168,7 @@ var (
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		contextmodule.AppModuleBasic{},
+		eventmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -239,6 +243,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	ContextKeeper contextmodulekeeper.Keeper
+
+	EventKeeper eventmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -284,6 +290,7 @@ func New(
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
 		contextmoduletypes.StoreKey,
+		eventmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -503,6 +510,14 @@ func New(
 	)
 	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.EventKeeper = *eventmodulekeeper.NewKeeper(
+		appCodec,
+		keys[eventmoduletypes.StoreKey],
+		keys[eventmoduletypes.MemStoreKey],
+		app.GetSubspace(eventmoduletypes.ModuleName),
+	)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -569,6 +584,7 @@ func New(
 		transferModule,
 		icaModule,
 		contextModule,
+		eventModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -599,6 +615,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		contextmoduletypes.ModuleName,
+		eventmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -624,6 +641,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		contextmoduletypes.ModuleName,
+		eventmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -654,6 +672,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		contextmoduletypes.ModuleName,
+		eventmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -684,6 +703,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		contextModule,
+		eventModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -889,6 +909,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(contextmoduletypes.ModuleName)
+	paramsKeeper.Subspace(eventmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

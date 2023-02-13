@@ -1,0 +1,7 @@
+syntax = "proto3";
+package manythings.mitosis.event;
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// Msg defines the Msg service.
+service Msg {}
