@@ -45267,6 +45267,93 @@ paths:
                         }
       tags:
         - Query
+  /many-things/mitosis/context/context_by_address:
+    get:
+      summary: Queries a list of ContextByAddress items.
+      operationId: ManythingsMitosisContextContextByAddress
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /many-things/mitosis/context/context_by_tx_hash:
+    get:
+      summary: Queries a list of ContextByTxHash items.
+      operationId: ManythingsMitosisContextContextByTxHash
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /many-things/mitosis/context/contexts_by_address:
+    get:
+      summary: Queries a list of ContextsByAddress items.
+      operationId: ManythingsMitosisContextContextsByAddress
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /many-things/mitosis/context/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -75027,6 +75114,12 @@ definitions:
   manythings.mitosis.context.Params:
     type: object
     description: Params defines the parameters for the module.
+  manythings.mitosis.context.QueryContextByAddressResponse:
+    type: object
+  manythings.mitosis.context.QueryContextByTxHashResponse:
+    type: object
+  manythings.mitosis.context.QueryContextsByAddressResponse:
+    type: object
   manythings.mitosis.context.QueryParamsResponse:
     type: object
     properties:
