@@ -1,0 +1,21 @@
+version: v1
+name: buf.build/many-things/mitosis
+deps:
+  - buf.build/cosmos/cosmos-proto
+  - buf.build/cosmos/cosmos-sdk:2410b846e3479781819c962987e8061e035d5a13 #v^0.46.7
+  - buf.build/cosmos/gogo-proto
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
+    - COMMENTS
+    - FILE_LOWER_SNAKE_CASE
+  except:
+    - UNARY_RPC
+    - COMMENT_FIELD
+    - SERVICE_SUFFIX
+    - PACKAGE_VERSION_SUFFIX
+    - RPC_REQUEST_STANDARD_NAME
+    - PACKAGE_DIRECTORY_MATCH

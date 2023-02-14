@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package manythings.mitosis.event;
+
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "mitosis/event/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/many-things/mitosis/event/params";
+  
+  }
+  
+  // Queries a list of VoteStatus items.
+  rpc VoteStatus (QueryVoteStatusRequest) returns (QueryVoteStatusResponse) {
+    option (google.api.http).get = "/many-things/mitosis/event/vote_status";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryVoteStatusRequest {}
+
+message QueryVoteStatusResponse {}
+
