@@ -25,10 +25,7 @@ jobs:
             ${{ runner.os }}-golang-
 
       - name: Run coverage
-        run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
-
-      - id: coverage  
-        uses: actions-rs/grcov@v0.1   
+        run: go test -race -coverprofile=coverage.out -covermode=atomic ./...  
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3 
