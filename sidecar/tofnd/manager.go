@@ -29,6 +29,10 @@ func NewManager(client Client, ctx sdkclient.Context, participant sdk.ValAddress
 	}
 }
 
+func (m Manager) isParticipant(p sdk.ValAddress) bool {
+	return m.participant.Equals(p)
+}
+
 func (m Manager) generateKey(KeyUID string) (types.PublicKey, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), m.timeout)
 	defer cancel()
