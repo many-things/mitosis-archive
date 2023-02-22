@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "github.com/many-things/mitosis/sidecar/types";
+
 package manythings.sidecar;
 
 message KeyPresenceRequest {

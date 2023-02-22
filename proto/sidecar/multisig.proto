@@ -1,8 +1,10 @@
 syntax = "proto3";
 
+option go_package = "github.com/many-things/mitosis/sidecar/types";
+
 package manythings.sidecar;
 
-//import "common.proto";
+import "common.proto";
 
 service Multisig {
   rpc KeyPresence(KeyPresenceRequest) returns (KeyPresenceResponse);
@@ -10,21 +12,21 @@ service Multisig {
   rpc Sign(SignRequest) returns (SignResponse);
 }
 
-message KeyPresenceRequest {
-  string key_uid = 1;
-  bytes pub_key = 2; // SEC1-encoded compressed pub key bytes to find the right mnemonic. Latest is used, if empty.
-}
-
-message KeyPresenceResponse {
-  enum Response {
-    RESPONSE_UNSPECIFIED = 0;
-    RESPONSE_PRESENT = 1;
-    RESPONSE_ABSENT = 2;
-    RESPONSE_FAIL = 3;
-  }
-
-  Response response = 1;
-}
+//message KeyPresenceRequest {
+//  string key_uid = 1;
+//  bytes pub_key = 2; // SEC1-encoded compressed pub key bytes to find the right mnemonic. Latest is used, if empty.
+//}
+//
+//message KeyPresenceResponse {
+//  enum Response {
+//    RESPONSE_UNSPECIFIED = 0;
+//    RESPONSE_PRESENT = 1;
+//    RESPONSE_ABSENT = 2;
+//    RESPONSE_FAIL = 3;
+//  }
+//
+//  Response response = 1;
+//}
 
 message KeygenRequest {
   string key_uid = 1;
