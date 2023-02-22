@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+option go_package = "github.com/many-things/mitosis/sidecar/types";
+
+package manythings.sidecar;
+
+import "sidecar/common.proto";
+
+service GG20 {
+  rpc Recover(RecoverRequest) returns (RecoverResponse);
+  rpc Keygen(stream MessageIn) returns (stream MessageOut);
+  rpc Sign(stream MessageIn) returns (stream MessageOut);
+  rpc KeyPresence(KeyPresenceRequest) returns (KeyPresenceResponse);
+}
+
+message RecoverRequest {
+  KeygenInit keygen_init = 1;
+  KeygenOutput keygen_output = 2;
+}
+
+message RecoverResponse {
+  enum Response {
+    RESPONSE_UNSPECIFIED = 0;
+    RESPONSE_SUCCESS = 1;
+    RESPONSE_FAIL = 2;
+  }
+
+  Response response = 1;
+}
+
+message KeygenInit {
+  string new_key_uid = 1;
+  repeated string party_uids = 2;
+  repeated uint32 party_share_counts = 5;
+  uint32 my_party_index = 3;
+  uint32 threshold = 4;
+}
+
+message KeygenOutput {
+  bytes pub_key = 1;
+  bytes group_recover_info = 2;
+  bytes private_recover_info = 3;
+}
+
+message MessageIn {
+  oneof data {
+    KeygenInit keygen_init = 1; // First message Only => Keygen
+    SignInit sign_init = 2; // First message Only => Sign
+    TrafficIn traffic = 3; // all subsequential message
+    bool abort = 4; // Abort the protocol
+  }
+}
+
+message MessageOut {
+  oneof data {
+    KeygenInit keygen_init = 1; // First message Only => Keygen
+    SignInit sign_init = 2; // First message Only => Sign
+    TrafficIn traffic = 3; // all subsequential message
+    bool abort = 4; // Abort the protocol
+  }
+
+  message KeygenResult {
+    oneof keygen_result_data {
+      KeygenOutput data = 1;
+      CriminalList criminals = 2;
+    }
+  }
+
+  message SignResult {
+    oneof sign_result_data {
+      bytes signature = 1;
+      CriminalList criminals = 2;
+    }
+  }
+
+  message CriminalList {
+    repeated Criminal criminals = 1;
+
+    message Criminal {
+      string party_uid = 1;
+
+      enum CrimeType {
+        CRIME_TYPE_UNSPECIFIED = 0;
+        CRIME_TYPE_NON_MALICIOUS = 1;
+        CRIME_TYPE_MALICIOUS = 2;
+      }
+
+      CrimeType crime_type = 2;
+    }
+  }
+}
+
+message TrafficIn {
+  string from_party_uid = 1;
+  bytes payload = 2;
+  bool is_broadcast = 3;
+}
+
+message TrafficOut {
+  string to_party_uid = 1;
+  bytes payload = 2;
+  bool is_broadcast = 3;
+}
+
+message SignInit {
+  string new_sig_uid = 1;
+  string key_uid = 2;
+  repeated string party_uids = 3;
+  bytes message_to_sign = 4;
+}

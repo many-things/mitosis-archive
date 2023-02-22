@@ -328,13 +328,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ContextByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "context_by_address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ContextByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "context_by_address"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ContextsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "contexts_by_address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ContextsByAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "contexts_by_address"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ContextByTxHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "context_by_tx_hash"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ContextByTxHash_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"many-things", "mitosis", "context", "context_by_tx_hash"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (
