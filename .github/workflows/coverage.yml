@@ -27,7 +27,7 @@ jobs:
       - name: Run coverage
         run: go test -race -coverprofile=coverage.out -covermode=atomic ./...  
 
-      - name: Setup Golang caches
+      - name: Saving Golang cache
         uses: actions/cache/save@v3
         with:
           path: |
