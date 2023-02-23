@@ -7,6 +7,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+// TODO: Gather utils stuffs kinda this
 func anyOf[T any](source []T, predicate func(T) bool) bool {
 	for i := range source {
 		if predicate(source[i]) {
@@ -31,7 +32,7 @@ func (m Manager) ProcessKeygenStarted(participants []sdk.ValAddress, eventKeyID 
 	}
 
 	payloadHash := sha256.Sum256(m.ctx.FromAddress)
-	sig, err := m.sign(keyUID, payloadHash[:], partyUID, pubKey)
+	_, err = m.sign(keyUID, payloadHash[:], partyUID, pubKey)
 	if err != nil {
 		return err
 	}
