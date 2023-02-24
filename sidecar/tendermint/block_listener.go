@@ -6,19 +6,20 @@ import (
 	"time"
 )
 
-type blockListener struct {
+type BlockListener struct {
 	client         *tmHTTP.HTTP
 	listenInterval time.Duration
+	done           chan struct{}
 }
 
-func NewBlockListener(client *tmHTTP.HTTP, interval time.Duration) *blockListener {
-	return &blockListener{
+func NewBlockListener(client *tmHTTP.HTTP, interval time.Duration) *BlockListener {
+	return &BlockListener{
 		client:         client,
 		listenInterval: interval,
 	}
 }
 
-func (b *blockListener) GetLatestBlockHeight(ctx context.Context) (*int64, error) {
+func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (*int64, error) {
 	blockInfo, err := b.client.BlockchainInfo(ctx, 0, 0)
 	if err != nil {
 		return nil, err
@@ -27,7 +28,7 @@ func (b *blockListener) GetLatestBlockHeight(ctx context.Context) (*int64, error
 	return &blockInfo.LastHeight, nil
 }
 
-func (b *blockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-chan error) {
+func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-chan error) {
 	blockHeightChan := make(chan int64)
 	errChan := make(chan error, 1)
 
@@ -64,9 +65,11 @@ func (b *blockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 	return blockHeightChan, errChan
 }
 
-func (b *blockListener) NewBlockWatcher(ctx context.Context, blockHeightChan <-chan int64, watchErrChan <-chan error) (<-chan int64, <-chan error) {
+func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-chan error) {
 	newBlockHeightChan := make(chan int64, 1)
 	errChan := make(chan error, 1)
+
+	blockHeightChan, watchErrChan := b.GetBlockHeight(ctx)
 
 	go func() {
 		defer close(newBlockHeightChan)
@@ -97,6 +100,7 @@ func (b *blockListener) NewBlockWatcher(ctx context.Context, blockHeightChan <-c
 					processedBlockHeight++
 					break
 				case <-ctx.Done():
+					close(b.done)
 					return
 				}
 			}
@@ -104,4 +108,8 @@ func (b *blockListener) NewBlockWatcher(ctx context.Context, blockHeightChan <-c
 	}()
 
 	return newBlockHeightChan, errChan
+}
+
+func (b *BlockListener) Done() <-chan struct{} {
+	return b.done
 }
