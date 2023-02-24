@@ -19,13 +19,13 @@ func NewBlockListener(client *tmHTTP.HTTP, interval time.Duration) *BlockListene
 	}
 }
 
-func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (*int64, error) {
+func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (int64, error) {
 	blockInfo, err := b.client.BlockchainInfo(ctx, 0, 0)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	return &blockInfo.LastHeight, nil
+	return blockInfo.LastHeight, nil
 }
 
 func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-chan error) {
@@ -39,7 +39,7 @@ func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 		defer func() { keepAliveCancel() }()
 
 		keepAlive, keepAliveCancel = context.WithTimeout(context.Background(), b.listenInterval)
-		var blockHeight *int64
+		var blockHeight int64
 		var err error
 		for {
 			select {
@@ -54,7 +54,7 @@ func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 			}
 
 			select {
-			case blockHeightChan <- *blockHeight:
+			case blockHeightChan <- blockHeight:
 				break
 			case <-ctx.Done():
 				return
@@ -79,14 +79,14 @@ func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-ch
 			return
 		}
 
-		processedBlockHeight := *latestBlockHeight
+		processedBlockHeight := latestBlockHeight
 		for {
 			select {
 			case newBlockHeight := <-blockHeightChan:
-				if *latestBlockHeight >= newBlockHeight {
+				if latestBlockHeight >= newBlockHeight {
 					continue
 				}
-				latestBlockHeight = &newBlockHeight
+				latestBlockHeight = newBlockHeight
 			case err = <-watchErrChan:
 				errChan <- err
 				return
@@ -94,7 +94,7 @@ func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-ch
 				return
 			}
 
-			for processedBlockHeight < *latestBlockHeight {
+			for processedBlockHeight < latestBlockHeight {
 				select {
 				case newBlockHeightChan <- processedBlockHeight + 1:
 					processedBlockHeight++

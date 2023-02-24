@@ -14,13 +14,10 @@ type TmEvent struct {
 }
 
 type TmEventBus struct {
-	client        *tmHttp.HTTP
-	listener      BlockListener
-	logger        log.Logger
-	done          chan struct{}
-	context       context.Context
-	contextCancel context.CancelFunc
-	pubSub        PubSub[TmEvent]
+	client   *tmHttp.HTTP
+	listener BlockListener
+	logger   log.Logger
+	pubSub   PubSub[TmEvent]
 }
 
 func NewTmEventBus(listener BlockListener, pubSub PubSub[TmEvent], logger log.Logger) *TmEventBus {
@@ -28,11 +25,10 @@ func NewTmEventBus(listener BlockListener, pubSub PubSub[TmEvent], logger log.Lo
 		listener: listener,
 		pubSub:   pubSub,
 		logger:   logger,
-		done:     make(chan struct{}),
 	}
 }
 
-func (tb *TmEventBus) ListenBlock() (<-chan coretypes.ResultBlockResults, <-chan error) {
+func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultBlockResults, <-chan error) {
 	blockResultChan := make(chan coretypes.ResultBlockResults)
 	errChan := make(chan error, 1)
 
@@ -53,7 +49,7 @@ func (tb *TmEventBus) ListenBlock() (<-chan coretypes.ResultBlockResults, <-chan
 			case blockHeightErr := <-heightErrChan:
 				errChan <- blockHeightErr
 				return
-			case <-tb.context.Done():
+			case <-ctx.Done():
 				return
 			}
 		}
@@ -96,7 +92,7 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 	errChan := make(chan error, 2)
 
 	ctx, ctxCancel := context.WithCancel(ctx)
-	blockResultChan, blockErr := tb.ListenBlock()
+	blockResultChan, blockErr := tb.ListenBlock(ctx)
 
 	go func() {
 
@@ -129,8 +125,4 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 
 func (tb *TmEventBus) Subscribe(filter func(TmEvent) bool) <-chan TmEvent {
 	return tb.pubSub.Subscribe(filter)
-}
-
-func (tb *TmEventBus) Done() chan struct{} {
-	return tb.done
 }
