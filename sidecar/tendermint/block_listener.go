@@ -63,3 +63,40 @@ func (b *blockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 
 	return blockHeightChan, errChan
 }
+
+func (b *blockListener) NewBlockWatcher(ctx context.Context, blockHeightChan <-chan int64, watchErrChan <-chan error) (<-chan int64, <-chan error) {
+	newBlockHeightChan := make(chan int64, 1)
+	errChan := make(chan error, 1)
+
+	go func() {
+		defer close(newBlockHeightChan)
+		latestBlockHeight, err := b.GetLatestBlockHeight(context.Background())
+		if err != nil {
+			errChan <- err
+			return
+		}
+
+		processedBlockHeight := *latestBlockHeight
+		for {
+			select {
+			case newBlockHeight := <-blockHeightChan:
+				if *latestBlockHeight >= newBlockHeight {
+					continue
+				}
+				latestBlockHeight = &newBlockHeight
+			case err = <-watchErrChan:
+				errChan <- err
+				return
+			case <-ctx.Done():
+				return
+			}
+
+			for processedBlockHeight < *latestBlockHeight {
+				newBlockHeightChan <- processedBlockHeight + 1
+				processedBlockHeight++
+			}
+		}
+	}()
+
+	return newBlockHeightChan, errChan
+}
