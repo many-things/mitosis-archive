@@ -92,8 +92,13 @@ func (b *blockListener) NewBlockWatcher(ctx context.Context, blockHeightChan <-c
 			}
 
 			for processedBlockHeight < *latestBlockHeight {
-				newBlockHeightChan <- processedBlockHeight + 1
-				processedBlockHeight++
+				select {
+				case newBlockHeightChan <- processedBlockHeight + 1:
+					processedBlockHeight++
+					break
+				case <-ctx.Done():
+					return
+				}
 			}
 		}
 	}()
