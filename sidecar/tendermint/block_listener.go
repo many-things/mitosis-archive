@@ -19,6 +19,7 @@ func NewBlockListener(client *tmHTTP.HTTP, interval time.Duration) *BlockListene
 	}
 }
 
+// GetLatestBlockHeight Get The Latest Block Height from Client
 func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (int64, error) {
 	blockInfo, err := b.client.BlockchainInfo(ctx, 0, 0)
 	if err != nil {
@@ -28,6 +29,7 @@ func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (int64, error)
 	return blockInfo.LastHeight, nil
 }
 
+// GetBlockHeight Returns Channel that send the Latest Block Height every listenInterval
 func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-chan error) {
 	blockHeightChan := make(chan int64)
 	errChan := make(chan error, 1)
@@ -65,6 +67,7 @@ func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 	return blockHeightChan, errChan
 }
 
+// NewBlockWatcher Returns Channel that send New Block Height
 func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-chan error) {
 	newBlockHeightChan := make(chan int64, 1)
 	errChan := make(chan error, 1)
@@ -94,6 +97,7 @@ func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-ch
 				return
 			}
 
+			// Processing current Block is more important than receive new block
 			for processedBlockHeight < latestBlockHeight {
 				select {
 				case newBlockHeightChan <- processedBlockHeight + 1:

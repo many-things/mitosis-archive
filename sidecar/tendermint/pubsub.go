@@ -13,6 +13,7 @@ type subscriber[T any] struct {
 	filter func(T) bool
 }
 
+// PubSub is Generic Pub-Sub implementation for Type T
 type PubSub[T any] interface {
 	Publish(T) error
 	Subscribe(filter func(T) bool) <-chan T
@@ -81,6 +82,7 @@ func (p *pubSub[T]) Done() <-chan struct{} {
 	return p.done
 }
 
+// run iterate whole subscriptions every published T and send to each subscription's channel
 func (p *pubSub[T]) run() {
 	for item := range p.buffer.Out {
 		p.subscribeMutex.Lock()

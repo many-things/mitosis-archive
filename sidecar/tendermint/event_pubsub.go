@@ -28,6 +28,7 @@ func NewTmEventBus(listener BlockListener, pubSub PubSub[TmEvent], logger log.Lo
 	}
 }
 
+// ListenBlock listen The Latest Block Height and get BlockResult from tendermint client
 func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultBlockResults, <-chan error) {
 	blockResultChan := make(chan coretypes.ResultBlockResults)
 	errChan := make(chan error, 1)
@@ -58,6 +59,7 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 	return blockResultChan, errChan
 }
 
+// publish iterate blockEvent and send to pubSub.Publish
 func (tb *TmEventBus) publish(block *coretypes.ResultBlockResults) error {
 	blockEvents := append(block.BeginBlockEvents, block.EndBlockEvents...)
 
