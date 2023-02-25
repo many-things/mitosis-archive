@@ -114,7 +114,6 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 				<-tb.pubSub.Done()
 				<-tb.listener.Done()
 
-				close(tb.done)
 				return
 			}
 		}
