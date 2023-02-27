@@ -73,7 +73,10 @@ func (w *Wallet) createTxConfig() client.TxConfig {
 }
 
 func (w *Wallet) GetAccountInfo() (*AccountInfo, error) {
-	fromAddress := libs.ConvertUncompressedSecp256k1ToBech32(w.privateKey.PubKey().Bytes(), w.ChainPrefix)
+	fromAddress, err := libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
+	if err != nil {
+		return nil, err
+	}
 
 	response, err := http.Get(w.DialURL + "/cosmos/auth/v1beta1/accounts/" + fromAddress)
 	if err != nil {
@@ -180,4 +183,8 @@ func (w *Wallet) BroadcastMsg(msg cosmostype.Msg) error {
 
 	err = w.BroadCastRawTx(rawTx)
 	return err
+}
+
+func IsMnemonic(mnemonic_or_privkey string) bool {
+	return bip39.IsMnemonicValid(mnemonic_or_privkey)
 }
