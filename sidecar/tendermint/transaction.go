@@ -1,7 +1,9 @@
 package tendermint
 
 import (
+	"bytes"
 	"encoding/hex"
+	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -27,6 +29,11 @@ type Wallet struct {
 type AccountInfo struct {
 	SequenceNumber uint64
 	AccountNumber  uint64
+}
+
+type RawTx struct {
+	Mode    string
+	TxBytes []byte
 }
 
 func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (*Wallet, error) {
@@ -125,4 +132,36 @@ func (w *Wallet) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
 
 	// Is `txConfig.TxJSONDecoder()` required?
 	return txConfig.TxEncoder()(txBuilder.GetTx())
+}
+
+func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
+	rawTxBody := RawTx{
+		Mode:    "BROADCAST_MODE_SYNC",
+		TxBytes: rawTxByte,
+	}
+
+	postBodyBytes, _ := json.Marshal(rawTxBody)
+	resp, err := http.Post(w.DialURL+"/cosmos/tx/v1beta1/txs", "application/json", bytes.NewBuffer(postBodyBytes))
+	if err != nil || resp.StatusCode != 200 {
+		return err // TODO:
+	}
+	defer resp.Body.Close()
+
+	_, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Return Response
+	return nil
+}
+
+func (w *Wallet) BroadcastMsg(msg cosmostype.Msg) error {
+	rawTx, err := w.CreateSignedRawTx(msg)
+	if err != nil {
+		return nil
+	}
+
+	err = w.BroadCastRawTx(rawTx)
+	return err
 }
