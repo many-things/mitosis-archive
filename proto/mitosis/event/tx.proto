@@ -6,6 +6,7 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 
 // Msg defines the Msg service.
 service Msg {
+  // VoteEvent
   rpc VoteEvent(MsgVoteEvent) returns (MsgVoteEventResponse);
 }
 
