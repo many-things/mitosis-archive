@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotype "github.com/cosmos/cosmos-sdk/crypto/types"
 	cosmostype "github.com/cosmos/cosmos-sdk/types"
@@ -37,8 +38,35 @@ type RawTx struct {
 	TxBytes []byte
 }
 
-func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string) (*Wallet, error) {
-	privBytes, err := bip39.MnemonicToByteArray(mnemonic)
+type MnemonicDeriveOption struct {
+	BIP39Passphrase string
+	HDPath          string
+}
+
+func WithBIP39Passphrase(passphrase string) func(option *MnemonicDeriveOption) {
+	return func(option *MnemonicDeriveOption) {
+		option.BIP39Passphrase = passphrase
+	}
+}
+
+func WithHDPath(hdPath string) func(option *MnemonicDeriveOption) {
+	return func(option *MnemonicDeriveOption) {
+		option.HDPath = hdPath
+	}
+}
+
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...func(option *MnemonicDeriveOption)) (*Wallet, error) {
+	deriveFn := hd.Secp256k1.Derive()
+	option := &MnemonicDeriveOption{
+		BIP39Passphrase: "",
+		HDPath:          hd.CreateHDPath(cosmostype.CoinType, 0, 0).String(),
+	}
+
+	for _, o := range options {
+		o(option)
+	}
+	privBytes, err := deriveFn(mnemonic, option.BIP39Passphrase, option.HDPath)
+
 	if err != nil {
 		return nil, err
 	}
