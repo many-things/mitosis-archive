@@ -9,14 +9,35 @@ service Msg {
   rpc VoteEvent(MsgVoteEvent) returns (MsgVoteEventResponse);
 }
 
-message IncomingEvent {}
+// Operation
+message Operation {
+  uint64 id = 1;
+  bytes args = 2;
+}
 
-message OutgoingEvent {}
+// IncomingEvent
+message IncomingEvent {
+  string chain_id = 1;
+  string tx_hash = 2;
+  bytes dest = 3;
+  bytes denom = 4;
+  Operation operation = 5;
+}
 
+// OutgoingEvent => ref. evm call response
+message OutgoingEvent {
+  string chain_id = 1;
+  string tx_hash = 2;
+  bool ok = 3;
+  bytes result = 4;
+}
+
+// MsgVoteEvent
 message MsgVoteEvent {
   string voter = 1;
   repeated IncomingEvent incoming = 2;
   repeated OutgoingEvent outgoing = 3;
 }
 
+// MsgVoteEventResponse
 message MsgVoteEventResponse {}

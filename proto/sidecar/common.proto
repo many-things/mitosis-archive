@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-option go_package = "github.com/many-things/mitosis/sidecar/types";
-
 package manythings.sidecar;
+
+option go_package = "github.com/many-things/mitosis/sidecar/types";
 
 message KeyPresenceRequest {
   string key_uid = 1;
@@ -19,5 +19,3 @@ message KeyPresenceResponse {
 
   Response response = 1;
 }
-
-
