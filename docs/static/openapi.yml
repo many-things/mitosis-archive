@@ -75158,10 +75158,54 @@ definitions:
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   manythings.mitosis.event.IncomingEvent:
     type: object
+    properties:
+      chain_id:
+        type: string
+      tx_hash:
+        type: string
+      dest:
+        type: string
+        format: byte
+      denom:
+        type: string
+        format: byte
+      operation:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          args:
+            type: string
+            format: byte
+        title: Operation
+    title: IncomingEvent
   manythings.mitosis.event.MsgVoteEventResponse:
     type: object
+    title: MsgVoteEventResponse
+  manythings.mitosis.event.Operation:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      args:
+        type: string
+        format: byte
+    title: Operation
   manythings.mitosis.event.OutgoingEvent:
     type: object
+    properties:
+      chain_id:
+        type: string
+      tx_hash:
+        type: string
+      ok:
+        type: boolean
+      result:
+        type: string
+        format: byte
+    title: OutgoingEvent => ref. evm call response
   manythings.mitosis.event.Params:
     type: object
     description: Params defines the parameters for the module.
