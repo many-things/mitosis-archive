@@ -75163,6 +75163,9 @@ definitions:
         type: string
       tx_hash:
         type: string
+      event_index:
+        type: string
+        format: uint64
       dest:
         type: string
         format: byte

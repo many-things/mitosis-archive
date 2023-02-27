@@ -20,9 +20,10 @@ message Operation {
 message IncomingEvent {
   string chain_id = 1;
   string tx_hash = 2;
-  bytes dest = 3;
-  bytes denom = 4;
-  Operation operation = 5;
+  uint64 event_index = 3;
+  bytes dest = 4;
+  bytes denom = 5;
+  Operation operation = 6;
 }
 
 // OutgoingEvent => ref. evm call response
