@@ -13,6 +13,7 @@ import (
 	txsigning "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	cosmostx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	"github.com/cosmos/go-bip39"
 	"github.com/many-things/mitosis/sidecar/tendermint/libs"
 	"github.com/tidwall/gjson"
 	"io"
@@ -34,6 +35,20 @@ type AccountInfo struct {
 type RawTx struct {
 	Mode    string
 	TxBytes []byte
+}
+
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string) (*Wallet, error) {
+	privBytes, err := bip39.MnemonicToByteArray(mnemonic)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Wallet{
+		privateKey:  &secp256k1.PrivKey{Key: privBytes},
+		ChainPrefix: chainPrefix,
+		ChainID:     chainID,
+		DialURL:     dialUrl,
+	}, nil
 }
 
 func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (*Wallet, error) {
@@ -140,6 +155,7 @@ func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
 		TxBytes: rawTxByte,
 	}
 
+	// TODO: change LCD to gRPC
 	postBodyBytes, _ := json.Marshal(rawTxBody)
 	resp, err := http.Post(w.DialURL+"/cosmos/tx/v1beta1/txs", "application/json", bytes.NewBuffer(postBodyBytes))
 	if err != nil || resp.StatusCode != 200 {
