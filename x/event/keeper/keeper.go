@@ -1,7 +1,9 @@
 package keeper
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -43,4 +45,14 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) VoteEvent(ctx sdk.Context, msg *types.MsgVoteEvent) error {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte("vote"))
+	height := ctx.BlockHeight()
+
+	key := bytes.Join([][]byte{sdk.Uint64ToBigEndian(uint64(height))}, []byte(":"))
+	store.Set(key, value)
+
+	return nil
 }

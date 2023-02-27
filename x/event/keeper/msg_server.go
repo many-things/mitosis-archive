@@ -21,8 +21,10 @@ var _ types.MsgServer = msgServer{}
 func (k msgServer) VoteEvent(goCtx context.Context, msg *types.MsgVoteEvent) (*types.MsgVoteEventResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	// TODO: validate message
+	if err := k.Keeper.VoteEvent(ctx, msg); err != nil {
+		return nil, err
+	}
 
 	return &types.MsgVoteEventResponse{}, nil
 }
