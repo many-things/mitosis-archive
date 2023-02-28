@@ -21,7 +21,7 @@ import (
 type Wallet interface {
 	createTxConfig() client.TxConfig
 	GetAccountInfo() (*AccountInfo, error)
-	CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error)
+	CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error)
 	BroadcastRawTx(rawTxByte []byte) error
 	BroadcastMsg(msg cosmostype.Msg) error
 }
@@ -130,17 +130,12 @@ func (w *WalletStruct) GetAccountInfo() (*AccountInfo, error) {
 	}, nil
 }
 
-func (w *WalletStruct) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
+func (w *WalletStruct) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
 	txBuilder.SetMsgs(msg)
 	txBuilder.SetGasLimit(100000)
-
-	accountInfo, err := w.GetAccountInfo()
-	if err != nil {
-		return nil, err
-	}
 
 	signerData := authsigning.SignerData{
 		ChainID:       w.ChainID,
@@ -209,7 +204,12 @@ func (w *WalletStruct) BroadcastRawTx(rawTxByte []byte) error {
 }
 
 func (w *WalletStruct) BroadcastMsg(msg cosmostype.Msg) error {
-	rawTx, err := w.CreateSignedRawTx(msg)
+	accountInfo, err := w.GetAccountInfo()
+	if err != nil {
+		return err
+	}
+
+	rawTx, err := w.CreateSignedRawTx(msg, *accountInfo)
 	if err != nil {
 		return nil
 	}
