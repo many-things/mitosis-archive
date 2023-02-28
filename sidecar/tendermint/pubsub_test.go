@@ -30,7 +30,8 @@ func Test_Publish(t *testing.T) {
 	// Insert 10 Different Data
 	bufferData := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	for _, value := range bufferData {
-		pubsub.Publish(value)
+		err := pubsub.Publish(value)
+		assert.NilError(t, err)
 	}
 	pubsub.Close()
 
@@ -39,6 +40,10 @@ func Test_Publish(t *testing.T) {
 		assert.Equal(t, bufferData[i], elem)
 		i++
 	}
+
+	pubsub.run()
+	err := pubsub.Publish(1)
+	assert.Error(t, err, "[Pubsub] Not Started")
 }
 
 func Test_Subscribe(t *testing.T) {
@@ -56,7 +61,8 @@ func Test_Subscribe(t *testing.T) {
 
 	bufferData := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	for _, value := range bufferData {
-		pubsub.Publish(value)
+		err := pubsub.Publish(value)
+		assert.NilError(t, err)
 	}
 	pubsub.Close() // Do not wait
 	pubsub.run()
