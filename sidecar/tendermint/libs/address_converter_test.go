@@ -8,14 +8,12 @@ import (
 	"testing"
 )
 
-func TestConvertUncompressedSecp256k1ToBech32(t *testing.T) {
-	expectation := "mito12ssslxcdxyhgth8qm57wnmdy3jv7wyfvxm06g3"
+func TestConvertPubKeyToBech32Address(t *testing.T) {
+	expectation := "mito17h6ufy9kmpkc8ldzzsltl26y8agm604ae6ea2r"
 
-	privKeyStr := "b3086285798d7447192c563e71e15486f8bd9af469b8aae13b14b6d7bca0dccf"
+	privKeyStr := "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 	privBytes, err := hex.DecodeString(privKeyStr)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NilError(t, err)
 	privKey := &secp256k1.PrivKey{Key: privBytes}
 
 	result, err := sdk.Bech32ifyAddressBytes("mito", privKey.PubKey().Address().Bytes())

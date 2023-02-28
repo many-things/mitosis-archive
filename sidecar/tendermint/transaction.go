@@ -43,19 +43,21 @@ type MnemonicDeriveOption struct {
 	HDPath          string
 }
 
-func WithBIP39Passphrase(passphrase string) func(option *MnemonicDeriveOption) {
+type MnemonicDeriveOptionHandler = func(option *MnemonicDeriveOption)
+
+func WithBIP39Passphrase(passphrase string) MnemonicDeriveOptionHandler {
 	return func(option *MnemonicDeriveOption) {
 		option.BIP39Passphrase = passphrase
 	}
 }
 
-func WithHDPath(hdPath string) func(option *MnemonicDeriveOption) {
+func WithHDPath(hdPath string) MnemonicDeriveOptionHandler {
 	return func(option *MnemonicDeriveOption) {
 		option.HDPath = hdPath
 	}
 }
 
-func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...func(option *MnemonicDeriveOption)) (*Wallet, error) {
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...MnemonicDeriveOptionHandler) (*Wallet, error) {
 	deriveFn := hd.Secp256k1.Derive()
 	option := &MnemonicDeriveOption{
 		BIP39Passphrase: "",
@@ -213,6 +215,6 @@ func (w *Wallet) BroadcastMsg(msg cosmostype.Msg) error {
 	return err
 }
 
-func IsMnemonic(mnemonic_or_privkey string) bool {
-	return bip39.IsMnemonicValid(mnemonic_or_privkey)
+func IsMnemonic(mnemonicOrPrivKey string) bool {
+	return bip39.IsMnemonicValid(mnemonicOrPrivKey)
 }
