@@ -40,7 +40,7 @@ func Test_BroadCastRawTx(t *testing.T) {
 	}
 
 	// Call
-	wallet.BroadCastRawTx(mockedRawTx)
+	wallet.BroadcastRawTx(mockedRawTx)
 }
 
 func Test_GetAccountInfo(t *testing.T) {
@@ -82,7 +82,6 @@ func Test_GetAccountInfo(t *testing.T) {
 
 	assert.Equal(t, accountInfo.SequenceNumber, uint64(1))
 	assert.Equal(t, accountInfo.AccountNumber, uint64(2))
-
 }
 
 func Test_IsMnemonic(t *testing.T) {

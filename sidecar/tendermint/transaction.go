@@ -18,7 +18,15 @@ import (
 	"io"
 )
 
-type Wallet struct {
+type Wallet interface {
+	createTxConfig() client.TxConfig
+	GetAccountInfo() (*AccountInfo, error)
+	CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error)
+	BroadcastRawTx(rawTxByte []byte) error
+	BroadcastMsg(msg cosmostype.Msg) error
+}
+
+type WalletStruct struct {
 	privateKey  cryptotype.PrivKey
 	ChainPrefix string
 	ChainID     string
@@ -54,7 +62,7 @@ func WithHDPath(hdPath string) MnemonicDeriveOptionHandler {
 	}
 }
 
-func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...MnemonicDeriveOptionHandler) (*Wallet, error) {
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...MnemonicDeriveOptionHandler) (Wallet, error) {
 	deriveFn := hd.Secp256k1.Derive()
 	option := &MnemonicDeriveOption{
 		BIP39Passphrase: "",
@@ -70,7 +78,7 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 		return nil, err
 	}
 
-	return &Wallet{
+	return &WalletStruct{
 		privateKey:  &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix: chainPrefix,
 		ChainID:     chainID,
@@ -78,13 +86,13 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 	}, nil
 }
 
-func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (*Wallet, error) {
+func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (Wallet, error) {
 	privBytes, err := hex.DecodeString(privateKey)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Wallet{
+	return &WalletStruct{
 		privateKey:  &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix: chainPrefix,
 		ChainID:     chainID,
@@ -92,14 +100,14 @@ func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl st
 	}, nil
 }
 
-func (w *Wallet) createTxConfig() client.TxConfig {
+func (w *WalletStruct) createTxConfig() client.TxConfig {
 	interfaceRegistry := types.NewInterfaceRegistry()
 	codec := codec.NewProtoCodec(interfaceRegistry)
 
 	return cosmostx.NewTxConfig(codec, cosmostx.DefaultSignModes)
 }
 
-func (w *Wallet) GetAccountInfo() (*AccountInfo, error) {
+func (w *WalletStruct) GetAccountInfo() (*AccountInfo, error) {
 	fromAddress, err := libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
 	if err != nil {
 		return nil, err
@@ -122,7 +130,7 @@ func (w *Wallet) GetAccountInfo() (*AccountInfo, error) {
 	}, nil
 }
 
-func (w *Wallet) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
+func (w *WalletStruct) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
@@ -179,7 +187,7 @@ func (w *Wallet) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
 	return txConfig.TxEncoder()(txBuilder.GetTx())
 }
 
-func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
+func (w *WalletStruct) BroadcastRawTx(rawTxByte []byte) error {
 	rawTxBody := RawTx{
 		Mode:    "BROADCAST_MODE_SYNC",
 		TxBytes: rawTxByte,
@@ -200,13 +208,13 @@ func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
 	return nil
 }
 
-func (w *Wallet) BroadcastMsg(msg cosmostype.Msg) error {
+func (w *WalletStruct) BroadcastMsg(msg cosmostype.Msg) error {
 	rawTx, err := w.CreateSignedRawTx(msg)
 	if err != nil {
 		return nil
 	}
 
-	err = w.BroadCastRawTx(rawTx)
+	err = w.BroadcastRawTx(rawTx)
 	return err
 }
 
