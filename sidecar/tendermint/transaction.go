@@ -16,7 +16,6 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint/libs"
 	"github.com/tidwall/gjson"
 	"io"
-	"net/http"
 )
 
 type Wallet struct {
@@ -106,7 +105,7 @@ func (w *Wallet) GetAccountInfo() (*AccountInfo, error) {
 		return nil, err
 	}
 
-	response, err := http.Get(w.DialURL + "/cosmos/auth/v1beta1/accounts/" + fromAddress)
+	response, err := libs.JsonGet(w.DialURL + "/cosmos/auth/v1beta1/accounts/" + fromAddress)
 	if err != nil {
 		return nil, err
 	}
