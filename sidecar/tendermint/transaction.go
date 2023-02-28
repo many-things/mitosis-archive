@@ -215,6 +215,6 @@ func (w *Wallet) BroadcastMsg(msg cosmostype.Msg) error {
 	return err
 }
 
-func IsMnemonic(mnemonicOrPrivKey string) bool {
-	return bip39.IsMnemonicValid(mnemonicOrPrivKey)
+func IsMnemonic(mnemonic string) bool {
+	return bip39.IsMnemonicValid(mnemonic)
 }
