@@ -20,6 +20,11 @@ service Query {
   rpc VoteStatus(QueryVoteStatusRequest) returns (QueryVoteStatusResponse) {
     option (google.api.http).get = "/many-things/mitosis/event/vote_status";
   }
+
+  // Queries a proxy account's address of validator
+  rpc Proxy(QueryProxyRequest) returns (QueryProxyResponse) {
+    option (google.api.http).get = "/many-things/mitosis/event/proxy";
+  }
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -34,3 +39,11 @@ message QueryParamsResponse {
 message QueryVoteStatusRequest {}
 
 message QueryVoteStatusResponse {}
+
+message QueryProxyRequest {
+  string validator = 1;
+}
+
+message QueryProxyResponse {
+  string proxy = 1;
+}

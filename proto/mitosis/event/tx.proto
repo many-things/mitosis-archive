@@ -8,6 +8,9 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 service Msg {
   // VoteEvent
   rpc VoteEvent(MsgVoteEvent) returns (MsgVoteEventResponse);
+
+  // RegisterProxy
+  rpc RegisterProxy(MsgRegisterProxy) returns (MsgRegisterProxyResponse);
 }
 
 // Operation
@@ -43,3 +46,12 @@ message MsgVoteEvent {
 
 // MsgVoteEventResponse
 message MsgVoteEventResponse {}
+
+// MsgRegisterProxy
+message MsgRegisterProxy {
+  string validator = 1;
+  string proxy = 2;
+}
+
+// MsgRegisterProxyResponse
+message MsgRegisterProxyResponse {}
