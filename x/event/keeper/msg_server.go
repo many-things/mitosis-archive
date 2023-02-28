@@ -22,7 +22,7 @@ func (k msgServer) VoteEvent(goCtx context.Context, msg *types.MsgVoteEvent) (*t
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// TODO: validate message
-	if err := k.Keeper.VoteEvent(ctx, msg); err != nil {
+	if err := k.Keeper.StoreEvent(ctx, msg); err != nil {
 		return nil, err
 	}
 
