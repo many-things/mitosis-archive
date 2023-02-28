@@ -26,7 +26,7 @@ type Wallet interface {
 	BroadcastMsg(msg cosmostype.Msg) error
 }
 
-type WalletStruct struct {
+type wallet struct {
 	privateKey  cryptotype.PrivKey
 	ChainPrefix string
 	ChainID     string
@@ -78,7 +78,7 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 		return nil, err
 	}
 
-	return &WalletStruct{
+	return &wallet{
 		privateKey:  &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix: chainPrefix,
 		ChainID:     chainID,
@@ -92,7 +92,7 @@ func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl st
 		return nil, err
 	}
 
-	return &WalletStruct{
+	return &wallet{
 		privateKey:  &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix: chainPrefix,
 		ChainID:     chainID,
@@ -100,14 +100,14 @@ func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl st
 	}, nil
 }
 
-func (w *WalletStruct) createTxConfig() client.TxConfig {
+func (w *wallet) createTxConfig() client.TxConfig {
 	interfaceRegistry := types.NewInterfaceRegistry()
 	codec := codec.NewProtoCodec(interfaceRegistry)
 
 	return cosmostx.NewTxConfig(codec, cosmostx.DefaultSignModes)
 }
 
-func (w *WalletStruct) GetAccountInfo() (*AccountInfo, error) {
+func (w *wallet) GetAccountInfo() (*AccountInfo, error) {
 	fromAddress, err := libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func (w *WalletStruct) GetAccountInfo() (*AccountInfo, error) {
 	}, nil
 }
 
-func (w *WalletStruct) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
+func (w *wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
@@ -182,7 +182,7 @@ func (w *WalletStruct) CreateSignedRawTx(msg cosmostype.Msg, accountInfo Account
 	return txConfig.TxEncoder()(txBuilder.GetTx())
 }
 
-func (w *WalletStruct) BroadcastRawTx(rawTxByte []byte) error {
+func (w *wallet) BroadcastRawTx(rawTxByte []byte) error {
 	rawTxBody := RawTx{
 		Mode:    "BROADCAST_MODE_SYNC",
 		TxBytes: rawTxByte,
@@ -203,7 +203,7 @@ func (w *WalletStruct) BroadcastRawTx(rawTxByte []byte) error {
 	return nil
 }
 
-func (w *WalletStruct) BroadcastMsg(msg cosmostype.Msg) error {
+func (w *wallet) BroadcastMsg(msg cosmostype.Msg) error {
 	accountInfo, err := w.GetAccountInfo()
 	if err != nil {
 		return err
