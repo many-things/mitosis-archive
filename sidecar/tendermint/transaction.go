@@ -1,9 +1,7 @@
 package tendermint
 
 import (
-	"bytes"
 	"encoding/hex"
-	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -187,10 +185,8 @@ func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
 		Mode:    "BROADCAST_MODE_SYNC",
 		TxBytes: rawTxByte,
 	}
+	resp, err := libs.JsonPost(w.DialURL+"/cosmos/tx/v1beta1/txs", rawTxBody)
 
-	// TODO: change LCD to gRPC
-	postBodyBytes, _ := json.Marshal(rawTxBody)
-	resp, err := http.Post(w.DialURL+"/cosmos/tx/v1beta1/txs", "application/json", bytes.NewBuffer(postBodyBytes))
 	if err != nil || resp.StatusCode != 200 {
 		return err // TODO:
 	}

@@ -18,7 +18,7 @@ func init() {
 	Client = &http.Client{}
 }
 
-func JsonPost(url string, body interface{}, header http.Header) (*http.Response, error) {
+func JsonPost(url string, body interface{}) (*http.Response, error) {
 	jsonBytes, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func JsonPost(url string, body interface{}, header http.Header) (*http.Response,
 		return nil, err
 	}
 
-	request.Header = header
+	request.Header.Add("Content-Type", "application/json")
 	return Client.Do(request)
 }
 
