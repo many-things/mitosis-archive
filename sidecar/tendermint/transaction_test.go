@@ -5,7 +5,11 @@ import (
 	"testing"
 )
 
-func TestIsMnemonic(t *testing.T) {
+func Test_BroadCastRawTx(t *testing.T) {
+
+}
+
+func Test_IsMnemonic(t *testing.T) {
 	validMnemonic := "burst visa embark foam office album waste autumn remove tourist moment tail camp trumpet blue grunt catalog metal metal simple school item cotton apart"
 
 	result := IsMnemonic(validMnemonic)
