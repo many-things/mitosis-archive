@@ -19,6 +19,6 @@ func Unwrap2[expected any, arg1 any, arg2 any](f func(arg1, arg2) (expected, err
 	return Must(f(a1, a2))
 }
 
-func JoinBytes(j []byte, bzs ...[]byte) []byte {
-	return bytes.Join(bzs, j)
+func JoinBytes(bzs ...[]byte) []byte {
+	return bytes.Join(bzs, []byte{})
 }
