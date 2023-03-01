@@ -19,6 +19,7 @@ import (
 )
 
 type Wallet interface {
+	GetAddress() (string, error)
 	GetAccountInfo() (*AccountInfo, error)
 	CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error)
 	BroadcastRawTx(rawTxByte []byte) error
@@ -106,8 +107,12 @@ func (w wallet) createTxConfig() client.TxConfig {
 	return cosmostx.NewTxConfig(codec, cosmostx.DefaultSignModes)
 }
 
+func (w wallet) GetAddress() (string, error) {
+	return libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
+}
+
 func (w wallet) GetAccountInfo() (*AccountInfo, error) {
-	fromAddress, err := libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
+	fromAddress, err := w.GetAddress()
 	if err != nil {
 		return nil, err
 	}

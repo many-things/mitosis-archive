@@ -98,13 +98,13 @@ func Test_GetAccountInfo(t *testing.T) {
 		},
 	}
 
-	privKey := "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+	privKey := "f1cd941f44fb891eeb3d153e311fb0cf6291994e9678f2a2b9bf66adce137214"
 	wallet, err := NewWallet(privKey, "mito", "", "https://test.com")
 	assert.NilError(t, err)
 
 	libs.Client = &mocks.MockClient{}
 	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
-		assert.Equal(t, req.URL.String(), "https://test.com/cosmos/auth/v1beta1/accounts/mito17h6ufy9kmpkc8ldzzsltl26y8agm604ae6ea2r")
+		assert.Equal(t, req.URL.String(), "https://test.com/cosmos/auth/v1beta1/accounts/mito1rmzvz47h84a09dkxgys4hqs70fczae30gadk39")
 
 		jsonResponse, err := json.Marshal(response)
 		assert.NilError(t, err)
@@ -132,4 +132,21 @@ func Test_IsMnemonic(t *testing.T) {
 
 	result = IsMnemonic(invalidMnemonic)
 	assert.Equal(t, result, false)
+}
+
+func Test_Mnemonic_And_PrivKey(t *testing.T) {
+	privKey := "f1cd941f44fb891eeb3d153e311fb0cf6291994e9678f2a2b9bf66adce137214"
+	mnemonic := "burst visa embark foam office album waste autumn remove tourist moment tail camp trumpet blue grunt catalog metal metal simple school item cotton apart"
+
+	wallet, err := NewWallet(privKey, "mito", "", "http://test.com")
+	assert.NilError(t, err)
+	walletAddress, err := wallet.GetAddress()
+	assert.NilError(t, err)
+
+	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mito", "", "http://test.com")
+	assert.NilError(t, err)
+	walletMnemonicAddress, err := walletMnemonic.GetAddress()
+	assert.NilError(t, err)
+
+	assert.Equal(t, walletAddress, walletMnemonicAddress)
 }
