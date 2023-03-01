@@ -15,7 +15,8 @@ var (
 )
 
 func init() {
-	Client = &http.Client{}
+	// TODO: make this configurable
+	Client = http.DefaultClient
 }
 
 func JsonPost(url string, body interface{}) (*http.Response, error) {

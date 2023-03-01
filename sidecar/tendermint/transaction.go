@@ -19,7 +19,6 @@ import (
 )
 
 type Wallet interface {
-	createTxConfig() client.TxConfig
 	GetAccountInfo() (*AccountInfo, error)
 	CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error)
 	BroadcastRawTx(rawTxByte []byte) error
@@ -100,14 +99,14 @@ func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl st
 	}, nil
 }
 
-func (w *wallet) createTxConfig() client.TxConfig {
+func (w wallet) createTxConfig() client.TxConfig {
 	interfaceRegistry := types.NewInterfaceRegistry()
 	codec := codec.NewProtoCodec(interfaceRegistry)
 
 	return cosmostx.NewTxConfig(codec, cosmostx.DefaultSignModes)
 }
 
-func (w *wallet) GetAccountInfo() (*AccountInfo, error) {
+func (w wallet) GetAccountInfo() (*AccountInfo, error) {
 	fromAddress, err := libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
 	if err != nil {
 		return nil, err
@@ -130,7 +129,7 @@ func (w *wallet) GetAccountInfo() (*AccountInfo, error) {
 	}, nil
 }
 
-func (w *wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
+func (w wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
@@ -182,7 +181,7 @@ func (w *wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) 
 	return txConfig.TxEncoder()(txBuilder.GetTx())
 }
 
-func (w *wallet) BroadcastRawTx(rawTxByte []byte) error {
+func (w wallet) BroadcastRawTx(rawTxByte []byte) error {
 	rawTxBody := RawTx{
 		Mode:    "BROADCAST_MODE_SYNC",
 		TxBytes: rawTxByte,
@@ -203,7 +202,7 @@ func (w *wallet) BroadcastRawTx(rawTxByte []byte) error {
 	return nil
 }
 
-func (w *wallet) BroadcastMsg(msg cosmostype.Msg) error {
+func (w wallet) BroadcastMsg(msg cosmostype.Msg) error {
 	accountInfo, err := w.GetAccountInfo()
 	if err != nil {
 		return err
