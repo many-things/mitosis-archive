@@ -11,7 +11,7 @@ type EventKeeper interface {
 	StoreEvent(ctx sdk.Context, msg *types.MsgVoteEvent) error
 
 	GetIncomingEvent(ctx sdk.Context, txHash string, evtIndex uint64) (*types.IncomingEvent, error)
-	ListIncomingEvent(ctx sdk.Context, txHash string) ([]*types.IncomingEvent, error)
+	ListIncomingEvent(ctx sdk.Context) ([]*types.IncomingEvent, error)
 
 	GetOutgoingEvent(ctx sdk.Context, txHash string) (*types.OutgoingEvent, error)
 	ListOutgoingEvent(ctx sdk.Context) ([]*types.OutgoingEvent, error)
@@ -45,10 +45,10 @@ func (k eventKeeper) GetIncomingEvent(ctx sdk.Context, txHash string, evtIndex u
 	return inStore.Get(txHash, evtIndex)
 }
 
-func (k eventKeeper) ListIncomingEvent(ctx sdk.Context, txHash string) ([]*types.IncomingEvent, error) {
+func (k eventKeeper) ListIncomingEvent(ctx sdk.Context) ([]*types.IncomingEvent, error) {
 	inStore := store.NewIncomingEventRepo(ctx, k.storeKey)
 
-	return inStore.List(txHash)
+	return inStore.List()
 }
 
 func (k eventKeeper) GetOutgoingEvent(ctx sdk.Context, txHash string) (*types.OutgoingEvent, error) {

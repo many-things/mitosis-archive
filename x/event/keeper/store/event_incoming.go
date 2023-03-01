@@ -13,7 +13,7 @@ import (
 type IncomingEventRepo interface {
 	Store(events []*types.IncomingEvent) error
 	Get(txHash string, evtIndex uint64) (*types.IncomingEvent, error)
-	List(txHash string) ([]*types.IncomingEvent, error)
+	List() ([]*types.IncomingEvent, error)
 }
 
 type incomingEventRepo struct{ store.KVStore }
@@ -55,10 +55,8 @@ func (s incomingEventRepo) Get(txHash string, evtIndex uint64) (*types.IncomingE
 	return event, nil
 }
 
-func (s incomingEventRepo) List(txHash string) ([]*types.IncomingEvent, error) {
-	iter := prefix.
-		NewStore(s.KVStore, utils.Unwrap1(hex.DecodeString, txHash)).
-		Iterator(nil, nil)
+func (s incomingEventRepo) List() ([]*types.IncomingEvent, error) {
+	iter := s.KVStore.Iterator(nil, nil)
 
 	var events []*types.IncomingEvent
 	for ; iter.Valid(); iter.Next() {
