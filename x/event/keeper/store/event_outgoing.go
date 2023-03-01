@@ -3,6 +3,7 @@ package store
 import (
 	"encoding/hex"
 	"github.com/cosmos/cosmos-sdk/store"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/utils"
@@ -18,7 +19,10 @@ type OutgoingEventRepo interface {
 type outgoingEventRepo struct{ store.KVStore }
 
 func NewOutgoingEventRepo(ctx sdk.Context, key storetypes.StoreKey) OutgoingEventRepo {
-	return outgoingEventRepo{OutgoingEventStore(ctx, key)}
+	return outgoingEventRepo{prefix.NewStore(
+		ctx.KVStore(key),
+		types.GetOutgoingEventPrefix(uint64(ctx.BlockHeight())),
+	)}
 }
 
 func (s outgoingEventRepo) buildKey(event *types.OutgoingEvent) []byte {
@@ -51,6 +55,7 @@ func (s outgoingEventRepo) Get(txHash string) (*types.OutgoingEvent, error) {
 
 func (s outgoingEventRepo) List() ([]*types.OutgoingEvent, error) {
 	iter := s.KVStore.Iterator(nil, nil)
+	defer iter.Close()
 
 	var events []*types.OutgoingEvent
 	for ; iter.Valid(); iter.Next() {

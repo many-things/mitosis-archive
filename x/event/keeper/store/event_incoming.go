@@ -19,7 +19,10 @@ type IncomingEventRepo interface {
 type incomingEventRepo struct{ store.KVStore }
 
 func NewIncomingEventRepo(ctx sdk.Context, key storetypes.StoreKey) IncomingEventRepo {
-	return incomingEventRepo{IncomingEventStore(ctx, key)}
+	return incomingEventRepo{prefix.NewStore(
+		ctx.KVStore(key),
+		types.GetIncomingEventPrefix(uint64(ctx.BlockHeight())),
+	)}
 }
 
 func (s incomingEventRepo) buildKey(event *types.IncomingEvent) []byte {
@@ -59,12 +62,8 @@ func (s incomingEventRepo) List(txHash string) ([]*types.IncomingEvent, error) {
 
 	var events []*types.IncomingEvent
 	for ; iter.Valid(); iter.Next() {
-		bz := iter.Value()
-
 		event := new(types.IncomingEvent)
-		if err := event.Unmarshal(bz); err != nil {
-			return nil, err
-		}
+		utils.Must(nil, event.Unmarshal(iter.Value()))
 		events = append(events, event)
 	}
 	if err := iter.Error(); err != nil {
