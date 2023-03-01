@@ -20,11 +20,9 @@ const (
 )
 
 var (
-	// === Events
 	PrefixVoteIncomingEvent = []byte{0x00}
 	PrefixVoteOutgoingEvent = []byte{0x01}
 
-	// === Validator
 	PrefixValidatorProxy = []byte{0x10}
 )
 
