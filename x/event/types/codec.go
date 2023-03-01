@@ -9,12 +9,14 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgVoteEvent{}, "event/VoteEvent", nil)
+	cdc.RegisterConcrete(&MsgRegisterProxy{}, "event/RegisterProxy", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgVoteEvent{},
+		&MsgRegisterProxy{},
 	)
 	// this line is used by starport scaffolding # 3
 
