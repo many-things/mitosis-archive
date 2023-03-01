@@ -61,7 +61,7 @@ func (s incomingEventRepo) List() ([]*types.IncomingEvent, error) {
 	var events []*types.IncomingEvent
 	for ; iter.Valid(); iter.Next() {
 		event := new(types.IncomingEvent)
-		utils.Must(nil, event.Unmarshal(iter.Value()))
+		utils.Must(event.Unmarshal(iter.Value()))
 		events = append(events, event)
 	}
 	if err := iter.Error(); err != nil {
