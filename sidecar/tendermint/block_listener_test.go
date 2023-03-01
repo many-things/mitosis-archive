@@ -47,3 +47,22 @@ func Test_GetBlockHeight(t *testing.T) {
 	}
 	blockListener.Close()
 }
+
+func Test_GetNewBlock(t *testing.T) {
+	mHttp := mockHTTP{
+		Height: 10,
+	}
+	blockListener := NewBlockListener(context.Background(), &mHttp, time.Millisecond*500)
+
+	newBlockChan, _ := blockListener.NewBlockWatcher()
+	time.Sleep(time.Second)
+	mHttp.Height = 20
+
+	var i int64
+	for i = 11; i <= 20; i++ {
+		select {
+		case elem := <-newBlockChan:
+			assert.Equal(t, elem, i)
+		}
+	}
+}
