@@ -7,7 +7,7 @@ import (
 
 type BaseKeeper interface {
 	GetIncomingEvent(ctx sdk.Context, txHash string, evtIndex uint64) (*IncomingEvent, error)
-	ListIncomingEvent(ctx sdk.Context, txHash string) ([]*IncomingEvent, error)
+	ListIncomingEvent(ctx sdk.Context) ([]*IncomingEvent, error)
 
 	GetOutgoingEvent(ctx sdk.Context, txHash string) (*OutgoingEvent, error)
 	ListOutgoingEvent(ctx sdk.Context) ([]*OutgoingEvent, error)
