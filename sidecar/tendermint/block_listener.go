@@ -2,26 +2,48 @@ package tendermint
 
 import (
 	"context"
-	tmHTTP "github.com/tendermint/tendermint/rpc/client/http"
+	coretypes "github.com/tendermint/tendermint/rpc/core/types"
+	"sync"
 	"time"
 )
 
-type BlockListener struct {
-	client         *tmHTTP.HTTP
-	listenInterval time.Duration
-	done           chan struct{}
+type BlockHeightFetcher interface {
+	BlockchainInfo(
+		ctx context.Context,
+		minHeight,
+		maxHeight int64,
+	) (*coretypes.ResultBlockchainInfo, error)
 }
 
-func NewBlockListener(client *tmHTTP.HTTP, interval time.Duration) *BlockListener {
-	return &BlockListener{
+type BlockListener interface {
+	GetLatestBlockHeight() (int64, error)
+	GetBlockHeight() (<-chan int64, <-chan error)
+	NewBlockWatcher() (<-chan int64, <-chan error)
+	Close()
+}
+
+type blockListener struct {
+	ctx            context.Context
+	ctxCancel      context.CancelFunc
+	client         BlockHeightFetcher
+	listenInterval time.Duration
+	once           *sync.Once
+}
+
+func NewBlockListener(ctx context.Context, client BlockHeightFetcher, interval time.Duration) BlockListener {
+	ctx, ctxCancel := context.WithCancel(ctx)
+	return &blockListener{
 		client:         client,
 		listenInterval: interval,
+		ctx:            ctx,
+		ctxCancel:      ctxCancel,
+		once:           &sync.Once{},
 	}
 }
 
 // GetLatestBlockHeight Get The Latest Block Height from Client
-func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (int64, error) {
-	blockInfo, err := b.client.BlockchainInfo(ctx, 0, 0)
+func (b *blockListener) GetLatestBlockHeight() (int64, error) {
+	blockInfo, err := b.client.BlockchainInfo(b.ctx, 0, 0)
 	if err != nil {
 		return 0, err
 	}
@@ -30,7 +52,7 @@ func (b *BlockListener) GetLatestBlockHeight(ctx context.Context) (int64, error)
 }
 
 // GetBlockHeight Returns Channel that send the Latest Block Height every listenInterval
-func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-chan error) {
+func (b *blockListener) GetBlockHeight() (<-chan int64, <-chan error) {
 	blockHeightChan := make(chan int64)
 	errChan := make(chan error, 1)
 
@@ -46,19 +68,20 @@ func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 		for {
 			select {
 			case <-keepAlive.Done():
-				blockHeight, err = b.GetLatestBlockHeight(context.Background())
+				blockHeight, err = b.GetLatestBlockHeight()
 				if err != nil {
 					errChan <- err
 					return
 				}
-			case <-ctx.Done():
+				keepAlive, keepAliveCancel = context.WithTimeout(context.Background(), b.listenInterval)
+			case <-b.ctx.Done():
 				return
 			}
 
 			select {
 			case blockHeightChan <- blockHeight:
 				break
-			case <-ctx.Done():
+			case <-b.ctx.Done():
 				return
 			}
 		}
@@ -68,15 +91,15 @@ func (b *BlockListener) GetBlockHeight(ctx context.Context) (<-chan int64, <-cha
 }
 
 // NewBlockWatcher Returns Channel that send New Block Height
-func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-chan error) {
+func (b *blockListener) NewBlockWatcher() (<-chan int64, <-chan error) {
 	newBlockHeightChan := make(chan int64, 1)
 	errChan := make(chan error, 1)
 
-	blockHeightChan, watchErrChan := b.GetBlockHeight(ctx)
+	blockHeightChan, watchErrChan := b.GetBlockHeight()
 
 	go func() {
 		defer close(newBlockHeightChan)
-		latestBlockHeight, err := b.GetLatestBlockHeight(context.Background())
+		latestBlockHeight, err := b.GetLatestBlockHeight()
 		if err != nil {
 			errChan <- err
 			return
@@ -93,7 +116,7 @@ func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-ch
 			case err = <-watchErrChan:
 				errChan <- err
 				return
-			case <-ctx.Done():
+			case <-b.ctx.Done():
 				return
 			}
 
@@ -103,8 +126,7 @@ func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-ch
 				case newBlockHeightChan <- processedBlockHeight + 1:
 					processedBlockHeight++
 					break
-				case <-ctx.Done():
-					close(b.done)
+				case <-b.ctx.Done():
 					return
 				}
 			}
@@ -114,6 +136,8 @@ func (b *BlockListener) NewBlockWatcher(ctx context.Context) (<-chan int64, <-ch
 	return newBlockHeightChan, errChan
 }
 
-func (b *BlockListener) Done() <-chan struct{} {
-	return b.done
+func (b *blockListener) Close() {
+	b.once.Do(func() {
+		b.ctxCancel()
+	})
 }
