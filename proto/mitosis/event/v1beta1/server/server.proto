@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package manythings.mitosis.event.server;
+
+import "google/api/annotations.proto";
+//import "cosmos/base/query/v1beta1/pagination.proto";
+import "mitosis/event/v1beta1/query.proto";
+import "mitosis/event/v1beta1/tx.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/server";
+
+// Msg defines the Msg service.
+service Msg {
+  // VoteEvent
+  rpc VoteEvent(MsgVoteEvent) returns (MsgVoteEventResponse);
+
+  // RegisterProxy
+  rpc RegisterProxy(MsgRegisterProxy) returns (MsgRegisterProxyResponse);
+}
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/many-things/mitosis/event/params";
+  }
+
+  // Queries a list of VoteStatus items.
+  rpc VoteStatus(QueryVoteStatusRequest) returns (QueryVoteStatusResponse) {
+    option (google.api.http).get = "/many-things/mitosis/event/vote_status";
+  }
+
+  // Queries a proxy account's address of validator
+  rpc Proxy(QueryProxyRequest) returns (QueryProxyResponse) {
+    option (google.api.http).get = "/many-things/mitosis/event/proxy";
+  }
+}

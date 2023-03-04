@@ -45393,7 +45393,7 @@ paths:
   /many-things/mitosis/event/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: ManythingsMitosisEventParams
+      operationId: ManythingsMitosisEventServerParams
       responses:
         '200':
           description: A successful response.
@@ -45429,7 +45429,7 @@ paths:
   /many-things/mitosis/event/proxy:
     get:
       summary: Queries a proxy account's address of validator
-      operationId: ManythingsMitosisEventProxy
+      operationId: ManythingsMitosisEventServerProxy
       responses:
         '200':
           description: A successful response.
@@ -45466,7 +45466,7 @@ paths:
   /many-things/mitosis/event/vote_status:
     get:
       summary: Queries a list of VoteStatus items.
-      operationId: ManythingsMitosisEventVoteStatus
+      operationId: ManythingsMitosisEventServerVoteStatus
       responses:
         '200':
           description: A successful response.
@@ -75198,17 +75198,29 @@ definitions:
     properties:
       chain_id:
         type: string
+      block_height:
+        type: string
       tx_hash:
         type: string
       event_index:
         type: string
-        format: uint64
-      dest:
+      destination_addr:
         type: string
         format: byte
-      denom:
-        type: string
-        format: byte
+      funds:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
       operation:
         type: object
         properties:
@@ -75241,6 +75253,9 @@ definitions:
     properties:
       chain_id:
         type: string
+      height:
+        type: string
+        format: uint64
       tx_hash:
         type: string
       ok:
