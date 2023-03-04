@@ -11,7 +11,7 @@ type msgServer struct {
 	baseKeeper keeper.Keeper
 }
 
-func NewMsgServer(keeper keeper.Keeper) types.MsgServer {
+func NewMsgServer(keeper keeper.Keeper) MsgServer {
 	return msgServer{keeper}
 }
 
