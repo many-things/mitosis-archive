@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/many-things/mitosis/x/event/server"
 
 	// "strings"
 
@@ -43,7 +44,7 @@ func CmdQueryParams() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			queryClient := server.NewQueryClient(clientCtx)
 
 			res, err := queryClient.Params(context.Background(), &types.QueryParamsRequest{})
 			if err != nil {
@@ -71,7 +72,7 @@ func CmdVoteStatus() *cobra.Command {
 				return err
 			}
 
-			queryClient := types.NewQueryClient(clientCtx)
+			queryClient := server.NewQueryClient(clientCtx)
 
 			params := &types.QueryVoteStatusRequest{}
 
