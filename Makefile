@@ -1,11 +1,17 @@
 
+run-local:
+	@ignite chain serve --skip-proto --quit-on-fail
+
 proto: proto-fmt proto-go proto-openapi
 
 proto-go:
-	./scripts/protocgen.sh
+	@echo "Generating protobuf bindings"
+	@./scripts/protocgen.sh
 
 proto-fmt:
-	buf format proto -w
+	@echo "Formatting protobuf definitions"
+	@buf format proto -w
 
 proto-openapi:
-	ignite generate openapi -y
+	@echo "Generating OpenAPI document"
+	@ignite generate openapi -y
