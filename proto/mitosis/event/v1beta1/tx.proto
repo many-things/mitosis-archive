@@ -9,14 +9,20 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 
 // IncomingEvent
 message IncomingEvent {
-  string chain_id = 1;
-  string block_height = 2;
-  string tx_hash = 3;
-  string event_index = 4;
-  bytes destination_addr = 5;
-  repeated cosmos.base.v1beta1.Coin funds = 6;
+  reserved 6, 7;
 
-  Operation operation = 7;
+  string chain_id = 1;
+  uint64 block_height = 2;
+  string tx_hash = 3;
+  uint64 event_index = 4;
+  bytes dest_addr = 5;
+
+  // RESERVED: 6
+  // RESERVED: 7
+
+  repeated cosmos.base.v1beta1.Coin funds = 8;
+
+  Operation operation = 9;
 }
 
 // OutgoingEvent => ref. evm call response
