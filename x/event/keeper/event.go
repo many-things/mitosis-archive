@@ -8,7 +8,7 @@ import (
 )
 
 type EventKeeper interface {
-	StoreEvent(ctx sdk.Context, msg *types.MsgVoteEvent) error
+	StoreEvent(ctx sdk.Context, incoming []*types.IncomingEvent, outgoing []*types.OutgoingEvent) error
 
 	GetIncomingEvent(ctx sdk.Context, txHash string, evtIndex uint64) (*types.IncomingEvent, error)
 	ListIncomingEvent(ctx sdk.Context) ([]*types.IncomingEvent, error)
@@ -25,14 +25,14 @@ func newEventKeeper(storeKey storetypes.StoreKey) EventKeeper {
 	return eventKeeper{storeKey}
 }
 
-func (k eventKeeper) StoreEvent(ctx sdk.Context, msg *types.MsgVoteEvent) error {
+func (k eventKeeper) StoreEvent(ctx sdk.Context, incoming []*types.IncomingEvent, outgoing []*types.OutgoingEvent) error {
 	inStore := store.NewIncomingEventRepo(ctx, k.storeKey)
-	if err := inStore.Store(msg.GetIncoming()); err != nil {
+	if err := inStore.Store(incoming); err != nil {
 		return err
 	}
 
 	outStore := store.NewOutgoingEventRepo(ctx, k.storeKey)
-	if err := outStore.Store(msg.GetOutgoing()); err != nil {
+	if err := outStore.Store(outgoing); err != nil {
 		return err
 	}
 

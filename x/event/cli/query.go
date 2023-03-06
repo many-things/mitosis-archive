@@ -46,7 +46,7 @@ func CmdQueryParams() *cobra.Command {
 
 			queryClient := server.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Params(context.Background(), &types.QueryParamsRequest{})
+			res, err := queryClient.Params(context.Background(), &server.QueryParamsRequest{})
 			if err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func CmdVoteStatus() *cobra.Command {
 
 			queryClient := server.NewQueryClient(clientCtx)
 
-			params := &types.QueryVoteStatusRequest{}
+			params := &server.QueryVoteStatusRequest{}
 
 			res, err := queryClient.VoteStatus(cmd.Context(), params)
 			if err != nil {

@@ -1,9 +1,10 @@
-package types
+package server
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/many-things/mitosis/pkg/utils"
+	"github.com/many-things/mitosis/x/event/types"
 )
 
 const (
@@ -23,7 +24,7 @@ func NewMsgVoteEvent(voter string) *MsgVoteEvent {
 }
 
 func (msg *MsgVoteEvent) Route() string {
-	return RouterKey
+	return types.RouterKey
 }
 
 func (msg *MsgVoteEvent) Type() string {
@@ -39,7 +40,7 @@ func (msg *MsgVoteEvent) GetSigners() []sdk.AccAddress {
 }
 
 func (msg *MsgVoteEvent) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := types.ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -52,7 +53,7 @@ func (msg *MsgVoteEvent) ValidateBasic() error {
 }
 
 func (msg *MsgRegisterProxy) Route() string {
-	return RouterKey
+	return types.RouterKey
 }
 
 func (msg *MsgRegisterProxy) Type() string {
@@ -65,7 +66,7 @@ func (msg *MsgRegisterProxy) GetSigners() []sdk.AccAddress {
 }
 
 func (msg *MsgRegisterProxy) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := types.ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -73,7 +74,7 @@ func (msg *MsgRegisterProxy) ValidateBasic() error {
 	if _, err := sdk.ValAddressFromBech32(msg.Validator); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validator address (%s)", err)
 	}
-	if _, err := sdk.AccAddressFromBech32(msg.Proxy); err != nil {
+	if _, err := sdk.AccAddressFromBech32(msg.ProxyAddr); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid proxy address (%s)", err)
 	}
 	return nil

@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
-
 	// this line is used by starport scaffolding # 1
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -49,18 +47,12 @@ func (AppModuleBasic) Name() string {
 
 // RegisterLegacyAminoCodec registers the amino codec for the module, which is used to marshal and unmarshal structs to/from []byte in order to persist them in the module's KVStore
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&types.MsgVoteEvent{}, "event/VoteEvent", nil)
-	cdc.RegisterConcrete(&types.MsgRegisterProxy{}, "event/RegisterProxy", nil)
+	server.RegisterServerLegacyAminoCodec(cdc)
 }
 
 // RegisterInterfaces registers a module's interface types and their concrete implementations as proto.Message
 func (a AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {
-	reg.RegisterImplementations((*sdk.Msg)(nil),
-		&types.MsgVoteEvent{},
-		&types.MsgRegisterProxy{},
-	)
-
-	msgservice.RegisterMsgServiceDesc(reg, &server.MsgServiceDesc)
+	server.RegisterServerInterfaces(reg)
 }
 
 // DefaultGenesis returns a default GenesisState for the module, marshalled to json.RawMessage. The default GenesisState need to be defined by the module developer and is primarily used for testing

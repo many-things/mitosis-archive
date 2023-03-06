@@ -75200,11 +75200,13 @@ definitions:
         type: string
       block_height:
         type: string
+        format: uint64
       tx_hash:
         type: string
       event_index:
         type: string
-      destination_addr:
+        format: uint64
+      dest_addr:
         type: string
         format: byte
       funds:
@@ -75232,12 +75234,6 @@ definitions:
             format: byte
         title: Operation
     title: IncomingEvent
-  manythings.mitosis.event.MsgRegisterProxyResponse:
-    type: object
-    title: MsgRegisterProxyResponse
-  manythings.mitosis.event.MsgVoteEventResponse:
-    type: object
-    title: MsgVoteEventResponse
   manythings.mitosis.event.Operation:
     type: object
     properties:
@@ -75267,19 +75263,25 @@ definitions:
   manythings.mitosis.event.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.event.QueryParamsResponse:
+  manythings.mitosis.event.server.MsgRegisterProxyResponse:
+    type: object
+    title: MsgRegisterProxyResponse
+  manythings.mitosis.event.server.MsgVoteEventResponse:
+    type: object
+    title: MsgVoteEventResponse
+  manythings.mitosis.event.server.QueryParamsResponse:
     type: object
     properties:
       params:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.event.QueryProxyResponse:
+  manythings.mitosis.event.server.QueryProxyResponse:
     type: object
     properties:
       proxy:
         type: string
-  manythings.mitosis.event.QueryVoteStatusResponse:
+  manythings.mitosis.event.server.QueryVoteStatusResponse:
     type: object
   manythings.mitosis.multisig.MsgStartKeygenResponse:
     type: object

@@ -4,8 +4,7 @@ package manythings.mitosis.event.server;
 
 import "google/api/annotations.proto";
 //import "cosmos/base/query/v1beta1/pagination.proto";
-import "mitosis/event/v1beta1/query.proto";
-import "mitosis/event/v1beta1/tx.proto";
+import "mitosis/event/v1beta1/server/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/server";
 

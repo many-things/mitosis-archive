@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/many-things/mitosis/x/event/server"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -50,7 +51,7 @@ func CmdVoteEvent() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgVoteEvent(
+			msg := server.NewMsgVoteEvent(
 				clientCtx.GetFromAddress().String(),
 			)
 			if err := msg.ValidateBasic(); err != nil {

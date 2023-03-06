@@ -4,7 +4,6 @@ import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/x/event/keeper"
-	"github.com/many-things/mitosis/x/event/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -17,16 +16,16 @@ func NewQueryServer(keeper keeper.Keeper) QueryServer {
 	return queryServer{keeper}
 }
 
-func (k queryServer) Params(gcx context.Context, req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+func (k queryServer) Params(gcx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(gcx)
 
-	return &types.QueryParamsResponse{Params: k.baseKeeper.GetParams(ctx)}, nil
+	return &QueryParamsResponse{Params: k.baseKeeper.GetParams(ctx)}, nil
 }
 
-func (k queryServer) VoteStatus(gcx context.Context, req *types.QueryVoteStatusRequest) (*types.QueryVoteStatusResponse, error) {
+func (k queryServer) VoteStatus(gcx context.Context, req *QueryVoteStatusRequest) (*QueryVoteStatusResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -36,10 +35,10 @@ func (k queryServer) VoteStatus(gcx context.Context, req *types.QueryVoteStatusR
 	// TODO: Process the query
 	_ = ctx
 
-	return &types.QueryVoteStatusResponse{}, nil
+	return &QueryVoteStatusResponse{}, nil
 }
 
-func (k queryServer) Proxy(gcx context.Context, req *types.QueryProxyRequest) (*types.QueryProxyResponse, error) {
+func (k queryServer) Proxy(gcx context.Context, req *QueryProxyRequest) (*QueryProxyResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -49,5 +48,5 @@ func (k queryServer) Proxy(gcx context.Context, req *types.QueryProxyRequest) (*
 	// TODO: process the query
 	_ = ctx
 
-	return &types.QueryProxyResponse{}, nil
+	return &QueryProxyResponse{}, nil
 }

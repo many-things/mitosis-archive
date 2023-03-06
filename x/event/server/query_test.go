@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setupQueryServer(t testing.TB) (keeper.Keeper, types.QueryServer, context.Context) {
+func setupQueryServer(t testing.TB) (keeper.Keeper, QueryServer, context.Context) {
 	k, ctx := keepertest.EventKeeper(t)
 	return *k, NewQueryServer(*k), sdk.WrapSDKContext(ctx)
 }
@@ -23,7 +23,7 @@ func TestParamsQuery(t *testing.T) {
 	params := types.DefaultParams()
 	k.SetParams(wctx, params)
 
-	response, err := s.Params(wctx, &types.QueryParamsRequest{})
+	response, err := s.Params(wctx, &QueryParamsRequest{})
 	require.NoError(t, err)
-	require.Equal(t, &types.QueryParamsResponse{Params: params}, response)
+	require.Equal(t, &QueryParamsResponse{Params: params}, response)
 }

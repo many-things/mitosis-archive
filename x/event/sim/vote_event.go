@@ -1,6 +1,7 @@
 package sim
 
 import (
+	"github.com/many-things/mitosis/x/event/server"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -18,7 +19,7 @@ func SimulateMsgVoteEvent(
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &types.MsgVoteEvent{
+		msg := &server.MsgVoteEvent{
 			Voter: simAccount.Address.String(),
 		}
 
