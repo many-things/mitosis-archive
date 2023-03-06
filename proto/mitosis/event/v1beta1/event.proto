@@ -3,6 +3,7 @@ syntax = "proto3";
 package manythings.mitosis.event;
 
 import "cosmos/base/v1beta1/coin.proto";
+import "mitosis/event/v1beta1/operation.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
 
@@ -31,10 +32,4 @@ message OutgoingEvent {
   string tx_hash = 3;
   bool ok = 4;
   bytes result = 5;
-}
-
-// Operation
-message Operation {
-  uint64 id = 1;
-  bytes args = 2;
 }

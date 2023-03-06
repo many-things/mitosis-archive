@@ -45438,6 +45438,9 @@ paths:
             properties:
               proxy:
                 type: string
+            description: >-
+              QueryProxyResponse is response type for the Query/Params RPC
+              method.
         default:
           description: An unexpected error response.
           schema:
@@ -45472,6 +45475,9 @@ paths:
           description: A successful response.
           schema:
             type: object
+            description: >-
+              QueryVoteStatusResponse is response type for the Query/Params RPC
+              method.
         default:
           description: An unexpected error response.
           schema:
@@ -75281,8 +75287,10 @@ definitions:
     properties:
       proxy:
         type: string
+    description: QueryProxyResponse is response type for the Query/Params RPC method.
   manythings.mitosis.event.server.QueryVoteStatusResponse:
     type: object
+    description: QueryVoteStatusResponse is response type for the Query/Params RPC method.
   manythings.mitosis.multisig.MsgStartKeygenResponse:
     type: object
   manythings.mitosis.multisig.MsgSubmitPubkeyResponse:

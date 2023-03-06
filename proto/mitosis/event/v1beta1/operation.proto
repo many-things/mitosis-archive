@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package manythings.mitosis.event;
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// Operation
+message Operation {
+  uint64 id = 1;
+  bytes args = 2;
+}
