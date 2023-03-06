@@ -1,6 +1,6 @@
 
 run-local:
-	@ignite chain serve --skip-proto --quit-on-fail
+	@ignite chain serve --skip-proto --quit-on-fail --verbose
 
 proto: proto-fmt proto-go proto-openapi
 
