@@ -3,8 +3,14 @@ package server
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
+)
+
+var (
+	Amino     = codec.NewLegacyAmino()
+	ModuleCdc = codec.NewAminoCodec(Amino)
 )
 
 func RegisterServerLegacyAminoCodec(cdc *codec.LegacyAmino) {
@@ -19,4 +25,10 @@ func RegisterServerInterfaces(reg cdctypes.InterfaceRegistry) {
 	)
 
 	msgservice.RegisterMsgServiceDesc(reg, &_Msg_serviceDesc)
+}
+
+func init() {
+	RegisterServerLegacyAminoCodec(Amino)
+	cryptocodec.RegisterCrypto(Amino)
+	sdk.RegisterLegacyAminoCodec(Amino)
 }

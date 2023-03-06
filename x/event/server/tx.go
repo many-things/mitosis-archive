@@ -40,7 +40,7 @@ func (msg *MsgVoteEvent) GetSigners() []sdk.AccAddress {
 }
 
 func (msg *MsgVoteEvent) GetSignBytes() []byte {
-	bz := types.ModuleCdc.MustMarshalJSON(msg)
+	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -66,7 +66,7 @@ func (msg *MsgRegisterProxy) GetSigners() []sdk.AccAddress {
 }
 
 func (msg *MsgRegisterProxy) GetSignBytes() []byte {
-	bz := types.ModuleCdc.MustMarshalJSON(msg)
+	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
