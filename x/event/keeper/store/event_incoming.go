@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/x/event/types"
 )
 
@@ -26,11 +25,11 @@ func NewIncomingEventRepo(ctx sdk.Context, key storetypes.StoreKey) IncomingEven
 }
 
 func (s incomingEventRepo) buildKey(event *types.IncomingEvent) []byte {
-	return utils.JoinBytes(
-		[]byte(":"),
-		utils.Unwrap1(hex.DecodeString, event.GetTxHash()),
-		sdk.Uint64ToBigEndian(event.GetEventIndex()),
-	)
+	txHashBz, err := hex.DecodeString(event.GetTxHash())
+	if err != nil {
+		panic(err.Error())
+	}
+	return append(txHashBz, sdk.Uint64ToBigEndian(event.GetEventIndex())...)
 }
 
 func (s incomingEventRepo) Store(events []*types.IncomingEvent) error {
@@ -38,7 +37,11 @@ func (s incomingEventRepo) Store(events []*types.IncomingEvent) error {
 		// ensure txHash already validated before execute this logic
 		key := s.buildKey(evt)
 		if !s.KVStore.Has(key) {
-			s.KVStore.Set(key, utils.Unwrap(evt.Marshal))
+			bz, err := evt.Marshal()
+			if err != nil {
+				panic(err.Error())
+			}
+			s.KVStore.Set(key, bz)
 		}
 	}
 	return nil
@@ -61,7 +64,9 @@ func (s incomingEventRepo) List() ([]*types.IncomingEvent, error) {
 	var events []*types.IncomingEvent
 	for ; iter.Valid(); iter.Next() {
 		event := new(types.IncomingEvent)
-		utils.Must(event.Unmarshal(iter.Value()))
+		if err := event.Unmarshal(iter.Value()); err != nil {
+			panic(err.Error())
+		}
 		events = append(events, event)
 	}
 	if err := iter.Error(); err != nil {

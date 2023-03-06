@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/pkg/utils"
 )
 
 const (
@@ -28,15 +27,16 @@ var (
 )
 
 func GetIncomingEventPrefix(height uint64) []byte {
-	return utils.JoinBytes(
+	return append(
 		PrefixVoteIncomingEvent,
-		sdk.Uint64ToBigEndian(height),
+		sdk.Uint64ToBigEndian(height)...,
 	)
 }
 
 func GetOutgoingEventPrefix(height uint64) []byte {
-	return utils.JoinBytes(PrefixVoteOutgoingEvent,
-		sdk.Uint64ToBigEndian(height),
+	return append(
+		PrefixVoteOutgoingEvent,
+		sdk.Uint64ToBigEndian(height)...,
 	)
 }
 

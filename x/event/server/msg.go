@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/x/event/keeper"
 )
 
@@ -33,8 +32,14 @@ func (k msgServer) RegisterProxy(gctx context.Context, msg *MsgRegisterProxy) (*
 		return nil, err
 	}
 
-	validator := utils.Must1(sdk.ValAddressFromBech32(msg.GetValidator()))
-	proxyAddr := utils.Must1(sdk.AccAddressFromBech32(msg.GetProxyAddr()))
+	validator, err := sdk.ValAddressFromBech32(msg.GetValidator())
+	if err != nil {
+		panic(err.Error())
+	}
+	proxyAddr, err := sdk.AccAddressFromBech32(msg.GetProxyAddr())
+	if err != nil {
+		panic(err.Error())
+	}
 
 	if err := k.baseKeeper.RegisterProxy(ctx, validator, proxyAddr); err != nil {
 		return nil, err

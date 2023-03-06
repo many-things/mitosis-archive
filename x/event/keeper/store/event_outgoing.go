@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/x/event/types"
 )
 
@@ -26,17 +25,22 @@ func NewOutgoingEventRepo(ctx sdk.Context, key storetypes.StoreKey) OutgoingEven
 }
 
 func (s outgoingEventRepo) buildKey(event *types.OutgoingEvent) []byte {
-	return utils.JoinBytes(
-		[]byte(":"),
-		utils.Unwrap1(hex.DecodeString, event.GetTxHash()),
-	)
+	txHashBz, err := hex.DecodeString(event.GetTxHash())
+	if err != nil {
+		panic(err.Error())
+	}
+	return txHashBz
 }
 
 func (s outgoingEventRepo) Store(events []*types.OutgoingEvent) error {
 	for _, evt := range events {
 		key := s.buildKey(evt)
 		if !s.KVStore.Has(key) {
-			s.KVStore.Set(key, utils.Unwrap(evt.Marshal))
+			bz, err := evt.Marshal()
+			if err != nil {
+				panic(err.Error())
+			}
+			s.KVStore.Set(key, bz)
 		}
 	}
 	return nil

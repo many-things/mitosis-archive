@@ -3,13 +3,18 @@ package event
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/x/event/types"
 )
 
 func endBlocker(ctx sdk.Context, keeper types.BaseKeeper) {
-	incomingEvents := utils.Must1(keeper.ListIncomingEvent(ctx))
-	outgoingEvents := utils.Must1(keeper.ListOutgoingEvent(ctx))
+	incomingEvents, err := keeper.ListIncomingEvent(ctx)
+	if err != nil {
+		panic(err.Error())
+	}
+	outgoingEvents, err := keeper.ListOutgoingEvent(ctx)
+	if err != nil {
+		panic(err.Error())
+	}
 	events := make(sdk.Events, len(incomingEvents)+len(outgoingEvents))
 
 	for i, evt := range incomingEvents {

@@ -3,7 +3,6 @@ package server
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/x/event/types"
 )
 
@@ -61,7 +60,10 @@ func (msg *MsgRegisterProxy) Type() string {
 }
 
 func (msg *MsgRegisterProxy) GetSigners() []sdk.AccAddress {
-	validator := utils.Unwrap1(sdk.ValAddressFromBech32, msg.Validator)
+	validator, err := sdk.ValAddressFromBech32(msg.Validator)
+	if err != nil {
+		panic(err.Error())
+	}
 	return []sdk.AccAddress{sdk.AccAddress(validator)}
 }
 
