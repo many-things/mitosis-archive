@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
-	"github.com/many-things/mitosis/x/event/server"
 
 	// this line is used by starport scaffolding # 1
 
@@ -19,8 +18,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/many-things/mitosis/x/event/client/cli"
+	"github.com/many-things/mitosis/x/event/cli"
 	"github.com/many-things/mitosis/x/event/keeper"
+	"github.com/many-things/mitosis/x/event/server"
 	"github.com/many-things/mitosis/x/event/types"
 )
 
