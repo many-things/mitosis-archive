@@ -295,6 +295,7 @@ func (m *QueryParamsResponse) GetParams() types.Params {
 	return types.Params{}
 }
 
+// QueryVoteStatusRequest is request type for the Query/Params RPC method.
 type QueryVoteStatusRequest struct {
 }
 
@@ -331,6 +332,7 @@ func (m *QueryVoteStatusRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryVoteStatusRequest proto.InternalMessageInfo
 
+// QueryVoteStatusResponse is response type for the Query/Params RPC method.
 type QueryVoteStatusResponse struct {
 }
 
@@ -367,6 +369,7 @@ func (m *QueryVoteStatusResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryVoteStatusResponse proto.InternalMessageInfo
 
+// QueryProxyRequest is request type for the Query/Params RPC method.
 type QueryProxyRequest struct {
 	Validator string `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator,omitempty"`
 }
@@ -411,6 +414,7 @@ func (m *QueryProxyRequest) GetValidator() string {
 	return ""
 }
 
+// QueryProxyResponse is response type for the Query/Params RPC method.
 type QueryProxyResponse struct {
 	Proxy string `protobuf:"bytes,1,opt,name=proxy,proto3" json:"proxy,omitempty"`
 }

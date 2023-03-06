@@ -36,14 +36,18 @@ message QueryParamsResponse {
   Params params = 1 [(gogoproto.nullable) = false];
 }
 
+// QueryVoteStatusRequest is request type for the Query/Params RPC method.
 message QueryVoteStatusRequest {}
 
+// QueryVoteStatusResponse is response type for the Query/Params RPC method.
 message QueryVoteStatusResponse {}
 
+// QueryProxyRequest is request type for the Query/Params RPC method.
 message QueryProxyRequest {
   string validator = 1;
 }
 
+// QueryProxyResponse is response type for the Query/Params RPC method.
 message QueryProxyResponse {
   string proxy = 1;
 }
