@@ -10,7 +10,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 	"github.com/many-things/mitosis/testutil/sample"
-	eventsimulation "github.com/many-things/mitosis/x/event/simulation"
+	eventsimulation "github.com/many-things/mitosis/x/event/sim"
 	"github.com/many-things/mitosis/x/event/types"
 )
 

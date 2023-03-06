@@ -1,4 +1,4 @@
-package simulation
+package sim
 
 import (
 	"math/rand"
