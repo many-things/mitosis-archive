@@ -1,4 +1,6 @@
 
+PHONY: build
+
 build: proto
 	@ignite chain build --skip-proto
 
