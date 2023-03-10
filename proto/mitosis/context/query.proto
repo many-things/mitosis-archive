@@ -11,37 +11,32 @@ option go_package = "github.com/many-things/mitosis/x/context/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  
   // Parameters queries the parameters of the module.
-  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/many-things/mitosis/context/params";
-  
   }
-  
+
   // Queries a list of ContextByAddress items.
-  rpc ContextByAddress (QueryContextByAddressRequest) returns (QueryContextByAddressResponse) {
+  rpc ContextByAddress(QueryContextByAddressRequest) returns (QueryContextByAddressResponse) {
     option (google.api.http).get = "/many-things/mitosis/context/context_by_address";
-  
   }
-  
+
   // Queries a list of ContextsByAddress items.
-  rpc ContextsByAddress (QueryContextsByAddressRequest) returns (QueryContextsByAddressResponse) {
+  rpc ContextsByAddress(QueryContextsByAddressRequest) returns (QueryContextsByAddressResponse) {
     option (google.api.http).get = "/many-things/mitosis/context/contexts_by_address";
-  
   }
-  
+
   // Queries a list of ContextByTxHash items.
-  rpc ContextByTxHash (QueryContextByTxHashRequest) returns (QueryContextByTxHashResponse) {
+  rpc ContextByTxHash(QueryContextByTxHashRequest) returns (QueryContextByTxHashResponse) {
     option (google.api.http).get = "/many-things/mitosis/context/context_by_tx_hash";
-  
   }
 }
+
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
-  
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }

@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option go_package = "github.com/many-things/mitosis/sidecar/types";
-
 package manythings.sidecar;
 
 import "sidecar/common.proto";
+
+option go_package = "github.com/many-things/mitosis/sidecar/types";
 
 service Multisig {
   rpc KeyPresence(KeyPresenceRequest) returns (KeyPresenceResponse);

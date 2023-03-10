@@ -1,5 +1,9 @@
 package types
 
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "event"
@@ -14,6 +18,28 @@ const (
 	MemStoreKey = "mem_event"
 )
 
-func KeyPrefix(p string) []byte {
-	return []byte(p)
+// PREFIX
+var (
+	PrefixVoteIncomingEvent = []byte{0x00}
+	PrefixVoteOutgoingEvent = []byte{0x01}
+
+	PrefixValidatorProxy = []byte{0x10}
+)
+
+func GetIncomingEventPrefix(height uint64) []byte {
+	return append(
+		PrefixVoteIncomingEvent,
+		sdk.Uint64ToBigEndian(height)...,
+	)
+}
+
+func GetOutgoingEventPrefix(height uint64) []byte {
+	return append(
+		PrefixVoteOutgoingEvent,
+		sdk.Uint64ToBigEndian(height)...,
+	)
+}
+
+func GetValidatorProxyPrefix() []byte {
+	return PrefixValidatorProxy
 }
