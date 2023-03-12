@@ -1,4 +1,5 @@
 
+# `make` -> proto -> build
 PHONY: build
 
 build: proto
