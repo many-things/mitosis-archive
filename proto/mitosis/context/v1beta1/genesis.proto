@@ -1,8 +1,9 @@
 syntax = "proto3";
-package manythings.mitosis.context;
+
+package manythings.mitosis.v1beta1.context;
 
 import "gogoproto/gogo.proto";
-import "mitosis/context/params.proto";
+import "mitosis/context/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/types";
 

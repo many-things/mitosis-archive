@@ -1,5 +1,6 @@
 syntax = "proto3";
-package manythings.mitosis.context;
+
+package manythings.mitosis.v1beta1.context;
 
 import "gogoproto/gogo.proto";
 
