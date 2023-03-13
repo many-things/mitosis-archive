@@ -1,7 +1,0 @@
-syntax = "proto3";
-package manythings.mitosis.context;
-
-option go_package = "github.com/many-things/mitosis/x/context/types";
-
-// Msg defines the Msg service.
-service Msg {}

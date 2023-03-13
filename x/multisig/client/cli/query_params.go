@@ -2,10 +2,10 @@ package cli
 
 import (
 	"context"
+	"github.com/many-things/mitosis/x/multisig/server"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/many-things/mitosis/x/multisig/types"
 	"github.com/spf13/cobra"
 )
 
@@ -17,9 +17,9 @@ func CmdQueryParams() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			queryClient := server.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Params(context.Background(), &types.QueryParamsRequest{})
+			res, err := queryClient.Params(context.Background(), &server.QueryParamsRequest{})
 			if err != nil {
 				return err
 			}
