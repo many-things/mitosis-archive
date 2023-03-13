@@ -3,7 +3,7 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.context.server;
 
 import "google/api/annotations.proto";
-import "mitosis/context/v1beta1/server/types.proto";
+import "mitosis/context/v1beta1/server/types_query.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/server";
 

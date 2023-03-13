@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.context.server;
+
+option go_package = "github.com/many-things/mitosis/x/context/server";
