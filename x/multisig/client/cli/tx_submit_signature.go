@@ -1,12 +1,12 @@
 package cli
 
 import (
+	"github.com/many-things/mitosis/x/multisig/server"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/many-things/mitosis/x/multisig/types"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +24,7 @@ func CmdSubmitSignature() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgSubmitSignature(
+			msg := server.NewMsgSubmitSignature(
 				clientCtx.GetFromAddress().String(),
 			)
 			if err := msg.ValidateBasic(); err != nil {
