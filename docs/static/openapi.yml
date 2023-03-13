@@ -45269,8 +45269,7 @@ paths:
         - Query
   /many-things/mitosis/context/context_by_address:
     get:
-      summary: Queries a list of ContextByAddress items.
-      operationId: ManythingsMitosisContextContextByAddress
+      operationId: ManythingsMitosisV1Beta1ContextServerContextByAddress
       responses:
         '200':
           description: A successful response.
@@ -45298,8 +45297,7 @@ paths:
         - Query
   /many-things/mitosis/context/context_by_tx_hash:
     get:
-      summary: Queries a list of ContextByTxHash items.
-      operationId: ManythingsMitosisContextContextByTxHash
+      operationId: ManythingsMitosisV1Beta1ContextServerContextByTxHash
       responses:
         '200':
           description: A successful response.
@@ -45327,8 +45325,7 @@ paths:
         - Query
   /many-things/mitosis/context/contexts_by_address:
     get:
-      summary: Queries a list of ContextsByAddress items.
-      operationId: ManythingsMitosisContextContextsByAddress
+      operationId: ManythingsMitosisV1Beta1ContextServerContextsByAddress
       responses:
         '200':
           description: A successful response.
@@ -45356,8 +45353,7 @@ paths:
         - Query
   /many-things/mitosis/context/params:
     get:
-      summary: Parameters queries the parameters of the module.
-      operationId: ManythingsMitosisContextParams
+      operationId: ManythingsMitosisV1Beta1ContextServerParams
       responses:
         '200':
           description: A successful response.
@@ -45393,7 +45389,7 @@ paths:
   /many-things/mitosis/event/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: ManythingsMitosisEventServerParams
+      operationId: ManythingsMitosisV1Beta1EventServerParams
       responses:
         '200':
           description: A successful response.
@@ -45429,7 +45425,7 @@ paths:
   /many-things/mitosis/event/proxy:
     get:
       summary: Queries a proxy account's address of validator
-      operationId: ManythingsMitosisEventServerProxy
+      operationId: ManythingsMitosisV1Beta1EventServerProxy
       responses:
         '200':
           description: A successful response.
@@ -45469,7 +45465,7 @@ paths:
   /many-things/mitosis/event/vote_status:
     get:
       summary: Queries a list of VoteStatus items.
-      operationId: ManythingsMitosisEventServerVoteStatus
+      operationId: ManythingsMitosisV1Beta1EventServerVoteStatus
       responses:
         '200':
           description: A successful response.
@@ -45501,7 +45497,7 @@ paths:
   /many-things/mitosis/multisig/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: ManythingsMitosisMultisigParams
+      operationId: ManythingsMitosisV1Beta1MultisigServerParams
       responses:
         '200':
           description: A successful response.
@@ -75183,23 +75179,23 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
-  manythings.mitosis.context.Params:
+  manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.context.QueryContextByAddressResponse:
+  manythings.mitosis.v1beta1.context.server.QueryContextByAddressResponse:
     type: object
-  manythings.mitosis.context.QueryContextByTxHashResponse:
+  manythings.mitosis.v1beta1.context.server.QueryContextByTxHashResponse:
     type: object
-  manythings.mitosis.context.QueryContextsByAddressResponse:
+  manythings.mitosis.v1beta1.context.server.QueryContextsByAddressResponse:
     type: object
-  manythings.mitosis.context.QueryParamsResponse:
+  manythings.mitosis.v1beta1.context.server.QueryParamsResponse:
     type: object
     properties:
       params:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.event.IncomingEvent:
+  manythings.mitosis.v1beta1.event.IncomingEvent:
     type: object
     properties:
       chain_id:
@@ -75240,7 +75236,7 @@ definitions:
             format: byte
         title: Operation
     title: IncomingEvent
-  manythings.mitosis.event.Operation:
+  manythings.mitosis.v1beta1.event.Operation:
     type: object
     properties:
       id:
@@ -75250,7 +75246,7 @@ definitions:
         type: string
         format: byte
     title: Operation
-  manythings.mitosis.event.OutgoingEvent:
+  manythings.mitosis.v1beta1.event.OutgoingEvent:
     type: object
     properties:
       chain_id:
@@ -75266,41 +75262,41 @@ definitions:
         type: string
         format: byte
     title: OutgoingEvent => ref. evm call response
-  manythings.mitosis.event.Params:
+  manythings.mitosis.v1beta1.event.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.event.server.MsgRegisterProxyResponse:
+  manythings.mitosis.v1beta1.event.server.MsgRegisterProxyResponse:
     type: object
     title: MsgRegisterProxyResponse
-  manythings.mitosis.event.server.MsgVoteEventResponse:
+  manythings.mitosis.v1beta1.event.server.MsgVoteEventResponse:
     type: object
     title: MsgVoteEventResponse
-  manythings.mitosis.event.server.QueryParamsResponse:
+  manythings.mitosis.v1beta1.event.server.QueryParamsResponse:
     type: object
     properties:
       params:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.event.server.QueryProxyResponse:
+  manythings.mitosis.v1beta1.event.server.QueryProxyResponse:
     type: object
     properties:
       proxy:
         type: string
     description: QueryProxyResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.event.server.QueryVoteStatusResponse:
+  manythings.mitosis.v1beta1.event.server.QueryVoteStatusResponse:
     type: object
     description: QueryVoteStatusResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.multisig.MsgStartKeygenResponse:
-    type: object
-  manythings.mitosis.multisig.MsgSubmitPubkeyResponse:
-    type: object
-  manythings.mitosis.multisig.MsgSubmitSignatureResponse:
-    type: object
-  manythings.mitosis.multisig.Params:
+  manythings.mitosis.v1beta1.multisig.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.multisig.QueryParamsResponse:
+  manythings.mitosis.v1beta1.multisig.server.MsgStartKeygenResponse:
+    type: object
+  manythings.mitosis.v1beta1.multisig.server.MsgSubmitPubkeyResponse:
+    type: object
+  manythings.mitosis.v1beta1.multisig.server.MsgSubmitSignatureResponse:
+    type: object
+  manythings.mitosis.v1beta1.multisig.server.QueryParamsResponse:
     type: object
     properties:
       params:
