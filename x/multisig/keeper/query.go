@@ -1,7 +1,5 @@
 package keeper
 
-import (
-	"github.com/many-things/mitosis/x/multisig/types"
-)
+import "github.com/many-things/mitosis/x/multisig/server"
 
-var _ types.QueryServer = Keeper{}
+var _ server.QueryServer = Keeper{}

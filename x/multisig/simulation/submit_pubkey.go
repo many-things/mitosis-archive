@@ -1,6 +1,7 @@
 package simulation
 
 import (
+	"github.com/many-things/mitosis/x/multisig/server"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -18,7 +19,7 @@ func SimulateMsgSubmitPubkey(
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &types.MsgSubmitPubkey{
+		msg := &server.MsgSubmitPubkey{
 			Creator: simAccount.Address.String(),
 		}
 

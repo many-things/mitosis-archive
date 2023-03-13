@@ -2,16 +2,16 @@ package keeper
 
 import (
 	"context"
+	"github.com/many-things/mitosis/x/multisig/server"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-func (k msgServer) SubmitSignature(goCtx context.Context, msg *types.MsgSubmitSignature) (*types.MsgSubmitSignatureResponse, error) {
+func (k msgServer) SubmitSignature(goCtx context.Context, msg *server.MsgSubmitSignature) (*server.MsgSubmitSignatureResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// TODO: Handling the message
 	_ = ctx
 
-	return &types.MsgSubmitSignatureResponse{}, nil
+	return &server.MsgSubmitSignatureResponse{}, nil
 }

@@ -2,16 +2,16 @@ package keeper
 
 import (
 	"context"
+	"github.com/many-things/mitosis/x/multisig/server"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-func (k msgServer) StartKeygen(goCtx context.Context, msg *types.MsgStartKeygen) (*types.MsgStartKeygenResponse, error) {
+func (k msgServer) StartKeygen(goCtx context.Context, msg *server.MsgStartKeygen) (*server.MsgStartKeygenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// TODO: Handling the message
 	_ = ctx
 
-	return &types.MsgStartKeygenResponse{}, nil
+	return &server.MsgStartKeygenResponse{}, nil
 }
