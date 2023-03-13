@@ -1,11 +1,11 @@
 package cli
 
 import (
+	"github.com/many-things/mitosis/x/context/server"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/many-things/mitosis/x/context/types"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +23,9 @@ func CmdContextsByAddress() *cobra.Command {
 				return err
 			}
 
-			queryClient := types.NewQueryClient(clientCtx)
+			queryClient := server.NewQueryClient(clientCtx)
 
-			params := &types.QueryContextsByAddressRequest{}
+			params := &server.QueryContextsByAddressRequest{}
 
 			res, err := queryClient.ContextsByAddress(cmd.Context(), params)
 			if err != nil {

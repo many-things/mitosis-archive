@@ -1,11 +1,11 @@
 package cli
 
 import (
+	"github.com/many-things/mitosis/x/context/server"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/many-things/mitosis/x/context/types"
 	"github.com/spf13/cobra"
 )
 
@@ -23,9 +23,9 @@ func CmdContextByTxHash() *cobra.Command {
 				return err
 			}
 
-			queryClient := types.NewQueryClient(clientCtx)
+			queryClient := server.NewQueryClient(clientCtx)
 
-			params := &types.QueryContextByTxHashRequest{}
+			params := &server.QueryContextByTxHashRequest{}
 
 			res, err := queryClient.ContextByTxHash(cmd.Context(), params)
 			if err != nil {
