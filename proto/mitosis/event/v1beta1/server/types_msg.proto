@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.event.server;
+
+import "gogoproto/gogo.proto";
+import "mitosis/event/v1beta1/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/server";
