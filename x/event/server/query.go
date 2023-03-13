@@ -24,29 +24,3 @@ func (k queryServer) Params(gcx context.Context, req *QueryParamsRequest) (*Quer
 
 	return &QueryParamsResponse{Params: k.baseKeeper.GetParams(ctx)}, nil
 }
-
-func (k queryServer) VoteStatus(gcx context.Context, req *QueryVoteStatusRequest) (*QueryVoteStatusResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(gcx)
-
-	// TODO: Process the query
-	_ = ctx
-
-	return &QueryVoteStatusResponse{}, nil
-}
-
-func (k queryServer) Proxy(gcx context.Context, req *QueryProxyRequest) (*QueryProxyResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(gcx)
-
-	// TODO: process the query
-	_ = ctx
-
-	return &QueryProxyResponse{}, nil
-}

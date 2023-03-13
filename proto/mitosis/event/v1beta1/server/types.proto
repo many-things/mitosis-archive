@@ -3,29 +3,9 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.event.server;
 
 import "gogoproto/gogo.proto";
-import "mitosis/event/v1beta1/event.proto";
 import "mitosis/event/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/server";
-
-// MsgVoteEvent
-message MsgVoteEvent {
-  string voter = 1;
-  repeated IncomingEvent incoming = 2;
-  repeated OutgoingEvent outgoing = 3;
-}
-
-// MsgVoteEventResponse
-message MsgVoteEventResponse {}
-
-// MsgRegisterProxy
-message MsgRegisterProxy {
-  string validator = 1;
-  string proxy_addr = 2;
-}
-
-// MsgRegisterProxyResponse
-message MsgRegisterProxyResponse {}
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -34,20 +14,4 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
-}
-
-// QueryVoteStatusRequest is request type for the Query/Params RPC method.
-message QueryVoteStatusRequest {}
-
-// QueryVoteStatusResponse is response type for the Query/Params RPC method.
-message QueryVoteStatusResponse {}
-
-// QueryProxyRequest is request type for the Query/Params RPC method.
-message QueryProxyRequest {
-  string validator = 1;
-}
-
-// QueryProxyResponse is response type for the Query/Params RPC method.
-message QueryProxyResponse {
-  string proxy = 1;
 }

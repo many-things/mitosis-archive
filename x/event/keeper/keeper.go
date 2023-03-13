@@ -17,9 +17,6 @@ type (
 		storeKey   storetypes.StoreKey
 		memKey     storetypes.StoreKey
 		paramstore paramtypes.Subspace
-
-		EventKeeper
-		ValidatorKeeper
 	}
 )
 
@@ -39,9 +36,6 @@ func NewKeeper(
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
-
-		EventKeeper:     newEventKeeper(storeKey),
-		ValidatorKeeper: newValidatorKeeper(storeKey),
 	}
 }
 

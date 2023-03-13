@@ -45267,90 +45267,6 @@ paths:
                         }
       tags:
         - Query
-  /many-things/mitosis/context/context_by_address:
-    get:
-      operationId: ManythingsMitosisV1Beta1ContextServerContextByAddress
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /many-things/mitosis/context/context_by_tx_hash:
-    get:
-      operationId: ManythingsMitosisV1Beta1ContextServerContextByTxHash
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /many-things/mitosis/context/contexts_by_address:
-    get:
-      operationId: ManythingsMitosisV1Beta1ContextServerContextsByAddress
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
   /many-things/mitosis/context/params:
     get:
       operationId: ManythingsMitosisV1Beta1ContextServerParams
@@ -45388,7 +45304,6 @@ paths:
         - Query
   /many-things/mitosis/event/params:
     get:
-      summary: Parameters queries the parameters of the module.
       operationId: ManythingsMitosisV1Beta1EventServerParams
       responses:
         '200':
@@ -45401,78 +45316,6 @@ paths:
                 type: object
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  /many-things/mitosis/event/proxy:
-    get:
-      summary: Queries a proxy account's address of validator
-      operationId: ManythingsMitosisV1Beta1EventServerProxy
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              proxy:
-                type: string
-            description: >-
-              QueryProxyResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: validator
-          in: query
-          required: false
-          type: string
-      tags:
-        - Query
-  /many-things/mitosis/event/vote_status:
-    get:
-      summary: Queries a list of VoteStatus items.
-      operationId: ManythingsMitosisV1Beta1EventServerVoteStatus
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            description: >-
-              QueryVoteStatusResponse is response type for the Query/Params RPC
               method.
         default:
           description: An unexpected error response.
@@ -75182,12 +75025,6 @@ definitions:
   manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.v1beta1.context.server.QueryContextByAddressResponse:
-    type: object
-  manythings.mitosis.v1beta1.context.server.QueryContextByTxHashResponse:
-    type: object
-  manythings.mitosis.v1beta1.context.server.QueryContextsByAddressResponse:
-    type: object
   manythings.mitosis.v1beta1.context.server.QueryParamsResponse:
     type: object
     properties:
@@ -75195,82 +75032,9 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.v1beta1.event.IncomingEvent:
-    type: object
-    properties:
-      chain_id:
-        type: string
-      block_height:
-        type: string
-        format: uint64
-      tx_hash:
-        type: string
-      event_index:
-        type: string
-        format: uint64
-      dest_addr:
-        type: string
-        format: byte
-      funds:
-        type: array
-        items:
-          type: object
-          properties:
-            denom:
-              type: string
-            amount:
-              type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
-
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
-      operation:
-        type: object
-        properties:
-          id:
-            type: string
-            format: uint64
-          args:
-            type: string
-            format: byte
-        title: Operation
-    title: IncomingEvent
-  manythings.mitosis.v1beta1.event.Operation:
-    type: object
-    properties:
-      id:
-        type: string
-        format: uint64
-      args:
-        type: string
-        format: byte
-    title: Operation
-  manythings.mitosis.v1beta1.event.OutgoingEvent:
-    type: object
-    properties:
-      chain_id:
-        type: string
-      height:
-        type: string
-        format: uint64
-      tx_hash:
-        type: string
-      ok:
-        type: boolean
-      result:
-        type: string
-        format: byte
-    title: OutgoingEvent => ref. evm call response
   manythings.mitosis.v1beta1.event.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.v1beta1.event.server.MsgRegisterProxyResponse:
-    type: object
-    title: MsgRegisterProxyResponse
-  manythings.mitosis.v1beta1.event.server.MsgVoteEventResponse:
-    type: object
-    title: MsgVoteEventResponse
   manythings.mitosis.v1beta1.event.server.QueryParamsResponse:
     type: object
     properties:
@@ -75278,15 +75042,6 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.v1beta1.event.server.QueryProxyResponse:
-    type: object
-    properties:
-      proxy:
-        type: string
-    description: QueryProxyResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.v1beta1.event.server.QueryVoteStatusResponse:
-    type: object
-    description: QueryVoteStatusResponse is response type for the Query/Params RPC method.
   manythings.mitosis.v1beta1.multisig.Params:
     type: object
     description: Params defines the parameters for the module.

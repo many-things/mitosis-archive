@@ -2,9 +2,7 @@ syntax = "proto3";
 
 package manythings.mitosis.v1beta1.context.server;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
-import "google/api/annotations.proto";
 import "mitosis/context/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/server";
@@ -17,15 +15,3 @@ message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
-
-message QueryContextByAddressRequest {}
-
-message QueryContextByAddressResponse {}
-
-message QueryContextsByAddressRequest {}
-
-message QueryContextsByAddressResponse {}
-
-message QueryContextByTxHashRequest {}
-
-message QueryContextByTxHashResponse {}
