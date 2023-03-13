@@ -1,4 +1,4 @@
-package simulation
+package sim
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -1,4 +1,4 @@
-package simulation
+package sim
 
 import (
 	"github.com/many-things/mitosis/x/multisig/server"
