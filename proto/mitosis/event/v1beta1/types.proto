@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.event;
+
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+import "mitosis/event/v1beta1/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// OutgoingEvent Message
+message OutgoingEvent {
+  bool ok = 1;
+  bytes result = 2;
+}
+
+// IncomingEvent Message
+message IncomingEvent {
+  string dest_chain = 1 [(gogoproto.customname) = "DestChain"];
+  bytes dest_address = 2 [(gogoproto.customname) = "DestAddr"];
+  uint32 op_id = 3 [(gogoproto.customname) = "OpId"];
+  repeated bytes op_args = 4 [(gogoproto.customname) = "OpArgs"];
+
+  repeated cosmos.base.v1beta1.Coin funds = 5;
+}
+
+// Event Message
+message Event {
+  // Chain identifier
+  string chain = 1 [(gogoproto.customname) = "Chain"];
+
+  // Transaction hash
+  bytes tx_hash = 2 [(gogoproto.customname) = "TxHash"];
+
+  // Event Index
+  uint32 evt_index = 3 [(gogoproto.customname) = "EventIdx"];
+
+  // Actual event payload
+  oneof event {
+    IncomingEvent incoming = 4;
+    OutgoingEvent outgoing = 5;
+  }
+}

@@ -3,6 +3,17 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.event.server;
 
 import "gogoproto/gogo.proto";
-import "mitosis/event/v1beta1/params.proto";
+import "mitosis/event/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/server";
+
+// Submit messages to vote
+message MsgSubmit {
+  repeated Event events = 1;
+}
+
+// Vote event message
+message MsgVote {
+  bytes voter = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  uint64 id = 2;
+}
