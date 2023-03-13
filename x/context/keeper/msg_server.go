@@ -1,8 +1,6 @@
 package keeper
 
-import (
-	"github.com/many-things/mitosis/x/context/types"
-)
+import "github.com/many-things/mitosis/x/context/server"
 
 type msgServer struct {
 	Keeper
@@ -10,8 +8,8 @@ type msgServer struct {
 
 // NewMsgServerImpl returns an implementation of the MsgServer interface
 // for the provided Keeper.
-func NewMsgServerImpl(keeper Keeper) types.MsgServer {
+func NewMsgServerImpl(keeper Keeper) server.MsgServer {
 	return &msgServer{Keeper: keeper}
 }
 
-var _ types.MsgServer = msgServer{}
+var _ server.MsgServer = msgServer{}

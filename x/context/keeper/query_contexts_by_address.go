@@ -2,14 +2,14 @@ package keeper
 
 import (
 	"context"
+	"github.com/many-things/mitosis/x/context/server"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/x/context/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) ContextsByAddress(goCtx context.Context, req *types.QueryContextsByAddressRequest) (*types.QueryContextsByAddressResponse, error) {
+func (k Keeper) ContextsByAddress(goCtx context.Context, req *server.QueryContextsByAddressRequest) (*server.QueryContextsByAddressResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -19,5 +19,5 @@ func (k Keeper) ContextsByAddress(goCtx context.Context, req *types.QueryContext
 	// TODO: Process the query
 	_ = ctx
 
-	return &types.QueryContextsByAddressResponse{}, nil
+	return &server.QueryContextsByAddressResponse{}, nil
 }
