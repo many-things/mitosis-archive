@@ -1,8 +1,9 @@
-package types
+package server
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 const TypeMsgSubmitSignature = "submit_signature"
@@ -16,7 +17,7 @@ func NewMsgSubmitSignature(creator string) *MsgSubmitSignature {
 }
 
 func (msg *MsgSubmitSignature) Route() string {
-	return RouterKey
+	return types.RouterKey
 }
 
 func (msg *MsgSubmitSignature) Type() string {

@@ -1,4 +1,4 @@
-package types
+package server
 
 import (
 	"testing"
@@ -8,21 +8,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMsgSubmitPubkey_ValidateBasic(t *testing.T) {
+func TestMsgStartKeygen_ValidateBasic(t *testing.T) {
 	tests := []struct {
 		name string
-		msg  MsgSubmitPubkey
+		msg  MsgStartKeygen
 		err  error
 	}{
 		{
 			name: "invalid address",
-			msg: MsgSubmitPubkey{
+			msg: MsgStartKeygen{
 				Creator: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
-			msg: MsgSubmitPubkey{
+			msg: MsgStartKeygen{
 				Creator: sample.AccAddress(),
 			},
 		},

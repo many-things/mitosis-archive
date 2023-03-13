@@ -1,8 +1,9 @@
-package types
+package server
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 const TypeMsgStartKeygen = "start_keygen"
@@ -16,7 +17,7 @@ func NewMsgStartKeygen(creator string) *MsgStartKeygen {
 }
 
 func (msg *MsgStartKeygen) Route() string {
-	return RouterKey
+	return types.RouterKey
 }
 
 func (msg *MsgStartKeygen) Type() string {

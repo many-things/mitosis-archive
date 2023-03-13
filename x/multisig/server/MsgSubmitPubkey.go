@@ -1,8 +1,9 @@
-package types
+package server
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 const TypeMsgSubmitPubkey = "submit_pubkey"
@@ -16,7 +17,7 @@ func NewMsgSubmitPubkey(creator string) *MsgSubmitPubkey {
 }
 
 func (msg *MsgSubmitPubkey) Route() string {
-	return RouterKey
+	return types.RouterKey
 }
 
 func (msg *MsgSubmitPubkey) Type() string {
