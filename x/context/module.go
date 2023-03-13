@@ -125,8 +125,8 @@ func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	server.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
-	server.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	server.RegisterMsgServer(cfg.MsgServer(), server.NewMsgServer(am.keeper))
+	server.RegisterQueryServer(cfg.QueryServer(), server.NewQueryServer(am.keeper))
 }
 
 // RegisterInvariants registers the invariants of the module. If an invariant deviates from its predicted value, the InvariantRegistry triggers appropriate logic (most often the chain will be halted)
