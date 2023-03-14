@@ -6,23 +6,35 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/types";
 
-// OperationStatus
-enum OperationStatus {
-  // Unspecified operation status
-  OPERATION_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
-
-  // Pending operation status
-  OPERATION_STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
-
-  // Signing operation status
-  OPERATION_STATUS_SIGNING = 2 [(gogoproto.enumvalue_customname) = "StatusSigning"];
-
-  // Executing operation status
-  OPERATION_STATUS_EXECUTING = 3 [(gogoproto.enumvalue_customname) = "StatusExecuting"];
-
-  // Finalized operation status
-  OPERATION_STATUS_FINALIZED = 4 [(gogoproto.enumvalue_customname) = "StatusFinalized"];
-}
-
 // Operation message
-message Operation {}
+message Operation {
+  // OperationStatus
+  enum Status {
+    // Unspecified operation status
+    STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
+
+    // Pending operation status
+    STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
+
+    // Signing operation status
+    STATUS_SIGN = 2 [(gogoproto.enumvalue_customname) = "StatusSign"];
+
+    // Executing operation status
+    STATUS_EXEC = 3 [(gogoproto.enumvalue_customname) = "StatusExec"];
+
+    // Finalized operation status
+    STATUS_FINALIZE = 4 [(gogoproto.enumvalue_customname) = "StatusFinalized"];
+  }
+
+  // Chain identifier
+  string chain = 1;
+
+  // Operation id
+  uint64 id = 2;
+
+  // Event ids
+  repeated uint64 evt_ids = 3;
+
+  // Operation status
+  Status status = 4;
+}

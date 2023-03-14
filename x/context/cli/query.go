@@ -43,7 +43,7 @@ func CmdQueryParams() *cobra.Command {
 
 			queryClient := server.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Params(context.Background(), &server.QueryParamsRequest{})
+			res, err := queryClient.Params(context.Background(), &server.QueryParams{})
 			if err != nil {
 				return err
 			}

@@ -2,16 +2,41 @@ syntax = "proto3";
 
 package manythings.mitosis.v1beta1.context.server;
 
+import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "mitosis/context/v1beta1/params.proto";
+import "mitosis/context/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/server";
 
-// QueryParamsRequest is request type for the Query/Params RPC method.
-message QueryParamsRequest {}
+// QueryParams is request type for the Query/Params RPC method.
+message QueryParams {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// Get single operation request
+message QueryOperation {
+  string chain = 1;
+  uint64 id = 2;
+}
+
+// Response of [QueryOperation]
+message QueryOperationResponse {
+  Operation operation = 1;
+}
+
+// Query list of operations request
+message QueryOperations {
+  string chain = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// Response of [QueryOperations]
+message QueryOperationsResponse {
+  repeated Operation operations = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
 }
