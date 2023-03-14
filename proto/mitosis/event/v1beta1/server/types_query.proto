@@ -9,7 +9,7 @@ import "mitosis/event/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/server";
 
-// QueryParamsRequest is request type for the Query/Params RPC method.
+// QueryParams is request type for the Query/Params RPC method.
 message QueryParams {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.

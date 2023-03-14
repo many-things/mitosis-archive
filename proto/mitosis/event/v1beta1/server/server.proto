@@ -34,8 +34,6 @@ service Query {
 
   // List polls
   rpc Polls(QueryPolls) returns (QueryPollsResponse) {
-    option (google.api.http) = {
-      get: "/mitosis/event/v1beta1/polls/{chain}" // + query pagination
-    };
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/polls/{chain}"};
   }
 }
