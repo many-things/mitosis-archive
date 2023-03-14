@@ -36,4 +36,14 @@ service Query {
   rpc Polls(QueryPolls) returns (QueryPollsResponse) {
     option (google.api.http) = {get: "/mitosis/event/v1beta1/polls/{chain}"};
   }
+
+  // Get proxy
+  rpc Proxy(QueryProxy) returns (QueryProxyResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/proxy/{validator}"};
+  }
+
+  // List proxies
+  rpc Proxies(QueryProxies) returns (QueryProxiesResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/proxies"};
+  }
 }

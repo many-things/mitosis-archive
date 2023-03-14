@@ -24,7 +24,7 @@ message QueryPoll {
   uint64 id = 2;
 }
 
-// Query single poll response
+// Response of [QueryPoll]
 message QueryPollResponse {
   Poll poll = 1;
 }
@@ -35,8 +35,30 @@ message QueryPolls {
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// Query list of polls response
+// Response of [QueryPolls]
 message QueryPollsResponse {
   repeated Poll polls = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
+}
+
+// Query single proxy account
+message QueryProxy {
+  bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
+// Response of [QueryProxy]
+message QueryProxyResponse {
+  bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+// Query list of proxy accounts
+message QueryProxies {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// Response of [QueryProxies]
+message QueryProxiesResponse {
+  repeated QueryProxyResponse proxies = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }

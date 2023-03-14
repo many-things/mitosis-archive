@@ -34,3 +34,13 @@ func (k queryServer) Polls(ctx context.Context, polls *QueryPolls) (*QueryPollsR
 	//TODO implement me
 	panic("implement me")
 }
+
+func (k queryServer) Proxy(ctx context.Context, proxy *QueryProxy) (*QueryProxyResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (k queryServer) Proxies(ctx context.Context, proxies *QueryProxies) (*QueryProxiesResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
