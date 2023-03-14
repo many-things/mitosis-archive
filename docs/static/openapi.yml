@@ -45304,6 +45304,7 @@ paths:
         - Query
   /many-things/mitosis/event/params:
     get:
+      summary: Parameters queries the parameters of the module.
       operationId: ManythingsMitosisV1Beta1EventServerParams
       responses:
         '200':
@@ -75032,9 +75033,125 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  manythings.mitosis.v1beta1.event.Event:
+    type: object
+    properties:
+      height:
+        type: string
+        format: uint64
+        title: Block height
+      tx_hash:
+        type: string
+        format: byte
+        title: Transaction hash
+      evt_idx:
+        type: integer
+        format: int64
+        title: Event Index
+      req:
+        type: object
+        properties:
+          dest_chain:
+            type: string
+          dest_addr:
+            type: string
+            format: byte
+          op_id:
+            type: integer
+            format: int64
+          op_args:
+            type: array
+            items:
+              type: string
+              format: byte
+          funds:
+            type: array
+            items:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+        title: TxReqEvent Message
+      res:
+        type: object
+        properties:
+          req_evt_id:
+            type: string
+            format: uint64
+            title: Request Event id correspond to given response
+          ok:
+            type: boolean
+          result:
+            type: string
+            format: byte
+        title: TxResEvent Message
+    title: Event Message
   manythings.mitosis.v1beta1.event.Params:
     type: object
     description: Params defines the parameters for the module.
+  manythings.mitosis.v1beta1.event.TxReqEvent:
+    type: object
+    properties:
+      dest_chain:
+        type: string
+      dest_addr:
+        type: string
+        format: byte
+      op_id:
+        type: integer
+        format: int64
+      op_args:
+        type: array
+        items:
+          type: string
+          format: byte
+      funds:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+    title: TxReqEvent Message
+  manythings.mitosis.v1beta1.event.TxResEvent:
+    type: object
+    properties:
+      req_evt_id:
+        type: string
+        format: uint64
+        title: Request Event id correspond to given response
+      ok:
+        type: boolean
+      result:
+        type: string
+        format: byte
+    title: TxResEvent Message
+  manythings.mitosis.v1beta1.event.server.MsgRegisterProxyResponse:
+    type: object
+    title: Response of [MsgRegisterProxy]
+  manythings.mitosis.v1beta1.event.server.MsgSubmitResponse:
+    type: object
+    title: Response of [MsgSubmit]
+  manythings.mitosis.v1beta1.event.server.MsgVoteResponse:
+    type: object
+    title: Response of [MsgVote]
   manythings.mitosis.v1beta1.event.server.QueryParamsResponse:
     type: object
     properties:

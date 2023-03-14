@@ -4,40 +4,56 @@ package manythings.mitosis.v1beta1.event;
 
 import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
-import "mitosis/event/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
 
-// OutgoingEvent Message
-message OutgoingEvent {
-  bool ok = 1;
-  bytes result = 2;
-}
-
-// IncomingEvent Message
-message IncomingEvent {
-  string dest_chain = 1 [(gogoproto.customname) = "DestChain"];
-  bytes dest_address = 2 [(gogoproto.customname) = "DestAddr"];
-  uint32 op_id = 3 [(gogoproto.customname) = "OpId"];
-  repeated bytes op_args = 4 [(gogoproto.customname) = "OpArgs"];
+// TxReqEvent Message
+message TxReqEvent {
+  string dest_chain = 1;
+  bytes dest_addr = 2;
+  uint32 op_id = 3;
+  repeated bytes op_args = 4;
 
   repeated cosmos.base.v1beta1.Coin funds = 5;
 }
 
+// TxResEvent Message
+message TxResEvent {
+  // Request Event id correspond to given response
+  uint64 req_evt_id = 1;
+  bool ok = 2;
+  bytes result = 3;
+}
+
+// EventStatus
+enum EventStatus {
+  // Unspecified event status
+  EVENT_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
+
+  // Pending event status
+  EVENT_STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
+
+  // Confirmed event status
+  EVENT_STATUS_CONFIRMED = 2 [(gogoproto.enumvalue_customname) = "StatusConfirmed"];
+
+  // Rejected event status
+  EVENT_STATUS_REJECTED = 3 [(gogoproto.enumvalue_customname) = "StatusRejected"];
+}
+
 // Event Message
 message Event {
-  // Chain identifier
-  string chain = 1 [(gogoproto.customname) = "Chain"];
+  // Block height
+  uint64 height = 1;
 
   // Transaction hash
-  bytes tx_hash = 2 [(gogoproto.customname) = "TxHash"];
+  bytes tx_hash = 2;
 
   // Event Index
-  uint32 evt_index = 3 [(gogoproto.customname) = "EventIdx"];
+  uint32 evt_idx = 3;
 
   // Actual event payload
   oneof event {
-    IncomingEvent incoming = 4;
-    OutgoingEvent outgoing = 5;
+    TxReqEvent req = 4;
+    TxResEvent res = 5;
   }
 }

@@ -3,12 +3,22 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.event.server;
 
 import "google/api/annotations.proto";
+import "mitosis/event/v1beta1/server/types_msg.proto";
 import "mitosis/event/v1beta1/server/types_query.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/server";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  // Submits / Initiates vote for external event.
+  rpc SubmitEvent(MsgSubmit) returns (MsgSubmitResponse);
+
+  // Votes to submitted external event.
+  rpc VoteEvent(MsgVote) returns (MsgVoteResponse);
+
+  // Registers an address of proxy account to submit / vote external event rather than execute with validator account itself.
+  rpc RegisterProxy(MsgRegisterProxy) returns (MsgRegisterProxyResponse);
+}
 
 // Query defines the gRPC querier service.
 service Query {
