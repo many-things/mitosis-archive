@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/x/event/keeper"
 )
 
@@ -14,36 +13,17 @@ func NewMsgServer(keeper keeper.Keeper) MsgServer {
 	return msgServer{keeper}
 }
 
-func (k msgServer) VoteEvent(gctx context.Context, msg *MsgVoteEvent) (*MsgVoteEventResponse, error) {
-	ctx := sdk.UnwrapSDKContext(gctx)
-
-	// TODO: validate message
-	if err := k.baseKeeper.StoreEvent(ctx, msg.GetIncoming(), msg.GetOutgoing()); err != nil {
-		return nil, err
-	}
-
-	return &MsgVoteEventResponse{}, nil
+func (m msgServer) Submit(ctx context.Context, submit *MsgSubmit) (*MsgSubmitResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (k msgServer) RegisterProxy(gctx context.Context, msg *MsgRegisterProxy) (*MsgRegisterProxyResponse, error) {
-	ctx := sdk.UnwrapSDKContext(gctx)
+func (m msgServer) Vote(ctx context.Context, vote *MsgVote) (*MsgVoteResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
 
-	if err := msg.ValidateBasic(); err != nil {
-		return nil, err
-	}
-
-	validator, err := sdk.ValAddressFromBech32(msg.GetValidator())
-	if err != nil {
-		panic(err.Error())
-	}
-	proxyAddr, err := sdk.AccAddressFromBech32(msg.GetProxyAddr())
-	if err != nil {
-		panic(err.Error())
-	}
-
-	if err := k.baseKeeper.RegisterProxy(ctx, validator, proxyAddr); err != nil {
-		return nil, err
-	}
-
-	return &MsgRegisterProxyResponse{}, nil
+func (m msgServer) RegisterProxy(ctx context.Context, proxy *MsgRegisterProxy) (*MsgRegisterProxyResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }

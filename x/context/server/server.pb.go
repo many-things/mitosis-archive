@@ -6,11 +6,8 @@ package server
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
-	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/many-things/mitosis/x/context/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -34,33 +31,28 @@ func init() {
 }
 
 var fileDescriptor_dedfb9d857bae9e1 = []byte{
-	// 410 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xcf, 0x4a, 0xe3, 0x40,
-	0x1c, 0xc7, 0x9b, 0x5d, 0xda, 0x43, 0x2e, 0xbb, 0x3b, 0xec, 0xa9, 0x2c, 0x39, 0xec, 0x9f, 0xc3,
-	0xb6, 0x38, 0x63, 0xeb, 0x41, 0x2f, 0x0a, 0x56, 0xb0, 0xed, 0x41, 0x50, 0xf1, 0xe4, 0xa5, 0x4c,
-	0xda, 0x61, 0x12, 0x30, 0x33, 0x69, 0x7e, 0xd3, 0x92, 0x5c, 0x7d, 0x02, 0xc1, 0x57, 0xf1, 0x21,
-	0x3c, 0x16, 0xbc, 0x08, 0x82, 0x48, 0xea, 0x83, 0x48, 0x33, 0xd3, 0x2a, 0xf5, 0x5f, 0x4d, 0x3d,
-	0xcd, 0x30, 0xf9, 0x7d, 0x3f, 0x7c, 0x3f, 0x13, 0xc6, 0xae, 0x06, 0xbe, 0x92, 0xe0, 0x03, 0xe9,
-	0x4a, 0xa1, 0x58, 0xac, 0xc8, 0xb0, 0xe6, 0x32, 0x45, 0x6b, 0x04, 0x58, 0x34, 0x64, 0x91, 0x59,
-	0x70, 0x18, 0x49, 0x25, 0xd1, 0xff, 0x80, 0x8a, 0x44, 0x79, 0xbe, 0xe0, 0x80, 0x4d, 0x0e, 0x9b,
-	0x79, 0x6c, 0xf2, 0x58, 0x07, 0xca, 0x95, 0xae, 0x84, 0x40, 0x02, 0x71, 0x29, 0x30, 0xd2, 0x1f,
-	0xb0, 0x28, 0x99, 0x91, 0x43, 0xca, 0x7d, 0x41, 0x95, 0x2f, 0x85, 0xc6, 0x96, 0x7f, 0x72, 0xc9,
-	0x65, 0xb6, 0x25, 0x93, 0x9d, 0x39, 0xfd, 0xc5, 0xa5, 0xe4, 0x27, 0x8c, 0xd0, 0xd0, 0x27, 0x54,
-	0x08, 0xa9, 0xb2, 0x08, 0x98, 0xaf, 0x7f, 0x5f, 0xeb, 0x1d, 0xd2, 0x88, 0x06, 0xd3, 0xa9, 0xca,
-	0x3b, 0x76, 0x2a, 0x09, 0x99, 0x99, 0xad, 0x17, 0xed, 0xaf, 0x7b, 0xc0, 0xeb, 0x69, 0xc9, 0x2e,
-	0x1e, 0x4c, 0xfa, 0xa2, 0x0b, 0xcb, 0x2e, 0xed, 0x67, 0x34, 0xb4, 0x89, 0x17, 0x36, 0xc7, 0x59,
-	0x58, 0xe7, 0x0e, 0x59, 0x7f, 0xc0, 0x40, 0x95, 0xb7, 0xf2, 0xc6, 0x21, 0x94, 0x02, 0xd8, 0xef,
-	0xea, 0xe9, 0xd5, 0xfd, 0xf9, 0x97, 0x7f, 0xe8, 0x0f, 0x99, 0x70, 0x56, 0x34, 0x88, 0xcc, 0xbb,
-	0x69, 0x73, 0x74, 0x6b, 0xd9, 0xdf, 0x77, 0xf4, 0x51, 0x23, 0xd9, 0xee, 0xf5, 0x22, 0x06, 0x80,
-	0x9a, 0x1f, 0x6d, 0x30, 0x4f, 0x98, 0xaa, 0xb4, 0x96, 0x07, 0x19, 0xa9, 0xf5, 0x4c, 0xaa, 0x86,
-	0xc8, 0x9b, 0x52, 0x66, 0xed, 0xb8, 0x49, 0x87, 0x1a, 0x97, 0xd4, 0xb2, 0x7f, 0x18, 0x2a, 0x3c,
-	0x1a, 0xe6, 0x2d, 0x06, 0xcf, 0x14, 0xdb, 0x9f, 0x40, 0x32, 0x8e, 0x1b, 0x99, 0x63, 0x1d, 0xad,
-	0x2e, 0xe2, 0x08, 0x4f, 0x25, 0x6f, 0x2c, 0xfb, 0xdb, 0xec, 0xea, 0x8e, 0xe2, 0x16, 0x05, 0x0f,
-	0xed, 0xe6, 0xbe, 0x7b, 0x0d, 0x98, 0x0a, 0x36, 0x97, 0xe6, 0xe4, 0xfd, 0x85, 0x2a, 0xee, 0x78,
-	0x14, 0xbc, 0x46, 0xfb, 0x32, 0x75, 0xac, 0x51, 0xea, 0x58, 0x77, 0xa9, 0x63, 0x9d, 0x8d, 0x9d,
-	0xc2, 0x68, 0xec, 0x14, 0xae, 0xc7, 0x4e, 0xe1, 0x98, 0x70, 0x5f, 0x79, 0x03, 0x17, 0x77, 0x65,
-	0xf0, 0x22, 0x34, 0x9e, 0x61, 0x75, 0x41, 0xb7, 0x94, 0xbd, 0xde, 0xb5, 0x87, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0x23, 0x46, 0xb2, 0x06, 0xc9, 0x04, 0x00, 0x00,
+	// 333 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0x3f, 0x4b, 0x3b, 0x31,
+	0x18, 0xc7, 0x7b, 0xbf, 0x9f, 0x2d, 0x98, 0x31, 0xe3, 0x21, 0x11, 0x5d, 0xc4, 0x7f, 0x89, 0xad,
+	0xa0, 0xe8, 0x20, 0xd8, 0xcd, 0x41, 0xfc, 0x33, 0xba, 0x48, 0x5a, 0xc3, 0x35, 0xe0, 0x25, 0x31,
+	0x4f, 0x5a, 0x5a, 0x4a, 0x17, 0x5f, 0x81, 0xe0, 0xab, 0xf0, 0x35, 0xb8, 0x88, 0x93, 0x63, 0xc1,
+	0xc5, 0x51, 0x7a, 0xbe, 0x10, 0xe9, 0xe5, 0xcc, 0x56, 0xac, 0x37, 0x05, 0x42, 0x3e, 0xdf, 0xe7,
+	0xf3, 0x0d, 0x0f, 0xda, 0x4c, 0xa5, 0xd3, 0x20, 0x81, 0xb5, 0xb5, 0x72, 0xa2, 0xef, 0x58, 0xaf,
+	0xde, 0x12, 0x8e, 0xd7, 0x19, 0x08, 0xdb, 0x13, 0xb6, 0x38, 0xa8, 0xb1, 0xda, 0x69, 0xbc, 0x9e,
+	0x72, 0x35, 0x70, 0x1d, 0xa9, 0x12, 0xa0, 0x05, 0x47, 0x8b, 0xf7, 0xb4, 0xe0, 0xa9, 0x07, 0xe2,
+	0xa5, 0x44, 0xeb, 0xe4, 0x56, 0x30, 0x6e, 0x24, 0xe3, 0x4a, 0x69, 0xc7, 0x9d, 0xd4, 0x0a, 0x7c,
+	0x50, 0xbc, 0xf3, 0xcb, 0x54, 0x37, 0x30, 0x02, 0xae, 0xef, 0xba, 0xc2, 0x0e, 0x3c, 0xd1, 0xa8,
+	0xa2, 0xff, 0xa7, 0x90, 0x34, 0x9e, 0x17, 0x50, 0xf5, 0x62, 0x7a, 0x8d, 0x9f, 0x22, 0x54, 0x3b,
+	0xe7, 0x96, 0xa7, 0x80, 0xf7, 0xe8, 0xdc, 0x5e, 0x34, 0x87, 0x3d, 0x17, 0x1f, 0x95, 0xe3, 0x2e,
+	0x05, 0x18, 0xad, 0x40, 0xac, 0xae, 0xdd, 0xbf, 0x7f, 0x3d, 0xfe, 0x5b, 0xc1, 0xcb, 0x6c, 0x56,
+	0x1d, 0xe3, 0x05, 0x5f, 0x23, 0xb4, 0x78, 0x66, 0x84, 0xcd, 0xff, 0x00, 0x1f, 0xfc, 0x75, 0x6c,
+	0x40, 0xe3, 0xe3, 0xd2, 0x68, 0x90, 0xde, 0xcf, 0xa5, 0xeb, 0x98, 0xcd, 0x94, 0xd6, 0x3f, 0x0c,
+	0x1b, 0xb6, 0x3b, 0x5c, 0xaa, 0x11, 0x1b, 0xca, 0x9b, 0x11, 0x7e, 0x89, 0x10, 0x0a, 0x71, 0x80,
+	0x0f, 0x4b, 0xab, 0x40, 0xdc, 0x2c, 0xcf, 0x86, 0x1e, 0x8d, 0xbc, 0xc7, 0x16, 0xde, 0x98, 0xbf,
+	0x47, 0xf3, 0xe4, 0x6d, 0x42, 0xa2, 0xf1, 0x84, 0x44, 0x9f, 0x13, 0x12, 0x3d, 0x64, 0xa4, 0x32,
+	0xce, 0x48, 0xe5, 0x23, 0x23, 0x95, 0x2b, 0x96, 0x48, 0xd7, 0xe9, 0xb6, 0x68, 0x5b, 0xa7, 0x6c,
+	0xea, 0xb6, 0xed, 0xe5, 0x42, 0x76, 0x3f, 0xa4, 0x7b, 0xad, 0x56, 0x2d, 0x5f, 0xcb, 0xdd, 0xef,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x45, 0xb1, 0x05, 0x4f, 0x40, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -110,13 +102,11 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
-	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
-	// Queries a list of ContextByAddress items.
-	ContextByAddress(ctx context.Context, in *QueryContextByAddressRequest, opts ...grpc.CallOption) (*QueryContextByAddressResponse, error)
-	// Queries a list of ContextsByAddress items.
-	ContextsByAddress(ctx context.Context, in *QueryContextsByAddressRequest, opts ...grpc.CallOption) (*QueryContextsByAddressResponse, error)
-	// Queries a list of ContextByTxHash items.
-	ContextByTxHash(ctx context.Context, in *QueryContextByTxHashRequest, opts ...grpc.CallOption) (*QueryContextByTxHashResponse, error)
+	Params(ctx context.Context, in *QueryParams, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// Get single operation
+	Operation(ctx context.Context, in *QueryOperation, opts ...grpc.CallOption) (*QueryOperationResponse, error)
+	// List multiple operations
+	Operations(ctx context.Context, in *QueryOperations, opts ...grpc.CallOption) (*QueryOperationsResponse, error)
 }
 
 type queryClient struct {
@@ -127,7 +117,7 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
+func (c *queryClient) Params(ctx context.Context, in *QueryParams, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
 	out := new(QueryParamsResponse)
 	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.context.server.Query/Params", in, out, opts...)
 	if err != nil {
@@ -136,27 +126,18 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
-func (c *queryClient) ContextByAddress(ctx context.Context, in *QueryContextByAddressRequest, opts ...grpc.CallOption) (*QueryContextByAddressResponse, error) {
-	out := new(QueryContextByAddressResponse)
-	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.context.server.Query/ContextByAddress", in, out, opts...)
+func (c *queryClient) Operation(ctx context.Context, in *QueryOperation, opts ...grpc.CallOption) (*QueryOperationResponse, error) {
+	out := new(QueryOperationResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.context.server.Query/Operation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *queryClient) ContextsByAddress(ctx context.Context, in *QueryContextsByAddressRequest, opts ...grpc.CallOption) (*QueryContextsByAddressResponse, error) {
-	out := new(QueryContextsByAddressResponse)
-	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.context.server.Query/ContextsByAddress", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) ContextByTxHash(ctx context.Context, in *QueryContextByTxHashRequest, opts ...grpc.CallOption) (*QueryContextByTxHashResponse, error) {
-	out := new(QueryContextByTxHashResponse)
-	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.context.server.Query/ContextByTxHash", in, out, opts...)
+func (c *queryClient) Operations(ctx context.Context, in *QueryOperations, opts ...grpc.CallOption) (*QueryOperationsResponse, error) {
+	out := new(QueryOperationsResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.context.server.Query/Operations", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,30 +147,25 @@ func (c *queryClient) ContextByTxHash(ctx context.Context, in *QueryContextByTxH
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
-	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
-	// Queries a list of ContextByAddress items.
-	ContextByAddress(context.Context, *QueryContextByAddressRequest) (*QueryContextByAddressResponse, error)
-	// Queries a list of ContextsByAddress items.
-	ContextsByAddress(context.Context, *QueryContextsByAddressRequest) (*QueryContextsByAddressResponse, error)
-	// Queries a list of ContextByTxHash items.
-	ContextByTxHash(context.Context, *QueryContextByTxHashRequest) (*QueryContextByTxHashResponse, error)
+	Params(context.Context, *QueryParams) (*QueryParamsResponse, error)
+	// Get single operation
+	Operation(context.Context, *QueryOperation) (*QueryOperationResponse, error)
+	// List multiple operations
+	Operations(context.Context, *QueryOperations) (*QueryOperationsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
+func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParams) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
-func (*UnimplementedQueryServer) ContextByAddress(ctx context.Context, req *QueryContextByAddressRequest) (*QueryContextByAddressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ContextByAddress not implemented")
+func (*UnimplementedQueryServer) Operation(ctx context.Context, req *QueryOperation) (*QueryOperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Operation not implemented")
 }
-func (*UnimplementedQueryServer) ContextsByAddress(ctx context.Context, req *QueryContextsByAddressRequest) (*QueryContextsByAddressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ContextsByAddress not implemented")
-}
-func (*UnimplementedQueryServer) ContextByTxHash(ctx context.Context, req *QueryContextByTxHashRequest) (*QueryContextByTxHashResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ContextByTxHash not implemented")
+func (*UnimplementedQueryServer) Operations(ctx context.Context, req *QueryOperations) (*QueryOperationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Operations not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -197,7 +173,7 @@ func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 }
 
 func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryParamsRequest)
+	in := new(QueryParams)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -209,61 +185,43 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: "/manythings.mitosis.v1beta1.context.server.Query/Params",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
+		return srv.(QueryServer).Params(ctx, req.(*QueryParams))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_ContextByAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryContextByAddressRequest)
+func _Query_Operation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryOperation)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).ContextByAddress(ctx, in)
+		return srv.(QueryServer).Operation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manythings.mitosis.v1beta1.context.server.Query/ContextByAddress",
+		FullMethod: "/manythings.mitosis.v1beta1.context.server.Query/Operation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ContextByAddress(ctx, req.(*QueryContextByAddressRequest))
+		return srv.(QueryServer).Operation(ctx, req.(*QueryOperation))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_ContextsByAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryContextsByAddressRequest)
+func _Query_Operations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryOperations)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).ContextsByAddress(ctx, in)
+		return srv.(QueryServer).Operations(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manythings.mitosis.v1beta1.context.server.Query/ContextsByAddress",
+		FullMethod: "/manythings.mitosis.v1beta1.context.server.Query/Operations",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ContextsByAddress(ctx, req.(*QueryContextsByAddressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_ContextByTxHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryContextByTxHashRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).ContextByTxHash(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/manythings.mitosis.v1beta1.context.server.Query/ContextByTxHash",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ContextByTxHash(ctx, req.(*QueryContextByTxHashRequest))
+		return srv.(QueryServer).Operations(ctx, req.(*QueryOperations))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -277,16 +235,12 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Params_Handler,
 		},
 		{
-			MethodName: "ContextByAddress",
-			Handler:    _Query_ContextByAddress_Handler,
+			MethodName: "Operation",
+			Handler:    _Query_Operation_Handler,
 		},
 		{
-			MethodName: "ContextsByAddress",
-			Handler:    _Query_ContextsByAddress_Handler,
-		},
-		{
-			MethodName: "ContextByTxHash",
-			Handler:    _Query_ContextByTxHash_Handler,
+			MethodName: "Operations",
+			Handler:    _Query_Operations_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

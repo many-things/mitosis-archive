@@ -23,7 +23,7 @@ func TestParamsQuery(t *testing.T) {
 	params := types.DefaultParams()
 	k.SetParams(wctx, params)
 
-	response, err := s.Params(wctx, &QueryParamsRequest{})
+	response, err := s.Params(wctx, &QueryParams{})
 	require.NoError(t, err)
 	require.Equal(t, &QueryParamsResponse{Params: params}, response)
 }

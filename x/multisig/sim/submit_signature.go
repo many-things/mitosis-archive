@@ -1,17 +1,17 @@
 package sim
 
 import (
-	"github.com/many-things/mitosis/x/event/server"
+	"github.com/many-things/mitosis/x/multisig/server"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"github.com/many-things/mitosis/x/event/keeper"
-	"github.com/many-things/mitosis/x/event/types"
+	"github.com/many-things/mitosis/x/multisig/keeper"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-func SimulateMsgVoteEvent(
+func SimulateMsgSubmitSignature(
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	k keeper.Keeper,
@@ -19,12 +19,12 @@ func SimulateMsgVoteEvent(
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &server.MsgVoteEvent{
-			Voter: simAccount.Address.String(),
+		msg := &server.MsgSubmitSignature{
+			Creator: simAccount.Address.String(),
 		}
 
-		// TODO: Handling the VoteEvent simulation
+		// TODO: Handling the SubmitSignature simulation
 
-		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "VoteEvent simulation not implemented"), nil, nil
+		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "SubmitSignature simulation not implemented"), nil, nil
 	}
 }

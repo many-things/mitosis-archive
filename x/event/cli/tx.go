@@ -2,9 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/many-things/mitosis/x/event/server"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -32,36 +29,6 @@ func GetTxCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-
-	cmd.AddCommand(CmdVoteEvent())
-	// this line is used by starport scaffolding # 1
-
-	return cmd
-}
-
-func CmdVoteEvent() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "vote-event",
-		Short: "Broadcast message VoteEvent",
-		Args:  cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := server.NewMsgVoteEvent(
-				clientCtx.GetFromAddress().String(),
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

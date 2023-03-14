@@ -18,7 +18,7 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/many-things/mitosis/x/context/client/cli"
+	"github.com/many-things/mitosis/x/context/cli"
 	"github.com/many-things/mitosis/x/context/keeper"
 	"github.com/many-things/mitosis/x/context/types"
 )

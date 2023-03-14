@@ -16,7 +16,7 @@ func NewQueryServer(keeper keeper.Keeper) QueryServer {
 	return queryServer{keeper}
 }
 
-func (k queryServer) Params(gcx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
+func (k queryServer) Params(gcx context.Context, req *QueryParams) (*QueryParamsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -25,28 +25,22 @@ func (k queryServer) Params(gcx context.Context, req *QueryParamsRequest) (*Quer
 	return &QueryParamsResponse{Params: k.baseKeeper.GetParams(ctx)}, nil
 }
 
-func (k queryServer) VoteStatus(gcx context.Context, req *QueryVoteStatusRequest) (*QueryVoteStatusResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
-
-	ctx := sdk.UnwrapSDKContext(gcx)
-
-	// TODO: Process the query
-	_ = ctx
-
-	return &QueryVoteStatusResponse{}, nil
+func (k queryServer) Poll(ctx context.Context, poll *QueryPoll) (*QueryPollResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
-func (k queryServer) Proxy(gcx context.Context, req *QueryProxyRequest) (*QueryProxyResponse, error) {
-	if req == nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid request")
-	}
+func (k queryServer) Polls(ctx context.Context, polls *QueryPolls) (*QueryPollsResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
 
-	ctx := sdk.UnwrapSDKContext(gcx)
+func (k queryServer) Proxy(ctx context.Context, proxy *QueryProxy) (*QueryProxyResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
 
-	// TODO: process the query
-	_ = ctx
-
-	return &QueryProxyResponse{}, nil
+func (k queryServer) Proxies(ctx context.Context, proxies *QueryProxies) (*QueryProxiesResponse, error) {
+	//TODO implement me
+	panic("implement me")
 }

@@ -2,11 +2,8 @@ syntax = "proto3";
 
 package manythings.mitosis.v1beta1.context.server;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
-import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "mitosis/context/v1beta1/params.proto";
-import "mitosis/context/v1beta1/server/types.proto";
+import "mitosis/context/v1beta1/server/types_query.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/server";
 
@@ -16,22 +13,17 @@ service Msg {}
 // Query defines the gRPC querier service.
 service Query {
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/many-things/mitosis/context/params";
+  rpc Params(QueryParams) returns (QueryParamsResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/params"};
   }
 
-  // Queries a list of ContextByAddress items.
-  rpc ContextByAddress(QueryContextByAddressRequest) returns (QueryContextByAddressResponse) {
-    option (google.api.http).get = "/many-things/mitosis/context/context_by_address";
+  // Get single operation
+  rpc Operation(QueryOperation) returns (QueryOperationResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}/{id}"};
   }
 
-  // Queries a list of ContextsByAddress items.
-  rpc ContextsByAddress(QueryContextsByAddressRequest) returns (QueryContextsByAddressResponse) {
-    option (google.api.http).get = "/many-things/mitosis/context/contexts_by_address";
-  }
-
-  // Queries a list of ContextByTxHash items.
-  rpc ContextByTxHash(QueryContextByTxHashRequest) returns (QueryContextByTxHashResponse) {
-    option (google.api.http).get = "/many-things/mitosis/context/context_by_tx_hash";
+  // List multiple operations
+  rpc Operations(QueryOperations) returns (QueryOperationsResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}"};
   }
 }
