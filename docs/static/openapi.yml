@@ -45267,6 +45267,233 @@ paths:
                         }
       tags:
         - Query
+  /mitosis/context/v1beta1/operation/{chain}:
+    get:
+      operationId: ManythingsMitosisV1Beta1ContextServerOperations
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              operations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chain:
+                      type: string
+                      title: Chain identifier
+                    id:
+                      type: string
+                      format: uint64
+                      title: Operation id
+                    evt_ids:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
+                      title: Event ids
+                    status:
+                      title: Operation status
+                      type: string
+                      enum:
+                        - STATUS_UNSPECIFIED
+                        - STATUS_PENDING
+                        - STATUS_SIGN
+                        - STATUS_EXEC
+                        - STATUS_FINALIZE
+                      default: STATUS_UNSPECIFIED
+                      description: |-
+                        - STATUS_UNSPECIFIED: Unspecified operation status
+                         - STATUS_PENDING: Pending operation status
+                         - STATUS_SIGN: Signing operation status
+                         - STATUS_EXEC: Executing operation status
+                         - STATUS_FINALIZE: Finalized operation status
+                  title: Operation message
+              page:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: Response of [QueryOperations]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: chain
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /mitosis/context/v1beta1/operation/{chain}/{id}:
+    get:
+      operationId: ManythingsMitosisV1Beta1ContextServerOperation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              operation:
+                type: object
+                properties:
+                  chain:
+                    type: string
+                    title: Chain identifier
+                  id:
+                    type: string
+                    format: uint64
+                    title: Operation id
+                  evt_ids:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
+                    title: Event ids
+                  status:
+                    title: Operation status
+                    type: string
+                    enum:
+                      - STATUS_UNSPECIFIED
+                      - STATUS_PENDING
+                      - STATUS_SIGN
+                      - STATUS_EXEC
+                      - STATUS_FINALIZE
+                    default: STATUS_UNSPECIFIED
+                    description: |-
+                      - STATUS_UNSPECIFIED: Unspecified operation status
+                       - STATUS_PENDING: Pending operation status
+                       - STATUS_SIGN: Signing operation status
+                       - STATUS_EXEC: Executing operation status
+                       - STATUS_FINALIZE: Finalized operation status
+                title: Operation message
+            title: Response of [QueryOperation]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: chain
+          in: path
+          required: true
+          type: string
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
   /mitosis/context/v1beta1/params:
     get:
       operationId: ManythingsMitosisV1Beta1ContextServerParams
@@ -45358,6 +45585,10 @@ paths:
                     type: string
                     format: uint64
                     title: Poll id
+                  op_id:
+                    type: string
+                    format: uint64
+                    title: Operation id - will be filled
                   proposer:
                     type: string
                     format: byte
@@ -45451,7 +45682,7 @@ paths:
                             format: byte
                         title: TxResEvent Message
                 title: Poll Message
-            title: Query single poll response
+            title: Response of [QueryPoll]
         default:
           description: An unexpected error response.
           schema:
@@ -45504,6 +45735,10 @@ paths:
                       type: string
                       format: uint64
                       title: Poll id
+                    op_id:
+                      type: string
+                      format: uint64
+                      title: Operation id - will be filled
                     proposer:
                       type: string
                       format: byte
@@ -45625,7 +45860,7 @@ paths:
                            repeated Bar results = 1;
                            PageResponse page = 2;
                    }
-            title: Query list of polls response
+            title: Response of [QueryPolls]
         default:
           description: An unexpected error response.
           schema:
@@ -45705,6 +45940,177 @@ paths:
           in: query
           required: false
           type: boolean
+      tags:
+        - Query
+  /mitosis/event/v1beta1/proxies:
+    get:
+      summary: List proxies
+      operationId: ManythingsMitosisV1Beta1EventServerProxies
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proxies:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    validator:
+                      type: string
+                      format: byte
+                    proxy_account:
+                      type: string
+                      format: byte
+                  title: Response of [QueryProxy]
+              page:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: Response of [QueryProxies]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /mitosis/event/v1beta1/proxy/{validator}:
+    get:
+      summary: Get proxy
+      operationId: ManythingsMitosisV1Beta1EventServerProxy
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validator:
+                type: string
+                format: byte
+              proxy_account:
+                type: string
+                format: byte
+            title: Response of [QueryProxy]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: validator
+          in: path
+          required: true
+          type: string
+          format: byte
       tags:
         - Query
   /many-things/mitosis/multisig/params:
@@ -75392,9 +75798,160 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
+  manythings.mitosis.v1beta1.context.Operation:
+    type: object
+    properties:
+      chain:
+        type: string
+        title: Chain identifier
+      id:
+        type: string
+        format: uint64
+        title: Operation id
+      evt_ids:
+        type: array
+        items:
+          type: string
+          format: uint64
+        title: Event ids
+      status:
+        title: Operation status
+        type: string
+        enum:
+          - STATUS_UNSPECIFIED
+          - STATUS_PENDING
+          - STATUS_SIGN
+          - STATUS_EXEC
+          - STATUS_FINALIZE
+        default: STATUS_UNSPECIFIED
+        description: |-
+          - STATUS_UNSPECIFIED: Unspecified operation status
+           - STATUS_PENDING: Pending operation status
+           - STATUS_SIGN: Signing operation status
+           - STATUS_EXEC: Executing operation status
+           - STATUS_FINALIZE: Finalized operation status
+    title: Operation message
+  manythings.mitosis.v1beta1.context.Operation.Status:
+    type: string
+    enum:
+      - STATUS_UNSPECIFIED
+      - STATUS_PENDING
+      - STATUS_SIGN
+      - STATUS_EXEC
+      - STATUS_FINALIZE
+    default: STATUS_UNSPECIFIED
+    description: |-
+      - STATUS_UNSPECIFIED: Unspecified operation status
+       - STATUS_PENDING: Pending operation status
+       - STATUS_SIGN: Signing operation status
+       - STATUS_EXEC: Executing operation status
+       - STATUS_FINALIZE: Finalized operation status
+    title: OperationStatus
   manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
+  manythings.mitosis.v1beta1.context.server.QueryOperationResponse:
+    type: object
+    properties:
+      operation:
+        type: object
+        properties:
+          chain:
+            type: string
+            title: Chain identifier
+          id:
+            type: string
+            format: uint64
+            title: Operation id
+          evt_ids:
+            type: array
+            items:
+              type: string
+              format: uint64
+            title: Event ids
+          status:
+            title: Operation status
+            type: string
+            enum:
+              - STATUS_UNSPECIFIED
+              - STATUS_PENDING
+              - STATUS_SIGN
+              - STATUS_EXEC
+              - STATUS_FINALIZE
+            default: STATUS_UNSPECIFIED
+            description: |-
+              - STATUS_UNSPECIFIED: Unspecified operation status
+               - STATUS_PENDING: Pending operation status
+               - STATUS_SIGN: Signing operation status
+               - STATUS_EXEC: Executing operation status
+               - STATUS_FINALIZE: Finalized operation status
+        title: Operation message
+    title: Response of [QueryOperation]
+  manythings.mitosis.v1beta1.context.server.QueryOperationsResponse:
+    type: object
+    properties:
+      operations:
+        type: array
+        items:
+          type: object
+          properties:
+            chain:
+              type: string
+              title: Chain identifier
+            id:
+              type: string
+              format: uint64
+              title: Operation id
+            evt_ids:
+              type: array
+              items:
+                type: string
+                format: uint64
+              title: Event ids
+            status:
+              title: Operation status
+              type: string
+              enum:
+                - STATUS_UNSPECIFIED
+                - STATUS_PENDING
+                - STATUS_SIGN
+                - STATUS_EXEC
+                - STATUS_FINALIZE
+              default: STATUS_UNSPECIFIED
+              description: |-
+                - STATUS_UNSPECIFIED: Unspecified operation status
+                 - STATUS_PENDING: Pending operation status
+                 - STATUS_SIGN: Signing operation status
+                 - STATUS_EXEC: Executing operation status
+                 - STATUS_FINALIZE: Finalized operation status
+          title: Operation message
+      page:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: Response of [QueryOperations]
   manythings.mitosis.v1beta1.context.server.QueryParamsResponse:
     type: object
     properties:
@@ -75478,6 +76035,10 @@ definitions:
         type: string
         format: uint64
         title: Poll id
+      op_id:
+        type: string
+        format: uint64
+        title: Operation id - will be filled
       proposer:
         type: string
         format: byte
@@ -75667,6 +76228,10 @@ definitions:
             type: string
             format: uint64
             title: Poll id
+          op_id:
+            type: string
+            format: uint64
+            title: Operation id - will be filled
           proposer:
             type: string
             format: byte
@@ -75759,7 +76324,7 @@ definitions:
                     format: byte
                 title: TxResEvent Message
         title: Poll Message
-    title: Query single poll response
+    title: Response of [QueryPoll]
   manythings.mitosis.v1beta1.event.server.QueryPollsResponse:
     type: object
     properties:
@@ -75775,6 +76340,10 @@ definitions:
               type: string
               format: uint64
               title: Poll id
+            op_id:
+              type: string
+              format: uint64
+              title: Operation id - will be filled
             proposer:
               type: string
               format: byte
@@ -75894,7 +76463,59 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-    title: Query list of polls response
+    title: Response of [QueryPolls]
+  manythings.mitosis.v1beta1.event.server.QueryProxiesResponse:
+    type: object
+    properties:
+      proxies:
+        type: array
+        items:
+          type: object
+          properties:
+            validator:
+              type: string
+              format: byte
+            proxy_account:
+              type: string
+              format: byte
+          title: Response of [QueryProxy]
+      page:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: Response of [QueryProxies]
+  manythings.mitosis.v1beta1.event.server.QueryProxyResponse:
+    type: object
+    properties:
+      validator:
+        type: string
+        format: byte
+      proxy_account:
+        type: string
+        format: byte
+    title: Response of [QueryProxy]
   manythings.mitosis.v1beta1.multisig.Params:
     type: object
     description: Params defines the parameters for the module.
