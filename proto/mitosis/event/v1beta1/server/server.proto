@@ -22,8 +22,20 @@ service Msg {
 
 // Query defines the gRPC querier service.
 service Query {
-  // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/many-things/mitosis/event/params";
+  // Queries the parameters of the module.
+  rpc Params(QueryParams) returns (QueryParamsResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/params"};
+  }
+
+  // Get poll
+  rpc Poll(QueryPoll) returns (QueryPollResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/poll/{chain}/{id}"};
+  }
+
+  // List polls
+  rpc Polls(QueryPolls) returns (QueryPollsResponse) {
+    option (google.api.http) = {
+      get: "/mitosis/event/v1beta1/polls/{chain}" // + query pagination
+    };
   }
 }

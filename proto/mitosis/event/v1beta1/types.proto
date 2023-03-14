@@ -25,21 +25,6 @@ message TxResEvent {
   bytes result = 3;
 }
 
-// EventStatus
-enum EventStatus {
-  // Unspecified event status
-  EVENT_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
-
-  // Pending event status
-  EVENT_STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
-
-  // Confirmed event status
-  EVENT_STATUS_CONFIRMED = 2 [(gogoproto.enumvalue_customname) = "StatusConfirmed"];
-
-  // Rejected event status
-  EVENT_STATUS_REJECTED = 3 [(gogoproto.enumvalue_customname) = "StatusRejected"];
-}
-
 // Event Message
 message Event {
   // Block height
@@ -56,4 +41,47 @@ message Event {
     TxReqEvent req = 4;
     TxResEvent res = 5;
   }
+}
+
+// Tally Message
+message Tally {
+  string total_power = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint"];
+  string ack = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint"];
+  string nak = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint"];
+}
+
+// Poll Message
+message Poll {
+  // Poll Status
+  enum Status {
+    // Unspecified status
+    STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
+
+    // Pending status
+    STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
+
+    // Confirmed status
+    STATUS_CONFIRMED = 2 [(gogoproto.enumvalue_customname) = "StatusConfirmed"];
+
+    // Rejected status
+    STATUS_REJECTED = 3 [(gogoproto.enumvalue_customname) = "StatusRejected"];
+  }
+
+  // Chain identifier
+  string chain = 1;
+
+  // Poll id
+  uint64 id = 2;
+
+  // Poll proposer
+  bytes proposer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+
+  // Poll status
+  Status status = 4;
+
+  // Vote tally
+  Tally tally = 5;
+
+  // Event payload
+  Event payload = 6;
 }

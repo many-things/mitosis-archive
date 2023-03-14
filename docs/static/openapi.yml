@@ -45267,7 +45267,7 @@ paths:
                         }
       tags:
         - Query
-  /many-things/mitosis/context/params:
+  /mitosis/context/v1beta1/params:
     get:
       operationId: ManythingsMitosisV1Beta1ContextServerParams
       responses:
@@ -45302,9 +45302,9 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /many-things/mitosis/event/params:
+  /mitosis/event/v1beta1/params:
     get:
-      summary: Parameters queries the parameters of the module.
+      summary: Queries the parameters of the module.
       operationId: ManythingsMitosisV1Beta1EventServerParams
       responses:
         '200':
@@ -45336,6 +45336,375 @@ paths:
                     '@type':
                       type: string
                   additionalProperties: {}
+      tags:
+        - Query
+  /mitosis/event/v1beta1/poll/{chain}/{id}:
+    get:
+      summary: Get poll
+      operationId: ManythingsMitosisV1Beta1EventServerPoll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              poll:
+                type: object
+                properties:
+                  chain:
+                    type: string
+                    title: Chain identifier
+                  id:
+                    type: string
+                    format: uint64
+                    title: Poll id
+                  proposer:
+                    type: string
+                    format: byte
+                    title: Poll proposer
+                  status:
+                    title: Poll status
+                    type: string
+                    enum:
+                      - STATUS_UNSPECIFIED
+                      - STATUS_PENDING
+                      - STATUS_CONFIRMED
+                      - STATUS_REJECTED
+                    default: STATUS_UNSPECIFIED
+                    description: |-
+                      - STATUS_UNSPECIFIED: Unspecified status
+                       - STATUS_PENDING: Pending status
+                       - STATUS_CONFIRMED: Confirmed status
+                       - STATUS_REJECTED: Rejected status
+                  tally:
+                    title: Vote tally
+                    type: object
+                    properties:
+                      total_power:
+                        type: string
+                      ack:
+                        type: string
+                      nak:
+                        type: string
+                  payload:
+                    title: Event payload
+                    type: object
+                    properties:
+                      height:
+                        type: string
+                        format: uint64
+                        title: Block height
+                      tx_hash:
+                        type: string
+                        format: byte
+                        title: Transaction hash
+                      evt_idx:
+                        type: integer
+                        format: int64
+                        title: Event Index
+                      req:
+                        type: object
+                        properties:
+                          dest_chain:
+                            type: string
+                          dest_addr:
+                            type: string
+                            format: byte
+                          op_id:
+                            type: integer
+                            format: int64
+                          op_args:
+                            type: array
+                            items:
+                              type: string
+                              format: byte
+                          funds:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                denom:
+                                  type: string
+                                amount:
+                                  type: string
+                              description: >-
+                                Coin defines a token with a denomination and an
+                                amount.
+
+
+                                NOTE: The amount field is an Int which
+                                implements the custom method
+
+                                signatures required by gogoproto.
+                        title: TxReqEvent Message
+                      res:
+                        type: object
+                        properties:
+                          req_evt_id:
+                            type: string
+                            format: uint64
+                            title: Request Event id correspond to given response
+                          ok:
+                            type: boolean
+                          result:
+                            type: string
+                            format: byte
+                        title: TxResEvent Message
+                title: Poll Message
+            title: Query single poll response
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: chain
+          in: path
+          required: true
+          type: string
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /mitosis/event/v1beta1/polls/{chain}:
+    get:
+      summary: List polls
+      operationId: ManythingsMitosisV1Beta1EventServerPolls
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              polls:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chain:
+                      type: string
+                      title: Chain identifier
+                    id:
+                      type: string
+                      format: uint64
+                      title: Poll id
+                    proposer:
+                      type: string
+                      format: byte
+                      title: Poll proposer
+                    status:
+                      title: Poll status
+                      type: string
+                      enum:
+                        - STATUS_UNSPECIFIED
+                        - STATUS_PENDING
+                        - STATUS_CONFIRMED
+                        - STATUS_REJECTED
+                      default: STATUS_UNSPECIFIED
+                      description: |-
+                        - STATUS_UNSPECIFIED: Unspecified status
+                         - STATUS_PENDING: Pending status
+                         - STATUS_CONFIRMED: Confirmed status
+                         - STATUS_REJECTED: Rejected status
+                    tally:
+                      title: Vote tally
+                      type: object
+                      properties:
+                        total_power:
+                          type: string
+                        ack:
+                          type: string
+                        nak:
+                          type: string
+                    payload:
+                      title: Event payload
+                      type: object
+                      properties:
+                        height:
+                          type: string
+                          format: uint64
+                          title: Block height
+                        tx_hash:
+                          type: string
+                          format: byte
+                          title: Transaction hash
+                        evt_idx:
+                          type: integer
+                          format: int64
+                          title: Event Index
+                        req:
+                          type: object
+                          properties:
+                            dest_chain:
+                              type: string
+                            dest_addr:
+                              type: string
+                              format: byte
+                            op_id:
+                              type: integer
+                              format: int64
+                            op_args:
+                              type: array
+                              items:
+                                type: string
+                                format: byte
+                            funds:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  denom:
+                                    type: string
+                                  amount:
+                                    type: string
+                                description: >-
+                                  Coin defines a token with a denomination and
+                                  an amount.
+
+
+                                  NOTE: The amount field is an Int which
+                                  implements the custom method
+
+                                  signatures required by gogoproto.
+                          title: TxReqEvent Message
+                        res:
+                          type: object
+                          properties:
+                            req_evt_id:
+                              type: string
+                              format: uint64
+                              title: Request Event id correspond to given response
+                            ok:
+                              type: boolean
+                            result:
+                              type: string
+                              format: byte
+                          title: TxResEvent Message
+                  title: Poll Message
+              page:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: Query list of polls response
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: chain
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /many-things/mitosis/multisig/params:
@@ -75099,6 +75468,132 @@ definitions:
   manythings.mitosis.v1beta1.event.Params:
     type: object
     description: Params defines the parameters for the module.
+  manythings.mitosis.v1beta1.event.Poll:
+    type: object
+    properties:
+      chain:
+        type: string
+        title: Chain identifier
+      id:
+        type: string
+        format: uint64
+        title: Poll id
+      proposer:
+        type: string
+        format: byte
+        title: Poll proposer
+      status:
+        title: Poll status
+        type: string
+        enum:
+          - STATUS_UNSPECIFIED
+          - STATUS_PENDING
+          - STATUS_CONFIRMED
+          - STATUS_REJECTED
+        default: STATUS_UNSPECIFIED
+        description: |-
+          - STATUS_UNSPECIFIED: Unspecified status
+           - STATUS_PENDING: Pending status
+           - STATUS_CONFIRMED: Confirmed status
+           - STATUS_REJECTED: Rejected status
+      tally:
+        title: Vote tally
+        type: object
+        properties:
+          total_power:
+            type: string
+          ack:
+            type: string
+          nak:
+            type: string
+      payload:
+        title: Event payload
+        type: object
+        properties:
+          height:
+            type: string
+            format: uint64
+            title: Block height
+          tx_hash:
+            type: string
+            format: byte
+            title: Transaction hash
+          evt_idx:
+            type: integer
+            format: int64
+            title: Event Index
+          req:
+            type: object
+            properties:
+              dest_chain:
+                type: string
+              dest_addr:
+                type: string
+                format: byte
+              op_id:
+                type: integer
+                format: int64
+              op_args:
+                type: array
+                items:
+                  type: string
+                  format: byte
+              funds:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+            title: TxReqEvent Message
+          res:
+            type: object
+            properties:
+              req_evt_id:
+                type: string
+                format: uint64
+                title: Request Event id correspond to given response
+              ok:
+                type: boolean
+              result:
+                type: string
+                format: byte
+            title: TxResEvent Message
+    title: Poll Message
+  manythings.mitosis.v1beta1.event.Poll.Status:
+    type: string
+    enum:
+      - STATUS_UNSPECIFIED
+      - STATUS_PENDING
+      - STATUS_CONFIRMED
+      - STATUS_REJECTED
+    default: STATUS_UNSPECIFIED
+    description: |-
+      - STATUS_UNSPECIFIED: Unspecified status
+       - STATUS_PENDING: Pending status
+       - STATUS_CONFIRMED: Confirmed status
+       - STATUS_REJECTED: Rejected status
+    title: Poll Status
+  manythings.mitosis.v1beta1.event.Tally:
+    type: object
+    properties:
+      total_power:
+        type: string
+      ack:
+        type: string
+      nak:
+        type: string
+    title: Tally Message
   manythings.mitosis.v1beta1.event.TxReqEvent:
     type: object
     properties:
@@ -75159,6 +75654,247 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  manythings.mitosis.v1beta1.event.server.QueryPollResponse:
+    type: object
+    properties:
+      poll:
+        type: object
+        properties:
+          chain:
+            type: string
+            title: Chain identifier
+          id:
+            type: string
+            format: uint64
+            title: Poll id
+          proposer:
+            type: string
+            format: byte
+            title: Poll proposer
+          status:
+            title: Poll status
+            type: string
+            enum:
+              - STATUS_UNSPECIFIED
+              - STATUS_PENDING
+              - STATUS_CONFIRMED
+              - STATUS_REJECTED
+            default: STATUS_UNSPECIFIED
+            description: |-
+              - STATUS_UNSPECIFIED: Unspecified status
+               - STATUS_PENDING: Pending status
+               - STATUS_CONFIRMED: Confirmed status
+               - STATUS_REJECTED: Rejected status
+          tally:
+            title: Vote tally
+            type: object
+            properties:
+              total_power:
+                type: string
+              ack:
+                type: string
+              nak:
+                type: string
+          payload:
+            title: Event payload
+            type: object
+            properties:
+              height:
+                type: string
+                format: uint64
+                title: Block height
+              tx_hash:
+                type: string
+                format: byte
+                title: Transaction hash
+              evt_idx:
+                type: integer
+                format: int64
+                title: Event Index
+              req:
+                type: object
+                properties:
+                  dest_chain:
+                    type: string
+                  dest_addr:
+                    type: string
+                    format: byte
+                  op_id:
+                    type: integer
+                    format: int64
+                  op_args:
+                    type: array
+                    items:
+                      type: string
+                      format: byte
+                  funds:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                title: TxReqEvent Message
+              res:
+                type: object
+                properties:
+                  req_evt_id:
+                    type: string
+                    format: uint64
+                    title: Request Event id correspond to given response
+                  ok:
+                    type: boolean
+                  result:
+                    type: string
+                    format: byte
+                title: TxResEvent Message
+        title: Poll Message
+    title: Query single poll response
+  manythings.mitosis.v1beta1.event.server.QueryPollsResponse:
+    type: object
+    properties:
+      polls:
+        type: array
+        items:
+          type: object
+          properties:
+            chain:
+              type: string
+              title: Chain identifier
+            id:
+              type: string
+              format: uint64
+              title: Poll id
+            proposer:
+              type: string
+              format: byte
+              title: Poll proposer
+            status:
+              title: Poll status
+              type: string
+              enum:
+                - STATUS_UNSPECIFIED
+                - STATUS_PENDING
+                - STATUS_CONFIRMED
+                - STATUS_REJECTED
+              default: STATUS_UNSPECIFIED
+              description: |-
+                - STATUS_UNSPECIFIED: Unspecified status
+                 - STATUS_PENDING: Pending status
+                 - STATUS_CONFIRMED: Confirmed status
+                 - STATUS_REJECTED: Rejected status
+            tally:
+              title: Vote tally
+              type: object
+              properties:
+                total_power:
+                  type: string
+                ack:
+                  type: string
+                nak:
+                  type: string
+            payload:
+              title: Event payload
+              type: object
+              properties:
+                height:
+                  type: string
+                  format: uint64
+                  title: Block height
+                tx_hash:
+                  type: string
+                  format: byte
+                  title: Transaction hash
+                evt_idx:
+                  type: integer
+                  format: int64
+                  title: Event Index
+                req:
+                  type: object
+                  properties:
+                    dest_chain:
+                      type: string
+                    dest_addr:
+                      type: string
+                      format: byte
+                    op_id:
+                      type: integer
+                      format: int64
+                    op_args:
+                      type: array
+                      items:
+                        type: string
+                        format: byte
+                    funds:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          denom:
+                            type: string
+                          amount:
+                            type: string
+                        description: >-
+                          Coin defines a token with a denomination and an
+                          amount.
+
+
+                          NOTE: The amount field is an Int which implements the
+                          custom method
+
+                          signatures required by gogoproto.
+                  title: TxReqEvent Message
+                res:
+                  type: object
+                  properties:
+                    req_evt_id:
+                      type: string
+                      format: uint64
+                      title: Request Event id correspond to given response
+                    ok:
+                      type: boolean
+                    result:
+                      type: string
+                      format: byte
+                  title: TxResEvent Message
+          title: Poll Message
+      page:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: Query list of polls response
   manythings.mitosis.v1beta1.multisig.Params:
     type: object
     description: Params defines the parameters for the module.
