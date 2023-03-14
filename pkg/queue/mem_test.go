@@ -1,7 +1,13 @@
 package queue
 
-import "testing"
+import (
+	"testing"
+)
 
-func setup(t *testing.T) Queue[Message] {
-	return NewMemoryQueue[Message]()
+func setupMemQueue[T Message](t *testing.T) Queue[T] {
+	return NewMemoryQueue[T]()
+}
+
+func TestMemoryQueue(t *testing.T) {
+	testQueue(t, setupMemQueue[Message](t))
 }

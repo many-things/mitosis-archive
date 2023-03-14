@@ -54,19 +54,28 @@ func (k kvq[T]) setLastItem(lastItem uint64) {
 	)
 }
 
-func (k kvq[T]) Produce(msg T) error {
+func (k kvq[T]) Size() uint64 {
 	lastItem := k.getLastItem()
-	bz, err := msg.Marshal()
-	if err != nil {
-		return err
-	}
+	firstItem := k.getFirstItem()
 
-	k.items.Set(sdk.Uint64ToBigEndian(lastItem), bz)
-	k.setLastItem(lastItem + 1) // -> last item
+	return lastItem - firstItem
+}
+
+func (k kvq[T]) Produce(msgs []T) error {
+	lastItem := k.getLastItem()
+	for i, msg := range msgs {
+		bz, err := msg.Marshal()
+		if err != nil {
+			return err
+		}
+
+		k.items.Set(sdk.Uint64ToBigEndian(lastItem+uint64(i)), bz)
+	}
+	k.setLastItem(lastItem + uint64(len(msgs))) // -> last item
 	return nil
 }
 
-func (k kvq[T]) Consume(amount int) ([]T, error) {
+func (k kvq[T]) Consume(amount uint64, f func([]byte) (T, error)) ([]T, error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
 	if lastItem-firstItem == 0 {
@@ -76,12 +85,17 @@ func (k kvq[T]) Consume(amount int) ([]T, error) {
 	iter := k.items.Iterator(sdk.Uint64ToBigEndian(firstItem), sdk.Uint64ToBigEndian(lastItem))
 	defer iter.Close()
 
-	ms := make([]T, min(lastItem-firstItem, uint64(amount)))
+	ms := make([]T, min(lastItem-firstItem, amount))
 	for i := 0; iter.Valid(); iter.Next() {
-		if err := ms[i].Unmarshal(iter.Value()); err != nil {
+		m, err := f(iter.Value())
+		if err != nil {
 			return nil, err
 		}
+		ms[i] = m
 		i++
+		if len(ms) > i {
+			break
+		}
 	}
 
 	k.setFirstItem(firstItem + uint64(len(ms)))
