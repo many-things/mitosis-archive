@@ -11,14 +11,12 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-type (
-	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
-	}
-)
+type Keeper struct {
+	cdc        codec.BinaryCodec
+	storeKey   storetypes.StoreKey
+	memKey     storetypes.StoreKey
+	paramstore paramtypes.Subspace
+}
 
 func NewKeeper(
 	cdc codec.BinaryCodec,

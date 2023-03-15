@@ -20,6 +20,12 @@ type PollRepo interface {
 	DeleteByHash(hash []byte) error
 
 	Paginate(page *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
+
+	// ExportGenesis returns the entire module's state
+	ExportGenesis() (genState *types.GenesisPoll, err error)
+
+	// ImportGenesis sets the entire module's state
+	ImportGenesis(genState *types.GenesisPoll) error
 }
 
 var (
@@ -29,11 +35,11 @@ var (
 )
 
 type kvPollRepo struct {
-	cdc  codec.Codec
+	cdc  codec.BinaryCodec
 	root store.KVStore
 }
 
-func NewKVPollRepo(cdc codec.Codec, store store.KVStore) PollRepo {
+func NewKVPollRepo(cdc codec.BinaryCodec, store store.KVStore) PollRepo {
 	return kvPollRepo{cdc, store}
 }
 
@@ -118,4 +124,93 @@ func (k kvPollRepo) Paginate(page *query.PageRequest) ([]mitotypes.KV[uint64, *t
 	}
 
 	return rs, pageResp, nil
+}
+
+func (k kvPollRepo) exportItemSet(store store.KVStore) (itemSet []*types.GenesisPoll_ItemSet, err error) {
+	_, err = query.Paginate(
+		store,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(key []byte, value []byte) error {
+			poll := new(types.Poll)
+			if err := poll.Unmarshal(value); err != nil {
+				return err
+			}
+
+			itemSet = append(itemSet, &types.GenesisPoll_ItemSet{
+				Id:   sdk.BigEndianToUint64(key),
+				Poll: poll,
+			})
+
+			return nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
+func (k kvPollRepo) exportHashSet(store store.KVStore) (hashSet []*types.GenesisPoll_HashSet, err error) {
+	_, err = query.Paginate(
+		store,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(key []byte, value []byte) error {
+			hashSet = append(hashSet, &types.GenesisPoll_HashSet{
+				Hash: key,
+				Id:   sdk.BigEndianToUint64(value),
+			})
+			return nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
+func (k kvPollRepo) ExportGenesis() (genState *types.GenesisPoll, err error) {
+	// initialize
+	genState = &types.GenesisPoll{}
+
+	// load latest id
+	genState.LatestId = sdk.BigEndianToUint64(k.root.Get(kvPollRepoKeyLatestId))
+
+	// load item set
+	genState.ItemSet, err = k.exportItemSet(prefix.NewStore(k.root, kvPollRepoItemsPrefix))
+	if err != nil {
+		return nil, err
+	}
+
+	// load hash set
+	genState.HashSet, err = k.exportHashSet(prefix.NewStore(k.root, kvPollRepoHashPrefix))
+	if err != nil {
+		return nil, err
+	}
+
+	return
+}
+
+func (k kvPollRepo) ImportGenesis(genState *types.GenesisPoll) error {
+	// save latest id
+	k.root.Set(kvPollRepoKeyLatestId, sdk.Uint64ToBigEndian(genState.GetLatestId()))
+
+	// save item set
+	pis := prefix.NewStore(k.root, kvPollRepoItemsPrefix)
+	for _, item := range genState.GetItemSet() {
+		bz, err := item.GetPoll().Marshal()
+		if err != nil {
+			return err
+		}
+		pis.Set(sdk.Uint64ToBigEndian(item.GetId()), bz)
+	}
+
+	// save hash set
+	phs := prefix.NewStore(k.root, kvPollRepoHashPrefix)
+	for _, item := range genState.GetHashSet() {
+		phs.Set(item.GetHash(), sdk.Uint64ToBigEndian(item.GetId()))
+	}
+
+	return nil
 }
