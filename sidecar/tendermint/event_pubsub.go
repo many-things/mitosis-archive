@@ -34,7 +34,7 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 	errChan := make(chan error, 1)
 
 	go func() {
-		newBlockHeightChan, heightErrChan := tb.listener.NewBlockWatcher(context.Background())
+		newBlockHeightChan, heightErrChan := tb.listener.NewBlockWatcher()
 
 		var blockHeight int64
 		for {
@@ -114,7 +114,7 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 				tb.pubSub.Close()
 
 				<-tb.pubSub.Done()
-				<-tb.listener.Done()
+				tb.listener.Close()
 
 				return
 			}

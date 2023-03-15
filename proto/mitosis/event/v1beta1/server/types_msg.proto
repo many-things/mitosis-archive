@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.event.server;
+
+import "gogoproto/gogo.proto";
+import "mitosis/event/v1beta1/types.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/server";
+
+// Submit messages to vote
+message MsgSubmit {
+  // Sender address
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+
+  // Chain identifier
+  string chain = 2;
+
+  // Events
+  repeated Event events = 3;
+}
+
+// Response of [MsgSubmit]
+message MsgSubmitResponse {}
+
+// Vote event message
+message MsgVote {
+  // Voter address
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+
+  // Chain identifier
+  string chain = 2;
+
+  // Vote ids
+  repeated uint64 ids = 3;
+}
+
+// Response of [MsgVote]
+message MsgVoteResponse {}
+
+// Set proxy message
+message MsgRegisterProxy {
+  // Validator address
+  bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // Proxy account address
+  bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+// Response of [MsgRegisterProxy]
+message MsgRegisterProxyResponse {}

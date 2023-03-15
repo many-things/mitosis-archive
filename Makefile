@@ -1,4 +1,7 @@
 
+# `make` -> proto -> build
+PHONY: build
+
 build: proto
 	@ignite chain build --skip-proto
 

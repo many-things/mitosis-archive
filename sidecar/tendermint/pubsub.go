@@ -24,7 +24,7 @@ type PubSub[T any] interface {
 type pubSub[T any] struct {
 	context        context.Context
 	contextCancel  context.CancelFunc
-	subscribeMutex sync.Mutex
+	subscribeMutex *sync.Mutex
 	subscriptions  []*subscriber[T]
 	buffer         *chanx.UnboundedChan[T]
 	bufferCapacity int
@@ -33,11 +33,18 @@ type pubSub[T any] struct {
 }
 
 func NewPubSub[T any]() PubSub[T] {
-	context, contextCancel := context.WithCancel(context.Background())
+	ctx, ctxCancel := context.WithCancel(context.Background())
+	bufferCapacity := 1000
 
 	return &pubSub[T]{
-		context:       context,
-		contextCancel: contextCancel,
+		context:        ctx,
+		contextCancel:  ctxCancel,
+		bufferCapacity: bufferCapacity,
+		subscriptions:  []*subscriber[T]{},
+		buffer:         chanx.NewUnboundedChan[T](bufferCapacity),
+		subscribeMutex: &sync.Mutex{},
+		done:           make(chan struct{}),
+		once:           &sync.Once{},
 	}
 }
 

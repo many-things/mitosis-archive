@@ -29,9 +29,6 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	}
 
 	cmd.AddCommand(CmdQueryParams())
-	cmd.AddCommand(CmdVoteStatus())
-
-	// this line is used by starport scaffolding # 1
 
 	return cmd
 }
@@ -46,37 +43,7 @@ func CmdQueryParams() *cobra.Command {
 
 			queryClient := server.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Params(context.Background(), &server.QueryParamsRequest{})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
-func CmdVoteStatus() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "vote-status",
-		Short: "Query VoteStatus",
-		Args:  cobra.ExactArgs(0),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			queryClient := server.NewQueryClient(clientCtx)
-
-			params := &server.QueryVoteStatusRequest{}
-
-			res, err := queryClient.VoteStatus(cmd.Context(), params)
+			res, err := queryClient.Params(context.Background(), &server.QueryParams{})
 			if err != nil {
 				return err
 			}

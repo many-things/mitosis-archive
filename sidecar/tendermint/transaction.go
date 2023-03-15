@@ -1,9 +1,7 @@
 package tendermint
 
 import (
-	"bytes"
 	"encoding/hex"
-	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -18,10 +16,17 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint/libs"
 	"github.com/tidwall/gjson"
 	"io"
-	"net/http"
 )
 
-type Wallet struct {
+type Wallet interface {
+	GetAddress() (string, error)
+	GetAccountInfo() (*AccountInfo, error)
+	CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error)
+	BroadcastRawTx(rawTxByte []byte) error
+	BroadcastMsg(msg cosmostype.Msg) error
+}
+
+type wallet struct {
 	privateKey  cryptotype.PrivKey
 	ChainPrefix string
 	ChainID     string
@@ -57,7 +62,7 @@ func WithHDPath(hdPath string) MnemonicDeriveOptionHandler {
 	}
 }
 
-func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...MnemonicDeriveOptionHandler) (*Wallet, error) {
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...MnemonicDeriveOptionHandler) (Wallet, error) {
 	deriveFn := hd.Secp256k1.Derive()
 	option := &MnemonicDeriveOption{
 		BIP39Passphrase: "",
@@ -73,7 +78,7 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 		return nil, err
 	}
 
-	return &Wallet{
+	return &wallet{
 		privateKey:  &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix: chainPrefix,
 		ChainID:     chainID,
@@ -81,13 +86,13 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 	}, nil
 }
 
-func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (*Wallet, error) {
+func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (Wallet, error) {
 	privBytes, err := hex.DecodeString(privateKey)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Wallet{
+	return &wallet{
 		privateKey:  &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix: chainPrefix,
 		ChainID:     chainID,
@@ -95,20 +100,24 @@ func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl st
 	}, nil
 }
 
-func (w *Wallet) createTxConfig() client.TxConfig {
+func (w wallet) createTxConfig() client.TxConfig {
 	interfaceRegistry := types.NewInterfaceRegistry()
 	codec := codec.NewProtoCodec(interfaceRegistry)
 
 	return cosmostx.NewTxConfig(codec, cosmostx.DefaultSignModes)
 }
 
-func (w *Wallet) GetAccountInfo() (*AccountInfo, error) {
-	fromAddress, err := libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
+func (w wallet) GetAddress() (string, error) {
+	return libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
+}
+
+func (w wallet) GetAccountInfo() (*AccountInfo, error) {
+	fromAddress, err := w.GetAddress()
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := http.Get(w.DialURL + "/cosmos/auth/v1beta1/accounts/" + fromAddress)
+	response, err := libs.JsonGet(w.DialURL + "/cosmos/auth/v1beta1/accounts/" + fromAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -125,17 +134,12 @@ func (w *Wallet) GetAccountInfo() (*AccountInfo, error) {
 	}, nil
 }
 
-func (w *Wallet) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
+func (w wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
 	txBuilder.SetMsgs(msg)
 	txBuilder.SetGasLimit(100000)
-
-	accountInfo, err := w.GetAccountInfo()
-	if err != nil {
-		return nil, err
-	}
 
 	signerData := authsigning.SignerData{
 		ChainID:       w.ChainID,
@@ -182,15 +186,13 @@ func (w *Wallet) CreateSignedRawTx(msg cosmostype.Msg) ([]byte, error) {
 	return txConfig.TxEncoder()(txBuilder.GetTx())
 }
 
-func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
+func (w wallet) BroadcastRawTx(rawTxByte []byte) error {
 	rawTxBody := RawTx{
 		Mode:    "BROADCAST_MODE_SYNC",
 		TxBytes: rawTxByte,
 	}
+	resp, err := libs.JsonPost(w.DialURL+"/cosmos/tx/v1beta1/txs", rawTxBody)
 
-	// TODO: change LCD to gRPC
-	postBodyBytes, _ := json.Marshal(rawTxBody)
-	resp, err := http.Post(w.DialURL+"/cosmos/tx/v1beta1/txs", "application/json", bytes.NewBuffer(postBodyBytes))
 	if err != nil || resp.StatusCode != 200 {
 		return err // TODO:
 	}
@@ -205,16 +207,21 @@ func (w *Wallet) BroadCastRawTx(rawTxByte []byte) error {
 	return nil
 }
 
-func (w *Wallet) BroadcastMsg(msg cosmostype.Msg) error {
-	rawTx, err := w.CreateSignedRawTx(msg)
+func (w wallet) BroadcastMsg(msg cosmostype.Msg) error {
+	accountInfo, err := w.GetAccountInfo()
+	if err != nil {
+		return err
+	}
+
+	rawTx, err := w.CreateSignedRawTx(msg, *accountInfo)
 	if err != nil {
 		return nil
 	}
 
-	err = w.BroadCastRawTx(rawTx)
+	err = w.BroadcastRawTx(rawTx)
 	return err
 }
 
-func IsMnemonic(mnemonicOrPrivKey string) bool {
-	return bip39.IsMnemonicValid(mnemonicOrPrivKey)
+func IsMnemonic(mnemonic string) bool {
+	return bip39.IsMnemonicValid(mnemonic)
 }
