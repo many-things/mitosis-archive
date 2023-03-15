@@ -14,7 +14,8 @@ type GenesisKeeper interface {
 }
 
 func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
-	pollRepo := state.NewKVPollRepo(k.cdc, ctx.KVStore(k.storeKey))
+	defaultChain := byte(0x01) // TODO: make chain registry
+	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	genesis = types.DefaultGenesis()
@@ -36,7 +37,8 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err
 }
 
 func (k Keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error {
-	pollRepo := state.NewKVPollRepo(k.cdc, ctx.KVStore(k.storeKey))
+	defaultChain := byte(0x01) // TODO: make chain registry
+	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	k.SetParams(ctx, genesis.Params)
