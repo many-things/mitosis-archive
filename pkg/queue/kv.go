@@ -61,7 +61,7 @@ func (k kvq[T]) Size() uint64 {
 	return lastItem - firstItem
 }
 
-func (k kvq[T]) Produce(msgs []T) error {
+func (k kvq[T]) Produce(msgs ...T) error {
 	lastItem := k.getLastItem()
 	for i, msg := range msgs {
 		bz, err := msg.Marshal()

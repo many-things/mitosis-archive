@@ -21,6 +21,14 @@ func (t *TestMessage) Unmarshal(bytes []byte) error {
 	return json.Unmarshal(bytes, t)
 }
 
+func MakeTestMessages(size int) []Message {
+	ts := make([]Message, size)
+	for i := 0; i < len(ts); i++ {
+		ts[i] = &TestMessage{Data: fmt.Sprintf("t%d", i)}
+	}
+	return ts
+}
+
 func ConvTestMessage(bz []byte) (Message, error) {
 	var v TestMessage
 	if err := v.Unmarshal(bz); err != nil {
@@ -30,14 +38,10 @@ func ConvTestMessage(bz []byte) (Message, error) {
 }
 
 func testQueue(t *testing.T, q Queue[Message]) {
-	size := uint64(50)
-	ts := make([]Message, size)
-	for i := 0; i < len(ts); i++ {
-		ts[i] = &TestMessage{Data: fmt.Sprintf("t%d", i)}
-	}
+	ts := MakeTestMessages(50)
 
 	// produce
-	assert.NoError(t, q.Produce(ts))
+	assert.NoError(t, q.Produce(ts...))
 	assert.Equal(t, uint64(len(ts)), q.Size())
 
 	// consume
@@ -55,7 +59,7 @@ func testQueue(t *testing.T, q Queue[Message]) {
 	assert.Equal(t, "t0", msgs[0].(*TestMessage).Data)
 
 	// produce half
-	assert.NoError(t, q.Produce(ts[:consumeSize]))
+	assert.NoError(t, q.Produce(ts[:consumeSize]...))
 
 	// consume half again
 	msgs, err = q.Consume(consumeSize, ConvTestMessage)
