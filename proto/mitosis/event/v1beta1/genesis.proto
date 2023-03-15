@@ -4,10 +4,45 @@ package manythings.mitosis.v1beta1.event;
 
 import "gogoproto/gogo.proto";
 import "mitosis/event/v1beta1/params.proto";
+import "mitosis/event/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// Genesis state of poll repository
+message GenesisPoll {
+  // Key-Value set of item
+  message ItemSet {
+    uint64 id = 1;
+    Poll poll = 2;
+  }
+
+  // Key-Value set of hash
+  message HashSet {
+    bytes hash = 1;
+    uint64 id = 2;
+  }
+
+  uint64 latest_id = 1;
+  repeated ItemSet item_set = 2;
+  repeated HashSet hash_set = 3;
+}
+
+// Genesis state of proxy repository
+message GenesisProxy {
+  // Key-Value set of item
+  message ItemSet {
+    bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  }
+
+  repeated ItemSet item_set = 1;
+}
 
 // GenesisState defines the event module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
+
+  GenesisPoll poll = 2;
+
+  GenesisProxy proxy = 3;
 }
