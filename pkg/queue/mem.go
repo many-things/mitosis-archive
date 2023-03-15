@@ -36,7 +36,7 @@ func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {
 	return ms, nil
 }
 
-func (k *memq[T]) Consume(amount uint64, f func([]byte) (T, error)) ([]T, error) {
+func (k *memq[T]) Consume(amount uint64, conv func([]byte) (T, error)) ([]T, error) {
 	l := min(uint64(len(k.store)), amount)
 
 	arr := k.store[:l]
@@ -44,7 +44,7 @@ func (k *memq[T]) Consume(amount uint64, f func([]byte) (T, error)) ([]T, error)
 
 	ms := make([]T, len(arr))
 	for i, bz := range arr {
-		m, err := f(bz)
+		m, err := conv(bz)
 		if err != nil {
 			return nil, err
 		}

@@ -75,7 +75,7 @@ func (k kvq[T]) Produce(msgs []T) error {
 	return nil
 }
 
-func (k kvq[T]) Consume(amount uint64, f func([]byte) (T, error)) ([]T, error) {
+func (k kvq[T]) Consume(amount uint64, conv func([]byte) (T, error)) ([]T, error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
 	if lastItem == firstItem {
@@ -85,15 +85,18 @@ func (k kvq[T]) Consume(amount uint64, f func([]byte) (T, error)) ([]T, error) {
 	iter := k.items.Iterator(sdk.Uint64ToBigEndian(firstItem), sdk.Uint64ToBigEndian(lastItem))
 	defer iter.Close()
 
-	ms := make([]T, min(lastItem-firstItem, amount))
-	for i := 0; iter.Valid(); iter.Next() {
-		m, err := f(iter.Value())
+	var (
+		ms   []T
+		want = min(lastItem-firstItem, amount)
+	)
+	for ; iter.Valid(); iter.Next() {
+		m, err := conv(iter.Value())
 		if err != nil {
 			return nil, err
 		}
-		ms[i] = m
-		i++
-		if len(ms) > i {
+
+		ms = append(ms, m)
+		if uint64(len(ms)) >= want {
 			break
 		}
 	}
