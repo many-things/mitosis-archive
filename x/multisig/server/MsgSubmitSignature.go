@@ -33,7 +33,7 @@ func (msg *MsgSubmitSignature) GetSigners() []sdk.AccAddress {
 }
 
 func (msg *MsgSubmitSignature) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := types.ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
