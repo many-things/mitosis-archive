@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.context.server;
+
+import "google/api/annotations.proto";
+import "mitosis/context/v1beta1/server/types_query.proto";
+
+option go_package = "github.com/many-things/mitosis/x/context/server";
+
+// Msg defines the Msg service.
+service Msg {}
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParams) returns (QueryParamsResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/params"};
+  }
+
+  // Get single operation
+  rpc Operation(QueryOperation) returns (QueryOperationResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}/{id}"};
+  }
+
+  // List multiple operations
+  rpc Operations(QueryOperations) returns (QueryOperationsResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}"};
+  }
+}

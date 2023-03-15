@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig;
+
+import "gogoproto/gogo.proto";
+import "mitosis/multisig/v1beta1/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/types";
+
+// GenesisState defines the multisig module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

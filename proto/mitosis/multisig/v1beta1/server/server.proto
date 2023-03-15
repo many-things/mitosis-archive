@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig.server;
+
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "mitosis/multisig/v1beta1/params.proto";
+import "mitosis/multisig/v1beta1/server/types.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/server";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc StartKeygen(MsgStartKeygen) returns (MsgStartKeygenResponse);
+  rpc SubmitPubkey(MsgSubmitPubkey) returns (MsgSubmitPubkeyResponse);
+  rpc SubmitSignature(MsgSubmitSignature) returns (MsgSubmitSignatureResponse);
+}
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/many-things/mitosis/multisig/params";
+  }
+}

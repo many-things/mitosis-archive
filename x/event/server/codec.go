@@ -10,15 +10,10 @@ import (
 )
 
 func RegisterServerLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgVoteEvent{}, "event/VoteEvent", nil)
-	cdc.RegisterConcrete(&MsgRegisterProxy{}, "event/RegisterProxy", nil)
 }
 
 func RegisterServerInterfaces(reg cdctypes.InterfaceRegistry) {
-	reg.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgVoteEvent{},
-		&MsgRegisterProxy{},
-	)
+	reg.RegisterImplementations((*sdk.Msg)(nil))
 
 	msgservice.RegisterMsgServiceDesc(reg, &_Msg_serviceDesc)
 }
