@@ -39,8 +39,8 @@ type kvPollRepo struct {
 	root store.KVStore
 }
 
-func NewKVPollRepo(cdc codec.BinaryCodec, store store.KVStore) PollRepo {
-	return kvPollRepo{cdc, store}
+func NewKVPollRepo(cdc codec.BinaryCodec, chain byte, store store.KVStore) PollRepo {
+	return kvPollRepo{cdc, prefix.NewStore(store, []byte{chain})}
 }
 
 func (k kvPollRepo) Load(id uint64) (types.Poll, error) {

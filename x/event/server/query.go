@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,22 +26,57 @@ func (k queryServer) Params(gcx context.Context, req *QueryParams) (*QueryParams
 	return &QueryParamsResponse{Params: k.baseKeeper.GetParams(ctx)}, nil
 }
 
-func (k queryServer) Poll(ctx context.Context, poll *QueryPoll) (*QueryPollResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) Poll(ctx context.Context, req *QueryPoll) (*QueryPollResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	poll, err := k.baseKeeper.QueryPoll(wctx, req.GetChain(), req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryPollResponse{Poll: poll}, nil
 }
 
-func (k queryServer) Polls(ctx context.Context, polls *QueryPolls) (*QueryPollsResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) Polls(ctx context.Context, req *QueryPolls) (*QueryPollsResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	set, pageResp, err := k.baseKeeper.QueryPolls(wctx, req.GetChain(), req.GetPagination())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryPollsResponse{
+		Polls: mitotypes.Values(set),
+		Page:  pageResp,
+	}, nil
 }
 
-func (k queryServer) Proxy(ctx context.Context, proxy *QueryProxy) (*QueryProxyResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) Proxy(ctx context.Context, req *QueryProxy) (*QueryProxyResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	proxy, err := k.baseKeeper.QueryProxy(wctx, req.GetValidator())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryProxyResponse{Validator: req.GetValidator(), ProxyAccount: proxy}, nil
 }
 
-func (k queryServer) Proxies(ctx context.Context, proxies *QueryProxies) (*QueryProxiesResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) Proxies(ctx context.Context, req *QueryProxies) (*QueryProxiesResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	set, pageResp, err := k.baseKeeper.QueryProxies(wctx, req.GetPagination())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryProxiesResponse{
+		Proxies: mitotypes.Map(set, func(k sdk.ValAddress, v sdk.AccAddress) *QueryProxyResponse {
+			return &QueryProxyResponse{
+				Validator:    k,
+				ProxyAccount: v,
+			}
+		}),
+		Page: pageResp,
+	}, nil
 }
