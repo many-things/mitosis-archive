@@ -78,7 +78,7 @@ func (k kvq[T]) Produce(msgs []T) error {
 func (k kvq[T]) Consume(amount uint64, f func([]byte) (T, error)) ([]T, error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
-	if lastItem-firstItem == 0 {
+	if lastItem == firstItem {
 		return nil, errors.New("empty queue")
 	}
 
