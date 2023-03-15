@@ -20,7 +20,9 @@ message MsgSubmit {
 }
 
 // Response of [MsgSubmit]
-message MsgSubmitResponse {}
+message MsgSubmitResponse {
+  uint64 poll_id = 1;
+}
 
 // Vote event message
 message MsgVote {
@@ -48,3 +50,12 @@ message MsgRegisterProxy {
 
 // Response of [MsgRegisterProxy]
 message MsgRegisterProxyResponse {}
+
+// Clear proxy message
+message MsgClearProxy {
+  // Validator address
+  bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
+// Response of [MsgClearProxy]
+message MsgClearProxyResponse {}

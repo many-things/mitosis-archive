@@ -18,6 +18,9 @@ service Msg {
 
   // Registers an address of proxy account to submit / vote external event rather than execute with validator account itself.
   rpc RegisterProxy(MsgRegisterProxy) returns (MsgRegisterProxyResponse);
+
+  // Clears proxy account info from a validator
+  rpc ClearProxy(MsgClearProxy) returns (MsgClearProxyResponse);
 }
 
 // Query defines the gRPC querier service.

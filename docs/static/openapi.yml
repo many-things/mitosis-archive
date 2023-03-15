@@ -76199,11 +76199,18 @@ definitions:
         type: string
         format: byte
     title: TxResEvent Message
+  manythings.mitosis.v1beta1.event.server.MsgClearProxyResponse:
+    type: object
+    title: Response of [MsgClearProxy]
   manythings.mitosis.v1beta1.event.server.MsgRegisterProxyResponse:
     type: object
     title: Response of [MsgRegisterProxy]
   manythings.mitosis.v1beta1.event.server.MsgSubmitResponse:
     type: object
+    properties:
+      poll_id:
+        type: string
+        format: uint64
     title: Response of [MsgSubmit]
   manythings.mitosis.v1beta1.event.server.MsgVoteResponse:
     type: object

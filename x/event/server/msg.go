@@ -27,3 +27,8 @@ func (m msgServer) RegisterProxy(ctx context.Context, proxy *MsgRegisterProxy) (
 	//TODO implement me
 	panic("implement me")
 }
+
+func (m msgServer) ClearProxy(ctx context.Context, proxy *MsgClearProxy) (*MsgClearProxyResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
