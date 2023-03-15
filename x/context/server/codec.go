@@ -5,14 +5,10 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/many-things/mitosis/x/context/types"
 
 	// this line is used by starport scaffolding # 1
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
-)
-
-var (
-	Amino     = codec.NewLegacyAmino()
-	ModuleCdc = codec.NewAminoCodec(Amino)
 )
 
 func RegisterServerLegacyAminoCodec(cdc *codec.LegacyAmino) {
@@ -26,7 +22,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 }
 
 func init() {
-	RegisterServerLegacyAminoCodec(Amino)
-	cryptocodec.RegisterCrypto(Amino)
-	sdk.RegisterLegacyAminoCodec(Amino)
+	RegisterServerLegacyAminoCodec(types.Amino)
+	cryptocodec.RegisterCrypto(types.Amino)
+	sdk.RegisterLegacyAminoCodec(types.Amino)
 }

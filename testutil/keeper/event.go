@@ -10,7 +10,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/many-things/mitosis/x/event/keeper"
-	"github.com/many-things/mitosis/x/event/server"
 	"github.com/many-things/mitosis/x/event/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
@@ -32,7 +31,7 @@ func EventKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	cdc := codec.NewProtoCodec(registry)
 
 	paramsSubspace := typesparams.NewSubspace(cdc,
-		server.Amino,
+		types.Amino,
 		storeKey,
 		memStoreKey,
 		"EventParams",
