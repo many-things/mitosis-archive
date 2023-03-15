@@ -15,6 +15,9 @@ func NewMemoryQueue[T Message]() Queue[T] {
 }
 
 func (k *memq[T]) Size() uint64 {
+	k.mux.RLock()
+	defer k.mux.RUnlock()
+
 	return uint64(len(k.store))
 }
 
@@ -47,7 +50,7 @@ func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {
 }
 
 func (k *memq[T]) Consume(amount uint64, conv func([]byte) (T, error)) ([]T, error) {
-	l := min(uint64(len(k.store)), amount)
+	l := min(k.Size(), amount)
 
 	k.mux.Lock()
 	bzs := k.store[:l]
