@@ -11,7 +11,7 @@ import (
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-func SimulateMsgStartKeygen(
+func SimulateMsgStartSign(
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	k keeper.Keeper,
@@ -19,7 +19,7 @@ func SimulateMsgStartKeygen(
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		//_, _ := simtypes.RandomAcc(r, accs)
-		msg := &server.MsgStartKeygen{}
+		msg := &server.MsgStartSign{}
 
 		// TODO: Handling the StartKeygen simulation
 

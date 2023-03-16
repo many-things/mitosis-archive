@@ -12,6 +12,7 @@ import (
 func RegisterServerLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgStartKeygen{}, "multisig/StartKeygen", nil)
 	cdc.RegisterConcrete(&MsgSubmitPubkey{}, "multisig/SubmitPubkey", nil)
+	cdc.RegisterConcrete(&MsgStartSign{}, "multisig/StartSign", nil)
 	cdc.RegisterConcrete(&MsgSubmitSignature{}, "multisig/SubmitSignature", nil)
 	// this line is used by starport scaffolding # 2
 }
@@ -22,6 +23,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSubmitPubkey{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgStartSign{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgSubmitSignature{},
