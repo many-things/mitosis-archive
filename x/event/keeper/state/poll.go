@@ -11,8 +11,8 @@ import (
 )
 
 type PollRepo interface {
-	Load(id uint64) (types.Poll, error)
-	LoadByHash(hash []byte) (types.Poll, error)
+	Load(id uint64) (*types.Poll, error)
+	LoadByHash(hash []byte) (*types.Poll, error)
 
 	Save(poll types.Poll) error
 
@@ -43,19 +43,25 @@ func NewKVPollRepo(cdc codec.BinaryCodec, chain byte, store store.KVStore) PollR
 	return kvPollRepo{cdc, prefix.NewStore(store, []byte{chain})}
 }
 
-func (k kvPollRepo) Load(id uint64) (types.Poll, error) {
+func (k kvPollRepo) Load(id uint64) (*types.Poll, error) {
 	bz := prefix.NewStore(k.root, kvPollRepoItemsPrefix).Get(sdk.Uint64ToBigEndian(id))
+	if bz == nil {
+		return nil, nil
+	}
 
-	var poll types.Poll
+	poll := new(types.Poll)
 	if err := poll.Unmarshal(bz); err != nil {
-		return types.Poll{}, err
+		return nil, err
 	}
 
 	return poll, nil
 }
 
-func (k kvPollRepo) LoadByHash(hash []byte) (types.Poll, error) {
+func (k kvPollRepo) LoadByHash(hash []byte) (*types.Poll, error) {
 	id := prefix.NewStore(k.root, kvPollRepoHashPrefix).Get(hash)
+	if id == nil {
+		return nil, nil
+	}
 	return k.Load(sdk.BigEndianToUint64(id))
 }
 

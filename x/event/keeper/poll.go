@@ -41,7 +41,7 @@ func (k keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll
 		return nil, err
 	}
 
-	return &poll, nil
+	return poll, nil
 }
 
 func (k keeper) QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {

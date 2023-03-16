@@ -25,9 +25,9 @@ func (m msgServer) Submit(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitR
 	}
 
 	// convert proxy account to validator account
-	val, err := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
-	if err != nil {
-		return nil, err
+	val, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
+	if !found {
+		return nil, errors.ErrNotFound
 	}
 
 	pollId, err := m.baseKeeper.SubmitPoll(wctx, val, req.GetChain(), req.GetEvents())
@@ -48,9 +48,9 @@ func (m msgServer) Vote(ctx context.Context, req *MsgVoteEvent) (*MsgVoteRespons
 	}
 
 	// convert proxy account to validator account
-	val, err := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
-	if err != nil {
-		return nil, err
+	val, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
+	if !found {
+		return nil, errors.ErrNotFound
 	}
 
 	if err := m.baseKeeper.VotePoll(wctx, val, req.GetChain(), req.GetIds()); err != nil {
@@ -112,8 +112,8 @@ func (m msgServer) RegisterChain(ctx context.Context, req *MsgRegisterChain) (*M
 	}
 
 	// convert proxy account to validator account to block non-validator execute this message
-	if _, err := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender()); err != nil {
-		return nil, err
+	if _, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender()); !found {
+		return nil, errors.ErrNotFound
 	}
 
 	prefix, err := m.baseKeeper.RegisterChain(wctx, req.GetChain())
@@ -134,8 +134,8 @@ func (m msgServer) UnregisterChain(ctx context.Context, req *MsgUnregisterChain)
 	}
 
 	// convert proxy account to validator account to block non-validator execute this message
-	if _, err := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender()); err != nil {
-		return nil, err
+	if _, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender()); !found {
+		return nil, errors.ErrNotFound
 	}
 
 	if err := m.baseKeeper.UnregisterChain(wctx, req.GetChain()); err != nil {

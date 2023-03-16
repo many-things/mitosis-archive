@@ -12,9 +12,9 @@ import (
 )
 
 type ProxyRepo interface {
-	Load(validator sdk.ValAddress) (sdk.AccAddress, error)
+	Load(validator sdk.ValAddress) (sdk.AccAddress, bool)
 
-	LoadByProxy(proxyAccount sdk.AccAddress) (sdk.ValAddress, error)
+	LoadByProxy(proxyAccount sdk.AccAddress) (sdk.ValAddress, bool)
 
 	Save(validator sdk.ValAddress, proxy sdk.AccAddress) error
 
@@ -43,12 +43,14 @@ func NewKVProxyRepo(cdc codec.BinaryCodec, store store.KVStore) ProxyRepo {
 	return kvProxyRepo{cdc, store}
 }
 
-func (k kvProxyRepo) Load(validator sdk.ValAddress) (sdk.AccAddress, error) {
-	return prefix.NewStore(k.root, kvProxyRepoItemsPrefix).Get(validator.Bytes()), nil
+func (k kvProxyRepo) Load(validator sdk.ValAddress) (sdk.AccAddress, bool) {
+	rtn := prefix.NewStore(k.root, kvProxyRepoItemsPrefix).Get(validator.Bytes())
+	return rtn, rtn != nil
 }
 
-func (k kvProxyRepo) LoadByProxy(proxyAccount sdk.AccAddress) (sdk.ValAddress, error) {
-	return prefix.NewStore(k.root, kvProxyRepoItemsReversePrefix).Get(proxyAccount.Bytes()), nil
+func (k kvProxyRepo) LoadByProxy(proxyAccount sdk.AccAddress) (sdk.ValAddress, bool) {
+	rtn := prefix.NewStore(k.root, kvProxyRepoItemsReversePrefix).Get(proxyAccount.Bytes())
+	return rtn, rtn != nil
 }
 
 func (k kvProxyRepo) Save(validator sdk.ValAddress, proxy sdk.AccAddress) error {
