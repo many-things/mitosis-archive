@@ -14,8 +14,6 @@ type GenesisKeeper interface {
 }
 
 func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
-	defaultChain := byte(0x01) // TODO: make chain registry
-	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
@@ -23,11 +21,6 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err
 
 	// export params
 	genesis.Params = k.GetParams(ctx)
-
-	// export polls
-	if genesis.Poll, err = pollRepo.ExportGenesis(); err != nil {
-		return nil, err
-	}
 
 	// export proxies
 	if genesis.Proxy, err = proxyRepo.ExportGenesis(); err != nil {
@@ -39,26 +32,38 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err
 		return nil, err
 	}
 
+	// export polls
+	for _, v := range genesis.GetChain().GetItemSet() {
+		pollRepo := state.NewKVPollRepo(k.cdc, v.GetPrefix()[0], ctx.KVStore(k.storeKey))
+		poll, err := pollRepo.ExportGenesis()
+		if err != nil {
+			return nil, err
+		}
+
+		genesis.Poll.ChainSet = append(genesis.Poll.ChainSet, poll)
+	}
+
 	return
 }
 
 func (k Keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error {
-	defaultChain := byte(0x01) // TODO: make chain registry
-	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	k.SetParams(ctx, genesis.Params)
 
-	if err := pollRepo.ImportGenesis(genesis.Poll); err != nil {
+	for _, v := range genesis.GetPoll().GetChainSet() {
+		pollRepo := state.NewKVPollRepo(k.cdc, v.GetChain()[0], ctx.KVStore(k.storeKey))
+		if err := pollRepo.ImportGenesis(v); err != nil {
+			return err
+		}
+	}
+
+	if err := proxyRepo.ImportGenesis(genesis.GetProxy()); err != nil {
 		return err
 	}
 
-	if err := proxyRepo.ImportGenesis(genesis.Proxy); err != nil {
-		return err
-	}
-
-	if err := chainRepo.ImportGenesis(genesis.Chain); err != nil {
+	if err := chainRepo.ImportGenesis(genesis.GetChain()); err != nil {
 		return err
 	}
 

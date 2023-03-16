@@ -22,9 +22,15 @@ message GenesisPoll {
     uint64 id = 2;
   }
 
-  uint64 latest_id = 1;
-  repeated ItemSet item_set = 2;
-  repeated HashSet hash_set = 3;
+  // Key-Value set of chain
+  message ChainSet {
+    bytes chain = 1;
+    uint64 latest_id = 2;
+    repeated ItemSet item_set = 3;
+    repeated HashSet hash_set = 4;
+  }
+
+  repeated ChainSet chain_set = 1;
 }
 
 // Genesis state of proxy repository

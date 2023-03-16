@@ -22,10 +22,10 @@ type PollRepo interface {
 	Paginate(page *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
 
 	// ExportGenesis returns the entire module's state
-	ExportGenesis() (genState *types.GenesisPoll, err error)
+	ExportGenesis() (genState *types.GenesisPoll_ChainSet, err error)
 
 	// ImportGenesis sets the entire module's state
-	ImportGenesis(genState *types.GenesisPoll) error
+	ImportGenesis(genState *types.GenesisPoll_ChainSet) error
 }
 
 var (
@@ -170,9 +170,9 @@ func (k kvPollRepo) exportHashSet(store store.KVStore) (hashSet []*types.Genesis
 	return
 }
 
-func (k kvPollRepo) ExportGenesis() (genState *types.GenesisPoll, err error) {
+func (k kvPollRepo) ExportGenesis() (genState *types.GenesisPoll_ChainSet, err error) {
 	// initialize
-	genState = &types.GenesisPoll{}
+	genState = &types.GenesisPoll_ChainSet{}
 
 	// load latest id
 	genState.LatestId = sdk.BigEndianToUint64(k.root.Get(kvPollRepoKeyLatestId))
@@ -192,7 +192,7 @@ func (k kvPollRepo) ExportGenesis() (genState *types.GenesisPoll, err error) {
 	return
 }
 
-func (k kvPollRepo) ImportGenesis(genState *types.GenesisPoll) error {
+func (k kvPollRepo) ImportGenesis(genState *types.GenesisPoll_ChainSet) error {
 	// save latest id
 	k.root.Set(kvPollRepoKeyLatestId, sdk.Uint64ToBigEndian(genState.GetLatestId()))
 

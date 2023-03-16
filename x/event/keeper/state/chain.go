@@ -118,10 +118,14 @@ func (k kvChainRepo) ExportGenesis() (genState *types.GenesisChain, err error) {
 }
 
 func (k kvChainRepo) ImportGenesis(genState *types.GenesisChain) error {
-	k.root.Set(kvChainRepoKeyLatestId, genState.LatestId)
+	if genState.GetLatestId() == nil {
+		k.root.Set(kvChainRepoKeyLatestId, []byte{0x0})
+	} else {
+		k.root.Set(kvChainRepoKeyLatestId, genState.GetLatestId())
+	}
 
 	ps := prefix.NewStore(k.root, kvChainRepoPrefixItems)
-	for _, item := range genState.ItemSet {
+	for _, item := range genState.GetItemSet() {
 		ps.Set([]byte(item.Chain), item.Prefix)
 	}
 
