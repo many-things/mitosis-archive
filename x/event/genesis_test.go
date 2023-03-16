@@ -14,8 +14,8 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.DefaultGenesis()
 
 	k, ctx := keepertest.EventKeeper(t)
-	event.InitGenesis(ctx, *k, *genesisState)
-	got := event.ExportGenesis(ctx, *k)
+	event.InitGenesis(ctx, k, *genesisState)
+	got := event.ExportGenesis(ctx, k)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)

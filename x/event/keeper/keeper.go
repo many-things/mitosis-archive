@@ -11,7 +11,18 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-type Keeper struct {
+type Keeper interface {
+	GetParams(ctx sdk.Context) types.Params
+	SetParams(ctx sdk.Context, params types.Params)
+	Logger(ctx sdk.Context) log.Logger
+
+	PollKeeper
+	ProxyKeeper
+	ChainKeeper
+	GenesisKeeper
+}
+
+type keeper struct {
 	cdc        codec.BinaryCodec
 	storeKey   storetypes.StoreKey
 	memKey     storetypes.StoreKey
@@ -23,13 +34,13 @@ func NewKeeper(
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-) *Keeper {
+) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return &Keeper{
+	return &keeper{
 		cdc:        cdc,
 		storeKey:   storeKey,
 		memKey:     memKey,
@@ -38,15 +49,15 @@ func NewKeeper(
 }
 
 // GetParams get all parameters as types.Params
-func (k Keeper) GetParams(ctx sdk.Context) types.Params {
+func (k keeper) GetParams(ctx sdk.Context) types.Params {
 	return types.NewParams()
 }
 
 // SetParams set the params
-func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
+func (k keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramstore.SetParamSet(ctx, &params)
 }
 
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (k keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }

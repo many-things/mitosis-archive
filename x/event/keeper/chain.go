@@ -7,8 +7,6 @@ import (
 	"github.com/many-things/mitosis/x/event/keeper/state"
 )
 
-var _ ChainKeeper = Keeper{}
-
 type ChainKeeper interface {
 	RegisterChain(ctx sdk.Context, chain string) (byte, error)
 
@@ -19,7 +17,7 @@ type ChainKeeper interface {
 	QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error)
 }
 
-func (k Keeper) RegisterChain(ctx sdk.Context, chain string) (byte, error) {
+func (k keeper) RegisterChain(ctx sdk.Context, chain string) (byte, error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	prefix, err := chainRepo.Save(chain)
@@ -30,7 +28,7 @@ func (k Keeper) RegisterChain(ctx sdk.Context, chain string) (byte, error) {
 	return prefix, nil
 }
 
-func (k Keeper) UnregisterChain(ctx sdk.Context, chain string) error {
+func (k keeper) UnregisterChain(ctx sdk.Context, chain string) error {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	if err := chainRepo.Delete(chain); err != nil {
@@ -40,7 +38,7 @@ func (k Keeper) UnregisterChain(ctx sdk.Context, chain string) error {
 	return nil
 }
 
-func (k Keeper) QueryChain(ctx sdk.Context, chain string) (byte, error) {
+func (k keeper) QueryChain(ctx sdk.Context, chain string) (byte, error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	prefix, err := chainRepo.Load(chain)
@@ -51,7 +49,7 @@ func (k Keeper) QueryChain(ctx sdk.Context, chain string) (byte, error) {
 	return prefix, nil
 }
 
-func (k Keeper) QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error) {
+func (k keeper) QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	chains, pageResp, err := chainRepo.Paginate(pageReq)

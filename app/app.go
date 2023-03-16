@@ -517,7 +517,7 @@ func New(
 	)
 	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper)
 
-	app.EventKeeper = *eventmodulekeeper.NewKeeper(
+	app.EventKeeper = eventmodulekeeper.NewKeeper(
 		appCodec,
 		keys[eventmoduletypes.StoreKey],
 		keys[eventmoduletypes.MemStoreKey],

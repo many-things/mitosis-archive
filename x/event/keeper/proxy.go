@@ -7,14 +7,17 @@ import (
 	"github.com/many-things/mitosis/x/event/keeper/state"
 )
 
-var _ ProxyKeeper = Keeper{}
-
 type ProxyKeeper interface {
 	RegisterProxy(ctx sdk.Context, val sdk.ValAddress, prx sdk.AccAddress) error
+
 	ClearProxy(ctx sdk.Context, val sdk.ValAddress) error
+
+	QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, error)
+
+	QueryProxies(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[sdk.ValAddress, sdk.AccAddress], *query.PageResponse, error)
 }
 
-func (k Keeper) RegisterProxy(ctx sdk.Context, val sdk.ValAddress, prx sdk.AccAddress) error {
+func (k keeper) RegisterProxy(ctx sdk.Context, val sdk.ValAddress, prx sdk.AccAddress) error {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	if err := proxyRepo.Save(val, prx); err != nil {
@@ -24,7 +27,7 @@ func (k Keeper) RegisterProxy(ctx sdk.Context, val sdk.ValAddress, prx sdk.AccAd
 	return nil
 }
 
-func (k Keeper) ClearProxy(ctx sdk.Context, val sdk.ValAddress) error {
+func (k keeper) ClearProxy(ctx sdk.Context, val sdk.ValAddress) error {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	if err := proxyRepo.Delete(val); err != nil {
@@ -34,7 +37,7 @@ func (k Keeper) ClearProxy(ctx sdk.Context, val sdk.ValAddress) error {
 	return nil
 }
 
-func (k Keeper) QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, error) {
+func (k keeper) QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, error) {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	acc, err := proxyRepo.Load(val)
@@ -45,7 +48,7 @@ func (k Keeper) QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress,
 	return acc, nil
 }
 
-func (k Keeper) QueryProxies(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[sdk.ValAddress, sdk.AccAddress], *query.PageResponse, error) {
+func (k keeper) QueryProxies(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[sdk.ValAddress, sdk.AccAddress], *query.PageResponse, error) {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	accs, pageResp, err := proxyRepo.Paginate(pageReq)

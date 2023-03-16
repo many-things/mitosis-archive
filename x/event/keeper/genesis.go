@@ -6,14 +6,12 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-var _ GenesisKeeper = Keeper{}
-
 type GenesisKeeper interface {
 	ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error)
 	ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error
 }
 
-func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
+func (k keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
@@ -46,7 +44,7 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err
 	return
 }
 
-func (k Keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error {
+func (k keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 

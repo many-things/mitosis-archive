@@ -8,8 +8,6 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-var _ PollKeeper = Keeper{}
-
 type PollKeeper interface {
 	// SubmitPoll handles [server.MsgSubmit]
 	SubmitPoll(ctx sdk.Context, sender sdk.AccAddress, chain string, events []*types.Event) (uint64, error)
@@ -24,17 +22,17 @@ type PollKeeper interface {
 	QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
 }
 
-func (k Keeper) SubmitPoll(ctx sdk.Context, sender sdk.AccAddress, chain string, events []*types.Event) (uint64, error) {
+func (k keeper) SubmitPoll(ctx sdk.Context, sender sdk.AccAddress, chain string, events []*types.Event) (uint64, error) {
 	// TODO
 	return 0, nil
 }
 
-func (k Keeper) VotePoll(ctx sdk.Context, sedner sdk.AccAddress, chain string, ids []uint64) error {
+func (k keeper) VotePoll(ctx sdk.Context, sedner sdk.AccAddress, chain string, ids []uint64) error {
 	// TODO
 	return nil
 }
 
-func (k Keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error) {
+func (k keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error) {
 	defaultChain := byte(0x01) // TODO: make chain registry
 	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
 
@@ -46,7 +44,7 @@ func (k Keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll
 	return &poll, nil
 }
 
-func (k Keeper) QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
+func (k keeper) QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
 	defaultChain := byte(0x01) // TODO: make chain registry
 	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
 
