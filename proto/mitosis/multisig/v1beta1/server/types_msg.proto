@@ -26,7 +26,7 @@ message MsgSubmitPubkey {
     (gogoproto.customname) = "KeyID",
     (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.KeyID"
   ];
-  string participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
   bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.PublicKey"];
 }
 
@@ -36,21 +36,6 @@ message MsgStartKeygenResponse {}
 // MsgSubmitPubkeyResponse is message for SubmitPubkey Response
 message MsgSubmitPubkeyResponse {}
 
-// MsgStartSign is message for StartSign event
-message MsgStartSign {
-  option (gogoproto.stable_marshaler) = true;
-
-  string module = 1;
-  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
-  string key_id = 3 [
-    (gogoproto.customname) = "KeyID",
-    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.PublicKey"
-  ];
-  map<string, bytes> pub_keys = 4 [(gogoproto.castvalue) = "github.com/many-things/mitosis/x/multisig/types.PublicKey"]; // party_uid
-  bytes message_to_sign = 5 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Hash"];
-  string request_module = 6;
-}
-
 // MsgSubmitSignature is message for SubmitSignature event
 message MsgSubmitSignature {
   string module = 1;
@@ -58,9 +43,6 @@ message MsgSubmitSignature {
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
   bytes signature = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Signature"];
 }
-
-// MsgStartSignRespnose is message for StartSign Response
-message MsgStartSignResponse {}
 
 // MsgSubmitSignatureResponse is message for SubmitSignature Response
 message MsgSubmitSignatureResponse {}

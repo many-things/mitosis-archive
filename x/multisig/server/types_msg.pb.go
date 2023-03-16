@@ -9,7 +9,6 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 	_ "github.com/many-things/mitosis/x/multisig/types"
 	github_com_many_things_mitosis_x_multisig_types "github.com/many-things/mitosis/x/multisig/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
@@ -36,7 +35,7 @@ type MsgStartKeygen struct {
 	Participants []github_com_cosmos_cosmos_sdk_types.ValAddress       `protobuf:"bytes,3,rep,name=participants,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participants,omitempty"`
 }
 
-func (*MsgStartKeygen) Type() string{ return "MsgStartKeygen" }
+func (*MsgStartKeygen) Type() string { return "MsgStartKeygen" }
 func (m *MsgStartKeygen) Reset()         { *m = MsgStartKeygen{} }
 func (m *MsgStartKeygen) String() string { return proto.CompactTextString(m) }
 func (*MsgStartKeygen) ProtoMessage()    {}
@@ -99,7 +98,7 @@ type MsgSubmitPubkey struct {
 	PubKey      github_com_many_things_mitosis_x_multisig_types.PublicKey `protobuf:"bytes,4,opt,name=pub_key,json=pubKey,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.PublicKey" json:"pub_key,omitempty"`
 }
 
-func (*MsgSubmitPubkey) Type() string { return "MsgSubmitPubKey" }
+func (*MsgSubmitPubkey) Type() string { return "MsgSubmitPubkey" }
 func (m *MsgSubmitPubkey) Reset()         { *m = MsgSubmitPubkey{} }
 func (m *MsgSubmitPubkey) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitPubkey) ProtoMessage()    {}
@@ -235,88 +234,6 @@ func (m *MsgSubmitPubkeyResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgSubmitPubkeyResponse proto.InternalMessageInfo
 
-// MsgStartSign is message for StartSign event
-type MsgStartSign struct {
-	Module        string                                                               `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
-	SigID         uint64                                                               `protobuf:"varint,2,opt,name=sig_id,json=sigId,proto3" json:"sig_id,omitempty"`
-	KeyID         github_com_many_things_mitosis_x_multisig_types.PublicKey            `protobuf:"bytes,3,opt,name=key_id,json=keyId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.PublicKey" json:"key_id,omitempty"`
-	PubKeys       map[string]github_com_many_things_mitosis_x_multisig_types.PublicKey `protobuf:"bytes,4,rep,name=pub_keys,json=pubKeys,proto3,castvalue=github.com/many-things/mitosis/x/multisig/types.PublicKey" json:"pub_keys,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	MessageToSign github_com_many_things_mitosis_x_multisig_types.Hash                 `protobuf:"bytes,5,opt,name=message_to_sign,json=messageToSign,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Hash" json:"message_to_sign,omitempty"`
-	RequestModule string                                                               `protobuf:"bytes,6,opt,name=request_module,json=requestModule,proto3" json:"request_module,omitempty"`
-}
-
-func (*MsgStartSign) Type() string { return "MsgStartSign" }
-func (m *MsgStartSign) Reset()         { *m = MsgStartSign{} }
-func (m *MsgStartSign) String() string { return proto.CompactTextString(m) }
-func (*MsgStartSign) ProtoMessage()    {}
-func (*MsgStartSign) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9d7fa7963eb62b7, []int{4}
-}
-func (m *MsgStartSign) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgStartSign) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *MsgStartSign) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgStartSign.Merge(m, src)
-}
-func (m *MsgStartSign) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgStartSign) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgStartSign.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgStartSign proto.InternalMessageInfo
-
-func (m *MsgStartSign) GetModule() string {
-	if m != nil {
-		return m.Module
-	}
-	return ""
-}
-
-func (m *MsgStartSign) GetSigID() uint64 {
-	if m != nil {
-		return m.SigID
-	}
-	return 0
-}
-
-func (m *MsgStartSign) GetKeyID() github_com_many_things_mitosis_x_multisig_types.PublicKey {
-	if m != nil {
-		return m.KeyID
-	}
-	return nil
-}
-
-func (m *MsgStartSign) GetPubKeys() map[string]github_com_many_things_mitosis_x_multisig_types.PublicKey {
-	if m != nil {
-		return m.PubKeys
-	}
-	return nil
-}
-
-func (m *MsgStartSign) GetMessageToSign() github_com_many_things_mitosis_x_multisig_types.Hash {
-	if m != nil {
-		return m.MessageToSign
-	}
-	return nil
-}
-
-func (m *MsgStartSign) GetRequestModule() string {
-	if m != nil {
-		return m.RequestModule
-	}
-	return ""
-}
-
 // MsgSubmitSignature is message for SubmitSignature event
 type MsgSubmitSignature struct {
 	Module      string                                                    `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
@@ -325,12 +242,12 @@ type MsgSubmitSignature struct {
 	Signature   github_com_many_things_mitosis_x_multisig_types.Signature `protobuf:"bytes,4,opt,name=signature,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"signature,omitempty"`
 }
 
-func (*MsgSubmitSignature) Type() string { return "MsgSubmitSignature"}
+func (*MsgSubmitSignature) Type() string { return "MsgSubmitSignature "}
 func (m *MsgSubmitSignature) Reset()         { *m = MsgSubmitSignature{} }
 func (m *MsgSubmitSignature) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitSignature) ProtoMessage()    {}
 func (*MsgSubmitSignature) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9d7fa7963eb62b7, []int{5}
+	return fileDescriptor_b9d7fa7963eb62b7, []int{4}
 }
 func (m *MsgSubmitSignature) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -387,43 +304,6 @@ func (m *MsgSubmitSignature) GetSignature() github_com_many_things_mitosis_x_mul
 	return nil
 }
 
-// MsgStartSignRespnose is message for StartSign Response
-type MsgStartSignResponse struct {
-}
-
-func (m *MsgStartSignResponse) Reset()         { *m = MsgStartSignResponse{} }
-func (m *MsgStartSignResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgStartSignResponse) ProtoMessage()    {}
-func (*MsgStartSignResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9d7fa7963eb62b7, []int{6}
-}
-func (m *MsgStartSignResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgStartSignResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgStartSignResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgStartSignResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgStartSignResponse.Merge(m, src)
-}
-func (m *MsgStartSignResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgStartSignResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgStartSignResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgStartSignResponse proto.InternalMessageInfo
-
 // MsgSubmitSignatureResponse is message for SubmitSignature Response
 type MsgSubmitSignatureResponse struct {
 }
@@ -432,7 +312,7 @@ func (m *MsgSubmitSignatureResponse) Reset()         { *m = MsgSubmitSignatureRe
 func (m *MsgSubmitSignatureResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitSignatureResponse) ProtoMessage()    {}
 func (*MsgSubmitSignatureResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9d7fa7963eb62b7, []int{7}
+	return fileDescriptor_b9d7fa7963eb62b7, []int{5}
 }
 func (m *MsgSubmitSignatureResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -466,10 +346,7 @@ func init() {
 	proto.RegisterType((*MsgSubmitPubkey)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgSubmitPubkey")
 	proto.RegisterType((*MsgStartKeygenResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgStartKeygenResponse")
 	proto.RegisterType((*MsgSubmitPubkeyResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgSubmitPubkeyResponse")
-	proto.RegisterType((*MsgStartSign)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgStartSign")
-	proto.RegisterMapType((map[string]github_com_many_things_mitosis_x_multisig_types.PublicKey)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgStartSign.PubKeysEntry")
 	proto.RegisterType((*MsgSubmitSignature)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgSubmitSignature")
-	proto.RegisterType((*MsgStartSignResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgStartSignResponse")
 	proto.RegisterType((*MsgSubmitSignatureResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.MsgSubmitSignatureResponse")
 }
 
@@ -478,50 +355,39 @@ func init() {
 }
 
 var fileDescriptor_b9d7fa7963eb62b7 = []byte{
-	// 688 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x54, 0x4b, 0x6b, 0xdb, 0x4a,
-	0x14, 0x8e, 0xfc, 0xca, 0xcd, 0x44, 0x49, 0x2e, 0x22, 0xe4, 0xea, 0x9a, 0x60, 0x1b, 0x43, 0xc0,
-	0x04, 0x22, 0x35, 0x7d, 0x40, 0x1a, 0xc8, 0xa2, 0xa2, 0x29, 0x4d, 0x4d, 0x20, 0xc8, 0x6d, 0xa0,
-	0x2d, 0xc5, 0x1d, 0x59, 0xc3, 0x64, 0xb0, 0xa5, 0x51, 0x74, 0x46, 0xa1, 0xda, 0x75, 0xdd, 0x55,
-	0x17, 0x5d, 0x74, 0x57, 0xfa, 0x13, 0xfa, 0x2f, 0xba, 0xcc, 0xb2, 0x74, 0xe1, 0x16, 0xe7, 0x5f,
-	0x78, 0x55, 0xf4, 0xb0, 0xa2, 0xb4, 0x0d, 0x24, 0xf5, 0xa2, 0x2b, 0x8f, 0xce, 0xf8, 0x7c, 0x3a,
-	0xdf, 0xe3, 0x08, 0xe9, 0x0e, 0x13, 0x1c, 0x18, 0xe8, 0x4e, 0x30, 0x10, 0x0c, 0x18, 0xd5, 0x4f,
-	0x36, 0x2d, 0x22, 0xf0, 0xa6, 0x0e, 0xc4, 0x3f, 0x21, 0xbe, 0x2e, 0x42, 0x8f, 0x40, 0xd7, 0x01,
-	0xaa, 0x79, 0x3e, 0x17, 0x5c, 0x59, 0x77, 0xb0, 0x1b, 0x8a, 0x23, 0xe6, 0x52, 0xd0, 0xd2, 0x5e,
-	0x2d, 0x6d, 0xd1, 0x26, 0x18, 0x5a, 0xd2, 0x5b, 0x5d, 0xef, 0x71, 0x70, 0x38, 0xe8, 0x16, 0x06,
-	0xa2, 0x1f, 0x07, 0xc4, 0x0f, 0x33, 0x74, 0x0f, 0x53, 0xe6, 0x62, 0xc1, 0xb8, 0x9b, 0xe0, 0x56,
-	0x97, 0x29, 0xa7, 0x3c, 0x3e, 0xea, 0xd1, 0x29, 0xad, 0xae, 0x52, 0xce, 0xe9, 0x80, 0xe8, 0xd8,
-	0x63, 0x3a, 0x76, 0x5d, 0x2e, 0xe2, 0x16, 0x48, 0x6f, 0xd7, 0x2e, 0x1d, 0xde, 0xc3, 0x3e, 0x76,
-	0xd2, 0xbf, 0x35, 0xbf, 0x4a, 0x68, 0x71, 0x1f, 0x68, 0x47, 0x60, 0x5f, 0xb4, 0x49, 0x48, 0x89,
-	0xab, 0xac, 0xa0, 0x8a, 0xc3, 0xed, 0x60, 0x40, 0x54, 0xa9, 0x21, 0xb5, 0xe6, 0xcc, 0xf4, 0x49,
-	0x79, 0x8a, 0x2a, 0x7d, 0x12, 0x76, 0x99, 0xad, 0x16, 0xa2, 0xba, 0x61, 0x8c, 0x86, 0xf5, 0x72,
-	0x9b, 0x84, 0x7b, 0xf7, 0xc7, 0xc3, 0xfa, 0x1d, 0xca, 0xc4, 0x51, 0x60, 0x69, 0x3d, 0xee, 0xe8,
-	0x91, 0x0a, 0x1b, 0x89, 0x0c, 0x99, 0x84, 0xaf, 0xce, 0xe7, 0x88, 0x55, 0xd3, 0xe2, 0x46, 0xb3,
-	0xdc, 0x27, 0xe1, 0x9e, 0xad, 0x3c, 0x41, 0xb2, 0x87, 0x7d, 0xc1, 0x7a, 0xcc, 0xc3, 0xae, 0x00,
-	0xb5, 0xd8, 0x28, 0xb6, 0x64, 0x63, 0x73, 0x3c, 0xac, 0x6f, 0xe4, 0x70, 0x53, 0xc5, 0x92, 0x9f,
-	0x0d, 0xb0, 0xfb, 0x29, 0xd4, 0x21, 0x1e, 0xdc, 0xb3, 0x6d, 0x9f, 0x00, 0x98, 0x17, 0x60, 0x9a,
-	0x9f, 0x0a, 0x68, 0x29, 0x22, 0x17, 0x58, 0x0e, 0x13, 0x07, 0x81, 0xd5, 0x27, 0xe1, 0xdf, 0x60,
-	0xd7, 0x41, 0xf3, 0xb9, 0xb1, 0xd4, 0x62, 0x8c, 0xff, 0x07, 0xe4, 0xf2, 0x28, 0xca, 0x21, 0x9a,
-	0xf5, 0x02, 0xab, 0xdb, 0x27, 0xa1, 0x5a, 0x6a, 0x48, 0x2d, 0xd9, 0xd8, 0x19, 0x0f, 0xeb, 0x77,
-	0xaf, 0x3b, 0xe7, 0x41, 0x60, 0x0d, 0x58, 0xaf, 0x4d, 0x42, 0xb3, 0xe2, 0x05, 0x56, 0x9b, 0x84,
-	0x4d, 0x15, 0xad, 0x5c, 0xcc, 0x83, 0x49, 0xc0, 0xe3, 0x2e, 0x90, 0xe6, 0xff, 0xe8, 0xbf, 0x9f,
-	0xc4, 0xcc, 0xae, 0xde, 0x95, 0x90, 0x3c, 0xe9, 0xea, 0x30, 0x7a, 0x79, 0x86, 0x1a, 0xa8, 0x02,
-	0x8c, 0x4e, 0x54, 0x2e, 0x19, 0x73, 0x91, 0xca, 0x1d, 0x46, 0x23, 0xb1, 0x80, 0xd1, 0x3d, 0x5b,
-	0x79, 0x91, 0xf9, 0x90, 0xe8, 0xf4, 0x20, 0xef, 0xc3, 0x14, 0xfc, 0x52, 0x2f, 0x3e, 0x48, 0xe8,
-	0x9f, 0x54, 0x37, 0x50, 0x4b, 0x8d, 0x62, 0x6b, 0xfe, 0xe6, 0xae, 0x76, 0xf5, 0xb5, 0xd5, 0xf2,
-	0x2c, 0x23, 0xf4, 0x36, 0x09, 0x61, 0xd7, 0x15, 0x7e, 0x68, 0xec, 0xbc, 0xf9, 0x36, 0xcd, 0x7c,
-	0xb3, 0x89, 0xfe, 0xa0, 0xbc, 0x44, 0x4b, 0x0e, 0x01, 0xc0, 0x94, 0x74, 0x05, 0xef, 0x02, 0xa3,
-	0xae, 0x5a, 0x8e, 0x0d, 0xde, 0x1a, 0x0f, 0xeb, 0xb7, 0xaf, 0xfb, 0x82, 0x87, 0x18, 0x8e, 0xcc,
-	0x85, 0x14, 0xf0, 0x31, 0x8f, 0xcd, 0x59, 0x43, 0x8b, 0x3e, 0x39, 0x0e, 0x08, 0x88, 0x6e, 0x6a,
-	0x52, 0x25, 0x36, 0x69, 0x21, 0xad, 0xee, 0xc7, 0xc5, 0xea, 0x36, 0x92, 0xf3, 0x04, 0x95, 0x7f,
-	0x51, 0x31, 0x4a, 0x5b, 0x62, 0x68, 0x74, 0x54, 0x96, 0x51, 0xf9, 0x04, 0x0f, 0x02, 0x12, 0x9b,
-	0x29, 0x9b, 0xc9, 0xc3, 0x76, 0x61, 0x4b, 0xda, 0x2e, 0xbd, 0xff, 0x58, 0x97, 0x9a, 0xaf, 0x0b,
-	0x48, 0xc9, 0x22, 0x13, 0xbd, 0x1a, 0x8b, 0xc0, 0x27, 0x53, 0x84, 0xe3, 0x37, 0x9b, 0x24, 0x4f,
-	0xbd, 0x49, 0xcf, 0xd1, 0x1c, 0x4c, 0x66, 0x9b, 0x66, 0x97, 0x32, 0x82, 0xe6, 0x39, 0x5e, 0x73,
-	0x05, 0x2d, 0xe7, 0x23, 0x93, 0x6d, 0xcc, 0x2a, 0xaa, 0xfe, 0xaa, 0xcc, 0xe4, 0xd6, 0x78, 0xf4,
-	0x79, 0x54, 0x93, 0x4e, 0x47, 0x35, 0xe9, 0xfb, 0xa8, 0x26, 0xbd, 0x3d, 0xab, 0xcd, 0x9c, 0x9e,
-	0xd5, 0x66, 0xbe, 0x9c, 0xd5, 0x66, 0x9e, 0xdd, 0xb8, 0xfa, 0x54, 0x49, 0x62, 0xad, 0x4a, 0xfc,
-	0xa1, 0xbf, 0xf5, 0x23, 0x00, 0x00, 0xff, 0xff, 0x85, 0x8c, 0x72, 0x41, 0xce, 0x06, 0x00, 0x00,
+	// 507 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x94, 0x4f, 0x8b, 0xd3, 0x40,
+	0x18, 0x87, 0x9b, 0x76, 0xb7, 0xd2, 0x71, 0x51, 0x08, 0xb2, 0xc6, 0xb2, 0xa4, 0xa5, 0x20, 0x2c,
+	0x0b, 0xcd, 0x58, 0xc4, 0x83, 0x07, 0x0f, 0x16, 0x2f, 0x6b, 0x11, 0x96, 0x14, 0x17, 0xd4, 0x43,
+	0x99, 0x34, 0x2f, 0xb3, 0x43, 0x9b, 0xcc, 0x98, 0x77, 0x66, 0x71, 0x6e, 0x7e, 0x04, 0xbf, 0x8a,
+	0xdf, 0xc2, 0xe3, 0x1e, 0xc5, 0x43, 0x91, 0xf6, 0x5b, 0xf4, 0x24, 0x49, 0xd3, 0x6e, 0x57, 0x59,
+	0xf0, 0x0f, 0xb2, 0xa7, 0x4c, 0xe6, 0xcd, 0xfb, 0xe4, 0xf7, 0x3e, 0x24, 0x43, 0x68, 0x22, 0xb4,
+	0x44, 0x81, 0x34, 0x31, 0x53, 0x2d, 0x50, 0x70, 0x7a, 0xde, 0x8b, 0x40, 0xb3, 0x1e, 0x45, 0xc8,
+	0xce, 0x21, 0xa3, 0xda, 0x2a, 0xc0, 0x51, 0x82, 0x3c, 0x50, 0x99, 0xd4, 0xd2, 0x3d, 0x4a, 0x58,
+	0x6a, 0xf5, 0x99, 0x48, 0x39, 0x06, 0x65, 0x6f, 0x50, 0xb6, 0x04, 0x6b, 0x46, 0xb0, 0xea, 0x6d,
+	0x1e, 0x8d, 0x25, 0x26, 0x12, 0x69, 0xc4, 0x10, 0xe8, 0x7b, 0x03, 0x99, 0xdd, 0xd0, 0x15, 0xe3,
+	0x22, 0x65, 0x5a, 0xc8, 0x74, 0xc5, 0x6d, 0xde, 0xe3, 0x92, 0xcb, 0x62, 0x49, 0xf3, 0x55, 0xb9,
+	0x7b, 0xc0, 0xa5, 0xe4, 0x53, 0xa0, 0x4c, 0x09, 0xca, 0xd2, 0x54, 0xea, 0xa2, 0x05, 0xcb, 0xea,
+	0xc3, 0x6b, 0xc3, 0x2b, 0x96, 0xb1, 0xa4, 0x7c, 0xac, 0xf3, 0xcd, 0x21, 0x77, 0x5e, 0x21, 0x1f,
+	0x6a, 0x96, 0xe9, 0x01, 0x58, 0x0e, 0xa9, 0xbb, 0x4f, 0xea, 0x89, 0x8c, 0xcd, 0x14, 0x3c, 0xa7,
+	0xed, 0x1c, 0x36, 0xc2, 0xf2, 0xce, 0x7d, 0x43, 0xea, 0x13, 0xb0, 0x23, 0x11, 0x7b, 0xd5, 0x7c,
+	0xbf, 0xdf, 0x9f, 0xcf, 0x5a, 0xbb, 0x03, 0xb0, 0xc7, 0x2f, 0x96, 0xb3, 0xd6, 0x13, 0x2e, 0xf4,
+	0x99, 0x89, 0x82, 0xb1, 0x4c, 0x68, 0x6e, 0xa1, 0xbb, 0xd2, 0xb0, 0x51, 0xf8, 0xe1, 0x32, 0x47,
+	0x61, 0x2d, 0x28, 0x1a, 0xc3, 0xdd, 0x09, 0xd8, 0xe3, 0xd8, 0x7d, 0x4d, 0xf6, 0x14, 0xcb, 0xb4,
+	0x18, 0x0b, 0xc5, 0x52, 0x8d, 0x5e, 0xad, 0x5d, 0x3b, 0xdc, 0xeb, 0xf7, 0x96, 0xb3, 0x56, 0x77,
+	0x8b, 0x5b, 0x1a, 0x5b, 0x5d, 0xba, 0x18, 0x4f, 0x4a, 0xd4, 0x29, 0x9b, 0x3e, 0x8f, 0xe3, 0x0c,
+	0x10, 0xc3, 0x2b, 0x98, 0xce, 0xe7, 0x2a, 0xb9, 0x9b, 0x0f, 0x67, 0xa2, 0x44, 0xe8, 0x13, 0x13,
+	0x4d, 0xc0, 0xde, 0xc4, 0x74, 0x43, 0x72, 0x7b, 0x2b, 0x96, 0x57, 0x6b, 0x3b, 0x7f, 0x37, 0xdc,
+	0x36, 0xc5, 0x3d, 0x25, 0xb7, 0x94, 0x89, 0x46, 0x13, 0xb0, 0xde, 0x4e, 0x01, 0x7c, 0xb6, 0x9c,
+	0xb5, 0x9e, 0xfe, 0x69, 0xce, 0x13, 0x13, 0x4d, 0xc5, 0x78, 0x00, 0x36, 0xac, 0x2b, 0x13, 0x0d,
+	0xc0, 0x76, 0x3c, 0xb2, 0x7f, 0xf5, 0x7b, 0x08, 0x01, 0x95, 0x4c, 0x11, 0x3a, 0x0f, 0xc8, 0xfd,
+	0x9f, 0x64, 0x6e, 0x4a, 0x1f, 0xab, 0xc4, 0xdd, 0xd4, 0x86, 0x82, 0xa7, 0x4c, 0x9b, 0x0c, 0xae,
+	0x75, 0xdd, 0x26, 0x75, 0x14, 0x7c, 0xed, 0x7a, 0xa7, 0xdf, 0xc8, 0x5d, 0x0f, 0x05, 0xcf, 0x95,
+	0xa1, 0xe0, 0xff, 0x4b, 0xd9, 0x3b, 0xd2, 0xc0, 0x75, 0xb6, 0x7f, 0x91, 0xb6, 0x19, 0x30, 0xbc,
+	0xe4, 0x75, 0x0e, 0x48, 0xf3, 0x57, 0x03, 0x6b, 0x41, 0xfd, 0x97, 0x5f, 0xe6, 0xbe, 0x73, 0x31,
+	0xf7, 0x9d, 0xef, 0x73, 0xdf, 0xf9, 0xb4, 0xf0, 0x2b, 0x17, 0x0b, 0xbf, 0xf2, 0x75, 0xe1, 0x57,
+	0xde, 0x3e, 0xfa, 0xfd, 0xb7, 0xaf, 0x4e, 0x8e, 0xa8, 0x5e, 0xfc, 0xb9, 0x8f, 0x7f, 0x04, 0x00,
+	0x00, 0xff, 0xff, 0x6f, 0x13, 0x7c, 0xc4, 0x9f, 0x04, 0x00, 0x00,
 }
 
 func (m *MsgStartKeygen) Marshal() (dAtA []byte, err error) {
@@ -667,88 +533,6 @@ func (m *MsgSubmitPubkeyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgStartSign) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgStartSign) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgStartSign) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.RequestModule) > 0 {
-		i -= len(m.RequestModule)
-		copy(dAtA[i:], m.RequestModule)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.RequestModule)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.MessageToSign) > 0 {
-		i -= len(m.MessageToSign)
-		copy(dAtA[i:], m.MessageToSign)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.MessageToSign)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.PubKeys) > 0 {
-		keysForPubKeys := make([]string, 0, len(m.PubKeys))
-		for k := range m.PubKeys {
-			keysForPubKeys = append(keysForPubKeys, string(k))
-		}
-		github_com_gogo_protobuf_sortkeys.Strings(keysForPubKeys)
-		for iNdEx := len(keysForPubKeys) - 1; iNdEx >= 0; iNdEx-- {
-			v := m.PubKeys[string(keysForPubKeys[iNdEx])]
-			baseI := i
-			if len(v) > 0 {
-				i -= len(v)
-				copy(dAtA[i:], v)
-				i = encodeVarintTypesMsg(dAtA, i, uint64(len(v)))
-				i--
-				dAtA[i] = 0x12
-			}
-			i -= len(keysForPubKeys[iNdEx])
-			copy(dAtA[i:], keysForPubKeys[iNdEx])
-			i = encodeVarintTypesMsg(dAtA, i, uint64(len(keysForPubKeys[iNdEx])))
-			i--
-			dAtA[i] = 0xa
-			i = encodeVarintTypesMsg(dAtA, i, uint64(baseI-i))
-			i--
-			dAtA[i] = 0x22
-		}
-	}
-	if len(m.KeyID) > 0 {
-		i -= len(m.KeyID)
-		copy(dAtA[i:], m.KeyID)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.KeyID)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.SigID != 0 {
-		i = encodeVarintTypesMsg(dAtA, i, uint64(m.SigID))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Module) > 0 {
-		i -= len(m.Module)
-		copy(dAtA[i:], m.Module)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.Module)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *MsgSubmitSignature) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -795,29 +579,6 @@ func (m *MsgSubmitSignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0xa
 	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgStartSignResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgStartSignResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgStartSignResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
 	return len(dAtA) - i, nil
 }
 
@@ -921,46 +682,6 @@ func (m *MsgSubmitPubkeyResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgStartSign) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Module)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	if m.SigID != 0 {
-		n += 1 + sovTypesMsg(uint64(m.SigID))
-	}
-	l = len(m.KeyID)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	if len(m.PubKeys) > 0 {
-		for k, v := range m.PubKeys {
-			_ = k
-			_ = v
-			l = 0
-			if len(v) > 0 {
-				l = 1 + len(v) + sovTypesMsg(uint64(len(v)))
-			}
-			mapEntrySize := 1 + len(k) + sovTypesMsg(uint64(len(k))) + l
-			n += mapEntrySize + 1 + sovTypesMsg(uint64(mapEntrySize))
-		}
-	}
-	l = len(m.MessageToSign)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	l = len(m.RequestModule)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	return n
-}
-
 func (m *MsgSubmitSignature) Size() (n int) {
 	if m == nil {
 		return 0
@@ -982,15 +703,6 @@ func (m *MsgSubmitSignature) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTypesMsg(uint64(l))
 	}
-	return n
-}
-
-func (m *MsgStartSignResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	return n
 }
 
@@ -1252,7 +964,7 @@ func (m *MsgSubmitPubkey) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Participant", wireType)
 			}
-			var stringLen uint64
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypesMsg
@@ -1262,23 +974,25 @@ func (m *MsgSubmitPubkey) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthTypesMsg
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypesMsg
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Participant = github_com_cosmos_cosmos_sdk_types.ValAddress(dAtA[iNdEx:postIndex])
+			m.Participant = append(m.Participant[:0], dAtA[iNdEx:postIndex]...)
+			if m.Participant == nil {
+				m.Participant = []byte{}
+			}
 			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
@@ -1414,333 +1128,6 @@ func (m *MsgSubmitPubkeyResponse) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: MsgSubmitPubkeyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypesMsg(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgStartSign) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypesMsg
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgStartSign: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgStartSign: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Module", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Module = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SigID", wireType)
-			}
-			m.SigID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SigID |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field KeyID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.KeyID = github_com_many_things_mitosis_x_multisig_types.PublicKey(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PubKeys", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.PubKeys == nil {
-				m.PubKeys = make(map[string]github_com_many_things_mitosis_x_multisig_types.PublicKey)
-			}
-			var mapkey string
-			mapvalue := []byte{}
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowTypesMsg
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowTypesMsg
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthTypesMsg
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey < 0 {
-						return ErrInvalidLengthTypesMsg
-					}
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					var mapbyteLen uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowTypesMsg
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapbyteLen |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intMapbyteLen := int(mapbyteLen)
-					if intMapbyteLen < 0 {
-						return ErrInvalidLengthTypesMsg
-					}
-					postbytesIndex := iNdEx + intMapbyteLen
-					if postbytesIndex < 0 {
-						return ErrInvalidLengthTypesMsg
-					}
-					if postbytesIndex > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapvalue = make([]byte, mapbyteLen)
-					copy(mapvalue, dAtA[iNdEx:postbytesIndex])
-					iNdEx = postbytesIndex
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipTypesMsg(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if (skippy < 0) || (iNdEx+skippy) < 0 {
-						return ErrInvalidLengthTypesMsg
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.PubKeys[mapkey] = ((github_com_many_things_mitosis_x_multisig_types.PublicKey)(mapvalue))
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MessageToSign", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.MessageToSign = append(m.MessageToSign[:0], dAtA[iNdEx:postIndex]...)
-			if m.MessageToSign == nil {
-				m.MessageToSign = []byte{}
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RequestModule", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RequestModule = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypesMsg(dAtA[iNdEx:])
@@ -1910,56 +1297,6 @@ func (m *MsgSubmitSignature) Unmarshal(dAtA []byte) error {
 				m.Signature = []byte{}
 			}
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypesMsg(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgStartSignResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypesMsg
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgStartSignResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgStartSignResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypesMsg(dAtA[iNdEx:])

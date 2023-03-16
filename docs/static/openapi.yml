@@ -76504,9 +76504,6 @@ definitions:
   manythings.mitosis.v1beta1.multisig.server.MsgStartKeygenResponse:
     type: object
     title: MsgStartKeygenResponse is message for StartKeygen Response
-  manythings.mitosis.v1beta1.multisig.server.MsgStartSignResponse:
-    type: object
-    title: MsgStartSignRespnose is message for StartSign Response
   manythings.mitosis.v1beta1.multisig.server.MsgSubmitPubkeyResponse:
     type: object
     title: MsgSubmitPubkeyResponse is message for SubmitPubkey Response

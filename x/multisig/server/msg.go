@@ -23,11 +23,6 @@ func (m msgServer) SubmitPubkey(ctx context.Context, pubkey *MsgSubmitPubkey) (*
 	panic("implement me")
 }
 
-func (m msgServer) StartSign(ctx context.Context, sign *MsgStartSign) (*MsgStartSignResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (m msgServer) SubmitSignature(ctx context.Context, signature *MsgSubmitSignature) (*MsgSubmitSignatureResponse, error) {
 	//TODO implement me
 	panic("implement me")

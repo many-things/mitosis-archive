@@ -15,7 +15,6 @@ option go_package = "github.com/many-things/mitosis/x/multisig/server";
 service Msg {
   rpc StartKeygen(MsgStartKeygen) returns (MsgStartKeygenResponse);
   rpc SubmitPubkey(MsgSubmitPubkey) returns (MsgSubmitPubkeyResponse);
-  rpc StartSign(MsgStartSign) returns (MsgStartSignResponse);
   rpc SubmitSignature(MsgSubmitSignature) returns (MsgSubmitSignatureResponse);
 }
 
