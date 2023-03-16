@@ -82,7 +82,7 @@ message QueryChain {
 // Response of [QueryChain]
 message QueryChainResponse {
   string chain = 1;
-  bytes prefix = 2;
+  bytes chain_prefix = 2;
 }
 
 // Query list of chain info

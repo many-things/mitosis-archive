@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.event;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// EventType is message group includes all event types
+message EventType {
+  // EventType_SubmitEvent is the event type of [MsgSubmitEvent]
+  message SubmitEvent {
+    bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+    string chain = 3;
+    repeated bytes event_hash = 4;
+  }
+
+  // EventType_VoteEvent is the event type of [MsgVoteEvent]
+  message VoteEvent {
+    bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+    string chain = 3;
+    repeated uint64 poll_ids = 4;
+  }
+
+  // EventType_RegisterProxy is the event type of [MsgRegisterProxy]
+  message RegisterProxy {
+    bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_registered = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  }
+
+  // EventType_ClearProxy is the event type of [MsgClearProxy]
+  message ClearProxy {
+    bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_cleared = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  }
+
+  // EventType_RegisterChain is the event type of [MsgRegisterChain]
+  message RegisterChain {
+    bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+    string chain = 3;
+    bytes chain_prefix = 4;
+  }
+
+  // EventType_UnregisterChain is the event type of [MsgUnregisterChain]
+  message UnregisterChain {
+    bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+    string chain = 3;
+    bytes chain_prefix = 4;
+  }
+}

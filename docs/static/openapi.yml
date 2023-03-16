@@ -45541,7 +45541,7 @@ paths:
             properties:
               chain:
                 type: string
-              prefix:
+              chain_prefix:
                 type: string
                 format: byte
             title: Response of [QueryChain]
@@ -45587,7 +45587,7 @@ paths:
                   properties:
                     chain:
                       type: string
-                    prefix:
+                    chain_prefix:
                       type: string
                       format: byte
                   title: Response of [QueryChain]
@@ -76425,7 +76425,7 @@ definitions:
     properties:
       chain:
         type: string
-      prefix:
+      chain_prefix:
         type: string
         format: byte
     title: Response of [QueryChain]
@@ -76439,7 +76439,7 @@ definitions:
           properties:
             chain:
               type: string
-            prefix:
+            chain_prefix:
               type: string
               format: byte
           title: Response of [QueryChain]
