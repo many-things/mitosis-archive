@@ -45826,15 +45826,9 @@ paths:
                                   type: string
                                 amount:
                                   type: string
-                              description: >-
-                                Coin defines a token with a denomination and an
-                                amount.
-
-
-                                NOTE: The amount field is an Int which
-                                implements the custom method
-
-                                signatures required by gogoproto.
+                                decimal:
+                                  type: string
+                                  format: uint64
                         title: TxReqEvent Message
                       res:
                         type: object
@@ -45976,15 +45970,9 @@ paths:
                                     type: string
                                   amount:
                                     type: string
-                                description: >-
-                                  Coin defines a token with a denomination and
-                                  an amount.
-
-
-                                  NOTE: The amount field is an Int which
-                                  implements the custom method
-
-                                  signatures required by gogoproto.
+                                  decimal:
+                                    type: string
+                                    format: uint64
                           title: TxReqEvent Message
                         res:
                           type: object
@@ -46236,6 +46224,47 @@ paths:
           in: query
           required: false
           type: boolean
+      tags:
+        - Query
+  /mitosis/event/v1beta1/proxy-reverse/{proxy_account}:
+    get:
+      summary: Get proxied validator
+      operationId: ManythingsMitosisV1Beta1EventServerProxyReverse
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validator:
+                type: string
+                format: byte
+            title: Response of [QueryProxyReverse]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: proxy_account
+          description: proxy account address
+          in: path
+          required: true
+          type: string
+          format: byte
       tags:
         - Query
   /mitosis/event/v1beta1/proxy/{validator}:
@@ -76127,6 +76156,16 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  manythings.mitosis.v1beta1.common.Coin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+      decimal:
+        type: string
+        format: uint64
   manythings.mitosis.v1beta1.event.Event:
     type: object
     properties:
@@ -76167,14 +76206,9 @@ definitions:
                   type: string
                 amount:
                   type: string
-              description: >-
-                Coin defines a token with a denomination and an amount.
-
-
-                NOTE: The amount field is an Int which implements the custom
-                method
-
-                signatures required by gogoproto.
+                decimal:
+                  type: string
+                  format: uint64
         title: TxReqEvent Message
       res:
         type: object
@@ -76276,14 +76310,9 @@ definitions:
                       type: string
                     amount:
                       type: string
-                  description: >-
-                    Coin defines a token with a denomination and an amount.
-
-
-                    NOTE: The amount field is an Int which implements the custom
-                    method
-
-                    signatures required by gogoproto.
+                    decimal:
+                      type: string
+                      format: uint64
             title: TxReqEvent Message
           res:
             type: object
@@ -76348,11 +76377,9 @@ definitions:
               type: string
             amount:
               type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
-
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+            decimal:
+              type: string
+              format: uint64
     title: TxReqEvent Message
   manythings.mitosis.v1beta1.event.TxResEvent:
     type: object
@@ -76536,14 +76563,9 @@ definitions:
                           type: string
                         amount:
                           type: string
-                      description: >-
-                        Coin defines a token with a denomination and an amount.
-
-
-                        NOTE: The amount field is an Int which implements the
-                        custom method
-
-                        signatures required by gogoproto.
+                        decimal:
+                          type: string
+                          format: uint64
                 title: TxReqEvent Message
               res:
                 type: object
@@ -76648,15 +76670,9 @@ definitions:
                             type: string
                           amount:
                             type: string
-                        description: >-
-                          Coin defines a token with a denomination and an
-                          amount.
-
-
-                          NOTE: The amount field is an Int which implements the
-                          custom method
-
-                          signatures required by gogoproto.
+                          decimal:
+                            type: string
+                            format: uint64
                   title: TxReqEvent Message
                 res:
                   type: object
@@ -76751,6 +76767,13 @@ definitions:
         type: string
         format: byte
     title: Response of [QueryProxy]
+  manythings.mitosis.v1beta1.event.server.QueryProxyReverseResponse:
+    type: object
+    properties:
+      validator:
+        type: string
+        format: byte
+    title: Response of [QueryProxyReverse]
   manythings.mitosis.v1beta1.multisig.Params:
     type: object
     description: Params defines the parameters for the module.

@@ -62,6 +62,17 @@ func (k queryServer) Proxy(ctx context.Context, req *QueryProxy) (*QueryProxyRes
 	return &QueryProxyResponse{Validator: req.GetValidator(), ProxyAccount: proxy}, nil
 }
 
+func (k queryServer) ProxyReverse(ctx context.Context, req *QueryProxyReverse) (*QueryProxyReverseResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	validator, err := k.baseKeeper.QueryProxyReverse(wctx, req.GetProxyAccount())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryProxyReverseResponse{Validator: validator}, nil
+}
+
 func (k queryServer) Proxies(ctx context.Context, req *QueryProxies) (*QueryProxiesResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 

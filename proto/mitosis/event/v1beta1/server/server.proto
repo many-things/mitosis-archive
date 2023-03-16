@@ -51,6 +51,11 @@ service Query {
     option (google.api.http) = {get: "/mitosis/event/v1beta1/proxy/{validator}"};
   }
 
+  // Get proxied validator
+  rpc ProxyReverse(QueryProxyReverse) returns (QueryProxyReverseResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/proxy-reverse/{proxy_account}"};
+  }
+
   // List proxies
   rpc Proxies(QueryProxies) returns (QueryProxiesResponse) {
     option (google.api.http) = {get: "/mitosis/event/v1beta1/proxies"};

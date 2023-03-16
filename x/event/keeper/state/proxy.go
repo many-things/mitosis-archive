@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
@@ -12,6 +13,8 @@ import (
 
 type ProxyRepo interface {
 	Load(validator sdk.ValAddress) (sdk.AccAddress, error)
+
+	LoadByProxy(proxyAccount sdk.AccAddress) (sdk.ValAddress, error)
 
 	Save(validator sdk.ValAddress, proxy sdk.AccAddress) error
 
@@ -27,7 +30,8 @@ type ProxyRepo interface {
 }
 
 var (
-	kvProxyRepoItemsPrefix = []byte{0x01}
+	kvProxyRepoItemsPrefix        = []byte{0x01}
+	kvProxyRepoItemsReversePrefix = []byte{0x02}
 )
 
 type kvProxyRepo struct {
@@ -43,13 +47,25 @@ func (k kvProxyRepo) Load(validator sdk.ValAddress) (sdk.AccAddress, error) {
 	return prefix.NewStore(k.root, kvProxyRepoItemsPrefix).Get(validator.Bytes()), nil
 }
 
+func (k kvProxyRepo) LoadByProxy(proxyAccount sdk.AccAddress) (sdk.ValAddress, error) {
+	return prefix.NewStore(k.root, kvProxyRepoItemsReversePrefix).Get(proxyAccount.Bytes()), nil
+}
+
 func (k kvProxyRepo) Save(validator sdk.ValAddress, proxy sdk.AccAddress) error {
 	prefix.NewStore(k.root, kvProxyRepoItemsPrefix).Set(validator.Bytes(), proxy.Bytes())
+	prefix.NewStore(k.root, kvProxyRepoItemsReversePrefix).Set(proxy.Bytes(), validator.Bytes())
 	return nil
 }
 
 func (k kvProxyRepo) Delete(validator sdk.ValAddress) error {
-	prefix.NewStore(k.root, kvProxyRepoItemsPrefix).Delete(validator.Bytes())
+	ps := prefix.NewStore(k.root, kvProxyRepoItemsPrefix)
+	proxy := ps.Get(validator)
+	if proxy == nil {
+		return errors.ErrKeyNotFound
+	}
+
+	ps.Delete(validator)
+	prefix.NewStore(k.root, kvProxyRepoItemsReversePrefix).Delete(proxy)
 	return nil
 }
 
@@ -98,8 +114,10 @@ func (k kvProxyRepo) ExportGenesis() (genState *types.GenesisProxy, err error) {
 
 func (k kvProxyRepo) ImportGenesis(genState *types.GenesisProxy) error {
 	ps := prefix.NewStore(k.root, kvProxyRepoItemsPrefix)
+	psr := prefix.NewStore(k.root, kvProxyRepoItemsReversePrefix)
 	for _, item := range genState.GetItemSet() {
 		ps.Set(item.GetValidator().Bytes(), item.GetProxyAccount().Bytes())
+		psr.Set(item.GetProxyAccount().Bytes(), item.GetValidator().Bytes())
 	}
 
 	return nil

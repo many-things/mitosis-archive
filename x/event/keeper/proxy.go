@@ -14,6 +14,8 @@ type ProxyKeeper interface {
 
 	QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, error)
 
+	QueryProxyReverse(ctx sdk.Context, prx sdk.AccAddress) (sdk.ValAddress, error)
+
 	QueryProxies(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[sdk.ValAddress, sdk.AccAddress], *query.PageResponse, error)
 }
 
@@ -46,6 +48,17 @@ func (k keeper) QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress,
 	}
 
 	return acc, nil
+}
+
+func (k keeper) QueryProxyReverse(ctx sdk.Context, prx sdk.AccAddress) (sdk.ValAddress, error) {
+	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
+
+	val, err := proxyRepo.LoadByProxy(prx)
+	if err != nil {
+		return nil, err
+	}
+
+	return val, nil
 }
 
 func (k keeper) QueryProxies(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[sdk.ValAddress, sdk.AccAddress], *query.PageResponse, error) {

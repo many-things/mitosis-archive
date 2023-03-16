@@ -52,6 +52,17 @@ message QueryProxyResponse {
   bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 
+// Query validator by proxy account
+message QueryProxyReverse {
+  // proxy account address
+  bytes proxy_account = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+// Response of [QueryProxyReverse]
+message QueryProxyReverseResponse {
+  bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
 // Query list of proxy accounts
 message QueryProxies {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;

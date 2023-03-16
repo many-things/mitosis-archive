@@ -17,7 +17,11 @@ func NewMsgServer(keeper keeper.Keeper) MsgServer {
 func (m msgServer) Submit(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	// TODO: validate request
+	if err := req.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	//m.baseKeeper.QueryProxy(wctx, req.GetSender())
 
 	pollId, err := m.baseKeeper.SubmitPoll(wctx, req.GetSender(), req.GetChain(), req.GetEvents())
 	if err != nil {
