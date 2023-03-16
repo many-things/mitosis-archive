@@ -8,7 +8,7 @@ import "mitosis/event/v1beta1/types.proto";
 option go_package = "github.com/many-things/mitosis/x/event/server";
 
 // Submit messages to vote
-message MsgSubmit {
+message MsgSubmitEvent {
   // Sender address
   bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 
@@ -25,7 +25,7 @@ message MsgSubmitResponse {
 }
 
 // Vote event message
-message MsgVote {
+message MsgVoteEvent {
   // Voter address
   bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 
@@ -62,7 +62,8 @@ message MsgClearProxyResponse {}
 
 // Register chain info
 message MsgRegisterChain {
-  string chain = 1;
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  string chain = 2;
 }
 
 // Response of [MsgRegisterChain]
@@ -72,7 +73,8 @@ message MsgRegisterChainResponse {
 
 // Unregisters chain info
 message MsgUnregisterChain {
-  string chain = 1;
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  string chain = 2;
 }
 
 // Response of [MsgUnregisterChain]
