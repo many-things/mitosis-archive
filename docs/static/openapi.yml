@@ -45529,7 +45529,7 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /mitosis/event/v1beta1/chain/{chain}/{network_id}:
+  /mitosis/event/v1beta1/chain/{chain}:
     get:
       summary: Get chain
       operationId: ManythingsMitosisV1Beta1EventServerChain
@@ -45541,9 +45541,7 @@ paths:
             properties:
               chain:
                 type: string
-              network_id:
-                type: string
-              chain_prefix:
+              prefix:
                 type: string
                 format: byte
             title: Response of [QueryChain]
@@ -45570,14 +45568,11 @@ paths:
           in: path
           required: true
           type: string
-        - name: network_id
-          in: path
-          required: true
-          type: string
       tags:
         - Query
   /mitosis/event/v1beta1/chains:
     get:
+      summary: List chain
       operationId: ManythingsMitosisV1Beta1EventServerChains
       responses:
         '200':
@@ -45592,9 +45587,7 @@ paths:
                   properties:
                     chain:
                       type: string
-                    network_id:
-                      type: string
-                    chain_prefix:
+                    prefix:
                       type: string
                       format: byte
                   title: Response of [QueryChain]
@@ -76405,9 +76398,7 @@ definitions:
     properties:
       chain:
         type: string
-      network_id:
-        type: string
-      chain_prefix:
+      prefix:
         type: string
         format: byte
     title: Response of [QueryChain]
@@ -76421,9 +76412,7 @@ definitions:
           properties:
             chain:
               type: string
-            network_id:
-              type: string
-            chain_prefix:
+            prefix:
               type: string
               format: byte
           title: Response of [QueryChain]

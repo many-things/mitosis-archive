@@ -63,7 +63,6 @@ message MsgClearProxyResponse {}
 // Register chain info
 message MsgRegisterChain {
   string chain = 1;
-  string network_id = 2;
 }
 
 // Response of [MsgRegisterChain]
@@ -74,7 +73,6 @@ message MsgRegisterChainResponse {
 // Unregisters chain info
 message MsgUnregisterChain {
   string chain = 1;
-  string network_id = 2;
 }
 
 // Response of [MsgUnregisterChain]

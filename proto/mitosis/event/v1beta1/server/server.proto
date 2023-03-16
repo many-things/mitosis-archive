@@ -58,7 +58,7 @@ service Query {
 
   // Get chain
   rpc Chain(QueryChain) returns (QueryChainResponse) {
-    option (google.api.http) = {get: "/mitosis/event/v1beta1/chain/{chain}/{network_id}"};
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/chain/{chain}"};
   }
 
   // List chain

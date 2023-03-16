@@ -66,14 +66,12 @@ message QueryProxiesResponse {
 // Query single chain info
 message QueryChain {
   string chain = 1;
-  string network_id = 2;
 }
 
 // Response of [QueryChain]
 message QueryChainResponse {
   string chain = 1;
-  string network_id = 2;
-  bytes chain_prefix = 3;
+  bytes prefix = 2;
 }
 
 // Query list of chain info
