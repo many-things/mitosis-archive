@@ -14,7 +14,7 @@ func NewMsgServer(keeper keeper.Keeper) MsgServer {
 	return msgServer{keeper}
 }
 
-func (m msgServer) Submit(ctx context.Context, req *MsgSubmit) (*MsgSubmitResponse, error) {
+func (m msgServer) Submit(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
 	// TODO: validate request
@@ -29,7 +29,7 @@ func (m msgServer) Submit(ctx context.Context, req *MsgSubmit) (*MsgSubmitRespon
 	return &MsgSubmitResponse{PollId: pollId}, nil
 }
 
-func (m msgServer) Vote(ctx context.Context, req *MsgVote) (*MsgVoteResponse, error) {
+func (m msgServer) Vote(ctx context.Context, req *MsgVoteEvent) (*MsgVoteResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
 	// TODO: validate request
