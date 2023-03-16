@@ -33,8 +33,12 @@ func (k keeper) VotePoll(ctx sdk.Context, sedner sdk.AccAddress, chain string, i
 }
 
 func (k keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error) {
-	defaultChain := byte(0x01) // TODO: make chain registry
-	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
+	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
+	chainPrefix, err := chainRepo.Load(chain)
+	if err != nil {
+		return nil, err
+	}
+	pollRepo := state.NewKVPollRepo(k.cdc, chainPrefix, ctx.KVStore(k.storeKey))
 
 	poll, err := pollRepo.Load(id)
 	if err != nil {
@@ -45,8 +49,12 @@ func (k keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll
 }
 
 func (k keeper) QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
-	defaultChain := byte(0x01) // TODO: make chain registry
-	pollRepo := state.NewKVPollRepo(k.cdc, defaultChain, ctx.KVStore(k.storeKey))
+	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
+	chainPrefix, err := chainRepo.Load(chain)
+	if err != nil {
+		return nil, nil, err
+	}
+	pollRepo := state.NewKVPollRepo(k.cdc, chainPrefix, ctx.KVStore(k.storeKey))
 
 	polls, pageResp, err := pollRepo.Paginate(pageReq)
 	if err != nil {
