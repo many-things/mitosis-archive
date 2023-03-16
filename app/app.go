@@ -523,7 +523,7 @@ func New(
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper)
 
 	app.MultisigKeeper = *multisigmodulekeeper.NewKeeper(
 		appCodec,

@@ -10,5 +10,5 @@ import (
 
 func setupMsgServer(t testing.TB) (MsgServer, context.Context) {
 	k, ctx := keepertest.EventKeeper(t)
-	return NewMsgServer(k), sdk.WrapSDKContext(ctx)
+	return NewMsgServer(k, nil), sdk.WrapSDKContext(ctx)
 }

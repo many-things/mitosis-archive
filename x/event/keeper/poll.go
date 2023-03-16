@@ -10,10 +10,10 @@ import (
 
 type PollKeeper interface {
 	// SubmitPoll handles [server.MsgSubmit]
-	SubmitPoll(ctx sdk.Context, sender sdk.AccAddress, chain string, events []*types.Event) (uint64, error)
+	SubmitPoll(ctx sdk.Context, val sdk.ValAddress, chain string, events []*types.Event) (uint64, error)
 
 	// VotePoll handles [server.MsgVote]
-	VotePoll(ctx sdk.Context, sedner sdk.AccAddress, chain string, ids []uint64) error
+	VotePoll(ctx sdk.Context, val sdk.ValAddress, chain string, ids []uint64) error
 
 	// QueryPoll handles [server.QueryPoll]
 	QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error)
@@ -22,12 +22,12 @@ type PollKeeper interface {
 	QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
 }
 
-func (k keeper) SubmitPoll(ctx sdk.Context, sender sdk.AccAddress, chain string, events []*types.Event) (uint64, error) {
+func (k keeper) SubmitPoll(ctx sdk.Context, val sdk.ValAddress, chain string, events []*types.Event) (uint64, error) {
 	// TODO
 	return 0, nil
 }
 
-func (k keeper) VotePoll(ctx sdk.Context, sedner sdk.AccAddress, chain string, ids []uint64) error {
+func (k keeper) VotePoll(ctx sdk.Context, val sdk.ValAddress, chain string, ids []uint64) error {
 	// TODO
 	return nil
 }
@@ -45,7 +45,7 @@ func (k keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll
 		return nil, err
 	}
 
-	return &poll, nil
+	return poll, nil
 }
 
 func (k keeper) QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
