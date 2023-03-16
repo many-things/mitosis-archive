@@ -72,11 +72,30 @@ func (m msgServer) ClearProxy(ctx context.Context, req *MsgClearProxy) (*MsgClea
 }
 
 func (m msgServer) RegisterChain(ctx context.Context, req *MsgRegisterChain) (*MsgRegisterChainResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	// TODO: validate request
+
+	prefix, err := m.baseKeeper.RegisterChain(wctx, req.GetChain())
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: Event?
+
+	return &MsgRegisterChainResponse{ChainPrefix: []byte{prefix}}, nil
 }
 
 func (m msgServer) UnregisterChain(ctx context.Context, req *MsgUnregisterChain) (*MsgUnregisterChainResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	// TODO: validate request
+
+	if err := m.baseKeeper.UnregisterChain(wctx, req.GetChain()); err != nil {
+		return nil, err
+	}
+
+	// TODO: Evnet?
+
+	return &MsgUnregisterChainResponse{}, nil
 }

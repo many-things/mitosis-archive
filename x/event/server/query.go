@@ -82,11 +82,31 @@ func (k queryServer) Proxies(ctx context.Context, req *QueryProxies) (*QueryProx
 }
 
 func (k queryServer) Chain(ctx context.Context, req *QueryChain) (*QueryChainResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	prefix, err := k.baseKeeper.QueryChain(wctx, req.GetChain())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryChainResponse{Chain: req.GetChain(), Prefix: []byte{prefix}}, nil
 }
 
 func (k queryServer) Chains(ctx context.Context, req *QueryChains) (*QueryChainsResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	set, pageResp, err := k.baseKeeper.QueryChains(wctx, req.GetPagination())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryChainsResponse{
+		Chains: mitotypes.Map(set, func(k string, v byte) *QueryChainResponse {
+			return &QueryChainResponse{
+				Chain:  k,
+				Prefix: []byte{v},
+			}
+		}),
+		Page: pageResp,
+	}, nil
 }

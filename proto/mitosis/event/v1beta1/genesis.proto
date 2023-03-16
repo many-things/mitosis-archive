@@ -58,4 +58,6 @@ message GenesisState {
   GenesisPoll poll = 2;
 
   GenesisProxy proxy = 3;
+
+  GenesisChain chain = 4;
 }
