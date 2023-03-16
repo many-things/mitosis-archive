@@ -17,7 +17,7 @@ func NewMsgServer(keeper keeper.Keeper, stakingKeeper types.StakingKeeper) MsgSe
 	return msgServer{keeper, stakingKeeper}
 }
 
-func (m msgServer) Submit(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitResponse, error) {
+func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
 	if err := req.ValidateBasic(); err != nil {
@@ -40,7 +40,7 @@ func (m msgServer) Submit(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitR
 	return &MsgSubmitResponse{PollId: pollId}, nil
 }
 
-func (m msgServer) Vote(ctx context.Context, req *MsgVoteEvent) (*MsgVoteResponse, error) {
+func (m msgServer) VoteEvent(ctx context.Context, req *MsgVoteEvent) (*MsgVoteResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
 	if err := req.ValidateBasic(); err != nil {

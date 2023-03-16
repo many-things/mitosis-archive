@@ -11,10 +11,10 @@ option go_package = "github.com/many-things/mitosis/x/event/server";
 // Msg defines the Msg service.
 service Msg {
   // Submits / Initiates vote for external event.
-  rpc Submit(MsgSubmitEvent) returns (MsgSubmitResponse);
+  rpc SubmitEvent(MsgSubmitEvent) returns (MsgSubmitResponse);
 
   // Votes to submitted external event.
-  rpc Vote(MsgVoteEvent) returns (MsgVoteResponse);
+  rpc VoteEvent(MsgVoteEvent) returns (MsgVoteResponse);
 
   // Registers an address of proxy account to submit / vote external event rather than execute with validator account itself.
   rpc RegisterProxy(MsgRegisterProxy) returns (MsgRegisterProxyResponse);
