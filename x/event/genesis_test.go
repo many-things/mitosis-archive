@@ -11,14 +11,10 @@ import (
 )
 
 func TestGenesis(t *testing.T) {
-	genesisState := types.GenesisState{
-		Params: types.DefaultParams(),
-
-		// this line is used by starport scaffolding # genesis/test/state
-	}
+	genesisState := types.DefaultGenesis()
 
 	k, ctx := keepertest.EventKeeper(t)
-	event.InitGenesis(ctx, *k, genesisState)
+	event.InitGenesis(ctx, *k, *genesisState)
 	got := event.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 

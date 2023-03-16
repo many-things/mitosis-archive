@@ -14,7 +14,8 @@ func DefaultGenesis() *GenesisState {
 			ItemSet: []*GenesisProxy_ItemSet{},
 		},
 		Chain: &GenesisChain{
-			ItemSet: []*GenesisChain_ItemSet{},
+			LatestId: []byte{0x01},
+			ItemSet:  []*GenesisChain_ItemSet{},
 		},
 	}
 }
