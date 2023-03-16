@@ -6,7 +6,8 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "mitosis/multisig/v1beta1/params.proto";
-import "mitosis/multisig/v1beta1/server/types.proto";
+import "mitosis/multisig/v1beta1/server/types_msg.proto";
+import "mitosis/multisig/v1beta1/server/types_query.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/server";
 
@@ -14,6 +15,7 @@ option go_package = "github.com/many-things/mitosis/x/multisig/server";
 service Msg {
   rpc StartKeygen(MsgStartKeygen) returns (MsgStartKeygenResponse);
   rpc SubmitPubkey(MsgSubmitPubkey) returns (MsgSubmitPubkeyResponse);
+  rpc StartSign(MsgStartSign) returns (MsgStartSignResponse);
   rpc SubmitSignature(MsgSubmitSignature) returns (MsgSubmitSignatureResponse);
 }
 

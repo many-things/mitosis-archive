@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig.server;
+
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "mitosis/multisig/v1beta1/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/server";
+
+message MsgStartKeygen {
+  string module = 1;
+  string key_id = 2 [
+    (gogoproto.customname) = "KeyID",
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.KeyID"
+  ];
+  repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
+message MsgSubmitPubkey {
+  string module = 1;
+  string key_id = 2 [
+    (gogoproto.customname) = "KeyID",
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.KeyID"
+  ];
+  string participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"];
+}
+
+message MsgStartKeygenResponse {}
+message MsgSubmitPubkeyResponse {}
+
+message MsgStartSign {
+  option (gogoproto.stable_marshaler) = true;
+
+  string module = 1;
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+  string key_id = 3 [
+    (gogoproto.customname) = "KeyID",
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"
+  ];
+  map<string, bytes> pub_keys = 4 [(gogoproto.castvalue) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"]; // party_uid
+  bytes message_to_sign = 5 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.Hash"];
+  string request_module = 6;
+}
+
+message MsgSubmitSignature {
+  string module = 1;
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes signature = 4 [(gogoproto.casttype) = "Signature"];
+}
+
+message MsgStartSignResponse {}
+message MsgSubmitSignatureResponse {}

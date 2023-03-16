@@ -8,3 +8,12 @@ import "google/api/annotations.proto";
 import "mitosis/multisig/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/server";
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
