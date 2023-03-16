@@ -18,10 +18,8 @@ func SimulateMsgStartKeygen(
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &server.MsgStartKeygen{
-			Creator: simAccount.Address.String(),
-		}
+		//_, _ := simtypes.RandomAcc(r, accs)
+		msg := &server.MsgStartKeygen{}
 
 		// TODO: Handling the StartKeygen simulation
 

@@ -9,24 +9,6 @@ import "mitosis/multisig/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/server";
 
-message MsgStartKeygen {
-  string creator = 1;
-}
-
-message MsgStartKeygenResponse {}
-
-message MsgSubmitPubkey {
-  string creator = 1;
-}
-
-message MsgSubmitPubkeyResponse {}
-
-message MsgSubmitSignature {
-  string creator = 1;
-}
-
-message MsgSubmitSignatureResponse {}
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
