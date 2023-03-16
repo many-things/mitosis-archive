@@ -38,6 +38,19 @@ message GenesisProxy {
   repeated ItemSet item_set = 1;
 }
 
+// Genesis state of chain registry
+message GenesisChain {
+  // Key-Value set of item
+  message ItemSet {
+    string chain = 1;
+    bytes prefix = 2;
+  }
+
+  bytes latest_id = 1;
+
+  repeated ItemSet item_set = 2;
+}
+
 // GenesisState defines the event module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
