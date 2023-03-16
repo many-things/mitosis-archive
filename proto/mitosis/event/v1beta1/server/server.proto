@@ -21,6 +21,12 @@ service Msg {
 
   // Clears proxy account info from a validator
   rpc ClearProxy(MsgClearProxy) returns (MsgClearProxyResponse);
+
+  // Register chain info
+  rpc RegisterChain(MsgRegisterChain) returns (MsgRegisterChainResponse);
+
+  // Unregister chain info
+  rpc UnregisterChain(MsgUnregisterChain) returns (MsgUnregisterChainResponse);
 }
 
 // Query defines the gRPC querier service.
@@ -48,5 +54,15 @@ service Query {
   // List proxies
   rpc Proxies(QueryProxies) returns (QueryProxiesResponse) {
     option (google.api.http) = {get: "/mitosis/event/v1beta1/proxies"};
+  }
+
+  // Get chain
+  rpc Chain(QueryChain) returns (QueryChainResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/chain/{chain}/{network_id}"};
+  }
+
+  // List chain
+  rpc Chains(QueryChains) returns (QueryChainsResponse) {
+    option (google.api.http) = {get: "/mitosis/event/v1beta1/chains"};
   }
 }

@@ -59,3 +59,23 @@ message MsgClearProxy {
 
 // Response of [MsgClearProxy]
 message MsgClearProxyResponse {}
+
+// Register chain info
+message MsgRegisterChain {
+  string chain = 1;
+  string network_id = 2;
+}
+
+// Response of [MsgRegisterChain]
+message MsgRegisterChainResponse {
+  bytes chain_prefix = 1;
+}
+
+// Unregisters chain info
+message MsgUnregisterChain {
+  string chain = 1;
+  string network_id = 2;
+}
+
+// Response of [MsgUnregisterChain]
+message MsgUnregisterChainResponse {}

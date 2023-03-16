@@ -70,3 +70,13 @@ func (m msgServer) ClearProxy(ctx context.Context, req *MsgClearProxy) (*MsgClea
 
 	return &MsgClearProxyResponse{}, nil
 }
+
+func (m msgServer) RegisterChain(ctx context.Context, chain *MsgRegisterChain) (*MsgRegisterChainResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m msgServer) UnregisterChain(ctx context.Context, chain *MsgUnregisterChain) (*MsgUnregisterChainResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}

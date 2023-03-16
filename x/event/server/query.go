@@ -80,3 +80,13 @@ func (k queryServer) Proxies(ctx context.Context, req *QueryProxies) (*QueryProx
 		Page: pageResp,
 	}, nil
 }
+
+func (k queryServer) Chain(ctx context.Context, chain *QueryChain) (*QueryChainResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (k queryServer) Chains(ctx context.Context, chains *QueryChains) (*QueryChainsResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
