@@ -77,7 +77,7 @@ message Poll {
   uint64 op_id = 3;
 
   // Poll proposer
-  bytes proposer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes proposer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 
   // Poll status
   Status status = 5;

@@ -14,7 +14,7 @@ type PollRepo interface {
 	Load(id uint64) (*types.Poll, error)
 	LoadByHash(hash []byte) (*types.Poll, error)
 
-	Save(poll types.Poll) error
+	Save(poll types.Poll) (uint64, error)
 
 	Delete(id uint64) error
 	DeleteByHash(hash []byte) error
@@ -65,18 +65,18 @@ func (k kvPollRepo) LoadByHash(hash []byte) (*types.Poll, error) {
 	return k.Load(sdk.BigEndianToUint64(id))
 }
 
-func (k kvPollRepo) Save(poll types.Poll) error {
+func (k kvPollRepo) Save(poll types.Poll) (uint64, error) {
 	latestId := sdk.BigEndianToUint64(k.root.Get(kvPollRepoKeyLatestId))
 	latestIdBz := sdk.Uint64ToBigEndian(latestId)
 
 	poll.Id = latestId
 	pollBz, err := poll.Marshal()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	evtHash, err := poll.GetPayload().Hash()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	prefix.NewStore(k.root, kvPollRepoItemsPrefix).Set(latestIdBz, pollBz)
@@ -85,7 +85,7 @@ func (k kvPollRepo) Save(poll types.Poll) error {
 	latestId++
 	k.root.Set(kvPollRepoKeyLatestId, sdk.Uint64ToBigEndian(latestId))
 
-	return nil
+	return poll.Id, nil
 }
 
 func (k kvPollRepo) Delete(id uint64) error {
