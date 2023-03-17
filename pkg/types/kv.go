@@ -1,5 +1,6 @@
 package types
 
+// KV is base data structure to store key-value set effectively.
 type KV[K, V any] struct {
 	Key   K
 	Value V
@@ -25,6 +26,7 @@ func Values[K, V any](kvs []KV[K, V]) []V {
 	return vs
 }
 
+// MapKV is a helper function to map a KV slice to a new slice of type R.
 func MapKV[K, V, R any](kvs []KV[K, V], f func(k K, v V) R) []R {
 	rs := make([]R, len(kvs))
 	for i := range kvs {
@@ -34,6 +36,7 @@ func MapKV[K, V, R any](kvs []KV[K, V], f func(k K, v V) R) []R {
 	return rs
 }
 
+// Map is a helper function to map a slice to a new slice of type U.
 func Map[T, U any](ts []T, f func(t T) U) []U {
 	us := make([]U, len(ts))
 	for i := range ts {
