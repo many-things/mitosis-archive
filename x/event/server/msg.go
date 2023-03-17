@@ -51,6 +51,7 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 		Executor:     val,
 		ProxyAccount: req.GetSender(),
 		Chain:        req.GetChain(),
+		PollId:       pollId,
 		EventHash:    mitotypes.Map(req.GetEvents(), eventConv),
 	}
 	if err = wctx.EventManager().EmitTypedEvent(event); err != nil {

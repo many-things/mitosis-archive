@@ -13,7 +13,8 @@ message EventType {
     bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
     bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string chain = 3;
-    repeated bytes event_hash = 4;
+    uint64 poll_id = 4;
+    repeated bytes event_hash = 5;
   }
 
   // EventType_VoteEvent is the event type of [MsgVoteEvent]
