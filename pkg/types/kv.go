@@ -35,12 +35,3 @@ func MapKV[K, V, R any](kvs []KV[K, V], f func(k K, v V) R) []R {
 	}
 	return rs
 }
-
-// Map is a helper function to map a slice to a new slice of type U.
-func Map[T, U any](ts []T, f func(t T) U) []U {
-	us := make([]U, len(ts))
-	for i := range ts {
-		us[i] = f(ts[i])
-	}
-	return us
-}
