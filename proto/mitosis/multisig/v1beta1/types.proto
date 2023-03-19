@@ -30,7 +30,7 @@ message Keygen {
   string chain = 1;
 
   // key id
-  string key_id = 2;
+  uint64 key_id = 2;
 
   // keygen participants
   repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
