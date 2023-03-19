@@ -22,12 +22,12 @@ type KeygenRepo interface {
 type kvKeygenRepo struct {
 	cdc     codec.BinaryCodec
 	root    store.KVStore
-	chainID string
+	chainId string
 }
 
-func NewKVChainKeygenRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) KeygenRepo {
+func NewKVChainKeygenRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) KeygenRepo {
 	return &kvKeygenRepo{
-		cdc, root, chainID,
+		cdc, root, chainId,
 	}
 }
 
@@ -37,7 +37,7 @@ var (
 )
 
 func (r kvKeygenRepo) getPrefix(prefix []byte) []byte {
-	return append([]byte(r.chainID), prefix...)
+	return append([]byte(r.chainId), prefix...)
 }
 
 func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {

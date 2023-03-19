@@ -39,6 +39,21 @@ message Keygen {
   Status status = 4;
 }
 
+// Pubkey Message
+message PubKey {
+  // key target chain id
+  string chain = 1;
+
+  // key id
+  uint64 key_id = 2;
+
+  // participant id
+  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // pub key
+  bytes pub_key = 4 [(gogoproto.casttype) = "PublicKey"];
+}
+
 // Sign Message
 message Sign {
   // Sign Status
