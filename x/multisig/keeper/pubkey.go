@@ -12,7 +12,7 @@ import (
 func (k keeper) RegisterPubKey(ctx sdk.Context, chainId string, pubKey *types.PubKey) error {
 	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
 
-	err := pubKeyRepo.Save(pubKey)
+	err := pubKeyRepo.Create(pubKey)
 	if err != nil {
 		return err
 	}

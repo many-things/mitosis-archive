@@ -13,7 +13,7 @@ import (
 
 type SignatureRepo interface {
 	Load(id uint64, participant sdk.ValAddress) (types.Signature, error)
-	Save(id uint64, participant sdk.ValAddress, signature types.Signature) error
+	Create(id uint64, participant sdk.ValAddress, signature types.Signature) error
 	Delete(id uint64, participant sdk.ValAddress) error
 
 	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error)
@@ -51,7 +51,7 @@ func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Sign
 	return bz, nil
 }
 
-func (r kvSignatureRepo) Save(id uint64, participant sdk.ValAddress, signature types.Signature) error {
+func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature types.Signature) error {
 	prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Set(participant, signature)
 	return nil
 }

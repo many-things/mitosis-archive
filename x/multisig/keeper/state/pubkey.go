@@ -12,7 +12,7 @@ import (
 
 type PubKeyRepo interface {
 	Load(id uint64, participant sdk.ValAddress) (*types.PubKey, error)
-	Save(pubKey *types.PubKey) error
+	Create(pubKey *types.PubKey) error
 	Delete(id uint64, participant sdk.ValAddress) error
 
 	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error)
@@ -52,7 +52,7 @@ func (r kvPubkeyRepo) Load(id uint64, participant sdk.ValAddress) (*types.PubKey
 	return pubkey, nil
 }
 
-func (r kvPubkeyRepo) Save(pubKey *types.PubKey) error {
+func (r kvPubkeyRepo) Create(pubKey *types.PubKey) error {
 	pubKeyBz, err := pubKey.Marshal()
 	if err != nil {
 		return err

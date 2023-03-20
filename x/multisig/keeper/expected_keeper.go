@@ -32,3 +32,11 @@ type SignKeeper interface {
 	QuerySign(ctx sdk.Context, chainId string, id uint64) (*types.Sign, error)
 	QuerySignList(ctx sdk.Context, chainId string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error)
 }
+
+type SignatureKeeper interface {
+	RegisterSignature(ctx sdk.Context, chainId string, sigId uint64, participant sdk.ValAddress, signature types.Signature) error
+	RemoveSignature(ctx sdk.Context, chainId string, sigId uint64, participant sdk.ValAddress) error
+
+	QuerySignature(ctx sdk.Context, chainId string, sigId uint64, participant sdk.ValAddress) (types.Signature, error)
+	QuerySignatureList(ctx sdk.Context, chainId string, sigId uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error)
+}
