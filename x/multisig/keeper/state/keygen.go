@@ -12,7 +12,7 @@ import (
 
 type KeygenRepo interface {
 	Load(id uint64) (*types.Keygen, error)
-	Save(keygen *types.Keygen) error
+	Save(keygen *types.Keygen) (uint64, error)
 	Delete(id uint64) error
 
 	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error)
@@ -51,20 +51,20 @@ func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 	return keygen, nil
 }
 
-func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
+func (r kvKeygenRepo) Save(keygen *types.Keygen) (uint64, error) {
 	latestId := sdk.BigEndianToUint64(r.root.Get(kvKeygenRepoLatestId))
 	latestIdBz := sdk.Uint64ToBigEndian(latestId)
 
 	keygen.KeyId = latestId
 	keygenBz, err := keygen.Marshal()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(latestIdBz, keygenBz)
 	r.root.Set(kvKeygenRepoLatestId, sdk.Uint64ToBigEndian(latestId+1))
 
-	return nil
+	return latestId, nil
 }
 
 func (r kvKeygenRepo) Delete(id uint64) error {
