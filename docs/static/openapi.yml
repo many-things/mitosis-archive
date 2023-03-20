@@ -76410,9 +76410,11 @@ definitions:
   manythings.mitosis.v1beta1.event.server.MsgSubmitResponse:
     type: object
     properties:
-      poll_id:
-        type: string
-        format: uint64
+      poll_ids:
+        type: array
+        items:
+          type: string
+          format: uint64
     title: Response of [MsgSubmit]
   manythings.mitosis.v1beta1.event.server.MsgUnregisterChainResponse:
     type: object

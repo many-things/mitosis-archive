@@ -33,32 +33,30 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 	}
 
 	// submits polls
-	pollId, err := m.baseKeeper.SubmitPoll(wctx, val, req.GetChain(), req.GetEvents())
+	polls, err := m.baseKeeper.SubmitPoll(wctx, val, req.GetChain(), req.GetEvents())
 	if err != nil {
 		return nil, err
 	}
 
-	// types.Event => Hash
-	eventConv := func(t *types.Event) []byte {
-		hash, err := t.Hash()
-		if err != nil {
-			panic(err.Error())
+	// [uint64, []byte] -> *types.EventType_SubmitEvent_Poll
+	pollConv := func(t mitotypes.KV[uint64, []byte]) *types.EventType_SubmitEvent_Poll {
+		return &types.EventType_SubmitEvent_Poll{
+			Id:        t.Key,
+			EventHash: t.Value,
 		}
-		return hash
 	}
 	// emits [EventType_SubmitEvent]
 	event := &types.EventType_SubmitEvent{
 		Executor:     val,
 		ProxyAccount: req.GetSender(),
 		Chain:        req.GetChain(),
-		PollId:       pollId,
-		EventHash:    mitotypes.Map(req.GetEvents(), eventConv),
+		Polls:        mitotypes.Map(polls, pollConv),
 	}
 	if err = wctx.EventManager().EmitTypedEvent(event); err != nil {
 		return nil, err
 	}
 
-	return &MsgSubmitResponse{PollId: pollId}, nil
+	return &MsgSubmitResponse{PollIds: mitotypes.Keys(polls)}, nil
 }
 
 func (m msgServer) VoteEvent(ctx context.Context, req *MsgVoteEvent) (*MsgVoteResponse, error) {

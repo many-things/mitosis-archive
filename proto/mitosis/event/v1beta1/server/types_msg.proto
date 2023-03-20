@@ -21,7 +21,7 @@ message MsgSubmitEvent {
 
 // Response of [MsgSubmit]
 message MsgSubmitResponse {
-  uint64 poll_id = 1;
+  repeated uint64 poll_ids = 1;
 }
 
 // Vote event message
