@@ -39,7 +39,7 @@ type kvChainRepo struct {
 func NewKVChainRepo(cdc codec.BinaryCodec, root store.KVStore) ChainRepo {
 	return &kvChainRepo{
 		cdc:  cdc,
-		root: root,
+		root: prefix.NewStore(root, kvChainRepoKey),
 	}
 }
 

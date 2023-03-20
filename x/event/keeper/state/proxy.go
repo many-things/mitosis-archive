@@ -40,7 +40,10 @@ type kvProxyRepo struct {
 }
 
 func NewKVProxyRepo(cdc codec.BinaryCodec, store store.KVStore) ProxyRepo {
-	return kvProxyRepo{cdc, store}
+	return kvProxyRepo{
+		cdc,
+		prefix.NewStore(store, kvProxyRepoKey),
+	}
 }
 
 func (k kvProxyRepo) Load(validator sdk.ValAddress) (sdk.AccAddress, bool) {
