@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -42,10 +42,10 @@ func TestChain(t *testing.T) {
 		for _, testcase := range testcases {
 			actual, err := k.RegisterChain(ctx, testcase.chain)
 			if !testcase.expectErr {
-				assert.NoError(t, err)
-				assert.Equal(t, testcase.expected, actual)
+				require.NoError(t, err)
+				require.Equal(t, testcase.expected, actual)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		}
 	}
@@ -72,9 +72,9 @@ func TestChain(t *testing.T) {
 		for _, testcase := range testcases {
 			err := k.UnregisterChain(ctx, testcase.chain)
 			if !testcase.expectedErr {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		}
 	}
@@ -83,19 +83,19 @@ func TestChain(t *testing.T) {
 
 	// query single
 	_, err := k.QueryChain(ctx, "mitosis-1")
-	assert.Error(t, err)
+	require.Error(t, err)
 	prefix, err := k.QueryChain(ctx, "osmosis-1")
-	assert.NoError(t, err)
-	assert.Equal(t, byte(0x01), prefix)
+	require.NoError(t, err)
+	require.Equal(t, byte(0x01), prefix)
 
 	// query multiple
 	prefixes, resp, err := k.QueryChains(ctx, nil)
-	assert.NoError(t, err)
-	assert.Equal(t, &query.PageResponse{
+	require.NoError(t, err)
+	require.Equal(t, &query.PageResponse{
 		NextKey: nil,
 		Total:   2,
 	}, resp)
-	assert.Equal(t, []mitotypes.KV[string, byte]{
+	require.Equal(t, []mitotypes.KV[string, byte]{
 		{Key: "cosmoshub-3", Value: 0x02},
 		{Key: "osmosis-1", Value: 0x01},
 	}, prefixes)
