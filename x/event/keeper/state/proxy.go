@@ -93,15 +93,14 @@ func (k kvProxyRepo) Paginate(page *query.PageRequest) ([]mitotypes.KV[sdk.ValAd
 	return rs, pageResp, nil
 }
 
-func (k kvProxyRepo) ExportGenesis() (genState *types.GenesisProxy, err error) {
-	genState = &types.GenesisProxy{}
-
-	_, err = query.Paginate(
+func (k kvProxyRepo) ExportGenesis() (*types.GenesisProxy, error) {
+	var items []*types.GenesisProxy_ItemSet
+	_, err := query.Paginate(
 		prefix.NewStore(k.root, kvProxyRepoItemsPrefix),
 		&query.PageRequest{Limit: query.MaxLimit},
 		func(key []byte, value []byte) error {
-			genState.ItemSet = append(
-				genState.ItemSet,
+			items = append(
+				items,
 				&types.GenesisProxy_ItemSet{
 					Validator:    key,
 					ProxyAccount: value,
@@ -113,8 +112,11 @@ func (k kvProxyRepo) ExportGenesis() (genState *types.GenesisProxy, err error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(items) == 0 {
+		return nil, nil
+	}
 
-	return
+	return &types.GenesisProxy{ItemSet: items}, nil
 }
 
 func (k kvProxyRepo) ImportGenesis(genState *types.GenesisProxy) error {

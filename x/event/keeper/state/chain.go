@@ -91,17 +91,16 @@ func (k kvChainRepo) Paginate(pageReq *query.PageRequest) ([]mitotypes.KV[string
 	return rs, pageResp, nil
 }
 
-func (k kvChainRepo) ExportGenesis() (genState *types.GenesisChain, err error) {
-	genState = &types.GenesisChain{}
+func (k kvChainRepo) ExportGenesis() (*types.GenesisChain, error) {
+	latestId := k.root.Get(kvChainRepoKeyLatestId)
 
-	genState.LatestId = k.root.Get(kvChainRepoKeyLatestId)
-
-	_, err = query.Paginate(
+	var items []*types.GenesisChain_ItemSet
+	_, err := query.Paginate(
 		prefix.NewStore(k.root, kvChainRepoPrefixItems),
 		&query.PageRequest{Limit: query.MaxLimit},
 		func(key []byte, value []byte) error {
-			genState.ItemSet = append(
-				genState.ItemSet,
+			items = append(
+				items,
 				&types.GenesisChain_ItemSet{
 					Chain:  string(key),
 					Prefix: value,
@@ -113,8 +112,14 @@ func (k kvChainRepo) ExportGenesis() (genState *types.GenesisChain, err error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(items) == 0 {
+		return nil, nil
+	}
 
-	return
+	return &types.GenesisChain{
+		LatestId: latestId,
+		ItemSet:  items,
+	}, nil
 }
 
 func (k kvChainRepo) ImportGenesis(genState *types.GenesisChain) error {
