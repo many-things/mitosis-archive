@@ -10,11 +10,17 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 message EventType {
   // EventType_SubmitEvent is the event type of [MsgSubmitEvent]
   message SubmitEvent {
+    message Poll {
+      uint64 id = 1;
+      bytes event_hash = 2;
+    }
+
     bytes executor = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
     bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string chain = 3;
-    uint64 poll_id = 4;
-    repeated bytes event_hash = 5;
+    string power = 4 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
+    repeated Poll submitted = 5;
+    repeated Poll voted = 6;
   }
 
   // EventType_VoteEvent is the event type of [MsgVoteEvent]

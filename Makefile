@@ -3,7 +3,7 @@
 PHONY: build
 
 test:
-	@go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+	@go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
 build: proto
 	@ignite chain build --skip-proto
