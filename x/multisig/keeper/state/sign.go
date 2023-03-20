@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -39,8 +40,8 @@ var (
 
 func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
-	if bz != nil { // TODO: add custom err
-		return nil, nil
+	if bz != nil {
+		return nil, errors.Wrap(errors.ErrNotFound, "Cannot find sign")
 	}
 
 	sign := new(types.Sign)
@@ -58,7 +59,7 @@ func (r kvSignRepo) Save(sign *types.Sign) error {
 	sign.SigId = latestId
 	signBz, err := sign.Marshal()
 	if err != nil {
-		return err
+		return errors.Wrap(errors.ErrNotFound, "Cannot find sign")
 	}
 
 	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(latestId), signBz)

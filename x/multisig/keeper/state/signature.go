@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -43,8 +44,8 @@ func (r kvSignatureRepo) getPrefix(prefix []byte, id uint64) []byte {
 func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Signature, error) {
 	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
 
-	if bz != nil { // TODO: not found exception
-		return nil, nil
+	if bz != nil {
+		return nil, errors.Wrap(errors.ErrNotFound, "Cannot find signature")
 	}
 
 	return bz, nil
@@ -59,8 +60,8 @@ func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
 	bz := ks.Get(participant)
 
-	if bz == nil { // TODO: not found exception
-		return nil
+	if bz == nil {
+		return errors.Wrap(errors.ErrNotFound, "Cannot find signature")
 	}
 
 	ks.Delete(participant)
