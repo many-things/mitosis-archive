@@ -8,13 +8,6 @@ import (
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-type KeygenKeeper interface {
-	RegisterKeygenEvent(ctx sdk.Context, chainId string, keygen *types.Keygen) (uint64, error)
-
-	QueryKeygen(ctx sdk.Context, chainId string, id uint64) (*types.Keygen, error)
-	QueryKeygenList(ctx sdk.Context, chainId string, pageReq *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error)
-}
-
 // RegisterKeygenEvent is register keygen into chainId's KV store
 func (k keeper) RegisterKeygenEvent(ctx sdk.Context, chainId string, keygen *types.Keygen) (uint64, error) {
 	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
