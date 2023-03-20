@@ -81,7 +81,7 @@ message Sign {
   string chain = 1;
 
   // signature id
-  string sig_id = 2;
+  uint64 sig_id = 2;
 
   // try-to-sign key id
   string key_id = 3;
