@@ -21,23 +21,9 @@ message MsgSubmitEvent {
 
 // Response of [MsgSubmit]
 message MsgSubmitResponse {
-  repeated uint64 poll_ids = 1;
+  repeated uint64 news = 1;
+  repeated uint64 voted = 2;
 }
-
-// Vote event message
-message MsgVoteEvent {
-  // Voter address
-  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-
-  // Chain identifier
-  string chain = 2;
-
-  // Vote ids
-  repeated uint64 ids = 3;
-}
-
-// Response of [MsgVote]
-message MsgVoteResponse {}
 
 // Set proxy message
 message MsgRegisterProxy {

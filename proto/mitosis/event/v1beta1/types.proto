@@ -45,9 +45,8 @@ message Event {
 
 // Tally Message
 message Tally {
-  string total_power = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint"];
-  string ack = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint"];
-  string nak = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint"];
+  string total_power = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
+  string confirmed = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
 }
 
 // Poll Message

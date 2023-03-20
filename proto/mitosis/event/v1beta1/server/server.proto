@@ -13,9 +13,6 @@ service Msg {
   // Submits / Initiates vote for external event.
   rpc SubmitEvent(MsgSubmitEvent) returns (MsgSubmitResponse);
 
-  // Votes to submitted external event.
-  rpc VoteEvent(MsgVoteEvent) returns (MsgVoteResponse);
-
   // Registers an address of proxy account to submit / vote external event rather than execute with validator account itself.
   rpc RegisterProxy(MsgRegisterProxy) returns (MsgRegisterProxyResponse);
 

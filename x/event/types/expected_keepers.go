@@ -24,4 +24,8 @@ type BankKeeper interface {
 // StakingKeeper defined the expected staking keeper used for retrieve validator info
 type StakingKeeper interface {
 	GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator stakingtypes.Validator, found bool)
+
+	GetLastTotalPower(ctx sdk.Context) sdk.Int
+
+	GetLastValidatorPower(ctx sdk.Context, operator sdk.ValAddress) (power int64)
 }

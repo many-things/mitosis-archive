@@ -32,17 +32,51 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 		return nil, errors.ErrNotFound
 	}
 
-	// submits polls
-	polls, err := m.baseKeeper.SubmitPoll(wctx, val, req.GetChain(), req.GetEvents())
+	// fetch total voting power & current validator's power from staking keeper
+	totalPower := m.stakingKeeper.GetLastTotalPower(wctx)
+	if totalPower.IsZero() {
+		return nil, errors.Wrap(errors.ErrPanic, "total validator power is zero")
+	}
+
+	valPower := sdk.NewInt(m.stakingKeeper.GetLastValidatorPower(wctx, val))
+	if valPower.IsZero() {
+		return nil, errors.Wrap(errors.ErrPanic, "validator power is zero")
+	}
+
+	// make poll candidates
+	candidates := mitotypes.Map(
+		req.GetEvents(),
+		func(t *types.Event) *types.Poll {
+			return &types.Poll{
+				Chain:    req.GetChain(),
+				Proposer: val,
+				Payload:  t,
+			}
+		},
+	)
+
+	// filter requested polls
+	newPolls, existPolls, err := m.baseKeeper.FilterNewPolls(wctx, req.GetChain(), candidates)
 	if err != nil {
 		return nil, err
 	}
 
+	// submits polls
+	submitted, err := m.baseKeeper.SubmitPolls(wctx, req.GetChain(), newPolls, totalPower, valPower)
+	if err != nil {
+		return nil, err
+	}
+
+	// vote polls
+	if err := m.baseKeeper.VotePolls(wctx, req.GetChain(), mitotypes.Keys(existPolls), valPower); err != nil {
+		return nil, err
+	}
+
 	// [uint64, []byte] -> *types.EventType_SubmitEvent_Poll
-	pollConv := func(t mitotypes.KV[uint64, []byte]) *types.EventType_SubmitEvent_Poll {
+	pollConv := func(id uint64, sum []byte) *types.EventType_SubmitEvent_Poll {
 		return &types.EventType_SubmitEvent_Poll{
-			Id:        t.Key,
-			EventHash: t.Value,
+			Id:        id,
+			EventHash: sum,
 		}
 	}
 	// emits [EventType_SubmitEvent]
@@ -50,46 +84,18 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 		Executor:     val,
 		ProxyAccount: req.GetSender(),
 		Chain:        req.GetChain(),
-		Polls:        mitotypes.Map(polls, pollConv),
+		Power:        &valPower,
+		Submitted:    mitotypes.MapKV(submitted, pollConv),
+		Voted:        mitotypes.MapKV(existPolls, pollConv),
 	}
 	if err = wctx.EventManager().EmitTypedEvent(event); err != nil {
 		return nil, err
 	}
 
-	return &MsgSubmitResponse{PollIds: mitotypes.Keys(polls)}, nil
-}
-
-func (m msgServer) VoteEvent(ctx context.Context, req *MsgVoteEvent) (*MsgVoteResponse, error) {
-	wctx := sdk.UnwrapSDKContext(ctx)
-
-	// basic validation of the request message
-	if err := req.ValidateBasic(); err != nil {
-		return nil, err
-	}
-
-	// convert proxy account to validator account
-	val, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
-	if !found {
-		return nil, errors.ErrNotFound
-	}
-
-	// votes polls
-	if err := m.baseKeeper.VotePoll(wctx, val, req.GetChain(), req.GetIds()); err != nil {
-		return nil, err
-	}
-
-	// emits [EventType_VoteEvent]
-	event := &types.EventType_VoteEvent{
-		Executor:     val,
-		ProxyAccount: req.GetSender(),
-		Chain:        req.GetChain(),
-		PollIds:      req.GetIds(),
-	}
-	if err := wctx.EventManager().EmitTypedEvent(event); err != nil {
-		return nil, err
-	}
-
-	return &MsgVoteResponse{}, nil
+	return &MsgSubmitResponse{
+		News:  mitotypes.Keys(submitted),
+		Voted: mitotypes.Keys(existPolls),
+	}, nil
 }
 
 func (m msgServer) RegisterProxy(ctx context.Context, req *MsgRegisterProxy) (*MsgRegisterProxyResponse, error) {

@@ -7,7 +7,6 @@ import (
 
 var _ = []sdk.Msg{
 	&MsgSubmitEvent{},
-	&MsgVoteEvent{},
 	&MsgRegisterProxy{},
 	&MsgClearProxy{},
 	&MsgRegisterChain{},
@@ -27,21 +26,6 @@ func (m *MsgSubmitEvent) ValidateBasic() error {
 	return nil
 }
 func (m *MsgSubmitEvent) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
-
-func (m *MsgVoteEvent) ValidateBasic() error {
-	// verify sender
-	if err := sdk.VerifyAddressFormat(m.GetSender().Bytes()); err != nil {
-		return errors.Wrapf(errors.ErrInvalidAddress, "sender %s", m.GetSender())
-	}
-
-	// assert poll ids size
-	if len(m.GetIds()) == 0 {
-		return errors.Wrap(errors.ErrInvalidRequest, "msg must have at least 1 poll id")
-	}
-
-	return nil
-}
-func (m *MsgVoteEvent) GetSigners() []sdk.AccAddress { return []sdk.AccAddress{m.Sender} }
 
 func (m *MsgRegisterProxy) ValidateBasic() error {
 	// verify validator
