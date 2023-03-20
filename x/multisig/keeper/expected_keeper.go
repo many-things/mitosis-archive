@@ -9,6 +9,8 @@ import (
 
 type KeygenKeeper interface {
 	RegisterKeygenEvent(ctx sdk.Context, chainId string, keygen *types.Keygen) (uint64, error)
+	RemoveKeygenEvent(ctx sdk.Context, chainId string, id uint64) error
+	UpdateKeygenStatus(ctx sdk.Context, chainId string, id uint64, newStatus types.Keygen_Status) (*types.Keygen, error)
 
 	QueryKeygen(ctx sdk.Context, chainId string, id uint64) (*types.Keygen, error)
 	QueryKeygenList(ctx sdk.Context, chainId string, pageReq *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error)
@@ -20,4 +22,13 @@ type PubKeyKeeper interface {
 
 	QueryPubKey(ctx sdk.Context, chainId string, keyId uint64, participant sdk.ValAddress) (*types.PubKey, error)
 	QueryPubKeyList(ctx sdk.Context, chainId string, keyId uint64, page *query.PageRequest) (*mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error)
+}
+
+type SignKeeper interface {
+	RegisterSignEvent(ctx sdk.Context, chainId string, sign *types.Sign) (uint64, error)
+	RemoveSignEvent(ctx sdk.Context, chainId string, id uint64) error
+	UpdateSignStatus(ctx sdk.Context, chainId string, id uint64, newStatus types.Sign_Status) (*types.Sign, error)
+
+	QuerySign(ctx sdk.Context, chainId string, id uint64) (*types.Sign, error)
+	QuerySignList(ctx sdk.Context, chainId string, page *query.PageRequest) (*mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error)
 }
