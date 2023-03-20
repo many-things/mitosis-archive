@@ -90,5 +90,5 @@ message Sign {
   repeated string participants = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 
   // Message to sign
-  string message_to_sign = 5 [(gogoproto.casttype) = "Hash"];
+  bytes message_to_sign = 5 [(gogoproto.casttype) = "Hash"];
 }
