@@ -35,6 +35,7 @@ type MsgStartKeygen struct {
 	Participants []github_com_cosmos_cosmos_sdk_types.ValAddress       `protobuf:"bytes,3,rep,name=participants,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participants,omitempty"`
 }
 
+func (*MsgStartKeygen) Type() string { return "MsgStartKeygen" }
 func (m *MsgStartKeygen) Reset()         { *m = MsgStartKeygen{} }
 func (m *MsgStartKeygen) String() string { return proto.CompactTextString(m) }
 func (*MsgStartKeygen) ProtoMessage()    {}
@@ -97,6 +98,7 @@ type MsgSubmitPubkey struct {
 	PubKey      github_com_many_things_mitosis_x_multisig_types.PublicKey `protobuf:"bytes,4,opt,name=pub_key,json=pubKey,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.PublicKey" json:"pub_key,omitempty"`
 }
 
+func (*MsgSubmitPubkey) Type() string { return "MsgSubmitPubkey" }
 func (m *MsgSubmitPubkey) Reset()         { *m = MsgSubmitPubkey{} }
 func (m *MsgSubmitPubkey) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitPubkey) ProtoMessage()    {}
@@ -240,6 +242,7 @@ type MsgSubmitSignature struct {
 	Signature   github_com_many_things_mitosis_x_multisig_types.Signature `protobuf:"bytes,4,opt,name=signature,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"signature,omitempty"`
 }
 
+func (*MsgSubmitSignature) Type() string { return "MsgSubmitSignature" }
 func (m *MsgSubmitSignature) Reset()         { *m = MsgSubmitSignature{} }
 func (m *MsgSubmitSignature) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitSignature) ProtoMessage()    {}

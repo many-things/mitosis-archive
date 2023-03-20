@@ -525,7 +525,7 @@ func New(
 	)
 	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper)
 
-	app.MultisigKeeper = *multisigmodulekeeper.NewKeeper(
+	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],
