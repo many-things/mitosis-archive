@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig.server;
+
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "mitosis/multisig/v1beta1/params.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/server";
+
+// MsgStartKeygen is message for startkeygen event
+message MsgStartKeygen {
+  string module = 1;
+  string key_id = 2 [
+    (gogoproto.customname) = "KeyID",
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.KeyID"
+  ];
+  repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
+// MsgSubmitPubkey is message for submitMessage event
+message MsgSubmitPubkey {
+  string module = 1;
+  string key_id = 2 [
+    (gogoproto.customname) = "KeyID",
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.KeyID"
+  ];
+  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.PublicKey"];
+}
+
+// MsgStartKeygenResponse is message for StartKeygen Response
+message MsgStartKeygenResponse {}
+
+// MsgSubmitPubkeyResponse is message for SubmitPubkey Response
+message MsgSubmitPubkeyResponse {}
+
+// MsgSubmitSignature is message for SubmitSignature event
+message MsgSubmitSignature {
+  string module = 1;
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes signature = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Signature"];
+}
+
+// MsgSubmitSignatureResponse is message for SubmitSignature Response
+message MsgSubmitSignatureResponse {}

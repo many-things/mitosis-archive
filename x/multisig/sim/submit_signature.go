@@ -18,10 +18,8 @@ func SimulateMsgSubmitSignature(
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &server.MsgSubmitSignature{
-			Creator: simAccount.Address.String(),
-		}
+		//simAccount, _ := simtypes.RandomAcc(r, accs)
+		msg := &server.MsgSubmitSignature{}
 
 		// TODO: Handling the SubmitSignature simulation
 
