@@ -64,10 +64,10 @@ func (k keeper) QueryKeygen(ctx sdk.Context, chainId string, id uint64) (*types.
 }
 
 // QueryKeygenList is fetch multiple keygens from chain
-func (k keeper) QueryKeygenList(ctx sdk.Context, chainId string, pageReq *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error) {
+func (k keeper) QueryKeygenList(ctx sdk.Context, chainId string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error) {
 	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
 
-	results, pageResp, err := keygenRepo.Paginate(pageReq)
+	results, pageResp, err := keygenRepo.Paginate(page)
 	if err != nil {
 		return nil, nil, err
 	}

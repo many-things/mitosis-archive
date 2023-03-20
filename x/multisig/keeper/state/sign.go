@@ -13,6 +13,7 @@ import (
 
 type SignRepo interface {
 	Load(id uint64) (*types.Sign, error)
+	Create(sign *types.Sign) (uint64, error)
 	Save(sign *types.Sign) error
 	Delete(id uint64) error
 
@@ -52,18 +53,28 @@ func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	return sign, nil
 }
 
-func (r kvSignRepo) Save(sign *types.Sign) error {
+func (r kvSignRepo) Create(sign *types.Sign) (uint64, error) {
 	latestIdPrefix := kvSignRepoLatestId
 	latestId := sdk.BigEndianToUint64(r.root.Get(latestIdPrefix))
 
 	sign.SigId = latestId
 	signBz, err := sign.Marshal()
 	if err != nil {
-		return errors.Wrap(errors.ErrNotFound, "Cannot find sign")
+		return 0, errors.Wrap(errors.ErrNotFound, "Cannot find sign")
 	}
 
 	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(latestId), signBz)
 	r.root.Set(latestIdPrefix, sdk.Uint64ToBigEndian(latestId+1))
+	return latestId, nil
+}
+
+func (r kvSignRepo) Save(sign *types.Sign) error {
+	signBz, err := sign.Marshal()
+	if err != nil {
+		return err
+	}
+
+	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(sign.SigId), signBz)
 	return nil
 }
 
