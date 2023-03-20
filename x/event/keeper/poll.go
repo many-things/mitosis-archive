@@ -9,22 +9,8 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-type PollKeeper interface {
-	// FilterNewPolls specifies fresh poll and returns new poll and existing polls' index
-	FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Poll) ([]*types.Poll, []mitotypes.KV[uint64, []byte], error)
-
-	// SubmitPolls handles [server.MsgSubmit] - returns key value set of poll_id and event_hash
-	SubmitPolls(ctx sdk.Context, chain string, polls []*types.Poll, totalPower, valPower sdk.Int) ([]mitotypes.KV[uint64, []byte], error)
-
-	// VotePolls handles [server.MsgVote]
-	VotePolls(ctx sdk.Context, chain string, votes []uint64, valPower sdk.Int) error
-
-	// QueryPoll handles [server.QueryPoll]
-	QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error)
-
-	// QueryPolls handles [server.QueryPolls]
-	QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
-}
+// determinism
+var _ types.PollKeeper = keeper{}
 
 func (k keeper) FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Poll) ([]*types.Poll, []mitotypes.KV[uint64, []byte], error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))

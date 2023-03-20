@@ -16,10 +16,10 @@ type Keeper interface {
 	SetParams(ctx sdk.Context, params types.Params)
 	Logger(ctx sdk.Context) log.Logger
 
-	PollKeeper
-	ProxyKeeper
-	ChainKeeper
-	GenesisKeeper
+	types.ChainKeeper
+	types.GenesisKeeper
+	types.PollKeeper
+	types.ProxyKeeper
 }
 
 type keeper struct {
