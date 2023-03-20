@@ -20,9 +20,8 @@ type SignatureRepo interface {
 }
 
 type kvSignatureRepo struct {
-	cdc     codec.BinaryCodec
-	root    store.KVStore
-	chainId string
+	cdc  codec.BinaryCodec
+	root store.KVStore
 }
 
 var (
@@ -31,12 +30,12 @@ var (
 
 func NewKVChainSignatureRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) SignatureRepo {
 	return &kvSignatureRepo{
-		cdc: cdc, root: root, chainId: chainId,
+		cdc:  cdc,
+		root: prefix.NewStore(root, append([]byte(chainId), kvSignatureRepoKey...)),
 	}
 }
 
 func (r kvSignatureRepo) getPrefix(prefix []byte, id uint64) []byte {
-	prefix = append([]byte(r.chainId), prefix...)
 	return append(prefix, sdk.Uint64ToBigEndian(id)...)
 }
 

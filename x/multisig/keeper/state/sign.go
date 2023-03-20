@@ -20,14 +20,14 @@ type SignRepo interface {
 }
 
 type kvSignRepo struct {
-	cdc     codec.BinaryCodec
-	root    store.KVStore
-	chainId string
+	cdc  codec.BinaryCodec
+	root store.KVStore
 }
 
 func NewKVChainSignRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) SignRepo {
 	return &kvSignRepo{
-		cdc, root, chainId,
+		cdc:  cdc,
+		root: prefix.NewStore(root, append([]byte(chainId), kvSignRepoKey...)),
 	}
 }
 
@@ -36,12 +36,8 @@ var (
 	kvSignRepoItemPrefix = []byte{0x02}
 )
 
-func (r kvSignRepo) getPrefix(prefix []byte) []byte {
-	return append([]byte(r.chainId), prefix...)
-}
-
 func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
-	bz := prefix.NewStore(r.root, r.getPrefix(kvSignRepoItemPrefix)).Get(sdk.Uint64ToBigEndian(id))
+	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz != nil { // TODO: add custom err
 		return nil, nil
 	}
@@ -55,7 +51,7 @@ func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 }
 
 func (r kvSignRepo) Save(sign *types.Sign) error {
-	latestIdPrefix := r.getPrefix(kvSignRepoLatestId)
+	latestIdPrefix := kvSignRepoLatestId
 	latestId := sdk.BigEndianToUint64(r.root.Get(latestIdPrefix))
 
 	sign.SigId = latestId
@@ -64,13 +60,13 @@ func (r kvSignRepo) Save(sign *types.Sign) error {
 		return err
 	}
 
-	prefix.NewStore(r.root, r.getPrefix(kvSignRepoItemPrefix)).Set(sdk.Uint64ToBigEndian(latestId), signBz)
+	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(latestId), signBz)
 	r.root.Set(latestIdPrefix, sdk.Uint64ToBigEndian(latestId+1))
 	return nil
 }
 
 func (r kvSignRepo) Delete(id uint64) error {
-	ks := prefix.NewStore(r.root, r.getPrefix(kvSignRepoItemPrefix))
+	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
 	bz := ks.Get(sdk.Uint64ToBigEndian(id))
 
 	var sign types.Sign
@@ -83,7 +79,7 @@ func (r kvSignRepo) Delete(id uint64) error {
 }
 
 func (r kvSignRepo) Paginate(page *query.PageRequest) ([]types.KV[uint64, *types.Sign], *query.PageResponse, error) {
-	ks := prefix.NewStore(r.root, r.getPrefix(kvSignRepoItemPrefix))
+	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
 
 	var results []types.KV[uint64, *types.Sign]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {

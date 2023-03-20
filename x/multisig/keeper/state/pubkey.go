@@ -18,14 +18,13 @@ type PubKeyRepo interface {
 }
 
 type kvPubkeyRepo struct {
-	cdc     codec.BinaryCodec
-	root    store.KVStore
-	chainId string
+	cdc  codec.BinaryCodec
+	root store.KVStore
 }
 
-func NewKVChainPubkeyRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) PubKeyRepo {
+func NewKVChainPubKeyRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) PubKeyRepo {
 	return &kvPubkeyRepo{
-		cdc, root, chainId,
+		cdc, prefix.NewStore(root, append([]byte(chainId), kvPubKeyRepoKey...)),
 	}
 }
 
@@ -34,7 +33,6 @@ var (
 )
 
 func (r kvPubkeyRepo) getPrefix(prefix []byte, id uint64) []byte {
-	prefix = append([]byte(r.chainId), prefix...)
 	return append(prefix, sdk.Uint64ToBigEndian(id)...)
 }
 

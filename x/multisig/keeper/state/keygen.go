@@ -20,14 +20,14 @@ type KeygenRepo interface {
 }
 
 type kvKeygenRepo struct {
-	cdc     codec.BinaryCodec
-	root    store.KVStore
-	chainId string
+	cdc  codec.BinaryCodec
+	root store.KVStore
 }
 
 func NewKVChainKeygenRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) KeygenRepo {
 	return &kvKeygenRepo{
-		cdc, root, chainId,
+		cdc:  cdc,
+		root: prefix.NewStore(root, append([]byte(chainId), kvKeygenRepoKey...)),
 	}
 }
 
@@ -36,12 +36,8 @@ var (
 	kvKeygenRepoItemsPrefix = []byte{0x02}
 )
 
-func (r kvKeygenRepo) getPrefix(prefix []byte) []byte {
-	return append([]byte(r.chainId), prefix...)
-}
-
 func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
-	bz := prefix.NewStore(r.root, r.getPrefix(kvKeygenRepoItemsPrefix)).Get(sdk.Uint64ToBigEndian(id))
+	bz := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz == nil {
 		return nil, nil
 	}
@@ -55,7 +51,7 @@ func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 }
 
 func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
-	latestId := sdk.BigEndianToUint64(r.root.Get(r.getPrefix(kvKeygenRepoLatestId)))
+	latestId := sdk.BigEndianToUint64(r.root.Get(kvKeygenRepoLatestId))
 	latestIdBz := sdk.Uint64ToBigEndian(latestId)
 
 	keygen.KeyId = latestId
@@ -64,14 +60,14 @@ func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
 		return err
 	}
 
-	prefix.NewStore(r.root, r.getPrefix(kvKeygenRepoItemsPrefix)).Set(latestIdBz, keygenBz)
-	r.root.Set(r.getPrefix(kvKeygenRepoLatestId), sdk.Uint64ToBigEndian(latestId+1))
+	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(latestIdBz, keygenBz)
+	r.root.Set(kvKeygenRepoLatestId, sdk.Uint64ToBigEndian(latestId+1))
 
 	return nil
 }
 
 func (r kvKeygenRepo) Delete(id uint64) error {
-	ks := prefix.NewStore(r.root, r.getPrefix(kvKeygenRepoItemsPrefix))
+	ks := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
 	bz := ks.Get(sdk.Uint64ToBigEndian(id))
 
 	// check for obj is exists and valid
@@ -85,7 +81,7 @@ func (r kvKeygenRepo) Delete(id uint64) error {
 }
 
 func (r kvKeygenRepo) Paginate(page *query.PageRequest) ([]types.KV[uint64, *types.Keygen], *query.PageResponse, error) {
-	ks := prefix.NewStore(r.root, r.getPrefix(kvKeygenRepoItemsPrefix))
+	ks := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
 
 	var results []types.KV[uint64, *types.Keygen]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
