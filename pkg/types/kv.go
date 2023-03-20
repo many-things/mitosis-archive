@@ -28,10 +28,7 @@ func Values[K, V any](kvs []KV[K, V]) []V {
 
 // MapKV is a helper function to map a KV slice to a new slice of type R.
 func MapKV[K, V, R any](kvs []KV[K, V], f func(k K, v V) R) []R {
-	rs := make([]R, len(kvs))
-	for i := range kvs {
-		kv := kvs[i]
-		rs[i] = f(kv.Key, kv.Value)
-	}
-	return rs
+	return Map(kvs, func(kv KV[K, V]) R {
+		return f(kv.Key, kv.Value)
+	})
 }

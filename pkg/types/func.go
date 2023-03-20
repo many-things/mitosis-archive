@@ -1,11 +1,10 @@
 package types
 
 // Map is a helper function to map a slice to a new slice of type U.
-func Map[K, V, R any](kvs []KV[K, V], f func(k K, v V) R) []R {
-	rs := make([]R, len(kvs))
-	for i := range kvs {
-		kv := kvs[i]
-		rs[i] = f(kv.Key, kv.Value)
+func Map[T, U any](ts []T, f func(t T) U) []U {
+	rs := make([]U, len(ts))
+	for i := range ts {
+		rs[i] = f(ts[i])
 	}
 	return rs
 }
