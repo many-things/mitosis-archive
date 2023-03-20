@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
@@ -14,7 +15,7 @@ type PubKeyRepo interface {
 	Save(pubKey *types.PubKey) error
 	Delete(id uint64, participant sdk.ValAddress) error
 
-	Paginate(id uint64, page *query.PageRequest) ([]types.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error)
+	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error)
 }
 
 type kvPubkeyRepo struct {
@@ -75,10 +76,10 @@ func (r kvPubkeyRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	return nil
 }
 
-func (r kvPubkeyRepo) Paginate(id uint64, page *query.PageRequest) ([]types.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error) {
+func (r kvPubkeyRepo) Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error) {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id))
 
-	var results []types.KV[sdk.ValAddress, *types.PubKey]
+	var results []mitosistype.KV[sdk.ValAddress, *types.PubKey]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
 		pubKey := new(types.PubKey)
 
@@ -87,7 +88,7 @@ func (r kvPubkeyRepo) Paginate(id uint64, page *query.PageRequest) ([]types.KV[s
 		}
 
 		addr := sdk.ValAddress(key)
-		results = append(results, types.NewKV(addr, pubKey))
+		results = append(results, mitosistype.NewKV(addr, pubKey))
 		return nil
 	})
 

@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
@@ -14,7 +15,7 @@ type SignRepo interface {
 	Save(sign *types.Sign) error
 	Delete(id uint64) error
 
-	Paginate(page *query.PageRequest) ([]types.KV[uint64, *types.Sign], *query.PageResponse, error)
+	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error)
 
 	// TODO: Implement Genesis Tool
 }
@@ -78,10 +79,10 @@ func (r kvSignRepo) Delete(id uint64) error {
 	return nil
 }
 
-func (r kvSignRepo) Paginate(page *query.PageRequest) ([]types.KV[uint64, *types.Sign], *query.PageResponse, error) {
+func (r kvSignRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error) {
 	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
 
-	var results []types.KV[uint64, *types.Sign]
+	var results []mitosistype.KV[uint64, *types.Sign]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
 		sign := new(types.Sign)
 
@@ -89,7 +90,7 @@ func (r kvSignRepo) Paginate(page *query.PageRequest) ([]types.KV[uint64, *types
 			return nil
 		}
 
-		results = append(results, types.NewKV(sdk.BigEndianToUint64(key), sign))
+		results = append(results, mitosistype.NewKV(sdk.BigEndianToUint64(key), sign))
 		return nil
 	})
 

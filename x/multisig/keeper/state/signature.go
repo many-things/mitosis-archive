@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
@@ -14,7 +15,7 @@ type SignatureRepo interface {
 	Save(id uint64, participant sdk.ValAddress, signature types.Signature) error
 	Delete(id uint64, participant sdk.ValAddress) error
 
-	Paginate(id uint64, page *query.PageRequest) ([]types.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error)
+	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error)
 
 	// TODO: Implement Genesis Tool
 }
@@ -66,12 +67,12 @@ func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	return nil
 }
 
-func (r kvSignatureRepo) Paginate(id uint64, page *query.PageRequest) ([]types.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error) {
+func (r kvSignatureRepo) Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error) {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
 
-	var results []types.KV[sdk.ValAddress, types.Signature]
+	var results []mitosistype.KV[sdk.ValAddress, types.Signature]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
-		results = append(results, types.NewKV(sdk.ValAddress(key), types.Signature(value)))
+		results = append(results, mitosistype.NewKV(sdk.ValAddress(key), types.Signature(value)))
 		return nil
 	})
 
