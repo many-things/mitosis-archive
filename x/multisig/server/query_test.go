@@ -13,7 +13,7 @@ import (
 
 func setupQueryServer(t testing.TB) (keeper.Keeper, QueryServer, context.Context) {
 	k, ctx := testkeeper.MultisigKeeper(t)
-	return *k, NewQueryServer(*k), sdk.WrapSDKContext(ctx)
+	return k, NewQueryServer(k), sdk.WrapSDKContext(ctx)
 }
 
 func TestParamsQuery(t *testing.T) {

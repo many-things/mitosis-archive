@@ -242,7 +242,7 @@ type MsgSubmitSignature struct {
 	Signature   github_com_many_things_mitosis_x_multisig_types.Signature `protobuf:"bytes,4,opt,name=signature,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"signature,omitempty"`
 }
 
-func (*MsgSubmitSignature) Type() string { return "MsgSubmitSignature "}
+func (*MsgSubmitSignature) Type() string { return "MsgSubmitSignature" }
 func (m *MsgSubmitSignature) Reset()         { *m = MsgSubmitSignature{} }
 func (m *MsgSubmitSignature) String() string { return proto.CompactTextString(m) }
 func (*MsgSubmitSignature) ProtoMessage()    {}

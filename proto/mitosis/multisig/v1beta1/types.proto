@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/types";
+
+// Keygen Message
+message Keygen {
+  // Keygen Status
+  enum Status {
+    // Unspecified Status
+    STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
+
+    // Keygen Assigned Status ( Not executed )
+    STATUS_ASSIGN = 1 [(gogoproto.enumvalue_customname) = "StatusAssign"];
+
+    // Keygen Started
+    STATUS_EXECUTE = 2 [(gogoproto.enumvalue_customname) = "StatusExecute"];
+
+    // Keygen Completed
+    STATUS_COMPLETED = 3 [(gogoproto.enumvalue_customname) = "StatusComplete"];
+
+    // Keygen Failed
+    STATUS_FAILED = 4 [(gogoproto.enumvalue_customname) = "StatusFailed"];
+  }
+
+  // key target chain id
+  string chain = 1;
+
+  // key id
+  uint64 key_id = 2;
+
+  // keygen participants
+  repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // keygen event status
+  Status status = 4;
+}
+
+// Pubkey Message
+message PubKey {
+  // key target chain id
+  string chain = 1;
+
+  // key id
+  uint64 key_id = 2;
+
+  // participant id
+  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // pub key
+  bytes pub_key = 4 [(gogoproto.casttype) = "PublicKey"];
+}
+
+// Sign Message
+message Sign {
+  // Sign Status
+  enum Status {
+    // Unspecified Status
+    STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspeicified"];
+
+    // Sign event Assigned ( Not executed )
+    STATUS_ASSIGN = 1 [(gogoproto.enumvalue_customname) = "StatusAssign"];
+
+    // Sign event executed
+    STATUS_EXECUTE = 2 [(gogoproto.enumvalue_customname) = "StatusExecute"];
+
+    // Sign event Completed
+    STATUS_COMPLETE = 3 [(gogoproto.enumvalue_customname) = "StatusComplete"];
+
+    // Sign event Success
+    STATUS_SUCCESS = 4 [(gogoproto.enumvalue_customname) = "StatusSuccess"];
+
+    // Sign event Failed
+    STATUS_FAILED = 5 [(gogoproto.enumvalue_customname) = "StatusFailed"];
+  }
+
+  // sign target chain id
+  string chain = 1;
+
+  // signature id
+  uint64 sig_id = 2;
+
+  // try-to-sign key id
+  string key_id = 3;
+
+  // participant_ids
+  repeated string participants = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // Message to sign
+  string message_to_sign = 5 [(gogoproto.casttype) = "Hash"];
+}
