@@ -1,10 +1,11 @@
 package keeper_test
 
 import (
+	"testing"
+
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/event/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestParams(t *testing.T) {
