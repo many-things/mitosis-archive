@@ -3,7 +3,9 @@
 PHONY: build
 
 test:
-	@go test -race -coverprofile=coverage.out -covermode=atomic ./...
+	@go test -race -coverprofile=coverage.out.tmp -covermode=atomic ./...
+	@cat coverage.out.tmp | grep -v '.pb.go' | grep -v '.pb.gw.go' > coverage.out
+	@rm coverage.out.tmp
 
 build: proto
 	@ignite chain build --skip-proto
