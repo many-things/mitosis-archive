@@ -1,8 +1,13 @@
 package types
 
 import (
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"gopkg.in/yaml.v2"
+)
+
+const (
+	DefaultPollThreshold = 0.5
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -14,7 +19,9 @@ func ParamKeyTable() paramtypes.KeyTable {
 
 // NewParams creates a new Params instance
 func NewParams() Params {
-	return Params{}
+	return Params{
+		PollThreshold: DefaultPollThreshold,
+	}
 }
 
 // DefaultParams returns a default set of parameters
@@ -29,6 +36,13 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 
 // Validate validates the set of params
 func (p *Params) Validate() error {
+	pollThreshold := p.GetPollThreshold()
+	if pollThreshold < 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be positive")
+	} else if pollThreshold > 1 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be less than 1")
+	}
+
 	return nil
 }
 
