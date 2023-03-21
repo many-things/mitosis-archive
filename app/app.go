@@ -250,7 +250,7 @@ type App struct {
 
 	EventKeeper eventmodulekeeper.Keeper
 
-	MultisigKeeper multisigmodulekeeper.Keeper
+	MultisigKeeper multisigmoduletypes.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -525,7 +525,7 @@ func New(
 	)
 	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper)
 
-	app.MultisigKeeper = *multisigmodulekeeper.NewKeeper(
+	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],
