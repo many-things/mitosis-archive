@@ -18,8 +18,8 @@ func TestGenesis(t *testing.T) {
 	}
 
 	k, ctx := keepertest.MultisigKeeper(t)
-	multisig.InitGenesis(ctx, *k, genesisState)
-	got := multisig.ExportGenesis(ctx, *k)
+	multisig.InitGenesis(ctx, k, genesisState)
+	got := multisig.ExportGenesis(ctx, k)
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)
