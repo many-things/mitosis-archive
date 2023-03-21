@@ -3,45 +3,9 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.event;
 
 import "gogoproto/gogo.proto";
-import "mitosis/common/v1beta1/types.proto";
+import "mitosis/event/v1beta1/types_event.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
-
-// TxReqEvent Message
-message TxReqEvent {
-  string dest_chain = 1;
-  bytes dest_addr = 2;
-  uint32 op_id = 3;
-  repeated bytes op_args = 4;
-
-  repeated mitosis.v1beta1.common.Coin funds = 5;
-}
-
-// TxResEvent Message
-message TxResEvent {
-  // Request Event id correspond to given response
-  uint64 req_evt_id = 1;
-  bool ok = 2;
-  bytes result = 3;
-}
-
-// Event Message
-message Event {
-  // Block height
-  uint64 height = 1;
-
-  // Transaction hash
-  bytes tx_hash = 2;
-
-  // Event Index
-  uint32 evt_idx = 3;
-
-  // Actual event payload
-  oneof event {
-    TxReqEvent req = 4;
-    TxResEvent res = 5;
-  }
-}
 
 // Tally Message
 message Tally {
