@@ -66,6 +66,11 @@ func (m msgServer) SubmitPubkey(ctx context.Context, msg *MsgSubmitPubkey) (*Msg
 		PubKey:      msg.PubKey,
 	}
 
+	if err := m.baseKeeper.RegisterPubKey(wctx, chainId, &pubKey); err != nil {
+		return nil, err
+	}
+
+	return &MsgSubmitPubkeyResponse{}, nil
 }
 
 func (m msgServer) SubmitSignature(ctx context.Context, signature *MsgSubmitSignature) (*MsgSubmitSignatureResponse, error) {
