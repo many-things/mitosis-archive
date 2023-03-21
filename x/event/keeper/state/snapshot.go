@@ -9,18 +9,23 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
+	"sort"
 )
 
 type SnapshotRepo interface {
-	Create(powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error)
+	Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error)
 
 	PowerOf(epoch *uint64, val sdk.ValAddress) (int64, error)
-
-	LatestPowerOf(val sdk.ValAddress) (int64, error)
 
 	LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error)
 
 	LatestEpoch() (*types.EpochInfo, error)
+
+	// ExportGenesis returns the entire module's state
+	ExportGenesis() (genState *types.GenesisSnapshot, err error)
+
+	// ImportGenesis sets the entire module's state
+	ImportGenesis(genState *types.GenesisSnapshot) error
 }
 
 var (
@@ -52,7 +57,7 @@ func (r kvSnapshotRepo) valSetStore() store.KVStore {
 func (r kvSnapshotRepo) latestEpoch(height uint64) (*types.EpochInfo, error) {
 	bz := r.root.Get(kvSnapshotRepoLatestEpochKey)
 	if bz == nil {
-		return &types.EpochInfo{0, height}, nil
+		return &types.EpochInfo{Height: height}, nil
 	}
 
 	ei := new(types.EpochInfo)
@@ -74,7 +79,7 @@ func (r kvSnapshotRepo) setLatestEpoch(epoch *types.EpochInfo) error {
 	return nil
 }
 
-func (r kvSnapshotRepo) Create(powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error) {
+func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error) {
 	var (
 		valPowerStore = r.valPowerStore()
 		valSetStore   = r.valSetStore()
@@ -92,6 +97,17 @@ func (r kvSnapshotRepo) Create(powers []mitotypes.KV[sdk.ValAddress, int64], hei
 		}
 	}
 
+	latestEpoch.TotalPower = &total
+	if err := r.setLatestEpoch(latestEpoch); err != nil {
+		return nil, err
+	}
+
+	sort.Slice(
+		powers,
+		func(i, j int) bool {
+			return powers[i].Key.String() > powers[j].Key.String()
+		},
+	)
 	for _, power := range powers {
 		v, p := power.Key, power.Value
 
@@ -146,10 +162,6 @@ func (r kvSnapshotRepo) PowerOf(epoch *uint64, val sdk.ValAddress) (int64, error
 	return int64(power), nil
 }
 
-func (r kvSnapshotRepo) LatestPowerOf(val sdk.ValAddress) (int64, error) {
-	return r.PowerOf(nil, val)
-}
-
 func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error) {
 	valSetStore := r.valSetStore()
 	latestEpoch, err := r.latestEpoch(0)
@@ -189,4 +201,97 @@ func (r kvSnapshotRepo) LatestEpoch() (*types.EpochInfo, error) {
 		return nil, nil
 	}
 	return epoch, nil
+}
+
+func (r kvSnapshotRepo) ExportGenesis() (genState *types.GenesisSnapshot, err error) {
+	epoch, err := r.latestEpoch(0)
+	if err != nil {
+		return nil, err
+	}
+	if epoch.GetEpoch() > 0 {
+		genState.LatestEpoch = epoch
+	}
+
+	powerStore := r.valPowerStore()
+
+	var powerSet []*types.GenesisSnapshot_PowerSet
+	_, err = query.Paginate(
+		powerStore,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(key []byte, value []byte) error {
+			div := len(key) - 8
+			addr := sdk.ValAddress(key[:div])
+			epoch := sdk.BigEndianToUint64(key[div:])
+
+			powerSet = append(powerSet, &types.GenesisSnapshot_PowerSet{
+				Validator: addr,
+				Epoch:     epoch,
+				Power:     sdk.BigEndianToUint64(value),
+			})
+			return nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(powerSet) > 0 {
+		genState.PowerSet = powerSet
+	}
+
+	return
+}
+
+func (r kvSnapshotRepo) ImportGenesis(genState *types.GenesisSnapshot) error {
+	if genState.GetLatestEpoch() != nil {
+		if err := r.setLatestEpoch(genState.GetLatestEpoch()); err != nil {
+			return err
+		}
+	}
+
+	var (
+		setStore   = r.valSetStore()
+		powerStore = r.valPowerStore()
+	)
+
+	sets := make(map[uint64]*types.ValidatorSet)
+	for _, power := range genState.GetPowerSet() {
+		if _, ok := sets[power.GetEpoch()]; ok {
+			sets[power.GetEpoch()].Items = append(
+				sets[power.GetEpoch()].Items,
+				&types.ValidatorSet_Item{
+					Validator: power.GetValidator(),
+					Power:     int64(power.GetPower()),
+				},
+			)
+		} else {
+			sets[power.GetEpoch()] = &types.ValidatorSet{
+				Items: []*types.ValidatorSet_Item{{
+					Validator: power.GetValidator(),
+					Power:     int64(power.GetPower()),
+				}},
+			}
+		}
+
+		powerStore.Set(
+			append(power.GetValidator().Bytes(), sdk.Uint64ToBigEndian(power.GetEpoch())...),
+			sdk.Uint64ToBigEndian(power.Power),
+		)
+	}
+
+	for epoch, set := range sets {
+		sort.Slice(
+			set.Items,
+			func(i, j int) bool {
+				return set.Items[i].Validator.String() > set.Items[j].Validator.String()
+			},
+		)
+		bz, err := set.Marshal()
+		if err != nil {
+			return err
+		}
+		setStore.Set(sdk.Uint64ToBigEndian(epoch), bz)
+	}
+
+	return nil
 }

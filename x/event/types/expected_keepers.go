@@ -28,10 +28,10 @@ type PollKeeper interface {
 	FilterNewPolls(ctx sdk.Context, chain string, polls []*Poll) ([]*Poll, []mitotypes.KV[uint64, []byte], error)
 
 	// SubmitPolls handles [server.MsgSubmit] - returns key value set of poll_id and event_hash
-	SubmitPolls(ctx sdk.Context, chain string, polls []*Poll, totalPower, valPower sdk.Int) ([]mitotypes.KV[uint64, []byte], error)
+	SubmitPolls(ctx sdk.Context, chain string, val sdk.ValAddress, polls []*Poll) ([]mitotypes.KV[uint64, []byte], error)
 
 	// VotePolls handles [server.MsgVote]
-	VotePolls(ctx sdk.Context, chain string, votes []uint64, valPower sdk.Int) error
+	VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, votes []uint64) error
 
 	// QueryPoll handles [server.QueryPoll]
 	QueryPoll(ctx sdk.Context, chain string, id uint64) (*Poll, error)
@@ -53,7 +53,9 @@ type ProxyKeeper interface {
 }
 
 type SnapshotKeeper interface {
-	CreateSnapshot(ctx sdk.Context, set []mitotypes.KV[sdk.ValAddress, int64]) (*EpochInfo, error)
+	CreateSnapshot(ctx sdk.Context, total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64]) (*EpochInfo, error)
+
+	VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error)
 
 	LatestSnapshotEpoch(ctx sdk.Context) (*EpochInfo, error)
 }

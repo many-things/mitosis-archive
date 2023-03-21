@@ -10,6 +10,7 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 message EpochInfo {
   uint64 epoch = 1;
   uint64 height = 2;
+  string total_power = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
 }
 
 // ValidatorSet defines a power information about every validator at specific epoch.

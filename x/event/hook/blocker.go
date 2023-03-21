@@ -8,7 +8,11 @@ import (
 )
 
 func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, keeper types.BaseKeeper, stakingKeeper types.StakingKeeper) {
-	var powers []mitotypes.KV[sdk.ValAddress, int64]
+
+	var (
+		total  = stakingKeeper.GetLastTotalPower(ctx)
+		powers []mitotypes.KV[sdk.ValAddress, int64]
+	)
 	stakingKeeper.IterateLastValidatorPowers(
 		ctx,
 		func(addr sdk.ValAddress, power int64) bool {
@@ -28,7 +32,7 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, keeper types.BaseKe
 		return
 	}
 
-	_, err = keeper.CreateSnapshot(ctx, powers)
+	_, err = keeper.CreateSnapshot(ctx, total, powers)
 
 	// TODO: emit event
 }

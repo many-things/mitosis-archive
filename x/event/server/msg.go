@@ -32,17 +32,6 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 		return nil, errors.ErrNotFound
 	}
 
-	// fetch total voting power & current validator's power from staking keeper
-	totalPower := m.stakingKeeper.GetLastTotalPower(wctx)
-	if totalPower.IsZero() {
-		return nil, errors.Wrap(errors.ErrPanic, "total validator power is zero")
-	}
-
-	valPower := sdk.NewInt(m.stakingKeeper.GetLastValidatorPower(wctx, val))
-	if valPower.IsZero() {
-		return nil, errors.Wrap(errors.ErrPanic, "validator power is zero")
-	}
-
 	// make poll candidates
 	candidates := mitotypes.Map(
 		req.GetEvents(),
@@ -62,13 +51,13 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 	}
 
 	// submits polls
-	submitted, err := m.baseKeeper.SubmitPolls(wctx, req.GetChain(), newPolls, totalPower, valPower)
+	submitted, err := m.baseKeeper.SubmitPolls(wctx, req.GetChain(), val, newPolls)
 	if err != nil {
 		return nil, err
 	}
 
 	// vote polls
-	if err := m.baseKeeper.VotePolls(wctx, req.GetChain(), mitotypes.Keys(existPolls), valPower); err != nil {
+	if err := m.baseKeeper.VotePolls(wctx, req.GetChain(), val, mitotypes.Keys(existPolls)); err != nil {
 		return nil, err
 	}
 
@@ -84,7 +73,6 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 		Executor:     val,
 		ProxyAccount: req.GetSender(),
 		Chain:        req.GetChain(),
-		Power:        &valPower,
 		Submitted:    mitotypes.MapKV(submitted, pollConv),
 		Voted:        mitotypes.MapKV(existPolls, pollConv),
 	}

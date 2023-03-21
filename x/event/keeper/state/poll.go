@@ -14,6 +14,9 @@ type PollRepo interface {
 	Load(id uint64) (*types.Poll, error)
 	LoadByHash(hash []byte) (*types.Poll, error)
 
+	IsVoted(id uint64, addr sdk.ValAddress) bool
+	SetVoted(id uint64, addr sdk.ValAddress)
+
 	Create(poll types.Poll) (uint64, error)
 	Save(poll types.Poll) error
 
@@ -33,6 +36,7 @@ var (
 	kvPollRepoKeyLatestId = []byte{0x01}
 	kvPollRepoItemsPrefix = []byte{0x02}
 	kvPollRepoHashPrefix  = []byte{0x03}
+	kvPollRepoVotePrefix  = []byte{0x04}
 )
 
 type kvPollRepo struct {
@@ -67,6 +71,14 @@ func (k kvPollRepo) LoadByHash(hash []byte) (*types.Poll, error) {
 		return nil, nil
 	}
 	return k.Load(sdk.BigEndianToUint64(id))
+}
+
+func (k kvPollRepo) IsVoted(id uint64, addr sdk.ValAddress) bool {
+	return prefix.NewStore(k.root, append(kvPollRepoVotePrefix, sdk.Uint64ToBigEndian(id)...)).Has(addr.Bytes())
+}
+
+func (k kvPollRepo) SetVoted(id uint64, addr sdk.ValAddress) {
+	prefix.NewStore(k.root, append(kvPollRepoVotePrefix, sdk.Uint64ToBigEndian(id)...)).Set(addr.Bytes(), []byte{0x00})
 }
 
 func (k kvPollRepo) Create(poll types.Poll) (uint64, error) {

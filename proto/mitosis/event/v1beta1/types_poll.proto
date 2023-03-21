@@ -39,15 +39,17 @@ message Poll {
   // Operation id - will be filled
   uint64 op_id = 3;
 
+  uint64 epoch = 4;
+
   // Poll proposer
-  bytes proposer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes proposer = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 
   // Poll status
-  Status status = 5;
+  Status status = 6;
 
   // Vote tally
-  Tally tally = 6;
+  Tally tally = 7;
 
   // Event payload
-  Event payload = 7;
+  Event payload = 8;
 }

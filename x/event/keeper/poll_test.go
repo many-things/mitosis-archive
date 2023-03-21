@@ -76,9 +76,22 @@ func TestPoll(t *testing.T) {
 	_, err := k.RegisterChain(ctx, "osmosis-1")
 	require.NoError(t, err)
 
-	bz := make([]byte, 32)
-	_, err = crand.Read(bz)
+	var val sdk.ValAddress
+	{
+		bz := make([]byte, 32)
+		_, err = crand.Read(bz)
+		require.NoError(t, err)
+		val = bz
+	}
+
+	epoch, err := k.CreateSnapshot(
+		ctx, sdk.NewInt(100),
+		[]mitotypes.KV[sdk.ValAddress, int64]{
+			mitotypes.NewKV(val, int64(100)),
+		},
+	)
 	require.NoError(t, err)
+	_ = epoch
 
 	events := mitotypes.Map(
 		make([]byte, 100),
@@ -90,13 +103,13 @@ func TestPoll(t *testing.T) {
 		func(evt *types.Event) *types.Poll {
 			return &types.Poll{
 				Chain:    "osmosis-1",
-				Proposer: bz,
+				Proposer: val,
 				Payload:  evt,
 			}
 		},
 	)
 
-	submitted, err := k.SubmitPolls(ctx, "osmosis-1", polls, sdk.NewInt(1000), sdk.NewInt(100))
+	submitted, err := k.SubmitPolls(ctx, "osmosis-1", val, polls)
 	require.NoError(t, err)
 
 	newPolls, existPolls, err := k.FilterNewPolls(ctx, "osmosis-1", polls)
@@ -104,7 +117,7 @@ func TestPoll(t *testing.T) {
 	require.Equal(t, submitted, existPolls)
 	require.Equal(t, newPolls, []*types.Poll(nil))
 
-	require.NoError(t, k.VotePolls(ctx, "osmosis-1", mitotypes.Keys(existPolls), sdk.NewInt(200)))
+	require.NoError(t, k.VotePolls(ctx, "osmosis-1", val, mitotypes.Keys(existPolls)))
 
 	pollsResp, _, err := k.QueryPolls(ctx, "osmosis-1", &query.PageRequest{Limit: query.MaxLimit})
 	require.NoError(t, err)
