@@ -19,6 +19,8 @@ type SnapshotRepo interface {
 	LatestPowerOf(val sdk.ValAddress) (int64, error)
 
 	LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error)
+
+	LatestEpoch() (*types.EpochInfo, error)
 }
 
 var (
@@ -176,4 +178,15 @@ func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], e
 	)
 
 	return kvs, nil
+}
+
+func (r kvSnapshotRepo) LatestEpoch() (*types.EpochInfo, error) {
+	epoch, err := r.latestEpoch(0)
+	if err != nil {
+		return nil, err
+	}
+	if epoch.GetEpoch() == 0 {
+		return nil, nil
+	}
+	return epoch, nil
 }

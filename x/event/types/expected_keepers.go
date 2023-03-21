@@ -52,8 +52,15 @@ type ProxyKeeper interface {
 	QueryProxies(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[sdk.ValAddress, sdk.AccAddress], *query.PageResponse, error)
 }
 
+type SnapshotKeeper interface {
+	CreateSnapshot(ctx sdk.Context, set []mitotypes.KV[sdk.ValAddress, int64]) (*EpochInfo, error)
+
+	LatestSnapshotEpoch(ctx sdk.Context) (*EpochInfo, error)
+}
+
 type BaseKeeper interface {
 	GetParams(ctx sdk.Context) Params
+
 	//SetParams(ctx sdk.Context, params Params)
 	//Logger(ctx sdk.Context) log.Logger
 	//
@@ -61,6 +68,8 @@ type BaseKeeper interface {
 	//GenesisKeeper
 	//PollKeeper
 	//ProxyKeeper
+
+	SnapshotKeeper
 }
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
