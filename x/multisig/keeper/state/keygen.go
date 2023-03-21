@@ -12,6 +12,7 @@ import (
 
 type KeygenRepo interface {
 	Load(id uint64) (*types.Keygen, error)
+	Create(keygen *types.Keygen) (uint64, error)
 	Save(keygen *types.Keygen) error
 	Delete(id uint64) error
 
@@ -51,19 +52,30 @@ func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 	return keygen, nil
 }
 
-func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
+// Create is create new keygen with new id
+func (r kvKeygenRepo) Create(keygen *types.Keygen) (uint64, error) {
 	latestId := sdk.BigEndianToUint64(r.root.Get(kvKeygenRepoLatestId))
 	latestIdBz := sdk.Uint64ToBigEndian(latestId)
 
 	keygen.KeyId = latestId
 	keygenBz, err := keygen.Marshal()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(latestIdBz, keygenBz)
 	r.root.Set(kvKeygenRepoLatestId, sdk.Uint64ToBigEndian(latestId+1))
 
+	return latestId, nil
+}
+
+func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
+	keygenBz, err := keygen.Marshal()
+	if err != nil {
+		return err
+	}
+
+	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(sdk.Uint64ToBigEndian(keygen.KeyId), keygenBz)
 	return nil
 }
 

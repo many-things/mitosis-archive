@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -12,7 +13,7 @@ import (
 
 type SignatureRepo interface {
 	Load(id uint64, participant sdk.ValAddress) (types.Signature, error)
-	Save(id uint64, participant sdk.ValAddress, signature types.Signature) error
+	Create(id uint64, participant sdk.ValAddress, signature types.Signature) error
 	Delete(id uint64, participant sdk.ValAddress) error
 
 	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error)
@@ -43,14 +44,14 @@ func (r kvSignatureRepo) getPrefix(prefix []byte, id uint64) []byte {
 func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Signature, error) {
 	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
 
-	if bz != nil { // TODO: not found exception
-		return nil, nil
+	if bz != nil {
+		return nil, errors.Wrap(errors.ErrNotFound, "cannot find signature")
 	}
 
 	return bz, nil
 }
 
-func (r kvSignatureRepo) Save(id uint64, participant sdk.ValAddress, signature types.Signature) error {
+func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature types.Signature) error {
 	prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Set(participant, signature)
 	return nil
 }
@@ -59,8 +60,8 @@ func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
 	bz := ks.Get(participant)
 
-	if bz == nil { // TODO: not found exception
-		return nil
+	if bz == nil {
+		return errors.Wrap(errors.ErrNotFound, "cannot find signature")
 	}
 
 	ks.Delete(participant)

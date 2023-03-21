@@ -91,4 +91,6 @@ message Sign {
 
   // Message to sign
   bytes message_to_sign = 5 [(gogoproto.casttype) = "Hash"];
+
+  Status status = 6;
 }
