@@ -6,17 +6,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper/state"
+	"github.com/many-things/mitosis/x/event/types"
 )
 
-type ChainKeeper interface {
-	RegisterChain(ctx sdk.Context, chain string) (byte, error)
-
-	UnregisterChain(ctx sdk.Context, chain string) error
-
-	QueryChain(ctx sdk.Context, chain string) (byte, error)
-
-	QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error)
-}
+// determinism
+var _ types.ChainKeeper = keeper{}
 
 func (k keeper) RegisterChain(ctx sdk.Context, chain string) (byte, error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
