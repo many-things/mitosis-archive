@@ -17,14 +17,15 @@ func NewMsgServer(keeper types.Keeper) MsgServer {
 }
 
 // StartKeygen is handle MsgStartKeygen message
-func (m msgServer) StartKeygen(ctx context.Context, keygen *MsgStartKeygen) (*MsgStartKeygenResponse, error) {
-	wctx := sdk.UnwrapSDKContext(ctx)
-	chainId, keyId, err := keygen.KeyID.ToInternalVariables()
+func (m msgServer) StartKeygen(ctx context.Context, msg *MsgStartKeygen) (*MsgStartKeygenResponse, error) {
+
+	chainId, keyId, err := msg.KeyID.ToInternalVariables()
 	if err != nil {
 		return nil, err
 	}
 
 	// check received keygen is valid
+	wctx := sdk.UnwrapSDKContext(ctx)
 	kgObj, err := m.baseKeeper.QueryKeygen(wctx, chainId, keyId)
 	if err != nil {
 		return nil, err
@@ -32,7 +33,7 @@ func (m msgServer) StartKeygen(ctx context.Context, keygen *MsgStartKeygen) (*Ms
 
 	if kgObj.Status > types.Keygen_StatusExecute {
 		return nil, errors.Wrap(errors.ErrInvalidRequest, "keygen: cannot start finished keygen")
-	} else if !reflect.DeepEqual(keygen.Participants, kgObj.Participants) {
+	} else if !reflect.DeepEqual(msg.Participants, kgObj.Participants) {
 		return nil, errors.Wrap(errors.ErrInvalidRequest, "keygen: invalid participants")
 	}
 
@@ -43,9 +44,10 @@ func (m msgServer) StartKeygen(ctx context.Context, keygen *MsgStartKeygen) (*Ms
 	return &MsgStartKeygenResponse{}, nil
 }
 
+// SubmitPubkey is handle generated PublicKey
 func (m msgServer) SubmitPubkey(ctx context.Context, pubkey *MsgSubmitPubkey) (*MsgSubmitPubkeyResponse, error) {
 	//TODO implement me
-	panic("implement me")
+	panic("implememnt me")
 }
 
 func (m msgServer) SubmitSignature(ctx context.Context, signature *MsgSubmitSignature) (*MsgSubmitSignatureResponse, error) {

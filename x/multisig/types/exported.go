@@ -1,6 +1,8 @@
 package types
 
 import (
+	"fmt"
+	"github.com/many-things/mitosis/pkg/utils"
 	"strconv"
 	"strings"
 )
@@ -10,7 +12,23 @@ type PublicKey []byte
 type Hash []byte
 type Signature []byte
 
-// TODO: add ValidatorBasic
+var (
+	KeyIDMinLength = 4
+	KeyIDMaxLength = 256
+)
+
+func (k KeyID) ValidateBasic() error {
+	if err := utils.ValidateString(string(k)); err != nil {
+		return err
+	}
+
+	// length not in between [KeyIDMinLength, KeyIDMaxLength]
+	if KeyIDMinLength > len(k) || KeyIDMaxLength < len(k) {
+		return fmt.Errorf("KeyID length must between [%d, %d]: now %d", KeyIDMinLength, KeyIDMaxLength, len(k))
+	}
+
+	return nil
+}
 
 // ToInternalVariables is make keyId into internal chainId / keyId
 func (k KeyID) ToInternalVariables() (string, uint64, error) {
