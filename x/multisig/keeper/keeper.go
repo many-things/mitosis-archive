@@ -12,12 +12,6 @@ import (
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-type Keeper interface {
-	GetParams(ctx sdk.Context) types.Params
-	SetParams(ctx sdk.Context, params types.Params)
-	Logger(ctx sdk.Context) log.Logger
-}
-
 type keeper struct {
 	cdc        codec.BinaryCodec
 	storeKey   storetypes.StoreKey

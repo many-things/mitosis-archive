@@ -5,7 +5,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
+
+type Keeper interface {
+	GetParams(ctx sdk.Context) types.Params
+	SetParams(ctx sdk.Context, params types.Params)
+	Logger(ctx sdk.Context) log.Logger
+}
 
 type KeygenKeeper interface {
 	RegisterKeygenEvent(ctx sdk.Context, chainId string, keygen *types.Keygen) (uint64, error)
