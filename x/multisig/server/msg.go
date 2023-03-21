@@ -73,7 +73,20 @@ func (m msgServer) SubmitPubkey(ctx context.Context, msg *MsgSubmitPubkey) (*Msg
 	return &MsgSubmitPubkeyResponse{}, nil
 }
 
-func (m msgServer) SubmitSignature(ctx context.Context, signature *MsgSubmitSignature) (*MsgSubmitSignatureResponse, error) {
-	//TODO implement me
-	panic("implement me")
+// SubmitSignature is handle submit signature events
+func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature) (*MsgSubmitSignatureResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	chainId, sigId, err := msg.GetSigID().ToInternalVariables()
+	if err != nil {
+		return nil, err
+	}
+
+	wctx := sdk.UnwrapSDKContext(ctx)
+	if err := m.baseKeeper.RegisterSignature(wctx, chainId, sigId, msg.Participant, msg.Signature); err != nil {
+		return nil, err
+	}
+	return &MsgSubmitSignatureResponse{}, nil
 }
