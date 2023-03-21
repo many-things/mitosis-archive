@@ -18,6 +18,9 @@ func NewMsgServer(keeper types.Keeper) MsgServer {
 
 // StartKeygen is handle MsgStartKeygen message
 func (m msgServer) StartKeygen(ctx context.Context, msg *MsgStartKeygen) (*MsgStartKeygenResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
 
 	chainId, keyId, err := msg.KeyID.ToInternalVariables()
 	if err != nil {
@@ -45,9 +48,24 @@ func (m msgServer) StartKeygen(ctx context.Context, msg *MsgStartKeygen) (*MsgSt
 }
 
 // SubmitPubkey is handle generated PublicKey
-func (m msgServer) SubmitPubkey(ctx context.Context, pubkey *MsgSubmitPubkey) (*MsgSubmitPubkeyResponse, error) {
-	//TODO implement me
-	panic("implememnt me")
+func (m msgServer) SubmitPubkey(ctx context.Context, msg *MsgSubmitPubkey) (*MsgSubmitPubkeyResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	chainId, keyId, err := msg.KeyID.ToInternalVariables()
+	if err != nil {
+		return nil, err
+	}
+
+	wctx := sdk.UnwrapSDKContext(ctx)
+	pubKey := types.PubKey{
+		Chain:       chainId,
+		KeyId:       keyId,
+		Participant: msg.Participant,
+		PubKey:      msg.PubKey,
+	}
+
 }
 
 func (m msgServer) SubmitSignature(ctx context.Context, signature *MsgSubmitSignature) (*MsgSubmitSignatureResponse, error) {
