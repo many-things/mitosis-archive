@@ -20,6 +20,7 @@ type Keeper interface {
 	types.GenesisKeeper
 	types.PollKeeper
 	types.ProxyKeeper
+	types.SnapshotKeeper
 }
 
 type keeper struct {

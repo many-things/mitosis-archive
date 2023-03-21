@@ -163,7 +163,7 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 
 // BeginBlock contains the logic that is automatically triggered at the beginning of each block
 func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
-	hook.BeginBlocker(ctx, req, am.keeper)
+	hook.BeginBlocker(ctx, req, am.keeper, am.stakingKeeper)
 }
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
