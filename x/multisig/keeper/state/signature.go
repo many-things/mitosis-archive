@@ -45,7 +45,7 @@ func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Sign
 	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
 
 	if bz != nil {
-		return nil, errors.Wrap(errors.ErrNotFound, "Cannot find signature")
+		return nil, errors.Wrap(errors.ErrNotFound, "cannot find signature")
 	}
 
 	return bz, nil
@@ -61,7 +61,7 @@ func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	bz := ks.Get(participant)
 
 	if bz == nil {
-		return errors.Wrap(errors.ErrNotFound, "Cannot find signature")
+		return errors.Wrap(errors.ErrNotFound, "cannot find signature")
 	}
 
 	ks.Delete(participant)

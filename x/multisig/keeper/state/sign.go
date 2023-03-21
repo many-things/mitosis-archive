@@ -42,7 +42,7 @@ var (
 func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz != nil {
-		return nil, errors.Wrap(errors.ErrNotFound, "Cannot find sign")
+		return nil, errors.Wrap(errors.ErrNotFound, "cannot find sign")
 	}
 
 	sign := new(types.Sign)
@@ -60,7 +60,7 @@ func (r kvSignRepo) Create(sign *types.Sign) (uint64, error) {
 	sign.SigId = latestId
 	signBz, err := sign.Marshal()
 	if err != nil {
-		return 0, errors.Wrap(errors.ErrNotFound, "Cannot find sign")
+		return 0, errors.Wrap(errors.ErrNotFound, "cannot find sign")
 	}
 
 	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(latestId), signBz)

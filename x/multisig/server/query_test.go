@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"github.com/many-things/mitosis/x/multisig/keeper"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setupQueryServer(t testing.TB) (keeper.Keeper, QueryServer, context.Context) {
+func setupQueryServer(t testing.TB) (types.Keeper, QueryServer, context.Context) {
 	k, ctx := testkeeper.MultisigKeeper(t)
 	return k, NewQueryServer(k), sdk.WrapSDKContext(ctx)
 }
