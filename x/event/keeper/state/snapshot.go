@@ -22,9 +22,9 @@ type SnapshotRepo interface {
 }
 
 var (
-	kvSnapshotLatestEpochKey       = []byte{0x01}
-	kvSnapshotValidatorPowerPrefix = []byte{0x02}
-	kvSnapshotValidatorSetPrefix   = []byte{0x03}
+	kvSnapshotRepoLatestEpochKey       = []byte{0x01}
+	kvSnapshotRepoValidatorPowerPrefix = []byte{0x02}
+	kvSnapshotRepoValidatorSetPrefix   = []byte{0x03}
 )
 
 type kvSnapshotRepo struct {
@@ -40,15 +40,15 @@ func NewKVSnapshotRepo(cdc codec.BinaryCodec, root store.KVStore) SnapshotRepo {
 }
 
 func (r kvSnapshotRepo) valPowerStore() store.KVStore {
-	return prefix.NewStore(r.root, kvSnapshotValidatorPowerPrefix)
+	return prefix.NewStore(r.root, kvSnapshotRepoLatestEpochKey)
 }
 
 func (r kvSnapshotRepo) valSetStore() store.KVStore {
-	return prefix.NewStore(r.root, kvSnapshotValidatorSetPrefix)
+	return prefix.NewStore(r.root, kvSnapshotRepoValidatorPowerPrefix)
 }
 
 func (r kvSnapshotRepo) latestEpoch() uint64 {
-	bz := r.root.Get(kvSnapshotLatestEpochKey)
+	bz := r.root.Get(kvSnapshotRepoValidatorSetPrefix)
 	if bz == nil {
 		return 0
 	}
@@ -56,7 +56,7 @@ func (r kvSnapshotRepo) latestEpoch() uint64 {
 }
 
 func (r kvSnapshotRepo) setLatestEpoch(epoch uint64) {
-	r.root.Set(kvSnapshotLatestEpochKey, sdk.Uint64ToBigEndian(epoch))
+	r.root.Set(kvSnapshotRepoValidatorSetPrefix, sdk.Uint64ToBigEndian(epoch))
 }
 
 func (r kvSnapshotRepo) Create(powers []mitotypes.KV[sdk.ValAddress, int64]) (uint64, error) {
