@@ -28,4 +28,6 @@ type StakingKeeper interface {
 	GetLastTotalPower(ctx sdk.Context) sdk.Int
 
 	GetLastValidatorPower(ctx sdk.Context, operator sdk.ValAddress) (power int64)
+
+	IterateLastValidatorPowers(ctx sdk.Context, handler func(operator sdk.ValAddress, power int64) (stop bool))
 }
