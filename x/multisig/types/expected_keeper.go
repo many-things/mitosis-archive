@@ -11,6 +11,11 @@ type Keeper interface {
 	GetParams(ctx sdk.Context) Params
 	SetParams(ctx sdk.Context, params Params)
 	Logger(ctx sdk.Context) log.Logger
+
+	KeygenKeeper
+	PubKeyKeeper
+	SignKeeper
+	SignatureKeeper
 }
 
 type KeygenKeeper interface {
