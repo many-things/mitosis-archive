@@ -6,10 +6,8 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-type GenesisKeeper interface {
-	ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error)
-	ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error
-}
+// determinism
+var _ types.GenesisKeeper = keeper{}
 
 func (k keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
