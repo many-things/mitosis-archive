@@ -6,6 +6,12 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
 
+// EpochInfo defines a epoch information.
+message EpochInfo {
+  uint64 epoch = 1;
+  uint64 height = 2;
+}
+
 // ValidatorSet defines a power information about every validator at specific epoch.
 message ValidatorSet {
   // Item defines a single row of k v pair.
