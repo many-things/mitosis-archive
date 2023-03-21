@@ -139,6 +139,7 @@ func (m *EventType_SubmitEvent) GetVoted() []*EventType_SubmitEvent_Poll {
 	return nil
 }
 
+// Poll is set of id / event_hash
 type EventType_SubmitEvent_Poll struct {
 	Id        uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	EventHash []byte `protobuf:"bytes,2,opt,name=event_hash,json=eventHash,proto3" json:"event_hash,omitempty"`

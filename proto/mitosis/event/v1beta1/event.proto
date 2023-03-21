@@ -10,6 +10,7 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 message EventType {
   // EventType_SubmitEvent is the event type of [MsgSubmitEvent]
   message SubmitEvent {
+    // Poll is set of id / event_hash
     message Poll {
       uint64 id = 1;
       bytes event_hash = 2;

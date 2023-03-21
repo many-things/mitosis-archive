@@ -2,14 +2,14 @@ package server
 
 import (
 	"context"
-	"github.com/many-things/mitosis/x/multisig/keeper"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 type msgServer struct {
-	keeper.Keeper
+	types.Keeper
 }
 
-func NewMsgServer(keeper keeper.Keeper) MsgServer {
+func NewMsgServer(keeper types.Keeper) MsgServer {
 	return msgServer{keeper}
 }
 
