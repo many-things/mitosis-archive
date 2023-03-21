@@ -53,7 +53,7 @@ type ProxyKeeper interface {
 }
 
 type BaseKeeper interface {
-	//GetParams(ctx sdk.Context) Params
+	GetParams(ctx sdk.Context) Params
 	//SetParams(ctx sdk.Context, params Params)
 	//Logger(ctx sdk.Context) log.Logger
 	//
