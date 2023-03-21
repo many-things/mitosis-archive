@@ -82,7 +82,7 @@ func (k keeper) SubmitPolls(
 			Confirmed:  &valPower,
 		}
 
-		pollId, err := pollRepo.Save(*poll)
+		pollId, err := pollRepo.Create(*poll)
 		if err != nil {
 			return nil, err
 		}
@@ -116,6 +116,10 @@ func (k keeper) VotePolls(ctx sdk.Context, chain string, votes []uint64, valPowe
 		}
 
 		loaded.Tally.Confirmed = mitotypes.Ref(loaded.Tally.Confirmed.Add(valPower))
+
+		if err := pollRepo.Save(*loaded); err != nil {
+			return err
+		}
 	}
 
 	return nil
