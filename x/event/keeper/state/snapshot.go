@@ -12,7 +12,7 @@ import (
 )
 
 type SnapshotRepo interface {
-	Create(powers []mitotypes.KV[sdk.ValAddress, int64]) (uint64, error)
+	Create(powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error)
 
 	PowerOf(epoch *uint64, val sdk.ValAddress) (int64, error)
 
@@ -40,38 +40,61 @@ func NewKVSnapshotRepo(cdc codec.BinaryCodec, root store.KVStore) SnapshotRepo {
 }
 
 func (r kvSnapshotRepo) valPowerStore() store.KVStore {
-	return prefix.NewStore(r.root, kvSnapshotRepoLatestEpochKey)
-}
-
-func (r kvSnapshotRepo) valSetStore() store.KVStore {
 	return prefix.NewStore(r.root, kvSnapshotRepoValidatorPowerPrefix)
 }
 
-func (r kvSnapshotRepo) latestEpoch() uint64 {
-	bz := r.root.Get(kvSnapshotRepoValidatorSetPrefix)
+func (r kvSnapshotRepo) valSetStore() store.KVStore {
+	return prefix.NewStore(r.root, kvSnapshotRepoValidatorSetPrefix)
+}
+
+func (r kvSnapshotRepo) latestEpoch(height uint64) (*types.EpochInfo, error) {
+	bz := r.root.Get(kvSnapshotRepoLatestEpochKey)
 	if bz == nil {
-		return 0
+		return &types.EpochInfo{0, height}, nil
 	}
-	return sdk.BigEndianToUint64(bz)
+
+	ei := new(types.EpochInfo)
+	if err := ei.Unmarshal(bz); err != nil {
+		return nil, err
+	}
+
+	return ei, nil
 }
 
-func (r kvSnapshotRepo) setLatestEpoch(epoch uint64) {
-	r.root.Set(kvSnapshotRepoValidatorSetPrefix, sdk.Uint64ToBigEndian(epoch))
+func (r kvSnapshotRepo) setLatestEpoch(epoch *types.EpochInfo) error {
+	bz, err := epoch.Marshal()
+	if err != nil {
+		return err
+	}
+
+	r.root.Set(kvSnapshotRepoLatestEpochKey, bz)
+
+	return nil
 }
 
-func (r kvSnapshotRepo) Create(powers []mitotypes.KV[sdk.ValAddress, int64]) (uint64, error) {
+func (r kvSnapshotRepo) Create(powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error) {
 	var (
 		valPowerStore = r.valPowerStore()
 		valSetStore   = r.valSetStore()
-
-		latestEpoch = r.latestEpoch()
 	)
+
+	latestEpoch, err := r.latestEpoch(height)
+	if err != nil {
+		return nil, err
+	}
+
+	if latestEpoch.GetHeight() < height {
+		latestEpoch = &types.EpochInfo{
+			Epoch:  latestEpoch.GetEpoch() + 1,
+			Height: height,
+		}
+	}
 
 	for _, power := range powers {
 		v, p := power.Key, power.Value
 
 		valPowerStore.Set(
-			append(v.Bytes(), sdk.Uint64ToBigEndian(latestEpoch)...),
+			append(v.Bytes(), sdk.Uint64ToBigEndian(latestEpoch.GetEpoch())...),
 			sdk.Uint64ToBigEndian(uint64(p)),
 		)
 	}
@@ -89,12 +112,10 @@ func (r kvSnapshotRepo) Create(powers []mitotypes.KV[sdk.ValAddress, int64]) (ui
 	}
 	valSetBz, err := valSet.Marshal()
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	valSetStore.Set(sdk.Uint64ToBigEndian(latestEpoch), valSetBz)
-
-	r.setLatestEpoch(latestEpoch + 1)
+	valSetStore.Set(sdk.Uint64ToBigEndian(latestEpoch.GetEpoch()), valSetBz)
 
 	return latestEpoch, nil
 }
@@ -129,9 +150,15 @@ func (r kvSnapshotRepo) LatestPowerOf(val sdk.ValAddress) (int64, error) {
 
 func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error) {
 	valSetStore := r.valSetStore()
-	latestEpoch := r.latestEpoch()
+	latestEpoch, err := r.latestEpoch(0)
+	if err != nil {
+		return nil, err
+	}
+	if latestEpoch.GetHeight() == 0 {
+		return nil, nil
+	}
 
-	valSetBz := valSetStore.Get(sdk.Uint64ToBigEndian(latestEpoch))
+	valSetBz := valSetStore.Get(sdk.Uint64ToBigEndian(latestEpoch.GetEpoch()))
 	if valSetBz == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "validator set")
 	}
