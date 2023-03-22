@@ -145,4 +145,6 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.Equal(t, uint64(len(ts)-(len(msgs)*2)), q.Size())
 		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
 	}
+
+	require.Equal(t, q.LastIndex(), uint64(75))
 }
