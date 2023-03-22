@@ -5,7 +5,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/queue"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
 )
@@ -20,8 +22,7 @@ type PollRepo interface {
 	Create(poll types.Poll) (uint64, error)
 	Save(poll types.Poll) error
 
-	Delete(id uint64) error
-	DeleteByHash(hash []byte) error
+	FlushFinishedPolls() ([]*types.Poll, error)
 
 	Paginate(page *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
 
@@ -33,36 +34,32 @@ type PollRepo interface {
 }
 
 var (
-	kvPollRepoKeyLatestId = []byte{0x01}
-	kvPollRepoItemsPrefix = []byte{0x02}
-	kvPollRepoHashPrefix  = []byte{0x03}
-	kvPollRepoVotePrefix  = []byte{0x04}
+	kvPollRepoQueuePrefix = []byte{0x01}
+	kvPollRepoHashPrefix  = []byte{0x02}
+	kvPollRepoVotePrefix  = []byte{0x03}
 )
 
 type kvPollRepo struct {
-	cdc  codec.BinaryCodec
-	root store.KVStore
+	cdc   codec.BinaryCodec
+	root  store.KVStore
+	queue queue.Queue[*types.Poll]
 }
 
 func NewKVPollRepo(cdc codec.BinaryCodec, chain byte, store store.KVStore) PollRepo {
+	root := prefix.NewStore(store, append(kvPollRepoKey, chain))
+
 	return kvPollRepo{
 		cdc,
-		prefix.NewStore(store, append(kvPollRepoKey, chain)),
+		root,
+		queue.NewKVQueue(
+			prefix.NewStore(root, kvPollRepoQueuePrefix),
+			func() *types.Poll { return &types.Poll{} },
+		),
 	}
 }
 
 func (k kvPollRepo) Load(id uint64) (*types.Poll, error) {
-	bz := prefix.NewStore(k.root, kvPollRepoItemsPrefix).Get(sdk.Uint64ToBigEndian(id))
-	if bz == nil {
-		return nil, nil
-	}
-
-	poll := new(types.Poll)
-	if err := poll.Unmarshal(bz); err != nil {
-		return nil, err
-	}
-
-	return poll, nil
+	return k.queue.Get(id)
 }
 
 func (k kvPollRepo) LoadByHash(hash []byte) (*types.Poll, error) {
@@ -70,7 +67,7 @@ func (k kvPollRepo) LoadByHash(hash []byte) (*types.Poll, error) {
 	if id == nil {
 		return nil, nil
 	}
-	return k.Load(sdk.BigEndianToUint64(id))
+	return k.queue.Get(sdk.BigEndianToUint64(id))
 }
 
 func (k kvPollRepo) IsVoted(id uint64, addr sdk.ValAddress) bool {
@@ -82,111 +79,52 @@ func (k kvPollRepo) SetVoted(id uint64, addr sdk.ValAddress) {
 }
 
 func (k kvPollRepo) Create(poll types.Poll) (uint64, error) {
-	itemStore := prefix.NewStore(k.root, kvPollRepoItemsPrefix)
 	hashStore := prefix.NewStore(k.root, kvPollRepoHashPrefix)
 
-	latestId := sdk.BigEndianToUint64(k.root.Get(kvPollRepoKeyLatestId))
-	latestIdBz := sdk.Uint64ToBigEndian(latestId)
-
-	poll.Id = latestId
-	pollBz, err := poll.Marshal()
+	ids, err := k.queue.Produce(&poll)
 	if err != nil {
 		return 0, err
 	}
+	if len(ids) != 1 {
+		return 0, sdkerrors.Wrap(sdkerrors.ErrPanic, "queue.Produce returned more than one id")
+	}
+
 	evtHash, err := poll.GetPayload().Hash()
 	if err != nil {
 		return 0, err
 	}
 
-	itemStore.Set(latestIdBz, pollBz)
-	hashStore.Set(evtHash, latestIdBz)
+	id := ids[0]
 
-	latestId++
-	k.root.Set(kvPollRepoKeyLatestId, sdk.Uint64ToBigEndian(latestId))
+	hashStore.Set(evtHash, sdk.Uint64ToBigEndian(id))
 
-	return poll.Id, nil
+	return id, nil
 }
 
 func (k kvPollRepo) Save(poll types.Poll) error {
-	itemStore := prefix.NewStore(k.root, kvPollRepoItemsPrefix)
-
-	pollBz, err := poll.Marshal()
-	if err != nil {
-		return err
-	}
-
-	itemStore.Set(sdk.Uint64ToBigEndian(poll.Id), pollBz)
-
-	return nil
+	return k.queue.Update(poll.GetId(), &poll)
 }
 
-func (k kvPollRepo) Delete(id uint64) error {
-	ps := prefix.NewStore(k.root, kvPollRepoItemsPrefix)
-	bz := ps.Get(sdk.Uint64ToBigEndian(id))
-
-	var poll types.Poll
-	if err := poll.Unmarshal(bz); err != nil {
-		return err
-	}
-
-	evtHash, err := poll.GetPayload().Hash()
-	if err != nil {
-		return err
-	}
-
-	ps.Delete(sdk.Uint64ToBigEndian(id))
-	prefix.NewStore(k.root, kvPollRepoHashPrefix).Delete(evtHash)
-	return nil
+func (k kvPollRepo) FlushFinishedPolls() ([]*types.Poll, error) {
+	// TODO: implement me
+	return nil, nil
 }
 
-func (k kvPollRepo) DeleteByHash(hash []byte) error {
-	id := prefix.NewStore(k.root, kvPollRepoHashPrefix).Get(hash)
-	return k.Delete(sdk.BigEndianToUint64(id))
-}
+func (k kvPollRepo) Paginate(pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
+	var kvs []mitotypes.KV[uint64, *types.Poll]
 
-func (k kvPollRepo) Paginate(page *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
-	ps := prefix.NewStore(k.root, kvPollRepoItemsPrefix)
-
-	var rs []mitotypes.KV[uint64, *types.Poll]
-	pageResp, err := query.Paginate(ps, page, func(key []byte, value []byte) error {
-		poll := new(types.Poll)
-		if err := poll.Unmarshal(value); err != nil {
-			return err
-		}
-
-		rs = append(rs, mitotypes.NewKV(sdk.BigEndianToUint64(key), poll))
-		return nil
-	})
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return rs, pageResp, nil
-}
-
-func (k kvPollRepo) exportItemSet(store store.KVStore) (itemSet []*types.GenesisPoll_ItemSet, err error) {
-	_, err = query.Paginate(
-		store,
-		&query.PageRequest{Limit: query.MaxLimit},
-		func(key []byte, value []byte) error {
-			poll := new(types.Poll)
-			if err := poll.Unmarshal(value); err != nil {
-				return err
-			}
-
-			itemSet = append(itemSet, &types.GenesisPoll_ItemSet{
-				Id:   sdk.BigEndianToUint64(key),
-				Poll: poll,
-			})
-
+	pageResp, err := k.queue.Paginate(
+		pageReq,
+		func(poll *types.Poll, u uint64) error {
+			kvs = append(kvs, mitotypes.NewKV(u, poll))
 			return nil
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return
+	return kvs, pageResp, nil
 }
 
 func (k kvPollRepo) exportHashSet(store store.KVStore) (hashSet []*types.GenesisPoll_HashSet, err error) {
@@ -212,14 +150,23 @@ func (k kvPollRepo) ExportGenesis() (genState *types.GenesisPoll_ChainSet, err e
 	// initialize
 	genState = &types.GenesisPoll_ChainSet{}
 
-	// load latest id
-	genState.LatestId = sdk.BigEndianToUint64(k.root.Get(kvPollRepoKeyLatestId))
-
 	// load item set
-	genState.ItemSet, err = k.exportItemSet(prefix.NewStore(k.root, kvPollRepoItemsPrefix))
+	queueGenesis, err := k.queue.ExportGenesis()
 	if err != nil {
 		return nil, err
 	}
+
+	genState.FirstId = queueGenesis.FirstIndex
+	genState.LastId = queueGenesis.LastIndex
+	genState.ItemSet = mitotypes.MapKV(
+		queueGenesis.Items,
+		func(k uint64, v *types.Poll, _ int) *types.GenesisPoll_ItemSet {
+			return &types.GenesisPoll_ItemSet{
+				Id:   k,
+				Poll: v,
+			}
+		},
+	)
 
 	// load hash set
 	genState.HashSet, err = k.exportHashSet(prefix.NewStore(k.root, kvPollRepoHashPrefix))
@@ -231,17 +178,19 @@ func (k kvPollRepo) ExportGenesis() (genState *types.GenesisPoll_ChainSet, err e
 }
 
 func (k kvPollRepo) ImportGenesis(genState *types.GenesisPoll_ChainSet) error {
-	// save latest id
-	k.root.Set(kvPollRepoKeyLatestId, sdk.Uint64ToBigEndian(genState.GetLatestId()))
-
 	// save item set
-	pis := prefix.NewStore(k.root, kvPollRepoItemsPrefix)
-	for _, item := range genState.GetItemSet() {
-		bz, err := item.GetPoll().Marshal()
-		if err != nil {
-			return err
-		}
-		pis.Set(sdk.Uint64ToBigEndian(item.GetId()), bz)
+	queueGenesis := queue.GenesisState[*types.Poll]{
+		LastIndex:  genState.LastId,
+		FirstIndex: genState.FirstId,
+		Items: mitotypes.Map(
+			genState.GetItemSet(),
+			func(t *types.GenesisPoll_ItemSet, _ int) mitotypes.KV[uint64, *types.Poll] {
+				return mitotypes.NewKV(t.GetId(), t.GetPoll())
+			},
+		),
+	}
+	if err := k.queue.ImportGenesis(queueGenesis); err != nil {
+		return err
 	}
 
 	// save hash set

@@ -35182,9 +35182,6 @@ paths:
             type: object
             properties:
               denom_trace:
-                description: >-
-                  denom_trace returns the requested denomination trace
-                  information.
                 type: object
                 properties:
                   path:
@@ -35197,6 +35194,11 @@ paths:
                   base_denom:
                     type: string
                     description: base denomination of the relayed fungible token.
+                description: >-
+                  DenomTrace contains the base denomination for ICS20 fungible
+                  tokens and the
+
+                  source tracing information path.
             description: >-
               QueryDenomTraceResponse is the response type for the
               Query/DenomTrace RPC
@@ -36355,7 +36357,6 @@ paths:
                     type: string
                     title: client identifier
                   client_state:
-                    title: client state
                     type: object
                     properties:
                       '@type':
@@ -36528,6 +36529,7 @@ paths:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
+                    title: client state
                 description: >-
                   IdentifiedClientState defines a client state with an
                   additional client
@@ -36780,7 +36782,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: consensus state associated with the channel
                 type: object
                 properties:
                   '@type':
@@ -36949,6 +36950,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: consensus state associated with the channel
               client_id:
                 type: string
                 title: client ID associated with the consensus state
@@ -40361,7 +40363,6 @@ paths:
             type: object
             properties:
               client_state:
-                title: client state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -40530,6 +40531,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: client state associated with the request identifier
               proof:
                 type: string
                 format: byte
@@ -41021,7 +41023,6 @@ paths:
 
                         gets reset
                     consensus_state:
-                      title: consensus state
                       type: object
                       properties:
                         '@type':
@@ -41196,6 +41197,7 @@ paths:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
+                      title: consensus state
                   description: >-
                     ConsensusStateWithHeight defines a consensus state with an
                     additional height
@@ -41829,9 +41831,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: >-
-                  consensus state associated with the client identifier at the
-                  given height
                 type: object
                 properties:
                   '@type':
@@ -42000,12 +41999,14 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: >-
+                  consensus state associated with the client identifier at the
+                  given height
               proof:
                 type: string
                 format: byte
                 title: merkle proof of existence
               proof_height:
-                title: height at which the proof was retrieved
                 type: object
                 properties:
                   revision_number:
@@ -42033,6 +42034,13 @@ paths:
                   RevisionHeight
 
                   gets reset
+                title: >-
+                  Height is a monotonically increasing data type
+
+                  that can be compared against another Height for the purposes
+                  of updating and
+
+                  freezing clients
             title: >-
               QueryConsensusStateResponse is the response type for the
               Query/ConsensusState
@@ -42476,7 +42484,6 @@ paths:
             type: object
             properties:
               upgraded_client_state:
-                title: client state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -42645,6 +42652,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: client state associated with the request identifier
             description: |-
               QueryUpgradedClientStateResponse is the response type for the
               Query/UpgradedClientState RPC method.
@@ -42846,7 +42854,6 @@ paths:
             type: object
             properties:
               upgraded_consensus_state:
-                title: Consensus state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -43015,6 +43022,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: Consensus state associated with the request identifier
             description: |-
               QueryUpgradedConsensusStateResponse is the response type for the
               Query/UpgradedConsensusState RPC method.
@@ -44212,7 +44220,6 @@ paths:
                     type: string
                     title: client identifier
                   client_state:
-                    title: client state
                     type: object
                     properties:
                       '@type':
@@ -44385,6 +44392,7 @@ paths:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
+                    title: client state
                 description: >-
                   IdentifiedClientState defines a client state with an
                   additional client
@@ -44632,7 +44640,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: consensus state associated with the channel
                 type: object
                 properties:
                   '@type':
@@ -44801,6 +44808,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: consensus state associated with the channel
               client_id:
                 type: string
                 title: client ID associated with the consensus state
@@ -45521,6 +45529,174 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /mitosis/event/v1beta1/chain/{chain}:
+    get:
+      summary: Get chain
+      operationId: ManythingsMitosisV1Beta1EventServerChain
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              chain:
+                type: string
+              chain_prefix:
+                type: string
+                format: byte
+            title: Response of [QueryChain]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: chain
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /mitosis/event/v1beta1/chains:
+    get:
+      summary: List chain
+      operationId: ManythingsMitosisV1Beta1EventServerChains
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              chains:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    chain:
+                      type: string
+                    chain_prefix:
+                      type: string
+                      format: byte
+                  title: Response of [QueryChain]
+              page:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: Response of [QueryChains]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
   /mitosis/event/v1beta1/params:
     get:
       summary: Queries the parameters of the module.
@@ -45605,9 +45781,7 @@ paths:
                     properties:
                       total_power:
                         type: string
-                      ack:
-                        type: string
-                      nak:
+                      confirmed:
                         type: string
                   payload:
                     title: Event payload
@@ -45650,15 +45824,9 @@ paths:
                                   type: string
                                 amount:
                                   type: string
-                              description: >-
-                                Coin defines a token with a denomination and an
-                                amount.
-
-
-                                NOTE: The amount field is an Int which
-                                implements the custom method
-
-                                signatures required by gogoproto.
+                                decimal:
+                                  type: string
+                                  format: uint64
                         title: TxReqEvent Message
                       res:
                         type: object
@@ -45755,9 +45923,7 @@ paths:
                       properties:
                         total_power:
                           type: string
-                        ack:
-                          type: string
-                        nak:
+                        confirmed:
                           type: string
                     payload:
                       title: Event payload
@@ -45800,15 +45966,9 @@ paths:
                                     type: string
                                   amount:
                                     type: string
-                                description: >-
-                                  Coin defines a token with a denomination and
-                                  an amount.
-
-
-                                  NOTE: The amount field is an Int which
-                                  implements the custom method
-
-                                  signatures required by gogoproto.
+                                  decimal:
+                                    type: string
+                                    format: uint64
                           title: TxReqEvent Message
                         res:
                           type: object
@@ -46060,6 +46220,47 @@ paths:
           in: query
           required: false
           type: boolean
+      tags:
+        - Query
+  /mitosis/event/v1beta1/proxy-reverse/{proxy_account}:
+    get:
+      summary: Get proxied validator
+      operationId: ManythingsMitosisV1Beta1EventServerProxyReverse
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validator:
+                type: string
+                format: byte
+            title: Response of [QueryProxyReverse]
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: proxy_account
+          description: proxy account address
+          in: path
+          required: true
+          type: string
+          format: byte
       tags:
         - Query
   /mitosis/event/v1beta1/proxy/{validator}:
@@ -72209,7 +72410,6 @@ definitions:
     type: object
     properties:
       denom_trace:
-        description: denom_trace returns the requested denomination trace information.
         type: object
         properties:
           path:
@@ -72222,6 +72422,11 @@ definitions:
           base_denom:
             type: string
             description: base denomination of the relayed fungible token.
+        description: >-
+          DenomTrace contains the base denomination for ICS20 fungible tokens
+          and the
+
+          source tracing information path.
     description: |-
       QueryDenomTraceResponse is the response type for the Query/DenomTrace RPC
       method.
@@ -72688,7 +72893,6 @@ definitions:
             type: string
             title: client identifier
           client_state:
-            title: client state
             type: object
             properties:
               '@type':
@@ -72851,6 +73055,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
+            title: client state
         description: |-
           IdentifiedClientState defines a client state with an additional client
           identifier field.
@@ -72893,7 +73098,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: consensus state associated with the channel
         type: object
         properties:
           '@type':
@@ -73050,6 +73254,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state associated with the channel
       client_id:
         type: string
         title: client ID associated with the consensus state
@@ -73946,7 +74151,6 @@ definitions:
         type: string
         title: client identifier
       client_state:
-        title: client state
         type: object
         properties:
           '@type':
@@ -74103,6 +74307,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state
     description: |-
       IdentifiedClientState defines a client state with an additional client
       identifier field.
@@ -74138,7 +74343,6 @@ definitions:
 
           gets reset
       consensus_state:
-        title: consensus state
         type: object
         properties:
           '@type':
@@ -74295,6 +74499,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state
     description: >-
       ConsensusStateWithHeight defines a consensus state with an additional
       height
@@ -74344,7 +74549,6 @@ definitions:
     type: object
     properties:
       client_state:
-        title: client state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -74501,6 +74705,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state associated with the request identifier
       proof:
         type: string
         format: byte
@@ -74842,9 +75047,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: >-
-          consensus state associated with the client identifier at the given
-          height
         type: object
         properties:
           '@type':
@@ -75001,12 +75203,14 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: >-
+          consensus state associated with the client identifier at the given
+          height
       proof:
         type: string
         format: byte
         title: merkle proof of existence
       proof_height:
-        title: height at which the proof was retrieved
         type: object
         properties:
           revision_number:
@@ -75033,6 +75237,13 @@ definitions:
           RevisionHeight
 
           gets reset
+        title: >-
+          Height is a monotonically increasing data type
+
+          that can be compared against another Height for the purposes of
+          updating and
+
+          freezing clients
     title: >-
       QueryConsensusStateResponse is the response type for the
       Query/ConsensusState
@@ -75076,7 +75287,6 @@ definitions:
 
                 gets reset
             consensus_state:
-              title: consensus state
               type: object
               properties:
                 '@type':
@@ -75243,6 +75453,7 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
+              title: consensus state
           description: >-
             ConsensusStateWithHeight defines a consensus state with an
             additional height
@@ -75283,7 +75494,6 @@ definitions:
     type: object
     properties:
       upgraded_client_state:
-        title: client state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -75440,6 +75650,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state associated with the request identifier
     description: |-
       QueryUpgradedClientStateResponse is the response type for the
       Query/UpgradedClientState RPC method.
@@ -75447,7 +75658,6 @@ definitions:
     type: object
     properties:
       upgraded_consensus_state:
-        title: Consensus state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -75604,6 +75814,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: Consensus state associated with the request identifier
     description: |-
       QueryUpgradedConsensusStateResponse is the response type for the
       Query/UpgradedConsensusState RPC method.
@@ -75905,7 +76116,6 @@ definitions:
             type: string
             title: client identifier
           client_state:
-            title: client state
             type: object
             properties:
               '@type':
@@ -76068,6 +76278,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
+            title: client state
         description: |-
           IdentifiedClientState defines a client state with an additional client
           identifier field.
@@ -76110,7 +76321,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: consensus state associated with the channel
         type: object
         properties:
           '@type':
@@ -76267,6 +76477,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state associated with the channel
       client_id:
         type: string
         title: client ID associated with the consensus state
@@ -76797,6 +77008,16 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  manythings.mitosis.v1beta1.common.Coin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+      decimal:
+        type: string
+        format: uint64
   manythings.mitosis.v1beta1.event.Event:
     type: object
     properties:
@@ -76837,14 +77058,9 @@ definitions:
                   type: string
                 amount:
                   type: string
-              description: >-
-                Coin defines a token with a denomination and an amount.
-
-
-                NOTE: The amount field is an Int which implements the custom
-                method
-
-                signatures required by gogoproto.
+                decimal:
+                  type: string
+                  format: uint64
         title: TxReqEvent Message
       res:
         type: object
@@ -76901,9 +77117,7 @@ definitions:
         properties:
           total_power:
             type: string
-          ack:
-            type: string
-          nak:
+          confirmed:
             type: string
       payload:
         title: Event payload
@@ -76946,14 +77160,9 @@ definitions:
                       type: string
                     amount:
                       type: string
-                  description: >-
-                    Coin defines a token with a denomination and an amount.
-
-
-                    NOTE: The amount field is an Int which implements the custom
-                    method
-
-                    signatures required by gogoproto.
+                    decimal:
+                      type: string
+                      format: uint64
             title: TxReqEvent Message
           res:
             type: object
@@ -76988,9 +77197,7 @@ definitions:
     properties:
       total_power:
         type: string
-      ack:
-        type: string
-      nak:
+      confirmed:
         type: string
     title: Tally Message
   manythings.mitosis.v1beta1.event.TxReqEvent:
@@ -77018,11 +77225,9 @@ definitions:
               type: string
             amount:
               type: string
-          description: |-
-            Coin defines a token with a denomination and an amount.
-
-            NOTE: The amount field is an Int which implements the custom method
-            signatures required by gogoproto.
+            decimal:
+              type: string
+              format: uint64
     title: TxReqEvent Message
   manythings.mitosis.v1beta1.event.TxResEvent:
     type: object
@@ -77037,15 +77242,86 @@ definitions:
         type: string
         format: byte
     title: TxResEvent Message
+  manythings.mitosis.v1beta1.event.server.MsgClearProxyResponse:
+    type: object
+    title: Response of [MsgClearProxy]
+  manythings.mitosis.v1beta1.event.server.MsgRegisterChainResponse:
+    type: object
+    properties:
+      chain_prefix:
+        type: string
+        format: byte
+    title: Response of [MsgRegisterChain]
   manythings.mitosis.v1beta1.event.server.MsgRegisterProxyResponse:
     type: object
     title: Response of [MsgRegisterProxy]
   manythings.mitosis.v1beta1.event.server.MsgSubmitResponse:
     type: object
+    properties:
+      news:
+        type: array
+        items:
+          type: string
+          format: uint64
+      voted:
+        type: array
+        items:
+          type: string
+          format: uint64
     title: Response of [MsgSubmit]
-  manythings.mitosis.v1beta1.event.server.MsgVoteResponse:
+  manythings.mitosis.v1beta1.event.server.MsgUnregisterChainResponse:
     type: object
-    title: Response of [MsgVote]
+    title: Response of [MsgUnregisterChain]
+  manythings.mitosis.v1beta1.event.server.QueryChainResponse:
+    type: object
+    properties:
+      chain:
+        type: string
+      chain_prefix:
+        type: string
+        format: byte
+    title: Response of [QueryChain]
+  manythings.mitosis.v1beta1.event.server.QueryChainsResponse:
+    type: object
+    properties:
+      chains:
+        type: array
+        items:
+          type: object
+          properties:
+            chain:
+              type: string
+            chain_prefix:
+              type: string
+              format: byte
+          title: Response of [QueryChain]
+      page:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: Response of [QueryChains]
   manythings.mitosis.v1beta1.event.server.QueryParamsResponse:
     type: object
     properties:
@@ -77094,9 +77370,7 @@ definitions:
             properties:
               total_power:
                 type: string
-              ack:
-                type: string
-              nak:
+              confirmed:
                 type: string
           payload:
             title: Event payload
@@ -77139,14 +77413,9 @@ definitions:
                           type: string
                         amount:
                           type: string
-                      description: >-
-                        Coin defines a token with a denomination and an amount.
-
-
-                        NOTE: The amount field is an Int which implements the
-                        custom method
-
-                        signatures required by gogoproto.
+                        decimal:
+                          type: string
+                          format: uint64
                 title: TxReqEvent Message
               res:
                 type: object
@@ -77206,9 +77475,7 @@ definitions:
               properties:
                 total_power:
                   type: string
-                ack:
-                  type: string
-                nak:
+                confirmed:
                   type: string
             payload:
               title: Event payload
@@ -77251,15 +77518,9 @@ definitions:
                             type: string
                           amount:
                             type: string
-                        description: >-
-                          Coin defines a token with a denomination and an
-                          amount.
-
-
-                          NOTE: The amount field is an Int which implements the
-                          custom method
-
-                          signatures required by gogoproto.
+                          decimal:
+                            type: string
+                            format: uint64
                   title: TxReqEvent Message
                 res:
                   type: object
@@ -77354,6 +77615,13 @@ definitions:
         type: string
         format: byte
     title: Response of [QueryProxy]
+  manythings.mitosis.v1beta1.event.server.QueryProxyReverseResponse:
+    type: object
+    properties:
+      validator:
+        type: string
+        format: byte
+    title: Response of [QueryProxyReverse]
   manythings.mitosis.v1beta1.multisig.Keygen:
     type: object
     properties:
