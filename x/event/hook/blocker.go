@@ -29,11 +29,12 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 	if err != nil {
 		panic(err.Error())
 	}
-	if epoch != nil && epoch.GetHeight()+params.GetEpochInterval() < height {
+	if epoch != nil && epoch.GetHeight()+params.GetEpochInterval() > height {
 		return
 	}
 
-	_, err = baseKeeper.CreateSnapshot(ctx, total, powers)
+	epoch, err = baseKeeper.CreateSnapshot(ctx, total, powers)
+	_ = epoch
 
 	// TODO: emit event
 }
