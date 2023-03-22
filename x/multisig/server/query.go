@@ -80,7 +80,7 @@ func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*Que
 	keyId := types.KeyID(msg.KeyId)
 	chainId, id, err := keyId.ToInternalVariables()
 	if err != nil {
-		return nil, fmt.Errorf("keyId has invalid format")
+		return nil, fmt.Errorf("keyId has invalid format: chainId-sequence")
 	}
 
 	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, chainId, id, msg.Pagination)
@@ -117,11 +117,35 @@ func (k queryServer) SignList(ctx context.Context, msg *QuerySignList) (*QuerySi
 }
 
 func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*QuerySignatureResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	sigId := types.SigID(msg.SigId)
+	chainId, id, err := sigId.ToInternalVariables()
+	if err != nil {
+		return nil, fmt.Errorf("sigId has invalid format: must be chainId-sequence")
+	}
+
+	signature, err := k.baseKeeper.QuerySignature(wctx, chainId, id, msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QuerySignatureResponse{Signature: signature}, nil
 }
 
 func (k queryServer) SignatureList(ctx context.Context, msg *QuerySignatureList) (*QuerySignatureListResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	sigId := types.SigID(msg.SigId)
+	chainId, id, err := sigId.ToInternalVariables()
+	if err != nil {
+		return nil, fmt.Errorf("sigId has invalid foramt: must be chainId-sequence")
+	}
+
+	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, chainId, id, msg.Pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QuerySignatureListResponse{List: mitotypes.Values(kvSignature), Page: page}, nil
 }
