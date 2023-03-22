@@ -22,6 +22,10 @@ func (t *TestMessage) Unmarshal(bytes []byte) error {
 	return json.Unmarshal(bytes, t)
 }
 
+func ConstructTestMessage() Message {
+	return &TestMessage{}
+}
+
 func MakeTestMessages(size int) []Message {
 	ts := make([]Message, size)
 	for i := 0; i < len(ts); i++ {
@@ -64,17 +68,17 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
 
 		{
-			m, err := q.Pick(0)
+			m, err := q.Get(0)
 			require.NoError(t, err)
 			require.Equal(t, "t0", m.(*TestMessage).Data)
 		}
 		{
-			m, err := q.Pick(49)
+			m, err := q.Get(49)
 			require.NoError(t, err)
 			require.Equal(t, "t49", m.(*TestMessage).Data)
 		}
 		{
-			_, err := q.Pick(50)
+			_, err := q.Get(50)
 			require.Error(t, err)
 		}
 	}
