@@ -3,7 +3,8 @@ package queue
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -29,49 +30,115 @@ func MakeTestMessages(size int) []Message {
 	return ts
 }
 
-func ConvTestMessage(bz []byte) (Message, error) {
-	var v TestMessage
-	if err := v.Unmarshal(bz); err != nil {
-		return nil, err
-	}
-	return &v, nil
-}
-
 func testQueue(t *testing.T, q Queue[Message]) {
 	ts := MakeTestMessages(50)
 
 	// produce
-	assert.NoError(t, q.Produce(ts...))
-	assert.Equal(t, uint64(len(ts)), q.Size())
+	pushed, err := q.Produce(ts...)
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		pushed,
+		mitotypes.Map(ts, func(_ Message, i int) uint64 { return uint64(i) }),
+	)
+	require.Equal(t, uint64(len(ts)), q.Size())
 
 	// consume
 	var (
 		consumeSize uint64 = 25
 		msgs        []Message
-		err         error
 	)
 
 	// consume half
-	msgs, err = q.Consume(consumeSize, ConvTestMessage)
-	assert.NoError(t, err)
-	assert.Equal(t, consumeSize, uint64(len(msgs)))
-	assert.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
-	assert.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	{
+		var rs []Message
+		require.NoError(
+			t,
+			q.Range(nil, func(msg Message, _ uint64) error {
+				rs = append(rs, msg)
+				return nil
+			}),
+		)
+		require.Equal(t, len(ts), len(rs))
+		require.Equal(t, uint64(len(ts)), q.Size())
+		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
+
+		{
+			m, err := q.Pick(0)
+			require.NoError(t, err)
+			require.Equal(t, "t0", m.(*TestMessage).Data)
+		}
+		{
+			m, err := q.Pick(49)
+			require.NoError(t, err)
+			require.Equal(t, "t49", m.(*TestMessage).Data)
+		}
+		{
+			_, err := q.Pick(50)
+			require.Error(t, err)
+		}
+	}
+
+	{
+		msgs, err = q.Consume(consumeSize)
+		require.NoError(t, err)
+		require.Equal(t, consumeSize, uint64(len(msgs)))
+		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
+		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	}
 
 	// produce half
-	assert.NoError(t, q.Produce(ts[:consumeSize]...))
+	pushed, err = q.Produce(ts[:consumeSize]...)
+	require.NoError(t, err)
+	require.Equal(
+		t,
+		pushed,
+		mitotypes.Map(ts[:consumeSize], func(_ Message, i int) uint64 { return uint64(len(ts) + i) }),
+	)
 
 	// consume half again
-	msgs, err = q.Consume(consumeSize, ConvTestMessage)
-	assert.NoError(t, err)
-	assert.Equal(t, consumeSize, uint64(len(msgs)))
-	assert.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
-	assert.Equal(t, "t25", msgs[0].(*TestMessage).Data)
+	{
+		var rs []Message
+		require.NoError(
+			t,
+			q.Range(nil, func(msg Message, _ uint64) error {
+				rs = append(rs, msg)
+				return nil
+			}),
+		)
+		require.Equal(t, len(ts), len(rs))
+		require.Equal(t, uint64(len(ts)), q.Size())
+		require.Equal(t, "t25", rs[0].(*TestMessage).Data)
+	}
+
+	{
+		msgs, err = q.Consume(consumeSize)
+		require.NoError(t, err)
+		require.Equal(t, consumeSize, uint64(len(msgs)))
+		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
+		require.Equal(t, "t25", msgs[0].(*TestMessage).Data)
+	}
 
 	// consume rest & check produced item
-	msgs, err = q.Consume(consumeSize, ConvTestMessage)
-	assert.NoError(t, err)
-	assert.Equal(t, consumeSize, uint64(len(msgs)))
-	assert.Equal(t, uint64(len(ts)-(len(msgs)*2)), q.Size())
-	assert.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	{
+		var rs []Message
+		require.NoError(
+			t,
+			q.Range(nil, func(msg Message, _ uint64) error {
+				rs = append(rs, msg)
+				return nil
+			}),
+		)
+		require.Equal(t, consumeSize, uint64(len(rs)))
+		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
+		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
+	}
+
+	{
+		msgs, err = q.Consume(consumeSize)
+		require.NoError(t, err)
+		require.Equal(t, consumeSize, uint64(len(msgs)))
+		require.Equal(t, uint64(len(ts)-(len(msgs)*2)), q.Size())
+		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	}
 }
