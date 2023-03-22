@@ -1,6 +1,7 @@
 package sim
 
 import (
+	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/server"
 	"math/rand"
 
@@ -13,7 +14,7 @@ import (
 func SimulateMsgStartKeygen(
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
-	k types.Keeper,
+	k keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {

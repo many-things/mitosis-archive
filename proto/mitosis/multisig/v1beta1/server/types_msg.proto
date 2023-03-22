@@ -39,7 +39,7 @@ message MsgSubmitPubkeyResponse {}
 // MsgSubmitSignature is message for SubmitSignature event
 message MsgSubmitSignature {
   string module = 1;
-  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+  string sig_id = 2 [(gogoproto.customname) = "SigID", (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.SigID"];
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
   bytes signature = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Signature"];
 }
