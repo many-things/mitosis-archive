@@ -7,6 +7,7 @@ import (
 	"github.com/many-things/mitosis/x/event/keeper"
 	"github.com/many-things/mitosis/x/event/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"strings"
 )
 
 func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.Keeper, stakingKeeper types.StakingKeeper) {
@@ -28,7 +29,9 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 
 	epoch, err := baseKeeper.LatestSnapshotEpoch(ctx)
 	if err != nil {
-		panic(err.Error())
+		if !strings.Contains(err.Error(), "epoch cannot be nil") {
+			panic(err.Error())
+		}
 	}
 	if epoch != nil && epoch.GetHeight()+params.GetEpochInterval() > height {
 		return
