@@ -22,7 +22,7 @@ type PollRepo interface {
 	Create(poll types.Poll) (uint64, error)
 	Save(poll types.Poll) error
 
-	FlushFinishedPolls() ([]*types.Poll, error)
+	Flush(threshold sdk.Dec) ([]mitotypes.KV[uint64, *types.Poll], error)
 
 	Paginate(page *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
 
@@ -105,9 +105,15 @@ func (k kvPollRepo) Save(poll types.Poll) error {
 	return k.queue.Update(poll.GetId(), &poll)
 }
 
-func (k kvPollRepo) FlushFinishedPolls() ([]*types.Poll, error) {
-	// TODO: implement me
-	return nil, nil
+func (k kvPollRepo) Flush(threshold sdk.Dec) ([]mitotypes.KV[uint64, *types.Poll], error) {
+	checker := func(poll *types.Poll, u uint64) (bool, error) {
+		return poll.GetTally().Passed(threshold), nil
+	}
+	passed, err := k.queue.ConsumeUntil(checker)
+	if err != nil {
+		return nil, err
+	}
+	return passed, nil
 }
 
 func (k kvPollRepo) Paginate(pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error) {
