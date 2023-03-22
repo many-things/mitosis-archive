@@ -86,7 +86,7 @@ func (k queryServer) Proxies(ctx context.Context, req *QueryProxies) (*QueryProx
 	}
 
 	return &QueryProxiesResponse{
-		Proxies: mitotypes.MapKV(set, func(k sdk.ValAddress, v sdk.AccAddress) *QueryProxyResponse {
+		Proxies: mitotypes.MapKV(set, func(k sdk.ValAddress, v sdk.AccAddress, _ int) *QueryProxyResponse {
 			return &QueryProxyResponse{
 				Validator:    k,
 				ProxyAccount: v,
@@ -116,7 +116,7 @@ func (k queryServer) Chains(ctx context.Context, req *QueryChains) (*QueryChains
 	}
 
 	return &QueryChainsResponse{
-		Chains: mitotypes.MapKV(set, func(k string, v byte) *QueryChainResponse {
+		Chains: mitotypes.MapKV(set, func(k string, v byte, _ int) *QueryChainResponse {
 			return &QueryChainResponse{
 				Chain:       k,
 				ChainPrefix: []byte{v},

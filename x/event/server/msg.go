@@ -35,7 +35,7 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 	// make poll candidates
 	candidates := mitotypes.Map(
 		req.GetEvents(),
-		func(t *types.Event) *types.Poll {
+		func(t *types.Event, _ int) *types.Poll {
 			return &types.Poll{
 				Chain:    req.GetChain(),
 				Proposer: val,
@@ -62,7 +62,7 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 	}
 
 	// [uint64, []byte] -> *types.EventType_SubmitEvent_Poll
-	pollConv := func(id uint64, sum []byte) *types.EventType_SubmitEvent_Poll {
+	pollConv := func(id uint64, sum []byte, _ int) *types.EventType_SubmitEvent_Poll {
 		return &types.EventType_SubmitEvent_Poll{
 			Id:        id,
 			EventHash: sum,

@@ -80,7 +80,7 @@ func TestPoll(t *testing.T) {
 
 	vals := mitotypes.Map(
 		make([]byte, 2),
-		func(_ byte) sdk.ValAddress {
+		func(_ byte, _ int) sdk.ValAddress {
 			bz := make([]byte, 32)
 			_, err = crand.Read(bz)
 			require.NoError(t, err)
@@ -92,7 +92,7 @@ func TestPoll(t *testing.T) {
 		ctx, sdk.NewInt(100),
 		mitotypes.Map(
 			vals,
-			func(val sdk.ValAddress) mitotypes.KV[sdk.ValAddress, int64] {
+			func(val sdk.ValAddress, _ int) mitotypes.KV[sdk.ValAddress, int64] {
 				return mitotypes.NewKV(val, int64(100))
 			},
 		),
@@ -103,12 +103,12 @@ func TestPoll(t *testing.T) {
 
 	events := mitotypes.Map(
 		make([]byte, 20),
-		func(_ byte) *types.Event { return mockEvent(t) },
+		func(_ byte, _ int) *types.Event { return mockEvent(t) },
 	)
 
 	polls := mitotypes.Map(
 		events,
-		func(evt *types.Event) *types.Poll {
+		func(evt *types.Event, _ int) *types.Poll {
 			return &types.Poll{
 				Chain:    "osmosis-1",
 				Proposer: vals[0],
@@ -134,11 +134,11 @@ func TestPoll(t *testing.T) {
 		t,
 		mitotypes.Map(
 			make([]byte, len(polls)),
-			func(_ byte) uint64 { return 200 },
+			func(_ byte, _ int) uint64 { return 200 },
 		),
 		mitotypes.MapKV(
 			pollsResp,
-			func(k uint64, v *types.Poll) uint64 { return v.Tally.Confirmed.Uint64() },
+			func(k uint64, v *types.Poll, _ int) uint64 { return v.Tally.Confirmed.Uint64() },
 		),
 	)
 }
