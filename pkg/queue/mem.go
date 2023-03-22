@@ -139,22 +139,25 @@ func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {
 	return ms, nil
 }
 
-func (k *memq[T]) Consume(amount uint64) ([]T, error) {
+func (k *memq[T]) Consume(amount uint64) ([]mitotypes.KV[uint64, T], error) {
 	l := min(k.Size(), amount)
 
 	k.mux.Lock()
+	size := uint64(len(k.store))
 	bzs := k.store[:l]
 	k.store = k.store[l:]
 	k.mux.Unlock()
 
-	ms := make([]T, len(bzs))
-	for i, bz := range bzs {
+	ms := make([]mitotypes.KV[uint64, T], len(bzs))
+	for ri, bz := range bzs {
+		ai := k.lastIdx - size + uint64(ri) // absolute index
+
 		m := k.constructor()
 		if err := m.Unmarshal(bz); err != nil {
 			return nil, err
 		}
 
-		ms[i] = m
+		ms[ri] = mitotypes.NewKV(ai, m)
 	}
 
 	return ms, nil
