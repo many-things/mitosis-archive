@@ -1,10 +1,10 @@
 package types
 
 // Map is a helper function to map a slice to a new slice of type U.
-func Map[T, U any](ts []T, f func(t T) U) []U {
+func Map[T, U any](ts []T, f func(t T, i int) U) []U {
 	rs := make([]U, len(ts))
 	for i := range ts {
-		rs[i] = f(ts[i])
+		rs[i] = f(ts[i], i)
 	}
 	return rs
 }

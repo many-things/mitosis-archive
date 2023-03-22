@@ -6,17 +6,23 @@ import (
 	"testing"
 )
 
-func setupMemQueue[T Message](t *testing.T) Queue[T] {
-	return NewMemoryQueue[T]()
+func setupMemQueue[T Message](t *testing.T, constructor func() T) Queue[T] {
+	return NewMemoryQueue[T](constructor)
 }
 
 func TestQueue(t *testing.T) {
-	testQueue(t, setupMemQueue[Message](t))
+	testQueue(
+		t,
+		setupMemQueue[Message](
+			t,
+			func() Message { return &TestMessage{} },
+		),
+	)
 }
 
 func TestRaceCondition(t *testing.T) {
 	var (
-		q  = setupMemQueue[Message](t)
+		q  = setupMemQueue[Message](t, func() Message { return &TestMessage{} })
 		ts = MakeTestMessages(50)
 		wg = sync.WaitGroup{}
 	)
@@ -25,7 +31,8 @@ func TestRaceCondition(t *testing.T) {
 		wg.Add(1)
 		go func(m Message) {
 			defer wg.Done()
-			assert.NoError(t, q.Produce(m))
+			_, err := q.Produce(m)
+			assert.NoError(t, err)
 		}(m)
 	}
 	wg.Wait()
@@ -37,7 +44,7 @@ func TestRaceCondition(t *testing.T) {
 		go func() {
 			defer wg.Done()
 
-			msgs, err := q.Consume(1, ConvTestMessage)
+			msgs, err := q.Consume(1)
 			assert.NoError(t, err)
 			assert.Len(t, msgs, 1)
 		}()
