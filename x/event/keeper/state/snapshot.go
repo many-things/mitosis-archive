@@ -89,6 +89,7 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 	if err != nil {
 		return nil, err
 	}
+
 	nextEpoch := &types.EpochInfo{
 		Epoch:      0, // start from zero for first epoch
 		Height:     height,
@@ -112,7 +113,7 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 		v, p := power.Key, power.Value
 
 		valPowerStore.Set(
-			append(v.Bytes(), sdk.Uint64ToBigEndian(latestEpoch.GetEpoch())...),
+			append(v.Bytes(), sdk.Uint64ToBigEndian(nextEpoch.GetEpoch())...),
 			sdk.Uint64ToBigEndian(uint64(p)),
 		)
 	}
@@ -133,9 +134,9 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 		return nil, err
 	}
 
-	valSetStore.Set(sdk.Uint64ToBigEndian(latestEpoch.GetEpoch()), valSetBz)
+	valSetStore.Set(sdk.Uint64ToBigEndian(nextEpoch.GetEpoch()), valSetBz)
 
-	return latestEpoch, nil
+	return nextEpoch, nil
 }
 
 func (r kvSnapshotRepo) PowerOf(epoch uint64, val sdk.ValAddress) (int64, error) {
