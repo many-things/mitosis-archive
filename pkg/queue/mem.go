@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/pkg/errors"
 	"sync"
@@ -44,6 +45,32 @@ func (k *memq[T]) Pick(i uint64) (T, error) {
 	}
 
 	return m, nil
+}
+
+func (k *memq[T]) Range(amount *uint64, f func(T, uint64) error) error {
+	limit := uint64(query.MaxLimit)
+	if amount != nil {
+		limit = *amount
+	}
+
+	l := min(k.Size(), limit)
+
+	k.mux.Lock()
+	bzs := k.store[:l]
+	bi := k.lastIdx
+	size := uint64(len(k.store))
+	k.mux.Unlock()
+
+	for i, bz := range bzs {
+		m := k.constructor()
+		if err := m.Unmarshal(bz); err != nil {
+			return errors.Wrap(err, "unmarshal")
+		}
+		if err := f(m, uint64(i)+bi-size); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (k *memq[T]) Produce(msgs ...T) ([]uint64, error) {
