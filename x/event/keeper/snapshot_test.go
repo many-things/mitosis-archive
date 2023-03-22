@@ -16,7 +16,7 @@ func TestSnapshot(t *testing.T) {
 
 	vals := mitotypes.Map(
 		make([]byte, 2),
-		func(_ byte) sdk.ValAddress {
+		func(_ byte, _ int) sdk.ValAddress {
 			bz := make([]byte, 32)
 			_, err := crand.Read(bz)
 			require.NoError(t, err)
@@ -28,7 +28,7 @@ func TestSnapshot(t *testing.T) {
 		ctx, sdk.NewInt(100),
 		mitotypes.Map(
 			vals,
-			func(val sdk.ValAddress) mitotypes.KV[sdk.ValAddress, int64] {
+			func(val sdk.ValAddress, _ int) mitotypes.KV[sdk.ValAddress, int64] {
 				return mitotypes.NewKV(val, int64(100))
 			},
 		),

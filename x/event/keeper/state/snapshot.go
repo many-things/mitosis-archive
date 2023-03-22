@@ -121,7 +121,7 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 	valSet := types.ValidatorSet{
 		Items: mitotypes.MapKV(
 			powers,
-			func(val sdk.ValAddress, power int64) *types.ValidatorSet_Item {
+			func(val sdk.ValAddress, power int64, _ int) *types.ValidatorSet_Item {
 				return &types.ValidatorSet_Item{
 					Validator: val,
 					Power:     power,
@@ -185,7 +185,7 @@ func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], e
 
 	kvs := mitotypes.Map(
 		valSet.Items,
-		func(item *types.ValidatorSet_Item) mitotypes.KV[sdk.ValAddress, int64] {
+		func(item *types.ValidatorSet_Item, _ int) mitotypes.KV[sdk.ValAddress, int64] {
 			return mitotypes.NewKV(item.Validator, item.Power)
 		},
 	)

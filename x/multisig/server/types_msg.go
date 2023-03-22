@@ -26,7 +26,7 @@ func (m *MsgSubmitPubkey) GetSigners() []sdk.AccAddress {
 }
 
 func (m *MsgStartKeygen) GetSigners() []sdk.AccAddress {
-	return mitotypes.Map(m.Participants, func(t sdk.ValAddress) sdk.AccAddress { return t.Bytes() })
+	return mitotypes.Map(m.Participants, func(t sdk.ValAddress, _ int) sdk.AccAddress { return t.Bytes() })
 }
 
 func (m *MsgStartKeygen) ValidateBasic() error {
