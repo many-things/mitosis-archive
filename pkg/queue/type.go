@@ -1,10 +1,9 @@
 package queue
 
-import "github.com/gogo/protobuf/proto"
+import "github.com/cosmos/cosmos-sdk/codec"
 
 type Message interface {
-	proto.Marshaler
-	proto.Unmarshaler
+	codec.ProtoMarshaler
 }
 
 type Queue[T Message] interface {
