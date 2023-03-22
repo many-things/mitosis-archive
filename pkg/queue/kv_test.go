@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func setupKVQueue[T Message](t *testing.T) Queue[T] {
+func setupKVQueue[T Message](t *testing.T, constructor func() T) Queue[T] {
 	storeKey := sdk.NewKVStoreKey("kv-test")
 	memStoreKey := storetypes.NewMemoryStoreKey("mem-test")
 
@@ -23,9 +23,15 @@ func setupKVQueue[T Message](t *testing.T) Queue[T] {
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 
-	return NewKVQueue[T](ctx.KVStore(storeKey))
+	return NewKVQueue[T](ctx.KVStore(storeKey), constructor)
 }
 
 func TestKVQueue(t *testing.T) {
-	testQueue(t, setupKVQueue[Message](t))
+	testQueue(
+		t,
+		setupKVQueue[Message](
+			t,
+			func() Message { return &TestMessage{} },
+		),
+	)
 }

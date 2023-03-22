@@ -1,10 +1,12 @@
 package queue
 
 import (
-	"errors"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
+	"github.com/pkg/errors"
 )
 
 var (
@@ -14,14 +16,15 @@ var (
 )
 
 type kvq[T Message] struct {
-	root  store.KVStore
-	items store.KVStore
+	root        store.KVStore
+	items       store.KVStore
+	constructor func() T
 }
 
-func NewKVQueue[T Message](root store.KVStore) Queue[T] {
+func NewKVQueue[T Message](root store.KVStore, constructor func() T) Queue[T] {
 	items := prefix.NewStore(root, kvPrefixItems)
 
-	return kvq[T]{root, items}
+	return kvq[T]{root, items, constructor}
 }
 
 func (k kvq[T]) getFirstItem() uint64 {
@@ -61,46 +64,78 @@ func (k kvq[T]) Size() uint64 {
 	return lastItem - firstItem
 }
 
-func (k kvq[T]) Produce(msgs ...T) error {
+func (k kvq[T]) Pick(i uint64) (T, error) {
+	m := k.constructor()
+
+	if i < k.getFirstItem() && k.getLastItem() < i {
+		return m, errors.New("index out of range")
+	}
+
+	bz := k.items.Get(sdk.Uint64ToBigEndian(i))
+	if bz == nil {
+		return m, errors.Errorf("queue not found in index %d", i)
+	}
+
+	if err := m.Unmarshal(bz); err != nil {
+		return m, errors.Wrap(err, "unmarshal")
+	}
+	return m, nil
+}
+
+func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {
 	lastItem := k.getLastItem()
 	for i, msg := range msgs {
 		bz, err := msg.Marshal()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		k.items.Set(sdk.Uint64ToBigEndian(lastItem+uint64(i)), bz)
 	}
 	k.setLastItem(lastItem + uint64(len(msgs))) // -> last item
-	return nil
+
+	return mitotypes.Map(
+		make([]byte, len(msgs)),
+		func(_ byte, i int) uint64 { return lastItem + uint64(i) },
+	), nil
 }
 
-func (k kvq[T]) Consume(amount uint64, conv func([]byte) (T, error)) ([]T, error) {
+func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
 	if lastItem == firstItem {
 		return nil, errors.New("empty queue")
 	}
 
-	iter := k.items.Iterator(sdk.Uint64ToBigEndian(firstItem), sdk.Uint64ToBigEndian(lastItem))
-	defer iter.Close()
-
 	var (
-		ms   []T
-		want = min(lastItem-firstItem, amount)
+		ms       []T
+		want     = min(lastItem-firstItem, amount)
+		queryReq = &query.PageRequest{
+			Key:     sdk.Uint64ToBigEndian(firstItem),
+			Limit:   want,
+			Reverse: false,
+		}
 	)
-	for ; iter.Valid(); iter.Next() {
-		m, err := conv(iter.Value())
-		if err != nil {
-			return nil, err
-		}
 
-		ms = append(ms, m)
-		if uint64(len(ms)) >= want {
-			break
-		}
+	_, err := query.Paginate(
+		k.items, queryReq,
+		func(_ []byte, value []byte) error {
+			m := k.constructor()
+			if err := m.Unmarshal(value); err != nil {
+				return err
+			}
+			ms = append(ms, m)
+			return nil
+		},
+	)
+	if err != nil {
+		return nil, err
 	}
 
 	k.setFirstItem(firstItem + uint64(len(ms)))
 	return ms, nil
+}
+
+func (k kvq[T]) MsgConstructor() func() T {
+	return k.constructor
 }

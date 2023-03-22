@@ -8,6 +8,8 @@ type Message interface {
 
 type Queue[T Message] interface {
 	Size() uint64
-	Produce(msgs ...T) error
-	Consume(amount uint64, conv func([]byte) (T, error)) ([]T, error)
+	Pick(uint64) (T, error)
+	Produce(msgs ...T) ([]uint64, error)
+	Consume(amount uint64) ([]T, error)
+	MsgConstructor() func() T
 }
