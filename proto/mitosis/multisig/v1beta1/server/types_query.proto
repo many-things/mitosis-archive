@@ -107,6 +107,6 @@ message QuerySignatureList {
 
 // QuerySignatureListResponse is response type for Query Signature List RPC method
 message QuerySignatureListResponse {
-  repeated bytes list = 1;
+  repeated bytes list = 1 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Signature"];
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }

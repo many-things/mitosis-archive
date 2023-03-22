@@ -64,7 +64,7 @@ func (k kvq[T]) Size() uint64 {
 	return lastItem - firstItem
 }
 
-func (k kvq[T]) Pick(i uint64) (T, error) {
+func (k kvq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 
 	if i < k.getFirstItem() || k.getLastItem() <= i {
@@ -115,6 +115,55 @@ func (k kvq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 		},
 	)
 	return err
+}
+
+func (k kvq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*query.PageResponse, error) {
+	lastItem := k.getLastItem()
+	firstItem := k.getFirstItem()
+	if lastItem == firstItem {
+		return nil, errors.New("empty queue")
+	}
+
+	if req.Key == nil {
+		if req.Reverse {
+			req.Key = sdk.Uint64ToBigEndian(lastItem)
+		} else {
+			req.Key = sdk.Uint64ToBigEndian(firstItem)
+		}
+	} else {
+		i := sdk.BigEndianToUint64(req.Key)
+		if i < firstItem || lastItem <= i {
+			return nil, errors.New("key out of range")
+		}
+	}
+
+	if req.Limit == 0 {
+		req.Limit = lastItem - firstItem
+	} else {
+		req.Limit = min(lastItem-firstItem, req.Limit)
+	}
+
+	resp, err := query.Paginate(
+		k.items,
+		req,
+		func(key []byte, value []byte) error {
+			m := k.constructor()
+			if err := m.Unmarshal(value); err != nil {
+				return err
+			}
+			return f(m, sdk.BigEndianToUint64(key))
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	next := sdk.BigEndianToUint64(resp.NextKey)
+	if next < firstItem || lastItem <= next {
+		resp.NextKey = nil
+	}
+
+	return resp, nil
 }
 
 func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {

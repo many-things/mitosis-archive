@@ -1,6 +1,9 @@
 package queue
 
-import "github.com/gogo/protobuf/proto"
+import (
+	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/gogo/protobuf/proto"
+)
 
 type Message interface {
 	proto.Marshaler
@@ -14,10 +17,13 @@ type Queue[T Message] interface {
 	Size() uint64
 
 	// Pick returns the item of specific id
-	Pick(uint64) (T, error)
+	Get(uint64) (T, error)
 
 	// Range iterates over the queue and calls the callback for each item.
 	Range(*uint64, func(T, uint64) error) error
+
+	// Paginate iterates over the queue and calls the callback for each item.
+	Paginate(*query.PageRequest, func(T, uint64) error) (*query.PageResponse, error)
 
 	// MsgConstructor returns the constructor of the message type.
 	MsgConstructor() func() T
