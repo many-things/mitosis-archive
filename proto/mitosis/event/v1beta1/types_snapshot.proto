@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.event;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// EpochInfo defines a epoch information.
+message EpochInfo {
+  uint64 epoch = 1;
+  uint64 height = 2;
+  string total_power = 3 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
+}
+
+// ValidatorSet defines a power information about every validator at specific epoch.
+message ValidatorSet {
+  // Item defines a single row of k v pair.
+  message Item {
+    bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    int64 power = 2;
+  }
+
+  repeated Item items = 1;
+}

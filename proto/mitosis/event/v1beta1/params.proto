@@ -11,4 +11,6 @@ message Params {
   option (gogoproto.goproto_stringer) = false;
 
   float poll_threshold = 1;
+
+  uint64 epoch_interval = 2;
 }

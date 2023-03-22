@@ -6,14 +6,13 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-type GenesisKeeper interface {
-	ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error)
-	ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error
-}
+// determinism
+var _ types.GenesisKeeper = keeper{}
 
 func (k keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
+	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	genesis = types.DefaultGenesis()
 
@@ -41,12 +40,18 @@ func (k keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err
 		genesis.Poll.ChainSet = append(genesis.Poll.ChainSet, poll)
 	}
 
+	// export snapshot
+	if genesis.Snapshot, err = snapshotRepo.ExportGenesis(); err != nil {
+		return nil, err
+	}
+
 	return
 }
 
 func (k keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) error {
 	proxyRepo := state.NewKVProxyRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
+	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	k.SetParams(ctx, genesis.Params)
 
@@ -62,6 +67,10 @@ func (k keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) erro
 	}
 
 	if err := chainRepo.ImportGenesis(genesis.GetChain()); err != nil {
+		return err
+	}
+
+	if err := snapshotRepo.ImportGenesis(genesis.GetSnapshot()); err != nil {
 		return err
 	}
 

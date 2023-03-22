@@ -9,22 +9,8 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-type PollKeeper interface {
-	// FilterNewPolls specifies fresh poll and returns new poll and existing polls' index
-	FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Poll) ([]*types.Poll, []mitotypes.KV[uint64, []byte], error)
-
-	// SubmitPolls handles [server.MsgSubmit] - returns key value set of poll_id and event_hash
-	SubmitPolls(ctx sdk.Context, chain string, polls []*types.Poll, totalPower, valPower sdk.Int) ([]mitotypes.KV[uint64, []byte], error)
-
-	// VotePolls handles [server.MsgVote]
-	VotePolls(ctx sdk.Context, chain string, votes []uint64, valPower sdk.Int) error
-
-	// QueryPoll handles [server.QueryPoll]
-	QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error)
-
-	// QueryPolls handles [server.QueryPolls]
-	QueryPolls(ctx sdk.Context, chain string, pageReq *query.PageRequest) ([]mitotypes.KV[uint64, *types.Poll], *query.PageResponse, error)
-}
+// determinism
+var _ types.PollKeeper = keeper{}
 
 func (k keeper) FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Poll) ([]*types.Poll, []mitotypes.KV[uint64, []byte], error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
@@ -61,12 +47,25 @@ func (k keeper) FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Pol
 func (k keeper) SubmitPolls(
 	ctx sdk.Context,
 	chain string,
+	val sdk.ValAddress,
 	polls []*types.Poll,
-	totalPower sdk.Int,
-	valPower sdk.Int,
 ) ([]mitotypes.KV[uint64, []byte], error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainPrefix, err := chainRepo.Load(chain)
+	if err != nil {
+		return nil, err
+	}
+
+	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
+	epoch, err := snapshotRepo.LatestEpoch()
+	if err != nil {
+		return nil, err
+	}
+	if epoch == nil {
+		return nil, errors.Wrap(errors.ErrKeyNotFound, "get latest epoch")
+	}
+
+	power, err := snapshotRepo.PowerOf(epoch.GetEpoch(), val)
 	if err != nil {
 		return nil, err
 	}
@@ -76,16 +75,18 @@ func (k keeper) SubmitPolls(
 	set := make([]mitotypes.KV[uint64, []byte], len(polls))
 	for i, poll := range polls {
 		// initialize poll
+		poll.Epoch = epoch.GetEpoch()
 		poll.Status = types.Poll_StatusPending
 		poll.Tally = &types.Tally{
-			TotalPower: &totalPower,
-			Confirmed:  &valPower,
+			TotalPower: epoch.TotalPower,
+			Confirmed:  mitotypes.Ref(sdk.NewInt(power)),
 		}
 
 		pollId, err := pollRepo.Create(*poll)
 		if err != nil {
 			return nil, err
 		}
+		pollRepo.SetVoted(pollId, val)
 
 		checksum, err := poll.GetPayload().Hash()
 		if err != nil {
@@ -93,20 +94,27 @@ func (k keeper) SubmitPolls(
 		}
 
 		set[i] = mitotypes.NewKV(pollId, checksum)
+
 	}
 
 	return set, nil
 }
 
-func (k keeper) VotePolls(ctx sdk.Context, chain string, votes []uint64, valPower sdk.Int) error {
+func (k keeper) VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, votes []uint64) error {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainPrefix, err := chainRepo.Load(chain)
 	if err != nil {
 		return err
 	}
 
+	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
+
 	pollRepo := state.NewKVPollRepo(k.cdc, chainPrefix, ctx.KVStore(k.storeKey))
 	for _, id := range votes {
+		if pollRepo.IsVoted(id, val) {
+			continue
+		}
+
 		loaded, err := pollRepo.Load(id)
 		if err != nil {
 			return err
@@ -115,11 +123,17 @@ func (k keeper) VotePolls(ctx sdk.Context, chain string, votes []uint64, valPowe
 			return errors.ErrKeyNotFound
 		}
 
-		loaded.Tally.Confirmed = mitotypes.Ref(loaded.Tally.Confirmed.Add(valPower))
+		power, err := snapshotRepo.PowerOf(loaded.GetEpoch(), val)
+		if err != nil {
+			return err
+		}
+
+		loaded.Tally.Confirmed = mitotypes.Ref(loaded.Tally.Confirmed.Add(sdk.NewInt(power)))
 
 		if err := pollRepo.Save(*loaded); err != nil {
 			return err
 		}
+		pollRepo.SetVoted(id, val)
 	}
 
 	return nil

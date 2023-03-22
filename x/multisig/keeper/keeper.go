@@ -12,6 +12,15 @@ import (
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
+type Keeper interface {
+	types.BaseKeeper
+
+	types.KeygenKeeper
+	types.PubKeyKeeper
+	types.SignKeeper
+	types.SignatureKeeper
+}
+
 type keeper struct {
 	cdc        codec.BinaryCodec
 	storeKey   storetypes.StoreKey
@@ -24,7 +33,7 @@ func NewKeeper(
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-) types.Keeper {
+) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())

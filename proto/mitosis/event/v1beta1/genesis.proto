@@ -4,7 +4,8 @@ package manythings.mitosis.v1beta1.event;
 
 import "gogoproto/gogo.proto";
 import "mitosis/event/v1beta1/params.proto";
-import "mitosis/event/v1beta1/types.proto";
+import "mitosis/event/v1beta1/types_poll.proto";
+import "mitosis/event/v1beta1/types_snapshot.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/types";
 
@@ -57,6 +58,19 @@ message GenesisChain {
   repeated ItemSet item_set = 2;
 }
 
+// Genesis state of snapshot repository
+message GenesisSnapshot {
+  // Key-Value set of power
+  message PowerSet {
+    bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    uint64 epoch = 2;
+    uint64 power = 3;
+  }
+
+  EpochInfo latest_epoch = 1;
+  repeated PowerSet power_set = 2;
+}
+
 // GenesisState defines the event module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
@@ -66,4 +80,6 @@ message GenesisState {
   GenesisProxy proxy = 3;
 
   GenesisChain chain = 4;
+
+  GenesisSnapshot snapshot = 5;
 }

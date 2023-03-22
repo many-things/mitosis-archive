@@ -2,16 +2,13 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
-type BaseKeeper interface {
-}
-
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
 type AccountKeeper interface {
-	GetAccount(ctx sdk.Context, addr sdk.AccAddress) types.AccountI
+	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
 	// Methods imported from account should be defined here
 }
 
@@ -28,4 +25,6 @@ type StakingKeeper interface {
 	GetLastTotalPower(ctx sdk.Context) sdk.Int
 
 	GetLastValidatorPower(ctx sdk.Context, operator sdk.ValAddress) (power int64)
+
+	IterateLastValidatorPowers(ctx sdk.Context, handler func(operator sdk.ValAddress, power int64) (stop bool))
 }

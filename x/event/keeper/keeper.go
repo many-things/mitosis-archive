@@ -6,20 +6,19 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/many-things/mitosis/x/event/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 type Keeper interface {
-	GetParams(ctx sdk.Context) types.Params
-	SetParams(ctx sdk.Context, params types.Params)
 	Logger(ctx sdk.Context) log.Logger
 
-	PollKeeper
-	ProxyKeeper
-	ChainKeeper
-	GenesisKeeper
+	types.ParamsKeeper
+	types.ChainKeeper
+	types.GenesisKeeper
+	types.PollKeeper
+	types.ProxyKeeper
+	types.SnapshotKeeper
 }
 
 type keeper struct {
