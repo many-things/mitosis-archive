@@ -3,13 +3,14 @@ package server
 import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type queryServer struct {
-	keeper.Keeper
+	baseKeeper keeper.Keeper
 }
 
 func NewQueryServer(keeper keeper.Keeper) QueryServer {
@@ -22,17 +23,34 @@ func (k queryServer) Params(goCtx context.Context, req *QueryParamsRequest) (*Qu
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	return &QueryParamsResponse{Params: k.GetParams(ctx)}, nil
+	return &QueryParamsResponse{Params: k.baseKeeper.GetParams(ctx)}, nil
 }
 
-func (k queryServer) Keygen(ctx context.Context, keygen *QueryKeygen) (*QueryKeygenResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) Keygen(ctx context.Context, msg *QueryKeygen) (*QueryKeygenResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	keygen, err := k.baseKeeper.QueryKeygen(wctx, msg.Chain, msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryKeygenResponse{
+		Keygen: keygen,
+	}, nil
 }
 
-func (k queryServer) KeygenList(ctx context.Context, list *QueryKeygenList) (*QueryKeygenListResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) KeygenList(ctx context.Context, msg *QueryKeygenList) (*QueryKeygenListResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	kvKeygen, page, err := k.baseKeeper.QueryKeygenList(wctx, msg.Chain, msg.Pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryKeygenListResponse{
+		List: mitotypes.Values(kvKeygen),
+		Page: page,
+	}, nil
 }
 
 func (k queryServer) PubKey(ctx context.Context, key *QueryPubKey) (*QueryPubKeyResponse, error) {
