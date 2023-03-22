@@ -42,7 +42,7 @@ service Query {
 
   // list pubkey query
   rpc PubKeyList(QueryPubKeyList) returns (QueryPubKeyListResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/pubkey/{id}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/pubkey/{key_id}"};
   }
 
   // specific sign query
