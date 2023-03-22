@@ -1085,19 +1085,19 @@ var (
 
 	pattern_Query_Keygen_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "keygen", "chain", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_KeygenList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "keygen", "chain"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_KeygenList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "keygens", "chain"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_PubKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "pubkey", "key_id", "validator"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PubKeyList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "pubkey", "key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_PubKeyList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "pubkeys", "key_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_Sign_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "sign", "chain", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_SignList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "sign", "chain"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_SignList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signs", "chain"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_Signature_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "signature", "sig_id", "validator"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_SignatureList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signature", "sig_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_SignatureList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signatures", "sig_id"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

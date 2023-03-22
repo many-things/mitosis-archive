@@ -32,7 +32,7 @@ service Query {
 
   // Keygen list query
   rpc KeygenList(QueryKeygenList) returns (QueryKeygenListResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/keygen/{chain}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/keygens/{chain}"};
   }
 
   // specific pubkey query
@@ -42,7 +42,7 @@ service Query {
 
   // list pubkey query
   rpc PubKeyList(QueryPubKeyList) returns (QueryPubKeyListResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/pubkey/{key_id}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/pubkeys/{key_id}"};
   }
 
   // specific sign query
@@ -52,7 +52,7 @@ service Query {
 
   // list sign query
   rpc SignList(QuerySignList) returns (QuerySignListResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/sign/{chain}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signs/{chain}"};
   }
 
   // specific signature query
@@ -62,6 +62,6 @@ service Query {
 
   // list signature query
   rpc SignatureList(QuerySignatureList) returns (QuerySignatureListResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signature/{sig_id}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signatures/{sig_id}"};
   }
 }
