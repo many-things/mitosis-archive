@@ -1,14 +1,16 @@
 package types
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"gopkg.in/yaml.v2"
 )
 
 const (
 	DefaultEpochInterval = 10
-	DefaultPollThreshold = 0.5
+	DefaultPollThreshold = "0.5"
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -22,7 +24,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 func NewParams() Params {
 	return Params{
 		EpochInterval: DefaultEpochInterval, // 10 blocks
-		PollThreshold: DefaultPollThreshold,
+		PollThreshold: mitotypes.Ref(sdk.MustNewDecFromStr(DefaultPollThreshold)),
 	}
 }
 
@@ -38,10 +40,9 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 
 // Validate validates the set of params
 func (p *Params) Validate() error {
-	pollThreshold := p.GetPollThreshold()
-	if pollThreshold < 0 {
+	if p.PollThreshold.LT(sdk.ZeroDec()) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be positive")
-	} else if pollThreshold > 1 {
+	} else if p.PollThreshold.GT(sdk.OneDec()) {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be less than 1")
 	}
 
