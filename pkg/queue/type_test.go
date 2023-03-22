@@ -14,38 +14,8 @@ type TestMessage struct {
 	Data string `json:"data"`
 }
 
-func (t *TestMessage) Reset() {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (t *TestMessage) String() string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (t *TestMessage) ProtoMessage() {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (t *TestMessage) Marshal() ([]byte, error) {
 	return json.Marshal(t)
-}
-
-func (t *TestMessage) MarshalTo(data []byte) (n int, err error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (t *TestMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (t *TestMessage) Size() int {
-	//TODO implement me
-	panic("implement me")
 }
 
 func (t *TestMessage) Unmarshal(bytes []byte) error {
@@ -92,6 +62,21 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.Equal(t, len(ts), len(rs))
 		require.Equal(t, uint64(len(ts)), q.Size())
 		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
+
+		{
+			m, err := q.Pick(0)
+			require.NoError(t, err)
+			require.Equal(t, "t0", m.(*TestMessage).Data)
+		}
+		{
+			m, err := q.Pick(49)
+			require.NoError(t, err)
+			require.Equal(t, "t49", m.(*TestMessage).Data)
+		}
+		{
+			_, err := q.Pick(50)
+			require.Error(t, err)
+		}
 	}
 
 	{

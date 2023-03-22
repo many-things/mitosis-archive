@@ -32,12 +32,13 @@ func (k *memq[T]) Size() uint64 {
 func (k *memq[T]) Pick(i uint64) (T, error) {
 	m := k.constructor()
 
-	if i < k.lastIdx && k.lastIdx+k.Size() < i {
+	size := k.Size()
+	if i < k.lastIdx-size || k.lastIdx <= i {
 		return m, errors.New("index out of range")
 	}
 
 	k.mux.Lock()
-	bz := k.store[i-k.lastIdx]
+	bz := k.store[i+size-k.lastIdx]
 	k.mux.Unlock()
 
 	if err := m.Unmarshal(bz); err != nil {
@@ -53,12 +54,12 @@ func (k *memq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 		limit = *amount
 	}
 
-	l := min(k.Size(), limit)
+	size := k.Size()
+	l := min(size, limit)
 
 	k.mux.Lock()
 	bzs := k.store[:l]
 	bi := k.lastIdx
-	size := uint64(len(k.store))
 	k.mux.Unlock()
 
 	for i, bz := range bzs {
@@ -94,6 +95,24 @@ func (k *memq[T]) Produce(msgs ...T) ([]uint64, error) {
 		make([]byte, len(msgs)),
 		func(_ byte, i int) uint64 { return idx + uint64(i) },
 	), nil
+}
+
+func (k *memq[T]) Update(i uint64, msg T) error {
+	size := k.Size()
+	if i < k.lastIdx-size && k.lastIdx < i {
+		return errors.New("index out of range")
+	}
+
+	bz, err := msg.Marshal()
+	if err != nil {
+		return errors.Wrap(err, "marshal")
+	}
+
+	k.mux.Lock()
+	k.store[i+size-k.lastIdx] = bz
+	k.mux.Unlock()
+
+	return nil
 }
 
 func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {

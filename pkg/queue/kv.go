@@ -67,13 +67,13 @@ func (k kvq[T]) Size() uint64 {
 func (k kvq[T]) Pick(i uint64) (T, error) {
 	m := k.constructor()
 
-	if i < k.getFirstItem() && k.getLastItem() < i {
+	if i < k.getFirstItem() || k.getLastItem() <= i {
 		return m, errors.New("index out of range")
 	}
 
 	bz := k.items.Get(sdk.Uint64ToBigEndian(i))
 	if bz == nil {
-		return m, errors.Errorf("queue not found in index %d", i)
+		return m, errors.Errorf("item not found in index %d", i)
 	}
 
 	if err := m.Unmarshal(bz); err != nil {
@@ -133,6 +133,20 @@ func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {
 		make([]byte, len(msgs)),
 		func(_ byte, i int) uint64 { return lastItem + uint64(i) },
 	), nil
+}
+
+func (k kvq[T]) Update(i uint64, msg T) error {
+	if i < k.getFirstItem() && k.getLastItem() < i {
+		return errors.New("index out of range")
+	}
+
+	bz, err := msg.Marshal()
+	if err != nil {
+		return errors.Wrap(err, "marshal")
+	}
+
+	k.items.Set(sdk.Uint64ToBigEndian(i), bz)
+	return nil
 }
 
 func (k kvq[T]) Consume(amount uint64) ([]T, error) {
