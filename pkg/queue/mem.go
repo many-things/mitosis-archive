@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/pkg/errors"
+	"sort"
 	"sync"
 )
 
@@ -82,6 +83,10 @@ func (k *memq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*qu
 	panic("unimplmented")
 }
 
+func (k *memq[T]) MsgConstructor() func() T {
+	return k.constructor
+}
+
 func (k *memq[T]) Produce(msgs ...T) ([]uint64, error) {
 	bzs := make([][]byte, len(msgs))
 	for i, msg := range msgs {
@@ -155,6 +160,45 @@ func (k *memq[T]) Consume(amount uint64) ([]T, error) {
 	return ms, nil
 }
 
-func (k *memq[T]) MsgConstructor() func() T {
-	return k.constructor
+func (k *memq[T]) ImportGenesis(g GenesisState[T]) error {
+	k.mux.Lock()
+	defer k.mux.Unlock()
+
+	k.store = [][]byte{}
+	k.lastIdx = g.LastIndex
+
+	sort.Slice(g.Items, func(i, j int) bool {
+		return g.Items[i].Key < g.Items[j].Key
+	})
+
+	for _, item := range g.Items {
+		bz, err := item.Value.Marshal()
+		if err != nil {
+			return err
+		}
+
+		k.store = append(k.store, bz)
+	}
+
+	return nil
+}
+
+func (k *memq[T]) ExportGenesis() (GenesisState[T], error) {
+	k.mux.Lock()
+	defer k.mux.Unlock()
+
+	g := GenesisState[T]{
+		FirstIndex: 0,
+		LastIndex:  k.lastIdx,
+	}
+
+	for i, bz := range k.store {
+		m := k.constructor()
+		if err := m.Unmarshal(bz); err != nil {
+			return GenesisState[T]{}, err
+		}
+		g.Items = append(g.Items, mitotypes.NewKV(uint64(i), m))
+	}
+
+	return g, nil
 }

@@ -170,6 +170,10 @@ func (k kvq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*quer
 	return resp, nil
 }
 
+func (k kvq[T]) MsgConstructor() func() T {
+	return k.constructor
+}
+
 func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {
 	lastItem := k.getLastItem()
 	for i, msg := range msgs {
@@ -238,6 +242,49 @@ func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 	return ms, nil
 }
 
-func (k kvq[T]) MsgConstructor() func() T {
-	return k.constructor
+func (k kvq[T]) ImportGenesis(g GenesisState[T]) error {
+	k.setFirstItem(g.FirstIndex)
+	k.setLastItem(g.LastIndex)
+
+	for _, item := range g.Items {
+		i, m := item.Key, item.Value
+
+		bz, err := m.Marshal()
+		if err != nil {
+			return errors.Wrap(err, "marshal")
+		}
+
+		k.items.Set(sdk.Uint64ToBigEndian(i), bz)
+	}
+
+	return nil
+}
+
+func (k kvq[T]) ExportGenesis() (GenesisState[T], error) {
+	g := GenesisState[T]{
+		FirstIndex: k.getFirstItem(),
+		LastIndex:  k.getLastItem(),
+	}
+
+	_, err := query.Paginate(
+		k.items,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(key []byte, value []byte) error {
+			m := k.constructor()
+			if err := m.Unmarshal(value); err != nil {
+				return err
+			}
+
+			g.Items = append(
+				g.Items,
+				mitotypes.NewKV(sdk.BigEndianToUint64(key), m),
+			)
+			return nil
+		},
+	)
+	if err != nil {
+		return GenesisState[T]{}, err
+	}
+
+	return g, nil
 }
