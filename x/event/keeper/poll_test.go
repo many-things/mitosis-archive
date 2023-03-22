@@ -126,6 +126,7 @@ func TestPoll(t *testing.T) {
 	require.Equal(t, newPolls, []*types.Poll(nil))
 
 	require.NoError(t, k.VotePolls(ctx, "osmosis-1", vals[1], mitotypes.Keys(existPolls)))
+	require.NoError(t, k.VotePolls(ctx, "osmosis-1", vals[1], mitotypes.Keys(existPolls)))
 
 	pollsResp, _, err := k.QueryPolls(ctx, "osmosis-1", &query.PageRequest{Limit: query.MaxLimit})
 	require.NoError(t, err)

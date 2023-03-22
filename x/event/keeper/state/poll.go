@@ -78,7 +78,7 @@ func (k kvPollRepo) IsVoted(id uint64, addr sdk.ValAddress) bool {
 }
 
 func (k kvPollRepo) SetVoted(id uint64, addr sdk.ValAddress) {
-	prefix.NewStore(k.root, append(kvPollRepoVotePrefix, sdk.Uint64ToBigEndian(id)...)).Set(addr.Bytes(), []byte{0x00})
+	prefix.NewStore(k.root, append(kvPollRepoVotePrefix, sdk.Uint64ToBigEndian(id)...)).Set(addr.Bytes(), []byte{})
 }
 
 func (k kvPollRepo) Create(poll types.Poll) (uint64, error) {
