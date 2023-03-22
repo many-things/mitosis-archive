@@ -19,7 +19,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/many-things/mitosis/x/event/cli"
-	"github.com/many-things/mitosis/x/event/keeper"
 	"github.com/many-things/mitosis/x/event/server"
 	"github.com/many-things/mitosis/x/event/types"
 )
@@ -98,7 +97,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper        keeper.Keeper
+	keeper        types.BaseKeeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
 	stakingKeeper types.StakingKeeper
@@ -106,8 +105,7 @@ type AppModule struct {
 
 func NewAppModule(
 	cdc codec.Codec,
-	keeper keeper.Keeper,
-
+	keeper types.BaseKeeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
 	stakingKeeper types.StakingKeeper,

@@ -17,7 +17,7 @@ import (
 	tmdb "github.com/tendermint/tm-db"
 )
 
-func EventKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+func EventKeeper(t testing.TB) (types.BaseKeeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 

@@ -5,16 +5,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
-	"github.com/many-things/mitosis/x/event/keeper"
 	"github.com/many-things/mitosis/x/event/types"
 )
 
 type msgServer struct {
-	baseKeeper    keeper.Keeper
+	baseKeeper    types.BaseKeeper
 	stakingKeeper types.StakingKeeper
 }
 
-func NewMsgServer(keeper keeper.Keeper, stakingKeeper types.StakingKeeper) MsgServer {
+func NewMsgServer(keeper types.BaseKeeper, stakingKeeper types.StakingKeeper) MsgServer {
 	return msgServer{keeper, stakingKeeper}
 }
 
