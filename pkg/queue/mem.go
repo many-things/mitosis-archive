@@ -29,6 +29,10 @@ func (k *memq[T]) Size() uint64 {
 	return uint64(len(k.store))
 }
 
+func (k *memq[T]) LastIndex() uint64 {
+	return k.lastIdx
+}
+
 func (k *memq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 

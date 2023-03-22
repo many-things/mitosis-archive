@@ -16,7 +16,10 @@ type Queue[T Message] interface {
 	// Size returns the number of items in the queue.
 	Size() uint64
 
-	// Pick returns the item of specific id
+	// LastIndex returns the last item's index of the queue.
+	LastIndex() uint64
+
+	// Get returns the item of specific id
 	Get(uint64) (T, error)
 
 	// Range iterates over the queue and calls the callback for each item.

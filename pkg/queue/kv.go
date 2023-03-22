@@ -64,6 +64,10 @@ func (k kvq[T]) Size() uint64 {
 	return lastItem - firstItem
 }
 
+func (k kvq[T]) LastIndex() uint64 {
+	return k.getLastItem()
+}
+
 func (k kvq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 
