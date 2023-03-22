@@ -13,6 +13,9 @@ build: proto
 run-local: proto
 	@ignite chain serve --skip-proto --quit-on-fail --verbose
 
+run-local-clean: proto
+	@ignite chain serve --skip-proto --quit-on-fail --verbose --reset-once
+
 proto: proto-fmt proto-go proto-openapi
 
 proto-go:
