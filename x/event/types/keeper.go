@@ -37,6 +37,9 @@ type PollKeeper interface {
 	// VotePolls handles [server.MsgVote]
 	VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, votes []uint64) error
 
+	// FlushPolls flushes passed polls and returns its result
+	FlushPolls(ctx sdk.Context, chain string, threshold sdk.Dec) ([]mitotypes.KV[uint64, *Poll], error)
+
 	// QueryPoll handles [server.QueryPoll]
 	QueryPoll(ctx sdk.Context, chain string, id uint64) (*Poll, error)
 

@@ -136,6 +136,22 @@ func (k keeper) VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, vot
 	return nil
 }
 
+func (k keeper) FlushPolls(ctx sdk.Context, chain string, threshold sdk.Dec) ([]mitotypes.KV[uint64, *types.Poll], error) {
+	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
+	chainPrefix, err := chainRepo.Load(chain)
+	if err != nil {
+		return nil, err
+	}
+
+	pollRepo := state.NewKVPollRepo(k.cdc, chainPrefix, ctx.KVStore(k.storeKey))
+	flushed, err := pollRepo.Flush(threshold)
+	if err != nil {
+		return nil, err
+	}
+
+	return flushed, nil
+}
+
 func (k keeper) QueryPoll(ctx sdk.Context, chain string, id uint64) (*types.Poll, error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainPrefix, err := chainRepo.Load(chain)
