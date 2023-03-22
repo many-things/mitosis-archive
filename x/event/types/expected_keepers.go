@@ -6,6 +6,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 type ChainKeeper interface {
@@ -62,15 +63,13 @@ type SnapshotKeeper interface {
 
 type BaseKeeper interface {
 	GetParams(ctx sdk.Context) Params
+	SetParams(ctx sdk.Context, params Params)
+	Logger(ctx sdk.Context) log.Logger
 
-	//SetParams(ctx sdk.Context, params Params)
-	//Logger(ctx sdk.Context) log.Logger
-	//
-	//ChainKeeper
-	//GenesisKeeper
-	//PollKeeper
-	//ProxyKeeper
-
+	ChainKeeper
+	GenesisKeeper
+	PollKeeper
+	ProxyKeeper
 	SnapshotKeeper
 }
 
