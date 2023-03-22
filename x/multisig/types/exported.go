@@ -25,6 +25,10 @@ func (k KeyID) ValidateBasic() error {
 		return err
 	}
 
+	if !strings.Contains(string(k), "-") {
+		return fmt.Errorf("keyID must format like \"string-number\"")
+	}
+
 	// length not in between [KeyIDMinLength, KeyIDMaxLength]
 	if KeyIDMinLength > len(k) || KeyIDMaxLength < len(k) {
 		return fmt.Errorf("KeyID length must between [%d, %d]: now %d", KeyIDMinLength, KeyIDMaxLength, len(k))
@@ -49,6 +53,10 @@ func (k KeyID) ToInternalVariables() (string, uint64, error) {
 func (s SigID) ValidateBasic() error {
 	if err := utils.ValidateString(string(s)); err != nil {
 		return err
+	}
+
+	if !strings.Contains(string(s), "-") {
+		return fmt.Errorf("sigID must format like \"string-number\"")
 	}
 
 	return nil
