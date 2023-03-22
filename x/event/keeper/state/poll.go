@@ -81,6 +81,8 @@ func (k kvPollRepo) SetVoted(id uint64, addr sdk.ValAddress) {
 func (k kvPollRepo) Create(poll types.Poll) (uint64, error) {
 	hashStore := prefix.NewStore(k.root, kvPollRepoHashPrefix)
 
+	poll.Id = k.queue.LastIndex()
+
 	ids, err := k.queue.Produce(&poll)
 	if err != nil {
 		return 0, err
