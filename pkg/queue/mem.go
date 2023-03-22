@@ -29,7 +29,7 @@ func (k *memq[T]) Size() uint64 {
 	return uint64(len(k.store))
 }
 
-func (k *memq[T]) Pick(i uint64) (T, error) {
+func (k *memq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 
 	size := k.Size()
@@ -72,6 +72,10 @@ func (k *memq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 		}
 	}
 	return nil
+}
+
+func (k *memq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*query.PageResponse, error) {
+	panic("unimplmented")
 }
 
 func (k *memq[T]) Produce(msgs ...T) ([]uint64, error) {

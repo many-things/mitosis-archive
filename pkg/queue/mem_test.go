@@ -11,18 +11,14 @@ func setupMemQueue[T Message](t *testing.T, constructor func() T) Queue[T] {
 }
 
 func TestQueue(t *testing.T) {
-	testQueue(
-		t,
-		setupMemQueue[Message](
-			t,
-			func() Message { return &TestMessage{} },
-		),
-	)
+	q := setupMemQueue[Message](t, ConstructTestMessage)
+
+	testQueue(t, q)
 }
 
 func TestRaceCondition(t *testing.T) {
 	var (
-		q  = setupMemQueue[Message](t, func() Message { return &TestMessage{} })
+		q  = setupMemQueue[Message](t, ConstructTestMessage)
 		ts = MakeTestMessages(50)
 		wg = sync.WaitGroup{}
 	)
