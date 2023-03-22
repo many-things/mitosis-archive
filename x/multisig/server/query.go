@@ -2,9 +2,11 @@ package server
 
 import (
 	"context"
+	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/keeper"
+	"github.com/many-things/mitosis/x/multisig/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -53,14 +55,43 @@ func (k queryServer) KeygenList(ctx context.Context, msg *QueryKeygenList) (*Que
 	}, nil
 }
 
-func (k queryServer) PubKey(ctx context.Context, key *QueryPubKey) (*QueryPubKeyResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKeyResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	keyId := types.KeyID(msg.KeyId)
+	chainId, id, err := keyId.ToInternalVariables()
+	if err != nil {
+		return nil, fmt.Errorf("keyId has invalid format")
+	}
+
+	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainId, id, msg.Validator)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryPubKeyResponse{
+		PubKey: pubKey,
+	}, nil
 }
 
-func (k queryServer) PubKeyList(ctx context.Context, list *QueryPubKeyList) (*QueryPubKeyListResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*QueryPubKeyListResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	keyId := types.KeyID(msg.KeyId)
+	chainId, id, err := keyId.ToInternalVariables()
+	if err != nil {
+		return nil, fmt.Errorf("keyId has invalid format")
+	}
+
+	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, chainId, id, msg.Pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryPubKeyListResponse{
+		List: mitotypes.Values(kvPubkeys),
+		Page: page,
+	}, err
 }
 
 func (k queryServer) Sign(ctx context.Context, sign *QuerySign) (*QuerySignResponse, error) {
