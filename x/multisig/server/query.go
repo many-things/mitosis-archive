@@ -3,16 +3,16 @@ package server
 import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/x/multisig/types"
+	"github.com/many-things/mitosis/x/multisig/keeper"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type queryServer struct {
-	types.Keeper
+	keeper.Keeper
 }
 
-func NewQueryServer(keeper types.Keeper) QueryServer {
+func NewQueryServer(keeper keeper.Keeper) QueryServer {
 	return queryServer{keeper}
 }
 

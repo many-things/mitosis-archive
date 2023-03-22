@@ -4,15 +4,16 @@ import (
 	"context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/types"
 	"reflect"
 )
 
 type msgServer struct {
-	baseKeeper types.Keeper
+	baseKeeper keeper.Keeper
 }
 
-func NewMsgServer(keeper types.Keeper) MsgServer {
+func NewMsgServer(keeper keeper.Keeper) MsgServer {
 	return msgServer{keeper}
 }
 

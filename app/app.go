@@ -250,7 +250,7 @@ type App struct {
 
 	EventKeeper eventmodulekeeper.Keeper
 
-	MultisigKeeper multisigmoduletypes.Keeper
+	MultisigKeeper multisigmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager

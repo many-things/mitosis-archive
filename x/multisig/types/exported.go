@@ -15,7 +15,7 @@ type Hash []byte
 type Signature []byte
 type SigID string
 
-var (
+const (
 	KeyIDMinLength = 4
 	KeyIDMaxLength = 256
 )
