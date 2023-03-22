@@ -8,10 +8,28 @@ type Message interface {
 }
 
 type Queue[T Message] interface {
+	// ============= immutable =============
+
+	// Size returns the number of items in the queue.
 	Size() uint64
+
+	// Pick returns the item of specific id
 	Pick(uint64) (T, error)
+
+	// Range iterates over the queue and calls the callback for each item.
 	Range(*uint64, func(T, uint64) error) error
-	Produce(msgs ...T) ([]uint64, error)
-	Consume(amount uint64) ([]T, error)
+
+	// MsgConstructor returns the constructor of the message type.
 	MsgConstructor() func() T
+
+	// ============= mutable =============
+
+	// Produce pushes the given messages to the queue.
+	Produce(...T) ([]uint64, error)
+
+	// Update updates the item of specific id.
+	Update(uint64, T) error
+
+	// Consume pops the given amount of items from the queue.
+	Consume(uint64) ([]T, error)
 }

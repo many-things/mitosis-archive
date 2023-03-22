@@ -62,6 +62,21 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.Equal(t, len(ts), len(rs))
 		require.Equal(t, uint64(len(ts)), q.Size())
 		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
+
+		{
+			m, err := q.Pick(0)
+			require.NoError(t, err)
+			require.Equal(t, "t0", m.(*TestMessage).Data)
+		}
+		{
+			m, err := q.Pick(49)
+			require.NoError(t, err)
+			require.Equal(t, "t49", m.(*TestMessage).Data)
+		}
+		{
+			_, err := q.Pick(50)
+			require.Error(t, err)
+		}
 	}
 
 	{
