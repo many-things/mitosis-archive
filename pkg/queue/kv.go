@@ -206,7 +206,7 @@ func (k kvq[T]) Update(i uint64, msg T) error {
 	return nil
 }
 
-func (k kvq[T]) Consume(amount uint64) ([]T, error) {
+func (k kvq[T]) Consume(amount uint64) ([]mitotypes.KV[uint64, T], error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
 	if lastItem == firstItem {
@@ -214,7 +214,7 @@ func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 	}
 
 	var (
-		ms       []T
+		ms       []mitotypes.KV[uint64, T]
 		want     = min(lastItem-firstItem, amount)
 		queryReq = &query.PageRequest{
 			Key:     sdk.Uint64ToBigEndian(firstItem),
@@ -225,17 +225,55 @@ func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 
 	_, err := query.Paginate(
 		k.items, queryReq,
-		func(_ []byte, value []byte) error {
+		func(key []byte, value []byte) error {
 			m := k.constructor()
 			if err := m.Unmarshal(value); err != nil {
 				return err
 			}
-			ms = append(ms, m)
+			ms = append(ms, mitotypes.NewKV(sdk.BigEndianToUint64(key), m))
 			return nil
 		},
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	k.setFirstItem(firstItem + uint64(len(ms)))
+	return ms, nil
+}
+
+func (k kvq[T]) ConsumeUntil(f func(T, uint64) (bool, error)) ([]mitotypes.KV[uint64, T], error) {
+	var (
+		ms        []mitotypes.KV[uint64, T]
+		firstItem = k.getFirstItem()
+		lastItem  = k.getLastItem()
+	)
+
+	iter := k.items.Iterator(
+		sdk.Uint64ToBigEndian(firstItem),
+		sdk.Uint64ToBigEndian(lastItem),
+	)
+	defer iter.Close()
+
+	for ; iter.Valid(); iter.Next() {
+		key, value := iter.Key(), iter.Value()
+		i := sdk.BigEndianToUint64(key)
+
+		m := k.constructor()
+		if err := m.Unmarshal(value); err != nil {
+			return nil, err
+		}
+		ms = append(ms, mitotypes.NewKV(i, m))
+
+		if ok, err := f(m, i); err != nil {
+			return nil, err
+		} else if !ok {
+			break
+		}
+
+		if err := iter.Error(); err != nil {
+			return nil, err
+		}
 	}
 
 	k.setFirstItem(firstItem + uint64(len(ms)))

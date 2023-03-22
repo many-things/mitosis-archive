@@ -160,6 +160,34 @@ func (k *memq[T]) Consume(amount uint64) ([]T, error) {
 	return ms, nil
 }
 
+func (k *memq[T]) ConsumeUntil(f func(T, uint64) (bool, error)) ([]mitotypes.KV[uint64, T], error) {
+	k.mux.Lock()
+	defer k.mux.Unlock()
+
+	var (
+		ms   []mitotypes.KV[uint64, T]
+		size = uint64(len(k.store))
+	)
+	for ri, bz := range k.store {
+		ai := k.lastIdx - size + uint64(ri) // absolute index
+
+		m := k.constructor()
+		if err := m.Unmarshal(bz); err != nil {
+			return nil, err
+		}
+		ms = append(ms, mitotypes.NewKV(ai, m))
+
+		if ok, err := f(m, ai); err != nil {
+			return nil, err
+		} else if ok {
+			break
+		}
+	}
+
+	k.store = k.store[len(ms):]
+	return ms, nil
+}
+
 func (k *memq[T]) ImportGenesis(g GenesisState[T]) error {
 	k.mux.Lock()
 	defer k.mux.Unlock()

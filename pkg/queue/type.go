@@ -41,7 +41,10 @@ type Queue[T Message] interface {
 	Update(uint64, T) error
 
 	// Consume pops the given amount of items from the queue.
-	Consume(uint64) ([]T, error)
+	Consume(uint64) ([]mitotypes.KV[uint64, T], error)
+
+	// ConsumeUntil pops the items from the queue until the given condition is met.
+	ConsumeUntil(func(T, uint64) (bool, error)) ([]mitotypes.KV[uint64, T], error)
 
 	// ImportGenesis imports the queue's genesis state.
 	ImportGenesis(GenesisState[T]) error
