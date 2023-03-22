@@ -5,16 +5,16 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
-	"github.com/many-things/mitosis/x/event/types"
+	"github.com/many-things/mitosis/x/event/keeper"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type queryServer struct {
-	baseKeeper types.BaseKeeper
+	baseKeeper keeper.Keeper
 }
 
-func NewQueryServer(keeper types.BaseKeeper) QueryServer {
+func NewQueryServer(keeper keeper.Keeper) QueryServer {
 	return queryServer{keeper}
 }
 

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper/state"
 	"github.com/many-things/mitosis/x/event/types"
@@ -24,7 +25,15 @@ func (k keeper) CreateSnapshot(ctx sdk.Context, total sdk.Int, powers []mitotype
 func (k keeper) VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error) {
 	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
 
-	power, err := snapshotRepo.PowerOf(epoch, val)
+	epochInfo, err := snapshotRepo.LatestEpoch()
+	if err != nil {
+		return 0, err
+	}
+	if epochInfo == nil {
+		return 0, sdkerrors.ErrKeyNotFound
+	}
+
+	power, err := snapshotRepo.PowerOf(epochInfo.GetEpoch(), val)
 	if err != nil {
 		return 0, err
 	}

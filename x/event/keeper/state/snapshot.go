@@ -15,7 +15,7 @@ import (
 type SnapshotRepo interface {
 	Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error)
 
-	PowerOf(epoch *uint64, val sdk.ValAddress) (int64, error)
+	PowerOf(epoch uint64, val sdk.ValAddress) (int64, error)
 
 	LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error)
 
@@ -54,10 +54,10 @@ func (r kvSnapshotRepo) valSetStore() store.KVStore {
 	return prefix.NewStore(r.root, kvSnapshotRepoValidatorSetPrefix)
 }
 
-func (r kvSnapshotRepo) latestEpoch(height uint64) (*types.EpochInfo, error) {
+func (r kvSnapshotRepo) latestEpoch() (*types.EpochInfo, error) {
 	bz := r.root.Get(kvSnapshotRepoLatestEpochKey)
 	if bz == nil {
-		return &types.EpochInfo{Height: height}, nil
+		return nil, nil
 	}
 
 	ei := new(types.EpochInfo)
@@ -85,20 +85,20 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 		valSetStore   = r.valSetStore()
 	)
 
-	latestEpoch, err := r.latestEpoch(height)
+	latestEpoch, err := r.latestEpoch()
 	if err != nil {
 		return nil, err
 	}
-
-	if latestEpoch.GetHeight() < height {
-		latestEpoch = &types.EpochInfo{
-			Epoch:  latestEpoch.GetEpoch() + 1,
-			Height: height,
-		}
+	nextEpoch := &types.EpochInfo{
+		Epoch:      0, // start from zero for first epoch
+		Height:     height,
+		TotalPower: &total,
+	}
+	if latestEpoch != nil {
+		nextEpoch.Epoch = latestEpoch.GetEpoch() + 1
 	}
 
-	latestEpoch.TotalPower = &total
-	if err := r.setLatestEpoch(latestEpoch); err != nil {
+	if err := r.setLatestEpoch(nextEpoch); err != nil {
 		return nil, err
 	}
 
@@ -138,12 +138,12 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 	return latestEpoch, nil
 }
 
-func (r kvSnapshotRepo) PowerOf(epoch *uint64, val sdk.ValAddress) (int64, error) {
+func (r kvSnapshotRepo) PowerOf(epoch uint64, val sdk.ValAddress) (int64, error) {
 	valPowerStore := prefix.NewStore(r.valPowerStore(), val.Bytes())
 
-	queryReq := &query.PageRequest{Limit: 1}
-	if epoch != nil {
-		queryReq.Key = sdk.Uint64ToBigEndian(*epoch)
+	queryReq := &query.PageRequest{
+		Key:   sdk.Uint64ToBigEndian(epoch),
+		Limit: 1,
 	}
 
 	var power uint64
@@ -164,11 +164,11 @@ func (r kvSnapshotRepo) PowerOf(epoch *uint64, val sdk.ValAddress) (int64, error
 
 func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error) {
 	valSetStore := r.valSetStore()
-	latestEpoch, err := r.latestEpoch(0)
+	latestEpoch, err := r.latestEpoch()
 	if err != nil {
 		return nil, err
 	}
-	if latestEpoch.GetHeight() == 0 {
+	if latestEpoch == nil {
 		return nil, nil
 	}
 
@@ -193,24 +193,20 @@ func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], e
 }
 
 func (r kvSnapshotRepo) LatestEpoch() (*types.EpochInfo, error) {
-	epoch, err := r.latestEpoch(0)
-	if err != nil {
-		return nil, err
-	}
-	if epoch.GetEpoch() == 0 {
-		return nil, nil
-	}
-	return epoch, nil
+	return r.latestEpoch()
 }
 
 func (r kvSnapshotRepo) ExportGenesis() (genState *types.GenesisSnapshot, err error) {
-	epoch, err := r.latestEpoch(0)
+	epoch, err := r.latestEpoch()
 	if err != nil {
 		return nil, err
 	}
-	if epoch.GetEpoch() > 0 {
-		genState.LatestEpoch = epoch
+	if epoch == nil {
+		return
 	}
+
+	genState = &types.GenesisSnapshot{}
+	genState.LatestEpoch = epoch
 
 	powerStore := r.valPowerStore()
 

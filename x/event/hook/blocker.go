@@ -3,11 +3,12 @@ package hook
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/event/keeper"
 	"github.com/many-things/mitosis/x/event/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, keeper types.BaseKeeper, stakingKeeper types.StakingKeeper) {
+func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.Keeper, stakingKeeper types.StakingKeeper) {
 
 	var (
 		total  = stakingKeeper.GetLastTotalPower(ctx)
@@ -22,9 +23,9 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, keeper types.BaseKe
 	)
 
 	height := uint64(ctx.BlockHeight())
-	params := keeper.GetParams(ctx)
+	params := baseKeeper.GetParams(ctx)
 
-	epoch, err := keeper.LatestSnapshotEpoch(ctx)
+	epoch, err := baseKeeper.LatestSnapshotEpoch(ctx)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -32,12 +33,12 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, keeper types.BaseKe
 		return
 	}
 
-	_, err = keeper.CreateSnapshot(ctx, total, powers)
+	_, err = baseKeeper.CreateSnapshot(ctx, total, powers)
 
 	// TODO: emit event
 }
 
-func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, keeper types.BaseKeeper) []abci.ValidatorUpdate {
+func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keeper) []abci.ValidatorUpdate {
 
 	return []abci.ValidatorUpdate{}
 }

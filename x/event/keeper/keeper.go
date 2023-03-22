@@ -10,6 +10,17 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 )
 
+type Keeper interface {
+	Logger(ctx sdk.Context) log.Logger
+
+	types.ParamsKeeper
+	types.ChainKeeper
+	types.GenesisKeeper
+	types.PollKeeper
+	types.ProxyKeeper
+	types.SnapshotKeeper
+}
+
 type keeper struct {
 	cdc        codec.BinaryCodec
 	storeKey   storetypes.StoreKey
@@ -22,7 +33,7 @@ func NewKeeper(
 	storeKey,
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
-) types.BaseKeeper {
+) Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())

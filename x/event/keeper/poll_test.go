@@ -73,28 +73,36 @@ func mockEvent(t *testing.T) *types.Event {
 func TestPoll(t *testing.T) {
 	k, ctx := testkeeper.EventKeeper(t)
 
+	ctx = ctx.WithBlockHeight(123)
+
 	_, err := k.RegisterChain(ctx, "osmosis-1")
 	require.NoError(t, err)
 
-	var val sdk.ValAddress
-	{
-		bz := make([]byte, 32)
-		_, err = crand.Read(bz)
-		require.NoError(t, err)
-		val = bz
-	}
+	vals := mitotypes.Map(
+		make([]byte, 2),
+		func(_ byte) sdk.ValAddress {
+			bz := make([]byte, 32)
+			_, err = crand.Read(bz)
+			require.NoError(t, err)
+			return bz
+		},
+	)
 
 	epoch, err := k.CreateSnapshot(
 		ctx, sdk.NewInt(100),
-		[]mitotypes.KV[sdk.ValAddress, int64]{
-			mitotypes.NewKV(val, int64(100)),
-		},
+		mitotypes.Map(
+			vals,
+			func(val sdk.ValAddress) mitotypes.KV[sdk.ValAddress, int64] {
+				return mitotypes.NewKV(val, int64(100))
+			},
+		),
 	)
+
 	require.NoError(t, err)
 	_ = epoch
 
 	events := mitotypes.Map(
-		make([]byte, 100),
+		make([]byte, 20),
 		func(_ byte) *types.Event { return mockEvent(t) },
 	)
 
@@ -103,13 +111,13 @@ func TestPoll(t *testing.T) {
 		func(evt *types.Event) *types.Poll {
 			return &types.Poll{
 				Chain:    "osmosis-1",
-				Proposer: val,
+				Proposer: vals[0],
 				Payload:  evt,
 			}
 		},
 	)
 
-	submitted, err := k.SubmitPolls(ctx, "osmosis-1", val, polls)
+	submitted, err := k.SubmitPolls(ctx, "osmosis-1", vals[0], polls)
 	require.NoError(t, err)
 
 	newPolls, existPolls, err := k.FilterNewPolls(ctx, "osmosis-1", polls)
@@ -117,7 +125,7 @@ func TestPoll(t *testing.T) {
 	require.Equal(t, submitted, existPolls)
 	require.Equal(t, newPolls, []*types.Poll(nil))
 
-	require.NoError(t, k.VotePolls(ctx, "osmosis-1", val, mitotypes.Keys(existPolls)))
+	require.NoError(t, k.VotePolls(ctx, "osmosis-1", vals[1], mitotypes.Keys(existPolls)))
 
 	pollsResp, _, err := k.QueryPolls(ctx, "osmosis-1", &query.PageRequest{Limit: query.MaxLimit})
 	require.NoError(t, err)
@@ -125,7 +133,7 @@ func TestPoll(t *testing.T) {
 		t,
 		mitotypes.Map(
 			make([]byte, len(polls)),
-			func(_ byte) uint64 { return 300 },
+			func(_ byte) uint64 { return 200 },
 		),
 		mitotypes.MapKV(
 			pollsResp,

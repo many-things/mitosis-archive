@@ -62,10 +62,10 @@ func (k keeper) SubmitPolls(
 		return nil, err
 	}
 	if epoch == nil {
-		return nil, errors.ErrKeyNotFound
+		return nil, errors.Wrap(errors.ErrKeyNotFound, "get latest epoch")
 	}
 
-	power, err := snapshotRepo.PowerOf(mitotypes.Ref(epoch.GetEpoch()), val)
+	power, err := snapshotRepo.PowerOf(epoch.GetEpoch(), val)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func (k keeper) VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, vot
 			return errors.ErrKeyNotFound
 		}
 
-		power, err := snapshotRepo.PowerOf(mitotypes.Ref(loaded.GetEpoch()), val)
+		power, err := snapshotRepo.PowerOf(loaded.GetEpoch(), val)
 		if err != nil {
 			return err
 		}
