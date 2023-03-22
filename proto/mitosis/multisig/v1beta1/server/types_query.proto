@@ -17,3 +17,51 @@ message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
+
+// QueryKeygen is request type for Query Keygen RPC method
+message QueryKeygen {}
+
+// QueryKeygenResponse is response type for Query Keygen RPC method
+message QueryKeygenResponse {}
+
+// QueryKeygenList is request type for Query Keygen List RPC method
+message QueryKeygenList {}
+
+// QueryKeygenListResponse is response type for Query Keygen List RPC method
+message QueryKeygenListResponse {}
+
+// QueryPubKey is request type for Query PubKey RPC method
+message QueryPubKey {}
+
+// QueryPubKeyResponse is response type for Query PubKey RPC method
+message QueryPubKeyResponse {}
+
+// QueryPubKeyList is request type for Query Specific Key's PubKey List RPC method
+message QueryPubKeyList {}
+
+// QueryPubKeyListResponse is response type for Query Specific Key's PubKey List RPC method
+message QueryPubKeyListResponse {}
+
+// QuerySign is request type for Query Specific Sign RPC method
+message QuerySign {}
+
+// QuerySignResponse is response type for Query Specific Sign RPC method
+message QuerySignResponse {}
+
+// QuerySignList is request type for Query Whole Sign List for Specific SigID
+message QuerySignList {}
+
+// QuerySignList is response type for Query Whole Sign List for Specific SigID
+message QuerySignListResponse {}
+
+// QuerySignature is request type for Query Signature RPC method
+message QuerySignature {}
+
+// QuerySignatureResponse is response type for Query Signature RPC method
+message QuerySignatureResponse {}
+
+// QuerySignatureList is request type for Query Signature List RPC method
+message QuerySignatureList {}
+
+// QuerySignatureListResponse is response type for Query Signature List RPC method
+message QuerySignatureListResponse {}
