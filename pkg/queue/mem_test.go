@@ -2,6 +2,7 @@ package queue
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"sync"
 	"testing"
 )
@@ -47,4 +48,23 @@ func TestRaceCondition(t *testing.T) {
 	}
 	wg.Wait()
 	assert.Equal(t, uint64(0), q.Size())
+}
+
+func TestMemQueue_Genesis(t *testing.T) {
+	eq := setupMemQueue(t, ConstructTestMessage)
+	nq := setupMemQueue(t, ConstructTestMessage)
+
+	tms := MakeTestMessages(10)
+	_, err := eq.Produce(tms...)
+	require.NoError(t, err)
+
+	eg, err := eq.ExportGenesis()
+	require.NoError(t, err)
+
+	require.NoError(t, nq.ImportGenesis(eg))
+
+	ng, err := nq.ExportGenesis()
+	require.NoError(t, err)
+
+	require.Equal(t, eg, ng)
 }
