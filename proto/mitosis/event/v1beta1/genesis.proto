@@ -26,9 +26,10 @@ message GenesisPoll {
   // Key-Value set of chain
   message ChainSet {
     bytes chain = 1;
-    uint64 latest_id = 2;
-    repeated ItemSet item_set = 3;
-    repeated HashSet hash_set = 4;
+    uint64 first_id = 2;
+    uint64 last_id = 3;
+    repeated ItemSet item_set = 4;
+    repeated HashSet hash_set = 5;
   }
 
   repeated ChainSet chain_set = 1;

@@ -2,10 +2,12 @@ package hook
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper"
 	"github.com/many-things/mitosis/x/event/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"strings"
 )
 
 func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.Keeper, stakingKeeper types.StakingKeeper) {
@@ -27,7 +29,9 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 
 	epoch, err := baseKeeper.LatestSnapshotEpoch(ctx)
 	if err != nil {
-		panic(err.Error())
+		if !strings.Contains(err.Error(), "epoch cannot be nil") {
+			panic(err.Error())
+		}
 	}
 	if epoch != nil && epoch.GetHeight()+params.GetEpochInterval() > height {
 		return
@@ -40,6 +44,24 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 }
 
 func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keeper) []abci.ValidatorUpdate {
+	params := baseKeeper.GetParams(ctx)
+
+	chains, _, err := baseKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
+	if err != nil {
+		panic(err.Error())
+	}
+
+	flushed := make([][]mitotypes.KV[uint64, *types.Poll], len(chains))
+	for i, chain := range chains {
+		flushed[i], err = baseKeeper.FlushPolls(ctx, chain.Key, *params.PollThreshold)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
+	// TODO: handle flushed event
+
+	// TODO: emit event
 
 	return []abci.ValidatorUpdate{}
 }

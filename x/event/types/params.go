@@ -1,8 +1,16 @@
 package types
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"gopkg.in/yaml.v2"
+)
+
+const (
+	DefaultEpochInterval = 10
+	DefaultPollThreshold = "0.5"
 )
 
 var _ paramtypes.ParamSet = (*Params)(nil)
@@ -15,7 +23,8 @@ func ParamKeyTable() paramtypes.KeyTable {
 // NewParams creates a new Params instance
 func NewParams() Params {
 	return Params{
-		EpochInterval: 10, // 10 blocks
+		EpochInterval: DefaultEpochInterval, // 10 blocks
+		PollThreshold: mitotypes.Ref(sdk.MustNewDecFromStr(DefaultPollThreshold)),
 	}
 }
 
@@ -30,12 +39,18 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 }
 
 // Validate validates the set of params
-func (p Params) Validate() error {
+func (p *Params) Validate() error {
+	if p.PollThreshold.LT(sdk.ZeroDec()) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be positive")
+	} else if p.PollThreshold.GT(sdk.OneDec()) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be less than 1")
+	}
+
 	return nil
 }
 
 // String implements the Stringer interface.
-func (p Params) String() string {
+func (p *Params) String() string {
 	out, _ := yaml.Marshal(p)
 	return string(out)
 }
