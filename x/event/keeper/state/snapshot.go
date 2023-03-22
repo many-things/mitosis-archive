@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
+	"github.com/pkg/errors"
 	"sort"
 )
 
@@ -194,7 +195,14 @@ func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], e
 }
 
 func (r kvSnapshotRepo) LatestEpoch() (*types.EpochInfo, error) {
-	return r.latestEpoch()
+	epoch, err := r.latestEpoch()
+	if err != nil {
+		return nil, err
+	}
+	if epoch == nil {
+		return nil, errors.New("epoch cannot be nil")
+	}
+	return epoch, nil
 }
 
 func (r kvSnapshotRepo) ExportGenesis() (genState *types.GenesisSnapshot, err error) {

@@ -61,9 +61,6 @@ func (k keeper) SubmitPolls(
 	if err != nil {
 		return nil, err
 	}
-	if epoch == nil {
-		return nil, errors.Wrap(errors.ErrKeyNotFound, "get latest epoch")
-	}
 
 	power, err := snapshotRepo.PowerOf(epoch.GetEpoch(), val)
 	if err != nil {
