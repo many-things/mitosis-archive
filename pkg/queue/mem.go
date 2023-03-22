@@ -23,6 +23,7 @@ func NewMemoryQueue[T Message](constructor func() T) Queue[T] {
 	}
 }
 
+// Size returns the number of items in the queue.
 func (k *memq[T]) Size() uint64 {
 	k.mux.RLock()
 	defer k.mux.RUnlock()
@@ -30,10 +31,12 @@ func (k *memq[T]) Size() uint64 {
 	return uint64(len(k.store))
 }
 
+// LastIndex returns the last item's index of the queue.
 func (k *memq[T]) LastIndex() uint64 {
 	return k.lastIdx
 }
 
+// Get returns the item of specific id
 func (k *memq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 
@@ -53,6 +56,7 @@ func (k *memq[T]) Get(i uint64) (T, error) {
 	return m, nil
 }
 
+// Range iterates over the queue and calls the callback for each item.
 func (k *memq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 	limit := uint64(query.MaxLimit)
 	if amount != nil {
@@ -79,14 +83,17 @@ func (k *memq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 	return nil
 }
 
+// Paginate iterates over the queue and calls the callback for each item.
 func (k *memq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*query.PageResponse, error) {
 	panic("unimplmented")
 }
 
+// MsgConstructor returns the constructor of the message type.
 func (k *memq[T]) MsgConstructor() func() T {
 	return k.constructor
 }
 
+// Produce pushes the given messages to the queue.
 func (k *memq[T]) Produce(msgs ...T) ([]uint64, error) {
 	bzs := make([][]byte, len(msgs))
 	for i, msg := range msgs {
@@ -110,6 +117,7 @@ func (k *memq[T]) Produce(msgs ...T) ([]uint64, error) {
 	), nil
 }
 
+// Update updates the item of specific id.
 func (k *memq[T]) Update(i uint64, msg T) error {
 	size := k.Size()
 	if i < k.lastIdx-size && k.lastIdx < i {
@@ -139,6 +147,7 @@ func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {
 	return ms, nil
 }
 
+// Consume pops the given amount of items from the queue.
 func (k *memq[T]) Consume(amount uint64) ([]mitotypes.KV[uint64, T], error) {
 	l := min(k.Size(), amount)
 
@@ -163,6 +172,7 @@ func (k *memq[T]) Consume(amount uint64) ([]mitotypes.KV[uint64, T], error) {
 	return ms, nil
 }
 
+// ConsumeUntil pops the items from the queue until the given condition is met.
 func (k *memq[T]) ConsumeUntil(f func(T, uint64) (bool, error)) ([]mitotypes.KV[uint64, T], error) {
 	k.mux.Lock()
 	defer k.mux.Unlock()
@@ -191,6 +201,7 @@ func (k *memq[T]) ConsumeUntil(f func(T, uint64) (bool, error)) ([]mitotypes.KV[
 	return ms, nil
 }
 
+// ImportGenesis imports the queue's genesis state.
 func (k *memq[T]) ImportGenesis(g GenesisState[T]) error {
 	k.mux.Lock()
 	defer k.mux.Unlock()
@@ -214,6 +225,7 @@ func (k *memq[T]) ImportGenesis(g GenesisState[T]) error {
 	return nil
 }
 
+// ExportGenesis exports the queue's genesis state.
 func (k *memq[T]) ExportGenesis() (GenesisState[T], error) {
 	k.mux.Lock()
 	defer k.mux.Unlock()
