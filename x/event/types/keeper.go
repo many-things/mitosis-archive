@@ -6,7 +6,7 @@ import (
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 )
 
-type ParamsKeeper interface {
+type BaseKeeper interface {
 	GetParams(ctx sdk.Context) Params
 
 	SetParams(ctx sdk.Context, params Params)

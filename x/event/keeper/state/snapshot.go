@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
+	"github.com/pkg/errors"
 	"sort"
 )
 
@@ -142,25 +143,12 @@ func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddre
 func (r kvSnapshotRepo) PowerOf(epoch uint64, val sdk.ValAddress) (int64, error) {
 	valPowerStore := prefix.NewStore(r.valPowerStore(), val.Bytes())
 
-	queryReq := &query.PageRequest{
-		Key:   sdk.Uint64ToBigEndian(epoch),
-		Limit: 1,
+	bz := valPowerStore.Get(sdk.Uint64ToBigEndian(epoch))
+	if bz == nil {
+		return 0, errors.New("power not found")
 	}
 
-	var power uint64
-	_, err := query.Paginate(
-		valPowerStore,
-		queryReq,
-		func(key []byte, value []byte) error {
-			power = sdk.BigEndianToUint64(value)
-			return nil
-		},
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	return int64(power), nil
+	return int64(sdk.BigEndianToUint64(bz)), nil
 }
 
 func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], error) {
@@ -194,7 +182,14 @@ func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], e
 }
 
 func (r kvSnapshotRepo) LatestEpoch() (*types.EpochInfo, error) {
-	return r.latestEpoch()
+	epoch, err := r.latestEpoch()
+	if err != nil {
+		return nil, err
+	}
+	if epoch == nil {
+		return nil, errors.New("epoch cannot be nil")
+	}
+	return epoch, nil
 }
 
 func (r kvSnapshotRepo) ExportGenesis() (genState *types.GenesisSnapshot, err error) {

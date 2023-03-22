@@ -13,7 +13,7 @@ import (
 type Keeper interface {
 	Logger(ctx sdk.Context) log.Logger
 
-	types.ParamsKeeper
+	types.BaseKeeper
 	types.ChainKeeper
 	types.GenesisKeeper
 	types.PollKeeper
