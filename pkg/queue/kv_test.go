@@ -98,3 +98,22 @@ func TestKVQueue_Paginate(t *testing.T) {
 		}
 	}
 }
+
+func TestKVQueue_Genesis(t *testing.T) {
+	eq := setupKVQueue(t, ConstructTestMessage)
+	nq := setupKVQueue(t, ConstructTestMessage)
+
+	tms := MakeTestMessages(10)
+	_, err := eq.Produce(tms...)
+	require.NoError(t, err)
+
+	eg, err := eq.ExportGenesis()
+	require.NoError(t, err)
+
+	require.NoError(t, nq.ImportGenesis(eg))
+
+	ng, err := nq.ExportGenesis()
+	require.NoError(t, err)
+
+	require.Equal(t, eg, ng)
+}

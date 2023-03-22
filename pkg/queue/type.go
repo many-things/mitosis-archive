@@ -3,6 +3,7 @@ package queue
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/gogo/protobuf/proto"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 )
 
 type Message interface {
@@ -16,7 +17,10 @@ type Queue[T Message] interface {
 	// Size returns the number of items in the queue.
 	Size() uint64
 
-	// Pick returns the item of specific id
+	// LastIndex returns the last item's index of the queue.
+	LastIndex() uint64
+
+	// Get returns the item of specific id
 	Get(uint64) (T, error)
 
 	// Range iterates over the queue and calls the callback for each item.
@@ -38,4 +42,16 @@ type Queue[T Message] interface {
 
 	// Consume pops the given amount of items from the queue.
 	Consume(uint64) ([]T, error)
+
+	// ImportGenesis imports the queue's genesis state.
+	ImportGenesis(GenesisState[T]) error
+
+	// ExportGenesis exports the queue's genesis state.
+	ExportGenesis() (GenesisState[T], error)
+}
+
+type GenesisState[T Message] struct {
+	LastIndex  uint64
+	FirstIndex uint64
+	Items      []mitotypes.KV[uint64, T]
 }
