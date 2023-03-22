@@ -94,22 +94,34 @@ func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*Que
 	}, err
 }
 
-func (k queryServer) Sign(ctx context.Context, sign *QuerySign) (*QuerySignResponse, error) {
+func (k queryServer) Sign(ctx context.Context, msg *QuerySign) (*QuerySignResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	sign, err := k.baseKeeper.QuerySign(wctx, msg.Chain, msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QuerySignResponse{Sign: sign}, nil
+}
+
+func (k queryServer) SignList(ctx context.Context, msg *QuerySignList) (*QuerySignListResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	kvSigns, page, err := k.baseKeeper.QuerySignList(wctx, msg.Chain, msg.Pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	return &QuerySignListResponse{List: mitotypes.Values(kvSigns), Page: page}, nil
+}
+
+func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*QuerySignatureResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (k queryServer) SignList(ctx context.Context, list *QuerySignList) (*QuerySignListResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (k queryServer) Signature(ctx context.Context, signature *QuerySignature) (*QuerySignatureResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (k queryServer) SignatureList(ctx context.Context, list *QuerySignatureList) (*QuerySignatureListResponse, error) {
+func (k queryServer) SignatureList(ctx context.Context, msg *QuerySignatureList) (*QuerySignatureListResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }
