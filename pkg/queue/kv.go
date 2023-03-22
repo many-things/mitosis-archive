@@ -67,7 +67,7 @@ func (k kvq[T]) Size() uint64 {
 func (k kvq[T]) Pick(i uint64) (T, error) {
 	m := k.constructor()
 
-	if i < k.getFirstItem() && k.getLastItem() < i {
+	if i < k.getFirstItem() || k.getLastItem() <= i {
 		return m, errors.New("index out of range")
 	}
 
