@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	DefaultEpochInterval = 10
 	DefaultPollThreshold = 0.5
 )
 
@@ -20,7 +21,7 @@ func ParamKeyTable() paramtypes.KeyTable {
 // NewParams creates a new Params instance
 func NewParams() Params {
 	return Params{
-		EpochInterval: 10, // 10 blocks
+		EpochInterval: DefaultEpochInterval, // 10 blocks
 		PollThreshold: DefaultPollThreshold,
 	}
 }
