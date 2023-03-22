@@ -82,6 +82,41 @@ func (k kvq[T]) Pick(i uint64) (T, error) {
 	return m, nil
 }
 
+func (k kvq[T]) Range(amount *uint64, f func(T, uint64) error) error {
+	lastItem := k.getLastItem()
+	firstItem := k.getFirstItem()
+	if lastItem == firstItem {
+		return errors.New("empty queue")
+	}
+
+	limit := uint64(query.MaxLimit)
+	if amount != nil {
+		limit = *amount
+	}
+
+	var (
+		want     = min(lastItem-firstItem, limit)
+		queryReq = &query.PageRequest{
+			Key:     sdk.Uint64ToBigEndian(firstItem),
+			Limit:   want,
+			Reverse: false,
+		}
+	)
+
+	_, err := query.Paginate(
+		k.items,
+		queryReq,
+		func(key []byte, value []byte) error {
+			m := k.constructor()
+			if err := m.Unmarshal(value); err != nil {
+				return err
+			}
+			return f(m, sdk.BigEndianToUint64(key))
+		},
+	)
+	return err
+}
+
 func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {
 	lastItem := k.getLastItem()
 	for i, msg := range msgs {

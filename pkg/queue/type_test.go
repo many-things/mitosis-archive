@@ -50,11 +50,27 @@ func testQueue(t *testing.T, q Queue[Message]) {
 	)
 
 	// consume half
-	msgs, err = q.Consume(consumeSize)
-	require.NoError(t, err)
-	require.Equal(t, consumeSize, uint64(len(msgs)))
-	require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
-	require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	{
+		var rs []Message
+		require.NoError(
+			t,
+			q.Range(nil, func(msg Message, _ uint64) error {
+				rs = append(rs, msg)
+				return nil
+			}),
+		)
+		require.Equal(t, len(ts), len(rs))
+		require.Equal(t, uint64(len(ts)), q.Size())
+		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
+	}
+
+	{
+		msgs, err = q.Consume(consumeSize)
+		require.NoError(t, err)
+		require.Equal(t, consumeSize, uint64(len(msgs)))
+		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
+		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	}
 
 	// produce half
 	pushed, err = q.Produce(ts[:consumeSize]...)
@@ -66,16 +82,48 @@ func testQueue(t *testing.T, q Queue[Message]) {
 	)
 
 	// consume half again
-	msgs, err = q.Consume(consumeSize)
-	require.NoError(t, err)
-	require.Equal(t, consumeSize, uint64(len(msgs)))
-	require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
-	require.Equal(t, "t25", msgs[0].(*TestMessage).Data)
+	{
+		var rs []Message
+		require.NoError(
+			t,
+			q.Range(nil, func(msg Message, _ uint64) error {
+				rs = append(rs, msg)
+				return nil
+			}),
+		)
+		require.Equal(t, len(ts), len(rs))
+		require.Equal(t, uint64(len(ts)), q.Size())
+		require.Equal(t, "t25", rs[0].(*TestMessage).Data)
+	}
+
+	{
+		msgs, err = q.Consume(consumeSize)
+		require.NoError(t, err)
+		require.Equal(t, consumeSize, uint64(len(msgs)))
+		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
+		require.Equal(t, "t25", msgs[0].(*TestMessage).Data)
+	}
 
 	// consume rest & check produced item
-	msgs, err = q.Consume(consumeSize)
-	require.NoError(t, err)
-	require.Equal(t, consumeSize, uint64(len(msgs)))
-	require.Equal(t, uint64(len(ts)-(len(msgs)*2)), q.Size())
-	require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	{
+		var rs []Message
+		require.NoError(
+			t,
+			q.Range(nil, func(msg Message, _ uint64) error {
+				rs = append(rs, msg)
+				return nil
+			}),
+		)
+		require.Equal(t, consumeSize, uint64(len(rs)))
+		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
+		require.Equal(t, "t0", rs[0].(*TestMessage).Data)
+	}
+
+	{
+		msgs, err = q.Consume(consumeSize)
+		require.NoError(t, err)
+		require.Equal(t, consumeSize, uint64(len(msgs)))
+		require.Equal(t, uint64(len(ts)-(len(msgs)*2)), q.Size())
+		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+	}
 }
