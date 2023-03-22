@@ -13,8 +13,38 @@ type TestMessage struct {
 	Data string `json:"data"`
 }
 
+func (t *TestMessage) Reset() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestMessage) String() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestMessage) ProtoMessage() {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (t *TestMessage) Marshal() ([]byte, error) {
 	return json.Marshal(t)
+}
+
+func (t *TestMessage) MarshalTo(data []byte) (n int, err error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t *TestMessage) Size() int {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (t *TestMessage) Unmarshal(bytes []byte) error {
