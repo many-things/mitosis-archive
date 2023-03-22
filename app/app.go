@@ -517,13 +517,13 @@ func New(
 	)
 	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper)
 
-	app.EventKeeper = *eventmodulekeeper.NewKeeper(
+	app.EventKeeper = eventmodulekeeper.NewKeeper(
 		appCodec,
 		keys[eventmoduletypes.StoreKey],
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper)
 
 	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
 		appCodec,

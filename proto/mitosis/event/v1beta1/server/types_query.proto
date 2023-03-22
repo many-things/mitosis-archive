@@ -5,7 +5,8 @@ package manythings.mitosis.v1beta1.event.server;
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "mitosis/event/v1beta1/params.proto";
-import "mitosis/event/v1beta1/types.proto";
+import "mitosis/event/v1beta1/types_event.proto";
+import "mitosis/event/v1beta1/types_poll.proto";
 
 option go_package = "github.com/many-things/mitosis/x/event/server";
 
@@ -52,6 +53,17 @@ message QueryProxyResponse {
   bytes proxy_account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 
+// Query validator by proxy account
+message QueryProxyReverse {
+  // proxy account address
+  bytes proxy_account = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+// Response of [QueryProxyReverse]
+message QueryProxyReverseResponse {
+  bytes validator = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
 // Query list of proxy accounts
 message QueryProxies {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
@@ -60,5 +72,27 @@ message QueryProxies {
 // Response of [QueryProxies]
 message QueryProxiesResponse {
   repeated QueryProxyResponse proxies = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
+}
+
+// Query single chain info
+message QueryChain {
+  string chain = 1;
+}
+
+// Response of [QueryChain]
+message QueryChainResponse {
+  string chain = 1;
+  bytes chain_prefix = 2;
+}
+
+// Query list of chain info
+message QueryChains {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// Response of [QueryChains]
+message QueryChainsResponse {
+  repeated QueryChainResponse chains = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }

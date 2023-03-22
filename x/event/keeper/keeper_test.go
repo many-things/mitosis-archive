@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetParams(t *testing.T) {
+func TestParams(t *testing.T) {
 	k, ctx := testkeeper.EventKeeper(t)
 	params := types.DefaultParams()
 

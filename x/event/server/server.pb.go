@@ -31,37 +31,44 @@ func init() {
 }
 
 var fileDescriptor_8493cefcc4fba2c7 = []byte{
-	// 467 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x94, 0x4f, 0x6b, 0x13, 0x41,
-	0x18, 0xc6, 0xb3, 0xb6, 0x8d, 0x30, 0xe0, 0x65, 0x8e, 0x8b, 0xae, 0x22, 0x5a, 0xff, 0xd0, 0xce,
-	0xb4, 0xa9, 0x82, 0x5a, 0x3d, 0xe8, 0xc5, 0x53, 0x21, 0x56, 0xf0, 0xe0, 0x45, 0x26, 0xed, 0xcb,
-	0x66, 0x60, 0x77, 0x66, 0x9d, 0x77, 0x12, 0x12, 0x42, 0x2f, 0x7a, 0x16, 0x04, 0x3f, 0x82, 0x07,
-	0x05, 0xbf, 0x88, 0xc7, 0x80, 0x17, 0xf1, 0x24, 0x89, 0x1f, 0x44, 0x76, 0x66, 0xb3, 0x20, 0xd8,
-	0xb0, 0xb3, 0xa7, 0x5c, 0x9e, 0xdf, 0xf3, 0xfe, 0x98, 0x3c, 0x2c, 0xb9, 0x93, 0x4b, 0xab, 0x51,
-	0x22, 0x87, 0x31, 0x28, 0xcb, 0xc7, 0xfb, 0x03, 0xb0, 0x62, 0x9f, 0x23, 0x98, 0x31, 0x98, 0xea,
-	0x87, 0x15, 0x46, 0x5b, 0x4d, 0x6f, 0xe5, 0x42, 0x4d, 0xed, 0x50, 0xaa, 0x14, 0x59, 0x45, 0xb1,
-	0x2a, 0xcf, 0x1c, 0xcd, 0x7c, 0x3c, 0xbe, 0x9c, 0x6a, 0x9d, 0x66, 0xc0, 0x45, 0x21, 0xb9, 0x50,
-	0x4a, 0x5b, 0x61, 0xa5, 0x56, 0xe8, 0x6b, 0xe2, 0x9d, 0xb5, 0x17, 0xed, 0xb4, 0x00, 0x7c, 0x93,
-	0x63, 0x5a, 0xa5, 0x59, 0x83, 0xf4, 0xdb, 0x11, 0x98, 0xa9, 0xcf, 0xf7, 0xde, 0x6f, 0x90, 0x8d,
-	0x23, 0x4c, 0xe9, 0x84, 0x74, 0x5f, 0x8e, 0x06, 0xb9, 0xb4, 0xb4, 0xc7, 0x1a, 0x7a, 0xb3, 0x23,
-	0x4c, 0x3d, 0x13, 0x3f, 0x0a, 0x67, 0x8e, 0x01, 0x0b, 0xad, 0x10, 0xa8, 0x21, 0x9b, 0xaf, 0xb4,
-	0x05, 0xba, 0x17, 0xd2, 0x51, 0x12, 0xf1, 0x83, 0x50, 0xa2, 0xbe, 0xf9, 0x21, 0x22, 0x97, 0x8e,
-	0x21, 0x95, 0x68, 0xc1, 0xf4, 0x8d, 0x9e, 0x4c, 0xe9, 0xc3, 0x90, 0xae, 0x7f, 0xd0, 0xf8, 0x69,
-	0x6b, 0x74, 0xe5, 0xd3, 0xfb, 0xd5, 0x25, 0x5b, 0x2f, 0xca, 0x7f, 0x85, 0x7e, 0x8e, 0x48, 0xb7,
-	0x2f, 0x8c, 0xc8, 0x91, 0xde, 0x6b, 0xdc, 0xeb, 0x50, 0x4f, 0xc5, 0x8f, 0xdb, 0x50, 0x2b, 0x91,
-	0xeb, 0x37, 0xdf, 0xfd, 0xf8, 0xf3, 0xe9, 0xc2, 0x55, 0x7a, 0x85, 0xff, 0x7f, 0x47, 0x85, 0x57,
-	0xfb, 0x1a, 0x91, 0xcd, 0xbe, 0xce, 0xb2, 0x80, 0xb1, 0xf8, 0x6b, 0x3a, 0xcb, 0x02, 0xc6, 0x52,
-	0x33, 0xb5, 0xdf, 0x9e, 0xf3, 0xbb, 0x4b, 0x6f, 0x9f, 0xe7, 0xa7, 0xb3, 0x8c, 0xcf, 0x4e, 0x86,
-	0x42, 0xaa, 0x33, 0x3e, 0x93, 0xa7, 0x67, 0xf4, 0x4b, 0x44, 0xb6, 0xca, 0x0a, 0xa4, 0x07, 0xe1,
-	0x77, 0x31, 0x3e, 0x6c, 0x01, 0xd5, 0xb6, 0x3b, 0xce, 0x76, 0x9b, 0xde, 0x58, 0x63, 0x8b, 0x2b,
-	0x5d, 0xfa, 0xad, 0x34, 0x75, 0x63, 0x0c, 0x35, 0x75, 0x33, 0x3c, 0x6c, 0x01, 0x35, 0x7f, 0xd7,
-	0x32, 0xcd, 0x67, 0x63, 0x91, 0xc9, 0x53, 0x61, 0xb5, 0x71, 0xef, 0x7a, 0xb1, 0xec, 0x90, 0x80,
-	0xf4, 0x7e, 0xf8, 0x69, 0x09, 0x18, 0x3f, 0x69, 0x85, 0xd5, 0xce, 0xdb, 0xce, 0xf9, 0x1a, 0x4d,
-	0xd6, 0x38, 0x4b, 0xc0, 0x67, 0xcf, 0xbf, 0x2f, 0x92, 0x68, 0xbe, 0x48, 0xa2, 0xdf, 0x8b, 0x24,
-	0xfa, 0xb8, 0x4c, 0x3a, 0xf3, 0x65, 0xd2, 0xf9, 0xb9, 0x4c, 0x3a, 0xaf, 0x77, 0x53, 0x69, 0x87,
-	0xa3, 0x01, 0x3b, 0xd1, 0x39, 0x2f, 0x55, 0x76, 0xbd, 0x4b, 0xdd, 0x37, 0xa9, 0x1a, 0xbd, 0xc5,
-	0xa0, 0xeb, 0x3e, 0x99, 0x07, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xf5, 0x5d, 0xfa, 0xc8, 0x04,
-	0x06, 0x00, 0x00,
+	// 590 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x96, 0x4f, 0x6b, 0x13, 0x41,
+	0x18, 0x87, 0x3b, 0x6a, 0x2a, 0x8c, 0x8a, 0x30, 0xc7, 0x45, 0x57, 0x11, 0xad, 0x7f, 0x68, 0x76,
+	0x6c, 0x5a, 0x2b, 0x36, 0x55, 0xb0, 0x41, 0x3c, 0x15, 0x62, 0xc5, 0x8b, 0x97, 0x32, 0x49, 0x87,
+	0xcd, 0xc0, 0xee, 0x4e, 0x9c, 0x99, 0x2c, 0x0d, 0x21, 0x97, 0xe2, 0x55, 0x10, 0xfa, 0x11, 0x3c,
+	0x28, 0xf8, 0x41, 0xf4, 0xe0, 0xa1, 0xe0, 0xc5, 0xa3, 0x24, 0x7e, 0x09, 0x6f, 0x32, 0x33, 0x9b,
+	0xd5, 0x4a, 0x0d, 0x3b, 0xe3, 0x29, 0x04, 0xde, 0xe7, 0x37, 0xcf, 0xbc, 0xbc, 0xf3, 0xb2, 0xf0,
+	0x76, 0xca, 0x14, 0x97, 0x4c, 0x62, 0x9a, 0xd3, 0x4c, 0xe1, 0x7c, 0xa5, 0x43, 0x15, 0x59, 0xc1,
+	0x92, 0x8a, 0x9c, 0x8a, 0xe2, 0x27, 0xea, 0x0b, 0xae, 0x38, 0xba, 0x99, 0x92, 0x6c, 0xa8, 0x7a,
+	0x2c, 0x8b, 0x65, 0x54, 0x50, 0x51, 0x51, 0x1f, 0x19, 0x3a, 0xb2, 0xe5, 0xc1, 0xa5, 0x98, 0xf3,
+	0x38, 0xa1, 0x98, 0xf4, 0x19, 0x26, 0x59, 0xc6, 0x15, 0x51, 0x8c, 0x67, 0xd2, 0xc6, 0x04, 0xcb,
+	0x73, 0x4f, 0x54, 0xc3, 0x3e, 0x95, 0xbb, 0xa9, 0x8c, 0x8b, 0xea, 0xa8, 0x42, 0xf5, 0xab, 0x01,
+	0x15, 0x43, 0x5b, 0xdf, 0xf8, 0x54, 0x83, 0xa7, 0xb7, 0x65, 0x8c, 0x0e, 0x00, 0x3c, 0xf7, 0x7c,
+	0xd0, 0x49, 0x99, 0x7a, 0xa2, 0x41, 0x74, 0x3f, 0xaa, 0x68, 0x1f, 0x6d, 0xcb, 0xf8, 0x0f, 0x30,
+	0xd8, 0x70, 0x07, 0x77, 0xa8, 0xec, 0xf3, 0x4c, 0x52, 0xf4, 0x06, 0xc0, 0x0b, 0x3b, 0x34, 0x66,
+	0x52, 0x51, 0xd1, 0x16, 0x7c, 0x7f, 0x88, 0x1e, 0xb8, 0xa4, 0x1d, 0x43, 0x83, 0xc7, 0xde, 0x68,
+	0xe9, 0xf3, 0x1a, 0x40, 0xd8, 0x4a, 0x28, 0x29, 0x64, 0xd6, 0x5d, 0x12, 0x7f, 0x73, 0xc1, 0x23,
+	0x3f, 0xee, 0xc4, 0xb6, 0xb4, 0x7a, 0x84, 0x65, 0x7e, 0x6d, 0x31, 0xa8, 0x5f, 0x5b, 0x0c, 0x5a,
+	0xfa, 0x1c, 0x02, 0x78, 0xf1, 0x45, 0x26, 0x8e, 0x19, 0x35, 0x5d, 0x62, 0xff, 0x82, 0x83, 0xd6,
+	0x7f, 0xc0, 0x33, 0xab, 0xc6, 0x4f, 0x08, 0x6b, 0xcf, 0xf4, 0x64, 0xa3, 0x77, 0x00, 0x2e, 0xb6,
+	0x89, 0x20, 0xa9, 0x44, 0x6b, 0x95, 0x93, 0x0d, 0x6a, 0xa9, 0x60, 0xd3, 0x87, 0x9a, 0x89, 0x5c,
+	0xbb, 0x71, 0xf0, 0xf5, 0xc7, 0xe1, 0xa9, 0x2b, 0xe8, 0x32, 0x3e, 0xf9, 0x2d, 0xf6, 0xad, 0xda,
+	0x07, 0x00, 0xcf, 0xb4, 0x79, 0x92, 0xa0, 0x86, 0xe3, 0x69, 0x3c, 0x49, 0x1c, 0x5e, 0x59, 0xc9,
+	0x94, 0x7e, 0x77, 0x8d, 0xdf, 0x1d, 0x74, 0xeb, 0x5f, 0x7e, 0x3c, 0x49, 0xf0, 0xa8, 0xab, 0x9b,
+	0x3b, 0xc6, 0x23, 0xb6, 0x37, 0x46, 0xef, 0x01, 0xac, 0xe9, 0x08, 0x89, 0x56, 0xdd, 0xcf, 0x95,
+	0x41, 0xd3, 0x03, 0x2a, 0x6d, 0x97, 0x8d, 0xed, 0x12, 0xba, 0x3e, 0xc7, 0x56, 0xce, 0x74, 0xd1,
+	0x47, 0x6d, 0x6a, 0x1e, 0xab, 0xab, 0xa9, 0x79, 0xa9, 0x4d, 0x0f, 0xa8, 0x7a, 0x5f, 0x75, 0x35,
+	0x1e, 0xe5, 0x24, 0x61, 0x7b, 0x44, 0x71, 0x31, 0x46, 0x5f, 0x00, 0x3c, 0x5f, 0x64, 0xe4, 0x54,
+	0x48, 0x8a, 0x36, 0xbc, 0xce, 0x37, 0x6c, 0xb0, 0xe5, 0xcf, 0x96, 0x57, 0xd8, 0x34, 0x57, 0x58,
+	0x47, 0x6b, 0xf3, 0xae, 0x50, 0x17, 0x96, 0xc2, 0x23, 0xf3, 0x77, 0x97, 0x74, 0xbb, 0x7c, 0x90,
+	0x29, 0x33, 0x26, 0x67, 0x75, 0x2c, 0xa3, 0x12, 0xdd, 0x73, 0xb7, 0x61, 0x54, 0x06, 0x0f, 0xbd,
+	0xb0, 0xd2, 0x7f, 0xc9, 0xf8, 0x5f, 0x45, 0xe1, 0x1c, 0x7f, 0x6d, 0xa7, 0x07, 0xda, 0xee, 0x2d,
+	0xc7, 0x31, 0xb1, 0xfb, 0xaa, 0xe9, 0x01, 0x55, 0x1e, 0x68, 0x33, 0xc9, 0xe5, 0x40, 0xeb, 0x5d,
+	0x66, 0x78, 0xe7, 0x5d, 0x66, 0x29, 0xd7, 0x5d, 0x66, 0xa9, 0xca, 0xbb, 0xcc, 0x58, 0xca, 0xad,
+	0xa7, 0x9f, 0x27, 0x21, 0x38, 0x9a, 0x84, 0xe0, 0xfb, 0x24, 0x04, 0x6f, 0xa7, 0xe1, 0xc2, 0xd1,
+	0x34, 0x5c, 0xf8, 0x36, 0x0d, 0x17, 0x5e, 0xd6, 0x63, 0xa6, 0x7a, 0x83, 0x4e, 0xd4, 0xe5, 0x29,
+	0xd6, 0x22, 0x75, 0x6b, 0x52, 0xc6, 0xed, 0x17, 0x81, 0xd6, 0xa1, 0xb3, 0x68, 0xbe, 0x4a, 0x56,
+	0x7f, 0x05, 0x00, 0x00, 0xff, 0xff, 0xd4, 0xce, 0x8f, 0x97, 0x67, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -77,11 +84,15 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	// Submits / Initiates vote for external event.
-	Submit(ctx context.Context, in *MsgSubmit, opts ...grpc.CallOption) (*MsgSubmitResponse, error)
-	// Votes to submitted external event.
-	Vote(ctx context.Context, in *MsgVote, opts ...grpc.CallOption) (*MsgVoteResponse, error)
+	SubmitEvent(ctx context.Context, in *MsgSubmitEvent, opts ...grpc.CallOption) (*MsgSubmitResponse, error)
 	// Registers an address of proxy account to submit / vote external event rather than execute with validator account itself.
 	RegisterProxy(ctx context.Context, in *MsgRegisterProxy, opts ...grpc.CallOption) (*MsgRegisterProxyResponse, error)
+	// Clears proxy account info from a validator
+	ClearProxy(ctx context.Context, in *MsgClearProxy, opts ...grpc.CallOption) (*MsgClearProxyResponse, error)
+	// Register chain info
+	RegisterChain(ctx context.Context, in *MsgRegisterChain, opts ...grpc.CallOption) (*MsgRegisterChainResponse, error)
+	// Unregister chain info
+	UnregisterChain(ctx context.Context, in *MsgUnregisterChain, opts ...grpc.CallOption) (*MsgUnregisterChainResponse, error)
 }
 
 type msgClient struct {
@@ -92,18 +103,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) Submit(ctx context.Context, in *MsgSubmit, opts ...grpc.CallOption) (*MsgSubmitResponse, error) {
+func (c *msgClient) SubmitEvent(ctx context.Context, in *MsgSubmitEvent, opts ...grpc.CallOption) (*MsgSubmitResponse, error) {
 	out := new(MsgSubmitResponse)
-	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Msg/Submit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) Vote(ctx context.Context, in *MsgVote, opts ...grpc.CallOption) (*MsgVoteResponse, error) {
-	out := new(MsgVoteResponse)
-	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Msg/Vote", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Msg/SubmitEvent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,66 +121,85 @@ func (c *msgClient) RegisterProxy(ctx context.Context, in *MsgRegisterProxy, opt
 	return out, nil
 }
 
+func (c *msgClient) ClearProxy(ctx context.Context, in *MsgClearProxy, opts ...grpc.CallOption) (*MsgClearProxyResponse, error) {
+	out := new(MsgClearProxyResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Msg/ClearProxy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RegisterChain(ctx context.Context, in *MsgRegisterChain, opts ...grpc.CallOption) (*MsgRegisterChainResponse, error) {
+	out := new(MsgRegisterChainResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Msg/RegisterChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UnregisterChain(ctx context.Context, in *MsgUnregisterChain, opts ...grpc.CallOption) (*MsgUnregisterChainResponse, error) {
+	out := new(MsgUnregisterChainResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Msg/UnregisterChain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// Submits / Initiates vote for external event.
-	Submit(context.Context, *MsgSubmit) (*MsgSubmitResponse, error)
-	// Votes to submitted external event.
-	Vote(context.Context, *MsgVote) (*MsgVoteResponse, error)
+	SubmitEvent(context.Context, *MsgSubmitEvent) (*MsgSubmitResponse, error)
 	// Registers an address of proxy account to submit / vote external event rather than execute with validator account itself.
 	RegisterProxy(context.Context, *MsgRegisterProxy) (*MsgRegisterProxyResponse, error)
+	// Clears proxy account info from a validator
+	ClearProxy(context.Context, *MsgClearProxy) (*MsgClearProxyResponse, error)
+	// Register chain info
+	RegisterChain(context.Context, *MsgRegisterChain) (*MsgRegisterChainResponse, error)
+	// Unregister chain info
+	UnregisterChain(context.Context, *MsgUnregisterChain) (*MsgUnregisterChainResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) Submit(ctx context.Context, req *MsgSubmit) (*MsgSubmitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Submit not implemented")
-}
-func (*UnimplementedMsgServer) Vote(ctx context.Context, req *MsgVote) (*MsgVoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Vote not implemented")
+func (*UnimplementedMsgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSubmitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitEvent not implemented")
 }
 func (*UnimplementedMsgServer) RegisterProxy(ctx context.Context, req *MsgRegisterProxy) (*MsgRegisterProxyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterProxy not implemented")
+}
+func (*UnimplementedMsgServer) ClearProxy(ctx context.Context, req *MsgClearProxy) (*MsgClearProxyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearProxy not implemented")
+}
+func (*UnimplementedMsgServer) RegisterChain(ctx context.Context, req *MsgRegisterChain) (*MsgRegisterChainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterChain not implemented")
+}
+func (*UnimplementedMsgServer) UnregisterChain(ctx context.Context, req *MsgUnregisterChain) (*MsgUnregisterChainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnregisterChain not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_Submit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgSubmit)
+func _Msg_SubmitEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSubmitEvent)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).Submit(ctx, in)
+		return srv.(MsgServer).SubmitEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/manythings.mitosis.v1beta1.event.server.Msg/Submit",
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Msg/SubmitEvent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Submit(ctx, req.(*MsgSubmit))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_Vote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgVote)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).Vote(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/manythings.mitosis.v1beta1.event.server.Msg/Vote",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Vote(ctx, req.(*MsgVote))
+		return srv.(MsgServer).SubmitEvent(ctx, req.(*MsgSubmitEvent))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -201,21 +222,83 @@ func _Msg_RegisterProxy_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_ClearProxy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgClearProxy)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ClearProxy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Msg/ClearProxy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ClearProxy(ctx, req.(*MsgClearProxy))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RegisterChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRegisterChain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RegisterChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Msg/RegisterChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RegisterChain(ctx, req.(*MsgRegisterChain))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UnregisterChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUnregisterChain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UnregisterChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Msg/UnregisterChain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UnregisterChain(ctx, req.(*MsgUnregisterChain))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "manythings.mitosis.v1beta1.event.server.Msg",
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Submit",
-			Handler:    _Msg_Submit_Handler,
-		},
-		{
-			MethodName: "Vote",
-			Handler:    _Msg_Vote_Handler,
+			MethodName: "SubmitEvent",
+			Handler:    _Msg_SubmitEvent_Handler,
 		},
 		{
 			MethodName: "RegisterProxy",
 			Handler:    _Msg_RegisterProxy_Handler,
+		},
+		{
+			MethodName: "ClearProxy",
+			Handler:    _Msg_ClearProxy_Handler,
+		},
+		{
+			MethodName: "RegisterChain",
+			Handler:    _Msg_RegisterChain_Handler,
+		},
+		{
+			MethodName: "UnregisterChain",
+			Handler:    _Msg_UnregisterChain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -234,8 +317,14 @@ type QueryClient interface {
 	Polls(ctx context.Context, in *QueryPolls, opts ...grpc.CallOption) (*QueryPollsResponse, error)
 	// Get proxy
 	Proxy(ctx context.Context, in *QueryProxy, opts ...grpc.CallOption) (*QueryProxyResponse, error)
+	// Get proxied validator
+	ProxyReverse(ctx context.Context, in *QueryProxyReverse, opts ...grpc.CallOption) (*QueryProxyReverseResponse, error)
 	// List proxies
 	Proxies(ctx context.Context, in *QueryProxies, opts ...grpc.CallOption) (*QueryProxiesResponse, error)
+	// Get chain
+	Chain(ctx context.Context, in *QueryChain, opts ...grpc.CallOption) (*QueryChainResponse, error)
+	// List chain
+	Chains(ctx context.Context, in *QueryChains, opts ...grpc.CallOption) (*QueryChainsResponse, error)
 }
 
 type queryClient struct {
@@ -282,9 +371,36 @@ func (c *queryClient) Proxy(ctx context.Context, in *QueryProxy, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *queryClient) ProxyReverse(ctx context.Context, in *QueryProxyReverse, opts ...grpc.CallOption) (*QueryProxyReverseResponse, error) {
+	out := new(QueryProxyReverseResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Query/ProxyReverse", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *queryClient) Proxies(ctx context.Context, in *QueryProxies, opts ...grpc.CallOption) (*QueryProxiesResponse, error) {
 	out := new(QueryProxiesResponse)
 	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Query/Proxies", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) Chain(ctx context.Context, in *QueryChain, opts ...grpc.CallOption) (*QueryChainResponse, error) {
+	out := new(QueryChainResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Query/Chain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) Chains(ctx context.Context, in *QueryChains, opts ...grpc.CallOption) (*QueryChainsResponse, error) {
+	out := new(QueryChainsResponse)
+	err := c.cc.Invoke(ctx, "/manythings.mitosis.v1beta1.event.server.Query/Chains", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -301,8 +417,14 @@ type QueryServer interface {
 	Polls(context.Context, *QueryPolls) (*QueryPollsResponse, error)
 	// Get proxy
 	Proxy(context.Context, *QueryProxy) (*QueryProxyResponse, error)
+	// Get proxied validator
+	ProxyReverse(context.Context, *QueryProxyReverse) (*QueryProxyReverseResponse, error)
 	// List proxies
 	Proxies(context.Context, *QueryProxies) (*QueryProxiesResponse, error)
+	// Get chain
+	Chain(context.Context, *QueryChain) (*QueryChainResponse, error)
+	// List chain
+	Chains(context.Context, *QueryChains) (*QueryChainsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -321,8 +443,17 @@ func (*UnimplementedQueryServer) Polls(ctx context.Context, req *QueryPolls) (*Q
 func (*UnimplementedQueryServer) Proxy(ctx context.Context, req *QueryProxy) (*QueryProxyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Proxy not implemented")
 }
+func (*UnimplementedQueryServer) ProxyReverse(ctx context.Context, req *QueryProxyReverse) (*QueryProxyReverseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProxyReverse not implemented")
+}
 func (*UnimplementedQueryServer) Proxies(ctx context.Context, req *QueryProxies) (*QueryProxiesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Proxies not implemented")
+}
+func (*UnimplementedQueryServer) Chain(ctx context.Context, req *QueryChain) (*QueryChainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Chain not implemented")
+}
+func (*UnimplementedQueryServer) Chains(ctx context.Context, req *QueryChains) (*QueryChainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Chains not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -401,6 +532,24 @@ func _Query_Proxy_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ProxyReverse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryProxyReverse)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ProxyReverse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Query/ProxyReverse",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ProxyReverse(ctx, req.(*QueryProxyReverse))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Query_Proxies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryProxies)
 	if err := dec(in); err != nil {
@@ -415,6 +564,42 @@ func _Query_Proxies_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Proxies(ctx, req.(*QueryProxies))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_Chain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryChain)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Chain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Query/Chain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Chain(ctx, req.(*QueryChain))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_Chains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryChains)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Chains(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/manythings.mitosis.v1beta1.event.server.Query/Chains",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Chains(ctx, req.(*QueryChains))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -440,8 +625,20 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_Proxy_Handler,
 		},
 		{
+			MethodName: "ProxyReverse",
+			Handler:    _Query_ProxyReverse_Handler,
+		},
+		{
 			MethodName: "Proxies",
 			Handler:    _Query_Proxies_Handler,
+		},
+		{
+			MethodName: "Chain",
+			Handler:    _Query_Chain_Handler,
+		},
+		{
+			MethodName: "Chains",
+			Handler:    _Query_Chains_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

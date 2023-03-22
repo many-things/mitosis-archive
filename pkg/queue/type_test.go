@@ -50,7 +50,7 @@ func testQueue(t *testing.T, q Queue[Message]) {
 	// consume
 	var (
 		consumeSize uint64 = 25
-		msgs        []Message
+		msgs        []mitotypes.KV[uint64, Message]
 	)
 
 	// consume half
@@ -88,7 +88,7 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.NoError(t, err)
 		require.Equal(t, consumeSize, uint64(len(msgs)))
 		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
-		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+		require.Equal(t, "t0", msgs[0].Value.(*TestMessage).Data)
 	}
 
 	// produce half
@@ -120,7 +120,7 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.NoError(t, err)
 		require.Equal(t, consumeSize, uint64(len(msgs)))
 		require.Equal(t, uint64(len(ts)-len(msgs)), q.Size())
-		require.Equal(t, "t25", msgs[0].(*TestMessage).Data)
+		require.Equal(t, "t25", msgs[0].Value.(*TestMessage).Data)
 	}
 
 	// consume rest & check produced item
@@ -143,7 +143,7 @@ func testQueue(t *testing.T, q Queue[Message]) {
 		require.NoError(t, err)
 		require.Equal(t, consumeSize, uint64(len(msgs)))
 		require.Equal(t, uint64(len(ts)-(len(msgs)*2)), q.Size())
-		require.Equal(t, "t0", msgs[0].(*TestMessage).Data)
+		require.Equal(t, "t0", msgs[0].Value.(*TestMessage).Data)
 	}
 
 	require.Equal(t, q.LastIndex(), uint64(75))

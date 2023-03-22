@@ -17,10 +17,10 @@ message Operation {
     STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
 
     // Signing operation status
-    STATUS_SIGN = 2 [(gogoproto.enumvalue_customname) = "StatusSign"];
+    STATUS_INIT_SIGN = 2 [(gogoproto.enumvalue_customname) = "StatusInitSign"];
 
     // Executing operation status
-    STATUS_EXEC = 3 [(gogoproto.enumvalue_customname) = "StatusExec"];
+    STATUS_FINISH_SIGN = 3 [(gogoproto.enumvalue_customname) = "StatusFinishSign"];
 
     // Finalized operation status
     STATUS_FINALIZE = 4 [(gogoproto.enumvalue_customname) = "StatusFinalized"];

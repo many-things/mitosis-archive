@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.event;
+
+import "gogoproto/gogo.proto";
+import "mitosis/event/v1beta1/types_event.proto";
+
+option go_package = "github.com/many-things/mitosis/x/event/types";
+
+// Tally Message
+message Tally {
+  string total_power = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
+  string confirmed = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
+}
+
+// Poll Message
+message Poll {
+  // Poll Status
+  enum Status {
+    // Unspecified status
+    STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspecified"];
+
+    // Pending status
+    STATUS_PENDING = 1 [(gogoproto.enumvalue_customname) = "StatusPending"];
+
+    // Confirmed status
+    STATUS_CONFIRMED = 2 [(gogoproto.enumvalue_customname) = "StatusConfirmed"];
+
+    // Rejected status
+    STATUS_REJECTED = 3 [(gogoproto.enumvalue_customname) = "StatusRejected"];
+  }
+
+  // Chain identifier
+  string chain = 1;
+
+  // Poll id
+  uint64 id = 2;
+
+  // Operation id - will be filled
+  uint64 op_id = 3;
+
+  uint64 epoch = 4;
+
+  // Poll proposer
+  bytes proposer = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // Poll status
+  Status status = 6;
+
+  // Vote tally
+  Tally tally = 7;
+
+  // Event payload
+  Event payload = 8;
+}

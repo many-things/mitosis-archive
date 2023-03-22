@@ -9,4 +9,8 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 // Params defines the parameters for the module.
 message Params {
   option (gogoproto.goproto_stringer) = false;
+
+  string poll_threshold = 1 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+
+  uint64 epoch_interval = 2;
 }

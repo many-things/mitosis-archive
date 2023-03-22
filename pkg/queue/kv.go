@@ -57,6 +57,7 @@ func (k kvq[T]) setLastItem(lastItem uint64) {
 	)
 }
 
+// Size returns the number of items in the queue.
 func (k kvq[T]) Size() uint64 {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
@@ -64,10 +65,12 @@ func (k kvq[T]) Size() uint64 {
 	return lastItem - firstItem
 }
 
+// LastIndex returns the last item's index of the queue.
 func (k kvq[T]) LastIndex() uint64 {
 	return k.getLastItem()
 }
 
+// Get returns the item of specific id
 func (k kvq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 
@@ -86,6 +89,7 @@ func (k kvq[T]) Get(i uint64) (T, error) {
 	return m, nil
 }
 
+// Range iterates over the queue and calls the callback for each item.
 func (k kvq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
@@ -121,6 +125,7 @@ func (k kvq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 	return err
 }
 
+// Paginate iterates over the queue and calls the callback for each item.
 func (k kvq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*query.PageResponse, error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
@@ -170,10 +175,12 @@ func (k kvq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*quer
 	return resp, nil
 }
 
+// MsgConstructor returns the constructor of the message type.
 func (k kvq[T]) MsgConstructor() func() T {
 	return k.constructor
 }
 
+// Produce pushes the given messages to the queue.
 func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {
 	lastItem := k.getLastItem()
 	for i, msg := range msgs {
@@ -192,6 +199,7 @@ func (k kvq[T]) Produce(msgs ...T) ([]uint64, error) {
 	), nil
 }
 
+// Update updates the item of specific id.
 func (k kvq[T]) Update(i uint64, msg T) error {
 	if i < k.getFirstItem() && k.getLastItem() < i {
 		return errors.New("index out of range")
@@ -206,7 +214,8 @@ func (k kvq[T]) Update(i uint64, msg T) error {
 	return nil
 }
 
-func (k kvq[T]) Consume(amount uint64) ([]T, error) {
+// Consume pops the given amount of items from the queue.
+func (k kvq[T]) Consume(amount uint64) ([]mitotypes.KV[uint64, T], error) {
 	lastItem := k.getLastItem()
 	firstItem := k.getFirstItem()
 	if lastItem == firstItem {
@@ -214,7 +223,7 @@ func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 	}
 
 	var (
-		ms       []T
+		ms       []mitotypes.KV[uint64, T]
 		want     = min(lastItem-firstItem, amount)
 		queryReq = &query.PageRequest{
 			Key:     sdk.Uint64ToBigEndian(firstItem),
@@ -225,12 +234,12 @@ func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 
 	_, err := query.Paginate(
 		k.items, queryReq,
-		func(_ []byte, value []byte) error {
+		func(key []byte, value []byte) error {
 			m := k.constructor()
 			if err := m.Unmarshal(value); err != nil {
 				return err
 			}
-			ms = append(ms, m)
+			ms = append(ms, mitotypes.NewKV(sdk.BigEndianToUint64(key), m))
 			return nil
 		},
 	)
@@ -242,6 +251,46 @@ func (k kvq[T]) Consume(amount uint64) ([]T, error) {
 	return ms, nil
 }
 
+// ConsumeUntil pops the items from the queue until the given condition is met.
+func (k kvq[T]) ConsumeUntil(f func(T, uint64) (bool, error)) ([]mitotypes.KV[uint64, T], error) {
+	var (
+		ms        []mitotypes.KV[uint64, T]
+		firstItem = k.getFirstItem()
+		lastItem  = k.getLastItem()
+	)
+
+	iter := k.items.Iterator(
+		sdk.Uint64ToBigEndian(firstItem),
+		sdk.Uint64ToBigEndian(lastItem),
+	)
+	defer iter.Close()
+
+	for ; iter.Valid(); iter.Next() {
+		key, value := iter.Key(), iter.Value()
+		i := sdk.BigEndianToUint64(key)
+
+		m := k.constructor()
+		if err := m.Unmarshal(value); err != nil {
+			return nil, err
+		}
+		ms = append(ms, mitotypes.NewKV(i, m))
+
+		if ok, err := f(m, i); err != nil {
+			return nil, err
+		} else if !ok {
+			break
+		}
+
+		if err := iter.Error(); err != nil {
+			return nil, err
+		}
+	}
+
+	k.setFirstItem(firstItem + uint64(len(ms)))
+	return ms, nil
+}
+
+// ImportGenesis imports the queue's genesis state.
 func (k kvq[T]) ImportGenesis(g GenesisState[T]) error {
 	k.setFirstItem(g.FirstIndex)
 	k.setLastItem(g.LastIndex)
@@ -260,6 +309,7 @@ func (k kvq[T]) ImportGenesis(g GenesisState[T]) error {
 	return nil
 }
 
+// ExportGenesis exports the queue's genesis state.
 func (k kvq[T]) ExportGenesis() (GenesisState[T], error) {
 	g := GenesisState[T]{
 		FirstIndex: k.getFirstItem(),
