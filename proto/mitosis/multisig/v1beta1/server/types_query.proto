@@ -6,6 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "mitosis/multisig/v1beta1/params.proto";
+import "mitosis/multisig/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/server";
 
@@ -16,4 +17,96 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryKeygen is request type for Query Keygen RPC method
+message QueryKeygen {
+  string chain = 1;
+  uint64 id = 2;
+}
+
+// QueryKeygenResponse is response type for Query Keygen RPC method
+message QueryKeygenResponse {
+  Keygen keygen = 1;
+}
+
+// QueryKeygenList is request type for Query Keygen List RPC method
+message QueryKeygenList {
+  string chain = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryKeygenListResponse is response type for Query Keygen List RPC method
+message QueryKeygenListResponse {
+  repeated Keygen list = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
+}
+
+// QueryPubKey is request type for Query PubKey RPC method
+message QueryPubKey {
+  string key_id = 1;
+  bytes validator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
+// QueryPubKeyResponse is response type for Query PubKey RPC method
+message QueryPubKeyResponse {
+  PubKey pubKey = 1;
+}
+
+// QueryPubKeyList is request type for Query Specific Key's PubKey List RPC method
+message QueryPubKeyList {
+  string key_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPubKeyListResponse is response type for Query Specific Key's PubKey List RPC method
+message QueryPubKeyListResponse {
+  repeated PubKey list = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
+}
+
+// QuerySign is request type for Query Specific Sign RPC method
+message QuerySign {
+  string chain = 1;
+  uint64 id = 2;
+}
+
+// QuerySignResponse is response type for Query Specific Sign RPC method
+message QuerySignResponse {
+  Sign sign = 1;
+}
+
+// QuerySignList is request type for Query Whole Sign List for Specific SigID
+message QuerySignList {
+  string chain = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySignList is response type for Query Whole Sign List for Specific SigID
+message QuerySignListResponse {
+  repeated Sign list = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
+}
+
+// QuerySignature is request type for Query Signature RPC method
+message QuerySignature {
+  string sig_id = 1;
+  bytes validator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+}
+
+// QuerySignatureResponse is response type for Query Signature RPC method
+message QuerySignatureResponse {
+  bytes signature = 1;
+}
+
+// QuerySignatureList is request type for Query Signature List RPC method
+message QuerySignatureList {
+  string sig_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QuerySignatureListResponse is response type for Query Signature List RPC method
+message QuerySignatureListResponse {
+  repeated bytes list = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
 }
