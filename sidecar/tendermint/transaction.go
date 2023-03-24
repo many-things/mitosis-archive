@@ -205,7 +205,7 @@ func (w wallet) BroadcastRawTx(rawTxByte []byte) error {
 	txClient := txtypes.NewServiceClient(conn)
 	resp, err := txClient.BroadcastTx(
 		context.Background(),
-		&txtypes.BroadcastTxRequest{Mode: txtypes.BroadcastMode_BROADCAST_MODE_SYNC, TxBytes: rawTxByte},
+		&txtypes.BroadcastTxRequest{Mode: txtypes.BroadcastMode_BROADCAST_MODE_BLOCK, TxBytes: rawTxByte},
 	)
 	if err != nil {
 		return err
