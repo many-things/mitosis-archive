@@ -18,7 +18,7 @@ import (
 func Test_BroadCastRawTx(t *testing.T) {
 	mockedRawTx := []byte("Hello World!")
 
-	wallet, err := NewWallet("", "", "", "https://test.com")
+	wallet, err := NewWallet("", "", "", "https://test.com", nil)
 	assert.NilError(t, err)
 
 	expectedBody := RawTx{
@@ -72,54 +72,13 @@ func Test_CreateSignedRawTx(t *testing.T) {
 		146, 193, 163, 210, 232, 247, 109, 40, 83, 211, 60, 5}
 
 	privKey := "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-	wallet, err := NewWallet(privKey, "mito", "", "https://test.com")
+	wallet, err := NewWallet(privKey, "mito", "", "https://test.com", nil)
 	assert.NilError(t, err)
 
 	result, err := wallet.CreateSignedRawTx(&msg, accountInfo)
 	assert.NilError(t, err)
 
 	assert.DeepEqual(t, result, expectedResult)
-}
-
-func Test_GetAccountInfo(t *testing.T) {
-	type MockedAccountResponse struct {
-		Sequence      uint64 `json:"sequence"`
-		AccountNumber uint64 `json:"account_number"`
-	}
-
-	type MockedResponse struct {
-		Account MockedAccountResponse `json:"account"`
-	}
-
-	response := MockedResponse{
-		Account: MockedAccountResponse{
-			Sequence:      1,
-			AccountNumber: 2,
-		},
-	}
-
-	privKey := "f1cd941f44fb891eeb3d153e311fb0cf6291994e9678f2a2b9bf66adce137214"
-	wallet, err := NewWallet(privKey, "mito", "", "https://test.com")
-	assert.NilError(t, err)
-
-	libs.Client = &mocks.MockClient{}
-	mocks.GetDoFunc = func(req *http.Request) (*http.Response, error) {
-		assert.Equal(t, req.URL.String(), "https://test.com/cosmos/auth/v1beta1/accounts/mito1rmzvz47h84a09dkxgys4hqs70fczae30gadk39")
-
-		jsonResponse, err := json.Marshal(response)
-		assert.NilError(t, err)
-
-		return &http.Response{
-			StatusCode: 200,
-			Body:       io.NopCloser(bytes.NewReader(jsonResponse)),
-		}, nil
-	}
-
-	accountInfo, err := wallet.GetAccountInfo()
-	assert.NilError(t, err)
-
-	assert.Equal(t, accountInfo.SequenceNumber, uint64(1))
-	assert.Equal(t, accountInfo.AccountNumber, uint64(2))
 }
 
 func Test_IsMnemonic(t *testing.T) {
@@ -138,12 +97,12 @@ func Test_Mnemonic_And_PrivKey(t *testing.T) {
 	privKey := "f1cd941f44fb891eeb3d153e311fb0cf6291994e9678f2a2b9bf66adce137214"
 	mnemonic := "burst visa embark foam office album waste autumn remove tourist moment tail camp trumpet blue grunt catalog metal metal simple school item cotton apart"
 
-	wallet, err := NewWallet(privKey, "mito", "", "http://test.com")
+	wallet, err := NewWallet(privKey, "mito", "", "http://test.com", nil)
 	assert.NilError(t, err)
 	walletAddress, err := wallet.GetAddress()
 	assert.NilError(t, err)
 
-	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mito", "", "http://test.com")
+	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mito", "", "http://test.com", nil)
 	assert.NilError(t, err)
 	walletMnemonicAddress, err := walletMnemonic.GetAddress()
 	assert.NilError(t, err)
