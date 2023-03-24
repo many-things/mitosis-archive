@@ -1,6 +1,7 @@
 package tendermint
 
 import (
+	"context"
 	"encoding/hex"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,9 +13,10 @@ import (
 	txsigning "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	cosmostx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	accounttype "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/many-things/mitosis/sidecar/tendermint/libs"
-	"github.com/tidwall/gjson"
+	"google.golang.org/grpc"
 	"io"
 )
 
@@ -117,20 +119,25 @@ func (w wallet) GetAccountInfo() (*AccountInfo, error) {
 		return nil, err
 	}
 
-	response, err := libs.JsonGet(w.DialURL + "/cosmos/auth/v1beta1/accounts/" + fromAddress)
+	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
-	data, err := io.ReadAll(response.Body)
+	cli := accounttype.NewQueryClient(conn)
+	res, err := cli.Account(context.Background(), &accounttype.QueryAccountRequest{Address: fromAddress})
 	if err != nil {
+		return nil, err
+	}
+
+	var baseAccount accounttype.BaseAccount
+	if err := baseAccount.Unmarshal(res.Account.Value); err != nil {
 		return nil, err
 	}
 
 	return &AccountInfo{
-		SequenceNumber: gjson.GetBytes(data, "account.sequence").Uint(),
-		AccountNumber:  gjson.GetBytes(data, "account.account_number").Uint(),
+		SequenceNumber: baseAccount.GetSequence(),
+		AccountNumber:  baseAccount.GetAccountNumber(),
 	}, nil
 }
 
@@ -181,8 +188,6 @@ func (w wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) (
 	}
 
 	txBuilder.SetSignatures(signature)
-
-	// Is `txConfig.TxJSONDecoder()` required?
 	return txConfig.TxEncoder()(txBuilder.GetTx())
 }
 
