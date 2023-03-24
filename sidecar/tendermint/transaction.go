@@ -138,7 +138,7 @@ func (w wallet) GetAccountInfo() (*AccountInfo, error) {
 		return nil, err
 	}
 
-	var baseAccount accounttypes.BaseAccount
+	baseAccount := new(accounttypes.BaseAccount)
 	if err := baseAccount.Unmarshal(res.Account.Value); err != nil {
 		return nil, err
 	}
