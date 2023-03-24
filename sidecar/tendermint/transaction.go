@@ -3,36 +3,38 @@ package tendermint
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotype "github.com/cosmos/cosmos-sdk/crypto/types"
-	cosmostype "github.com/cosmos/cosmos-sdk/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	txtypes "github.com/cosmos/cosmos-sdk/types/tx"
 	txsigning "github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	cosmostx "github.com/cosmos/cosmos-sdk/x/auth/tx"
-	accounttype "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	accounttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/many-things/mitosis/sidecar/tendermint/libs"
 	"google.golang.org/grpc"
-	"io"
 )
 
 type Wallet interface {
 	GetAddress() (string, error)
 	GetAccountInfo() (*AccountInfo, error)
-	CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error)
+	CreateSignedRawTx(msg sdk.Msg, accountInfo AccountInfo) ([]byte, error)
 	BroadcastRawTx(rawTxByte []byte) error
-	BroadcastMsg(msg cosmostype.Msg) error
+	BroadcastMsg(msg sdk.Msg) error
 }
 
 type wallet struct {
-	privateKey  cryptotype.PrivKey
-	ChainPrefix string
-	ChainID     string
-	DialURL     string
+	privateKey        cryptotype.PrivKey
+	ChainPrefix       string
+	ChainID           string
+	DialURL           string
+	InterfaceRegistry codectypes.InterfaceRegistry
 }
 
 type AccountInfo struct {
@@ -64,11 +66,11 @@ func WithHDPath(hdPath string) MnemonicDeriveOptionHandler {
 	}
 }
 
-func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, options ...MnemonicDeriveOptionHandler) (Wallet, error) {
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, interfaceRegistry codectypes.InterfaceRegistry, options ...MnemonicDeriveOptionHandler) (Wallet, error) {
 	deriveFn := hd.Secp256k1.Derive()
 	option := &MnemonicDeriveOption{
 		BIP39Passphrase: "",
-		HDPath:          hd.CreateHDPath(cosmostype.CoinType, 0, 0).String(),
+		HDPath:          hd.CreateHDPath(sdk.CoinType, 0, 0).String(),
 	}
 
 	for _, o := range options {
@@ -81,36 +83,44 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 	}
 
 	return &wallet{
-		privateKey:  &secp256k1.PrivKey{Key: privBytes},
-		ChainPrefix: chainPrefix,
-		ChainID:     chainID,
-		DialURL:     dialUrl,
+		privateKey:        &secp256k1.PrivKey{Key: privBytes},
+		ChainPrefix:       chainPrefix,
+		ChainID:           chainID,
+		DialURL:           dialUrl,
+		InterfaceRegistry: interfaceRegistry,
 	}, nil
 }
 
-func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string) (Wallet, error) {
+func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string, interfaceRegistry codectypes.InterfaceRegistry) (Wallet, error) {
 	privBytes, err := hex.DecodeString(privateKey)
 	if err != nil {
 		return nil, err
 	}
 
 	return &wallet{
-		privateKey:  &secp256k1.PrivKey{Key: privBytes},
-		ChainPrefix: chainPrefix,
-		ChainID:     chainID,
-		DialURL:     dialUrl,
+		privateKey:        &secp256k1.PrivKey{Key: privBytes},
+		ChainPrefix:       chainPrefix,
+		ChainID:           chainID,
+		DialURL:           dialUrl,
+		InterfaceRegistry: interfaceRegistry,
 	}, nil
 }
 
 func (w wallet) createTxConfig() client.TxConfig {
-	interfaceRegistry := types.NewInterfaceRegistry()
-	codec := codec.NewProtoCodec(interfaceRegistry)
-
-	return cosmostx.NewTxConfig(codec, cosmostx.DefaultSignModes)
+	cdc := codec.NewProtoCodec(w.InterfaceRegistry)
+	return authtx.NewTxConfig(cdc, []txsigning.SignMode{txsigning.SignMode_SIGN_MODE_DIRECT})
 }
 
 func (w wallet) GetAddress() (string, error) {
 	return libs.ConvertPubKeyToBech32Address(w.privateKey.PubKey(), w.ChainPrefix)
+}
+
+func (w wallet) Dial() *grpc.ClientConn {
+	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	return conn
 }
 
 func (w wallet) GetAccountInfo() (*AccountInfo, error) {
@@ -119,18 +129,16 @@ func (w wallet) GetAccountInfo() (*AccountInfo, error) {
 		return nil, err
 	}
 
-	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure())
+	conn := w.Dial()
+	defer conn.Close()
+
+	cli := accounttypes.NewQueryClient(conn)
+	res, err := cli.Account(context.Background(), &accounttypes.QueryAccountRequest{Address: fromAddress})
 	if err != nil {
 		return nil, err
 	}
 
-	cli := accounttype.NewQueryClient(conn)
-	res, err := cli.Account(context.Background(), &accounttype.QueryAccountRequest{Address: fromAddress})
-	if err != nil {
-		return nil, err
-	}
-
-	var baseAccount accounttype.BaseAccount
+	var baseAccount accounttypes.BaseAccount
 	if err := baseAccount.Unmarshal(res.Account.Value); err != nil {
 		return nil, err
 	}
@@ -141,7 +149,7 @@ func (w wallet) GetAccountInfo() (*AccountInfo, error) {
 	}, nil
 }
 
-func (w wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) ([]byte, error) {
+func (w wallet) CreateSignedRawTx(msg sdk.Msg, accountInfo AccountInfo) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
@@ -192,27 +200,22 @@ func (w wallet) CreateSignedRawTx(msg cosmostype.Msg, accountInfo AccountInfo) (
 }
 
 func (w wallet) BroadcastRawTx(rawTxByte []byte) error {
-	rawTxBody := RawTx{
-		Mode:    "BROADCAST_MODE_SYNC",
-		TxBytes: rawTxByte,
-	}
-	resp, err := libs.JsonPost(w.DialURL+"/cosmos/tx/v1beta1/txs", rawTxBody)
-
-	if err != nil || resp.StatusCode != 200 {
-		return err // TODO:
-	}
-	defer resp.Body.Close()
-
-	_, err = io.ReadAll(resp.Body)
+	conn := w.Dial()
+	defer conn.Close()
+	txClient := txtypes.NewServiceClient(conn)
+	resp, err := txClient.BroadcastTx(
+		context.Background(),
+		&txtypes.BroadcastTxRequest{Mode: txtypes.BroadcastMode_BROADCAST_MODE_SYNC, TxBytes: rawTxByte},
+	)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Return Response
+	fmt.Println(resp.String())
 	return nil
 }
 
-func (w wallet) BroadcastMsg(msg cosmostype.Msg) error {
+func (w wallet) BroadcastMsg(msg sdk.Msg) error {
 	accountInfo, err := w.GetAccountInfo()
 	if err != nil {
 		return err
