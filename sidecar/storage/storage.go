@@ -16,8 +16,7 @@ type Storage interface {
 type keyStorage struct {
 	ValidatorAddress string
 	Keys             map[string]string
-
-	keyStoragePath string
+	fileMgr          LocalFileMgr
 }
 
 var (
@@ -26,7 +25,8 @@ var (
 )
 
 func newConfig(cfg *config.SidecarConfig) Storage {
-	savedKey, err := importKeysFromPath("")
+	mgr := NewLocalFileMgr("")
+	savedKey, err := mgr.ImportKeyMap()
 	if err != nil {
 		panic(err) // if this method is not executed, must not be runnable for sidecar logics
 	}
@@ -35,7 +35,7 @@ func newConfig(cfg *config.SidecarConfig) Storage {
 	return keyStorage{
 		ValidatorAddress: "",
 		Keys:             savedKey,
-		keyStoragePath:   "",
+		fileMgr:          mgr,
 	}
 }
 
@@ -52,7 +52,7 @@ func GetStorage(cfg *config.SidecarConfig) Storage {
 func (s keyStorage) SaveKey(keyId, value string) error {
 	s.Keys[keyId] = value
 
-	err := exportKeyToPath(s.keyStoragePath, keyId, value)
+	err := s.fileMgr.ExportKey(keyId, value)
 	if err != nil {
 		return err
 	}
