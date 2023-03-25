@@ -8,10 +8,20 @@ import (
 
 // TODO: path~~ to libraries, convert path controller into interfaces (kvManager)
 
-type LocalStorageMgr interface {
+type LocalFileMgr interface {
 	ImportKeyMap() (map[string]string, error)
 	ExportKeyMap(keys map[string]string) error
 	ExportKey(key, value string) error
+}
+
+type localFileMgr struct {
+	basePath string
+}
+
+func NewLocalFileMgr(basePath string) LocalFileMgr {
+	return localFileMgr{
+		basePath: basePath,
+	}
 }
 
 // pathExists check given absolute path exists.
@@ -57,21 +67,21 @@ func writeFile(path, value string) error {
 	return os.WriteFile(path, []byte(value), 0644)
 }
 
-func exportKeyToPath(path, key, value string) error {
-	targetPath := filepath.Join(path, key)
+func (m localFileMgr) ExportKey(key, value string) error {
+	targetPath := filepath.Join(m.basePath, key)
 	return writeFile(targetPath, value)
 }
 
-// importKeyFromPath import keys from storage
-func importKeysFromPath(path string) (map[string]string, error) {
-	files, err := os.ReadDir(path)
+// ImportKeyMap import keys from storage
+func (m localFileMgr) ImportKeyMap() (map[string]string, error) {
+	files, err := os.ReadDir(m.basePath)
 	if err != nil {
 		return nil, err
 	}
 
 	kvStore := make(map[string]string)
 	for _, file := range files {
-		value, err := readFile(filepath.Join(path, file.Name()))
+		value, err := readFile(filepath.Join(m.basePath, file.Name()))
 		if err != nil {
 			continue
 		}
@@ -81,14 +91,14 @@ func importKeysFromPath(path string) (map[string]string, error) {
 	return kvStore, nil
 }
 
-// exportKeyToPath export given map to target folder for each files
-func exportKeysToPath(keys map[string]string, path string) error {
-	if dir, err := dirExists(path); err != nil || !dir {
+// ExportKeyMap export given map to target folder for each files
+func (m localFileMgr) ExportKeyMap(keys map[string]string) error {
+	if dir, err := dirExists(m.basePath); err != nil || !dir {
 		return fmt.Errorf("target folder is not exists")
 	}
 
 	for key, value := range keys {
-		targetPath := filepath.Join(path, key)
+		targetPath := filepath.Join(m.basePath, key)
 
 		if exist, err := pathExists(targetPath); err == nil || exist {
 			continue
