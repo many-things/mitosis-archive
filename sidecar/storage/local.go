@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 )
 
+// TODO: path~~ to libraries, convert path controller into interfaces (kvManager)
+
 // pathExists check given absolute path exists.
 func pathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
@@ -49,8 +51,13 @@ func writeFile(path, value string) error {
 	return os.WriteFile(path, []byte(value), 0644)
 }
 
+func exportKeyToPath(path, key, value string) error {
+	targetPath := filepath.Join(path, key)
+	return writeFile(targetPath, value)
+}
+
 // importKeyFromPath import keys from storage
-func importKeyFromPath(path string) (map[string]string, error) {
+func importKeysFromPath(path string) (map[string]string, error) {
 	files, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
@@ -69,7 +76,7 @@ func importKeyFromPath(path string) (map[string]string, error) {
 }
 
 // exportKeyToPath export given map to target folder for each files
-func exportKeyToPath(keys map[string]string, path string) error {
+func exportKeysToPath(keys map[string]string, path string) error {
 	if dir, err := dirExists(path); err != nil || !dir {
 		return fmt.Errorf("target folder is not exists")
 	}
