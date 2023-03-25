@@ -8,6 +8,12 @@ import (
 
 // TODO: path~~ to libraries, convert path controller into interfaces (kvManager)
 
+type LocalStorageMgr interface {
+	ImportKeyMap() (map[string]string, error)
+	ExportKeyMap(keys map[string]string) error
+	ExportKey(key, value string) error
+}
+
 // pathExists check given absolute path exists.
 func pathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
