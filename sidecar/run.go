@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
+	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	goerr "github.com/go-errors/errors"
 	"github.com/gogo/protobuf/proto"
 	"github.com/many-things/mitosis/sidecar/config"
 	"github.com/many-things/mitosis/sidecar/mito"
@@ -14,8 +14,13 @@ import (
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/types"
 	"github.com/many-things/mitosis/sidecar/utils"
+	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
+	golog "log"
+	"os"
+
 	"time"
 )
 
@@ -39,55 +44,40 @@ func createTofNManager(cliCtx client.Context, config config.SidecarConfig, logge
 	return tofnd.NewManager(types.NewMultisigClient(conn), cliCtx, valAddr, logger, config.TofNConfig.DialTimeout)
 }
 
+func dummyHandler(event proto.Message) error {
+	return nil
+}
+
 func run() {
+	cfg := config.DefaultSidecarConfig()
+	ctx, cancel := context.WithCancel(context.Background())
+	eGroup, ctx := errgroup.WithContext(ctx)
+	logger := log.NewTMLogger(os.Stdout)
 
-}
-
-func Consume[T any](sub <-chan T, handle func(event T)) mito.Job {
-	return func(ctx context.Context) error {
-		errs := make(chan error, 1)
-		for {
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			case err := <-errs:
-				return err
-			case event, ok := <-sub:
-				if !ok {
-					return nil
-				}
-				go func() {
-					defer recovery(errs)
-					handle(event)
-				}()
-			}
-		}
+	mitoDialUrl := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+	// TODO: implement block getter
+	fetcher, err := sdkClient.NewClientFromNode(mitoDialUrl)
+	if err != nil {
+		golog.Fatal(err)
 	}
-}
 
-func recovery(errChan chan<- error) {
-	if r := recover(); r != nil {
-		err := fmt.Errorf("panicked: %s\n%s", r, goerr.Wrap(r, 1).Stack())
-		errChan <- err
+	listener := tendermint.NewBlockListener(ctx, fetcher, time.Second*5)
+	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
+	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
+
+	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.PubKey]())
+	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Sign]())
+
+	jobs := []mito.Job{
+		mito.CreateTypedJob(keygenEventRecv, dummyHandler, cancel, logger),
+		mito.CreateTypedJob(signEventRecv, dummyHandler, cancel, logger),
 	}
-}
 
-func createTypedJob[T proto.Message](sub <-chan tendermint.TmEvent, handler func(event T) error, cancel context.CancelFunc, logger log.Logger) mito.Job {
-	return func(ctx context.Context) error {
-		handleWithLog := func(e tendermint.TmEvent) {
-			event := utils.Must(sdk.ParseTypedEvent(e.Event)).(T)
-			err := handler(event)
-			if err != nil {
-				logger.Error(err.Error()) // KeyVal?
-			}
-		}
-		consume := Consume(sub, handleWithLog)
-		err := consume(ctx)
-		if err != nil {
-			cancel()
-			return err
-		}
+	utils.ForEach(jobs, func(j mito.Job) {
+		eGroup.Go(func() error { return j(ctx) })
+	})
 
-		return nil
+	if err := eGroup.Wait(); err != nil {
+		logger.Error(err.Error())
 	}
 }
