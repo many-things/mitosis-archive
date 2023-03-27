@@ -2,6 +2,8 @@ package tendermint
 
 import (
 	"context"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/gogo/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmHttp "github.com/tendermint/tendermint/rpc/client/http"
@@ -126,4 +128,15 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 
 func (tb *TmEventBus) Subscribe(filter func(TmEvent) bool) <-chan TmEvent {
 	return tb.pubSub.Subscribe(filter)
+}
+
+func Filter[T proto.Message]() func(e TmEvent) bool {
+	return func(e TmEvent) bool {
+		typedEvent, err := sdk.ParseTypedEvent(e.Event)
+		if err != nil {
+			return false
+		}
+
+		return proto.MessageName(typedEvent) == proto.MessageName(*new(T))
+	}
 }
