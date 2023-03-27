@@ -19,7 +19,7 @@ type EventMgr interface {
 }
 
 type eventMgr struct {
-	cfg      config.TendermintConfig
+	cfg      config.TmConfig
 	wallet   tendermint.Wallet
 	eventBus *tendermint.TmEventBus
 	jobs     []Job
@@ -27,7 +27,7 @@ type eventMgr struct {
 	eventCtx context.Context
 }
 
-func NewEventMgr(ctx context.Context, cfg config.TendermintConfig, logger log.Logger) (EventMgr, error) {
+func NewEventMgr(ctx context.Context, cfg config.TmConfig, logger log.Logger) (EventMgr, error) {
 	dialUrl := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 
 	// TODO: interfaceRegistry

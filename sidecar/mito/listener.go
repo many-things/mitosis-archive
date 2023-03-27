@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	goerr "github.com/go-errors/errors"
 	"github.com/gogo/protobuf/proto"
+	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/tendermint"
-	"github.com/many-things/mitosis/sidecar/utils"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
@@ -61,6 +61,7 @@ func recovery(errChan chan<- error) {
 	}
 }
 
+// CreateTypedJob is make handler for applied events. One subscription channel must be matched one job.
 func CreateTypedJob[T proto.Message](sub <-chan tendermint.TmEvent, handler func(event T) error, cancel context.CancelFunc, logger log.Logger) Job {
 	return func(ctx context.Context) error {
 		handleWithLog := func(e tendermint.TmEvent) {

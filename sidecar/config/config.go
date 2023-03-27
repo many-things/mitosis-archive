@@ -9,7 +9,7 @@ type TofNConfig struct {
 	DialTimeout time.Duration `mapstrcture:"tofnd-dial-timeout"`
 }
 
-type TendermintConfig struct {
+type TmConfig struct {
 	Host    string `mapstructure:"host"`
 	Port    int    `mapstructure:"port"`
 	Denom   string `mapstructure:"denom"`
@@ -20,8 +20,8 @@ type TendermintConfig struct {
 
 // SidecarConfig contains configuration for all Sidecar Program
 type SidecarConfig struct {
-	TofNConfig TofNConfig       `mapstructure:"tofn"`
-	MitoConfig TendermintConfig `mapstructure:"mito"`
+	TofNConfig TofNConfig `mapstructure:"tofn"`
+	MitoConfig TmConfig   `mapstructure:"mito"`
 }
 
 func DefaultTofNConfig() TofNConfig {
@@ -32,8 +32,8 @@ func DefaultTofNConfig() TofNConfig {
 	}
 }
 
-func DefaultMitoConfig() TendermintConfig {
-	return TendermintConfig{
+func DefaultMitoConfig() TmConfig {
+	return TmConfig{
 		Host:    "localhost",
 		Port:    9090,
 		Denom:   "mito",
