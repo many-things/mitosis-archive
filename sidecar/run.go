@@ -34,3 +34,7 @@ func createTofNManager(cliCtx client.Context, config config.SidecarConfig, logge
 
 	return tofnd.NewManager(types.NewMultisigClient(conn), cliCtx, valAddr, logger, config.TofNConfig.DialTimeout)
 }
+
+func run() {
+
+}

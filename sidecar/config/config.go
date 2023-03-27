@@ -10,10 +10,12 @@ type TofNConfig struct {
 }
 
 type TendermintConfig struct {
-	Host   string `mapstructure:"host"`
-	Port   int    `mapstructure:"port"`
-	Denom  string `mapstructure:"denom"`
-	Prefix string `mapstructure:"prefix"`
+	Host    string `mapstructure:"host"`
+	Port    int    `mapstructure:"port"`
+	Denom   string `mapstructure:"denom"`
+	Prefix  string `mapstructure:"prefix"`
+	ChainId string `mapstructure:"chain-id"`
+	PrivKey string `mapstructure:"privkey"`
 }
 
 // SidecarConfig contains configuration for all Sidecar Program
@@ -32,10 +34,12 @@ func DefaultTofNConfig() TofNConfig {
 
 func DefaultMitoConfig() TendermintConfig {
 	return TendermintConfig{
-		Host:   "localhost",
-		Port:   9090,
-		Denom:  "mito",
-		Prefix: "mito",
+		Host:    "localhost",
+		Port:    9090,
+		Denom:   "mito",
+		Prefix:  "mito",
+		ChainId: "",
+		PrivKey: "",
 	}
 }
 
