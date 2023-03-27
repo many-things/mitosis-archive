@@ -7,21 +7,27 @@ import (
 	"github.com/many-things/mitosis/sidecar/config"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/tendermint/tendermint/libs/log"
+	"golang.org/x/sync/errgroup"
 	"time"
 )
 
-type MitoEventMgr interface {
-	MitoEventTxMgr
-	MitoEventListenMgr
+type Job func(ctx context.Context) error
+
+type EventMgr interface {
+	EventTxMgr
+	EventListenMgr
 }
 
-type mitoEventMgr struct {
+type eventMgr struct {
 	cfg      config.TendermintConfig
 	wallet   tendermint.Wallet
 	eventBus *tendermint.TmEventBus
+	jobs     []Job
+	errGroup *errgroup.Group
+	eventCtx context.Context
 }
 
-func NewMitoEventMgr(ctx context.Context, cfg config.TendermintConfig, logger log.Logger) (MitoEventMgr, error) {
+func NewEventMgr(ctx context.Context, cfg config.TendermintConfig, logger log.Logger) (EventMgr, error) {
 	dialUrl := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 
 	// TODO: interfaceRegistry
@@ -37,9 +43,14 @@ func NewMitoEventMgr(ctx context.Context, cfg config.TendermintConfig, logger lo
 	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
-	return &mitoEventMgr{
+	errGroup, eventCtx := errgroup.WithContext(ctx)
+
+	return &eventMgr{
 		cfg:      cfg,
 		wallet:   wallet,
 		eventBus: eventBus,
+		jobs:     []Job{},
+		errGroup: errGroup,
+		eventCtx: eventCtx,
 	}, nil
 }

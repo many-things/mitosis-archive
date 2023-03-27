@@ -6,10 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	goerr "github.com/go-errors/errors"
+	"github.com/gogo/protobuf/proto"
 	"github.com/many-things/mitosis/sidecar/config"
+	"github.com/many-things/mitosis/sidecar/mito"
+	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/types"
-
+	"github.com/many-things/mitosis/sidecar/utils"
 	"github.com/tendermint/tendermint/libs/log"
 	"google.golang.org/grpc"
 	"time"
@@ -37,4 +41,53 @@ func createTofNManager(cliCtx client.Context, config config.SidecarConfig, logge
 
 func run() {
 
+}
+
+func Consume[T any](sub <-chan T, handle func(event T)) mito.Job {
+	return func(ctx context.Context) error {
+		errs := make(chan error, 1)
+		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case err := <-errs:
+				return err
+			case event, ok := <-sub:
+				if !ok {
+					return nil
+				}
+				go func() {
+					defer recovery(errs)
+					handle(event)
+				}()
+			}
+		}
+	}
+}
+
+func recovery(errChan chan<- error) {
+	if r := recover(); r != nil {
+		err := fmt.Errorf("panicked: %s\n%s", r, goerr.Wrap(r, 1).Stack())
+		errChan <- err
+	}
+}
+
+func createTypedJob[T proto.Message](sub <-chan tendermint.TmEvent, handler func(event T) error, cancel context.CancelFunc, logger log.Logger) mito.Job {
+	return func(ctx context.Context) error {
+		handleWithLog := func(e tendermint.TmEvent) {
+			event := utils.Must(sdk.ParseTypedEvent(e.Event)).(T)
+			err := handler(event)
+			if err != nil {
+				logger.Error(err.Error()) // KeyVal?
+			}
+		}
+		consume := Consume(sub, handleWithLog)
+		err := consume(ctx)
+		if err != nil {
+			cancel()
+			return err
+		}
+
+		return nil
+	}
 }
