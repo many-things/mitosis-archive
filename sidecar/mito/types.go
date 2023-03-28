@@ -28,16 +28,19 @@ type eventMgr struct {
 }
 
 func NewEventMgr(ctx context.Context, cfg config.TmConfig, logger log.Logger) (EventMgr, error) {
-	dialUrl := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	dialURL := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 
 	// TODO: interfaceRegistry
-	wallet, err := tendermint.NewWallet(cfg.PrivKey, cfg.Prefix, cfg.ChainId, dialUrl, nil)
+	wallet, err := tendermint.NewWallet(cfg.PrivKey, cfg.Prefix, cfg.ChainID, dialURL, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: implement block getter
-	fetcher, err := sdkClient.NewClientFromNode(dialUrl)
+	fetcher, err := sdkClient.NewClientFromNode(dialURL)
+	if err != nil {
+		return nil, err
+	}
 
 	listener := tendermint.NewBlockListener(ctx, fetcher, time.Second*5)
 	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()

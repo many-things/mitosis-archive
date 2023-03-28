@@ -1,6 +1,8 @@
 package state
 
 import (
+	"sort"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,7 +14,6 @@ import (
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
 	"github.com/pkg/errors"
-	"sort"
 )
 
 type SnapshotRepo interface {

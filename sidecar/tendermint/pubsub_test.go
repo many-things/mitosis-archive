@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func MockPubSub() pubSub[int] {
+func mockPubSub() pubSub[int] {
 	ctx, ctxCancel := context.WithCancel(context.Background())
 	bufferCapacity := 1000
 
@@ -25,7 +25,7 @@ func MockPubSub() pubSub[int] {
 }
 
 func Test_Publish(t *testing.T) {
-	pubsub := MockPubSub()
+	pubsub := mockPubSub()
 
 	// Insert 10 Different Data
 	bufferData := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
@@ -48,7 +48,7 @@ func Test_Publish(t *testing.T) {
 
 func Test_Subscribe(t *testing.T) {
 	// Add Successfully on Subscription
-	pubsub := MockPubSub()
+	pubsub := mockPubSub()
 
 	oddFilter := pubsub.Subscribe(func(item int) bool {
 		return item%2 == 1

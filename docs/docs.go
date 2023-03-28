@@ -29,12 +29,14 @@ func handler(title string) http.HandlerFunc {
 	t, _ := httptemplate.ParseFS(template, indexFile)
 
 	return func(w http.ResponseWriter, req *http.Request) {
-		t.Execute(w, struct {
+		if err := t.Execute(w, struct {
 			Title string
 			URL   string
 		}{
 			title,
 			apiFile,
-		})
+		}); err != nil {
+			panic(err)
+		}
 	}
 }

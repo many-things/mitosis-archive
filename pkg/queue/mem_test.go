@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func setupMemQueue[T Message](t *testing.T, constructor func() T) Queue[T] {
+func setupMemQueue[T Message](_ *testing.T, constructor func() T) Queue[T] {
 	return NewMemoryQueue[T](constructor)
 }
 

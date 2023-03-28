@@ -1,9 +1,10 @@
 package sim
 
 import (
+	"math/rand"
+
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/server"
-	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

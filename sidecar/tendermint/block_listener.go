@@ -79,6 +79,7 @@ func (b *blockListener) GetBlockHeight() (<-chan int64, <-chan error) {
 			}
 
 			select {
+			// TODO: change into default
 			case blockHeightChan <- blockHeight:
 				break
 			case <-b.ctx.Done():
@@ -125,7 +126,6 @@ func (b *blockListener) NewBlockWatcher() (<-chan int64, <-chan error) {
 				select {
 				case newBlockHeightChan <- processedBlockHeight + 1:
 					processedBlockHeight++
-					break
 				case <-b.ctx.Done():
 					return
 				}

@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // TODO: Gather utils stuffs kinda this
@@ -23,21 +22,20 @@ func (m Manager) ProcessKeygenStarted(participants []sdk.ValAddress, eventKeyID 
 		return nil
 	}
 
-	keyUID := fmt.Sprintf("#{keyID}_#{0}")
 	partyUID := m.participant.String()
 
-	pubKey, err := m.generateKey(keyUID)
+	pubKey, err := m.generateKey(eventKeyID)
 	if err != nil {
 		return err
 	}
 
 	payloadHash := sha256.Sum256(m.ctx.FromAddress)
-	_, err = m.sign(keyUID, payloadHash[:], partyUID, pubKey)
+	_, err = m.sign(eventKeyID, payloadHash[:], partyUID, pubKey)
 	if err != nil {
 		return err
 	}
 
-	m.logger.Info(fmt.Sprintf("operatorr #{partyUID} sending public key for multisig key #{keyUID}"))
+	m.logger.Info(fmt.Sprintf("operator %s sending public key for multisig key %s", partyUID, eventKeyID))
 
 	// TODO: make "created Pubkey" Event for Mitosis
 	// TODO: Broadcast it

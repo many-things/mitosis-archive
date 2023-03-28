@@ -14,7 +14,7 @@ type TmConfig struct {
 	Port    int    `mapstructure:"port"`
 	Denom   string `mapstructure:"denom"`
 	Prefix  string `mapstructure:"prefix"`
-	ChainId string `mapstructure:"chain-id"`
+	ChainID string `mapstructure:"chain-id"`
 	PrivKey string `mapstructure:"privkey"`
 }
 
@@ -38,7 +38,7 @@ func DefaultMitoConfig() TmConfig {
 		Port:    9090,
 		Denom:   "mito",
 		Prefix:  "mito",
-		ChainId: "",
+		ChainID: "",
 		PrivKey: "",
 	}
 }

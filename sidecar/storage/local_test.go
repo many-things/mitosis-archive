@@ -4,11 +4,11 @@ type mockLocalFileMgr struct {
 	mockedKeyMap map[string]string
 }
 
-func (m mockLocalFileMgr) ExportKey(key, value string) error {
+func (m mockLocalFileMgr) ExportKey(_, _ string) error {
 	return nil
 }
 
-func (m mockLocalFileMgr) ExportKeyMap(keys map[string]string) error {
+func (m mockLocalFileMgr) ExportKeyMap(_ map[string]string) error {
 	return nil
 }
 

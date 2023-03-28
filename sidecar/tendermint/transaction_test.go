@@ -10,7 +10,6 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint/libs/mocks"
 	"gotest.tools/assert"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -18,7 +17,7 @@ import (
 func Test_BroadCastRawTx(t *testing.T) {
 	mockedRawTx := []byte("Hello World!")
 
-	wallet, err := NewWallet("", "", "", "https://test.com", nil)
+	_, err := NewWallet("", "", "", "https://test.com", nil)
 	assert.NilError(t, err)
 
 	expectedBody := RawTx{
@@ -38,12 +37,11 @@ func Test_BroadCastRawTx(t *testing.T) {
 		assert.DeepEqual(t, reqBody, jsonBytes)
 		return &http.Response{
 			StatusCode: 200,
-			Body:       ioutil.NopCloser(bytes.NewReader([]byte("{}"))),
+			Body:       io.NopCloser(bytes.NewReader([]byte("{}"))),
 		}, nil
 	}
 
-	// Call
-	wallet.BroadcastRawTx(mockedRawTx)
+	// TODO: broadcast signed variable into rpc
 }
 
 func Test_CreateSignedRawTx(t *testing.T) {

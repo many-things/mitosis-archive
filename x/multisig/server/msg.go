@@ -2,12 +2,13 @@ package server
 
 import (
 	"context"
+	"reflect"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/types"
-	"reflect"
 )
 
 type msgServer struct {

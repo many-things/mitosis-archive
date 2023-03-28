@@ -2,10 +2,11 @@ package libs
 
 import (
 	"encoding/hex"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"gotest.tools/assert"
-	"testing"
 )
 
 func TestConvertPubKeyToBech32Address(t *testing.T) {

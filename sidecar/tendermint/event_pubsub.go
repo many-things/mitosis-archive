@@ -42,7 +42,7 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 		for {
 			select {
 			case blockHeight = <-newBlockHeightChan:
-				block, err := tb.client.BlockResults(context.Background(), &blockHeight)
+				block, err := tb.client.BlockResults(ctx, &blockHeight)
 				if err != nil {
 					errChan <- err
 					return
@@ -99,7 +99,6 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 	blockResultChan, blockErr := tb.ListenBlock(ctx)
 
 	go func() {
-
 		for {
 			select {
 			case block, ok := <-blockResultChan:

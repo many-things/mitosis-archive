@@ -21,7 +21,7 @@ func Test_SaveKey(t *testing.T) {
 	err := mgr.SaveKey("test_key", "test_value")
 	assert.NilError(t, err)
 
-	val, _ := keys["test_key"]
+	val := keys["test_key"]
 	assert.Equal(t, val, "test_value")
 }
 
