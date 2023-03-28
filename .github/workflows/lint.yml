@@ -28,7 +28,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.43.0
-          skip-go-installation: true
+          skip-cache: true
           args: --config .golangci.yaml
 
       - name: Saving Golang cache
