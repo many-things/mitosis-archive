@@ -1,6 +1,8 @@
 package state
 
 import (
+	sdkerrors "cosmossdk.io/errors"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -27,51 +29,51 @@ type kvSignRepo struct {
 	root store.KVStore
 }
 
-func NewKVChainSignRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) SignRepo {
+func NewKVChainSignRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) SignRepo {
 	return &kvSignRepo{
 		cdc:  cdc,
-		root: prefix.NewStore(root, append([]byte(chainId), kvSignRepoKey...)),
+		root: prefix.NewStore(root, append([]byte(chainID), kvSignRepoKey...)),
 	}
 }
 
 var (
-	kvSignRepoLatestId   = []byte{0x01}
+	kvSignRepoLatestID   = []byte{0x01}
 	kvSignRepoItemPrefix = []byte{0x02}
 )
 
 func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz != nil {
-		return nil, errors.Wrap(errors.ErrNotFound, "cannot find sign")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "cannot find sign")
 	}
 
 	sign := new(types.Sign)
 	if err := sign.Unmarshal(bz); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot unmarshal sign: %w", err)
 	}
 
 	return sign, nil
 }
 
 func (r kvSignRepo) Create(sign *types.Sign) (uint64, error) {
-	latestIdPrefix := kvSignRepoLatestId
-	latestId := sdk.BigEndianToUint64(r.root.Get(latestIdPrefix))
+	latestIDPrefix := kvSignRepoLatestID
+	latestID := sdk.BigEndianToUint64(r.root.Get(latestIDPrefix))
 
-	sign.SigID = latestId
+	sign.SigID = latestID
 	signBz, err := sign.Marshal()
 	if err != nil {
-		return 0, errors.Wrap(errors.ErrNotFound, "cannot find sign")
+		return 0, sdkerrors.Wrap(errors.ErrNotFound, "cannot find sign")
 	}
 
-	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(latestId), signBz)
-	r.root.Set(latestIdPrefix, sdk.Uint64ToBigEndian(latestId+1))
-	return latestId, nil
+	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(latestID), signBz)
+	r.root.Set(latestIDPrefix, sdk.Uint64ToBigEndian(latestID+1))
+	return latestID, nil
 }
 
 func (r kvSignRepo) Save(sign *types.Sign) error {
 	signBz, err := sign.Marshal()
 	if err != nil {
-		return err
+		return fmt.Errorf("sign: cannot marshal. %w", err)
 	}
 
 	prefix.NewStore(r.root, kvSignRepoItemPrefix).Set(sdk.Uint64ToBigEndian(sign.SigID), signBz)
@@ -84,7 +86,7 @@ func (r kvSignRepo) Delete(id uint64) error {
 
 	var sign types.Sign
 	if err := sign.Unmarshal(bz); err != nil {
-		return err
+		return fmt.Errorf("sign: cannot unmarshal. %w", err)
 	}
 
 	ks.Delete(sdk.Uint64ToBigEndian(id))
@@ -99,7 +101,7 @@ func (r kvSignRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, 
 		sign := new(types.Sign)
 
 		if err := sign.Unmarshal(value); err != nil {
-			return nil
+			return fmt.Errorf("sign: cannot unmarshal signkey %d. err: %w", key, err)
 		}
 
 		results = append(results, mitosistype.NewKV(sdk.BigEndianToUint64(key), sign))
@@ -107,7 +109,7 @@ func (r kvSignRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, 
 	})
 
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("signrepo pagination: %w", err)
 	}
 
 	return results, pageResp, nil

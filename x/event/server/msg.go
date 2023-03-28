@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
@@ -132,7 +133,7 @@ func (m msgServer) ClearProxy(ctx context.Context, req *MsgClearProxy) (*MsgClea
 	// check proxy account registered
 	proxy, found := m.baseKeeper.QueryProxy(wctx, req.GetValidator())
 	if !found {
-		return nil, errors.Wrap(errors.ErrNotFound, "query proxy")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "query proxy")
 	}
 
 	// if yes, then clear proxy
@@ -164,7 +165,7 @@ func (m msgServer) RegisterChain(ctx context.Context, req *MsgRegisterChain) (*M
 	// convert proxy account to validator account to block non-validator execute this message
 	val, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
 	if !found {
-		return nil, errors.Wrap(errors.ErrNotFound, "query proxy reverse")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "query proxy reverse")
 	}
 
 	// registers chain

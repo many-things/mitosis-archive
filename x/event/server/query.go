@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
@@ -32,7 +33,7 @@ func (k queryServer) Poll(ctx context.Context, req *QueryPoll) (*QueryPollRespon
 
 	poll, err := k.baseKeeper.QueryPoll(wctx, req.GetChain(), req.GetId())
 	if poll == nil {
-		return nil, errors.Wrap(errors.ErrNotFound, "query poll")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "query poll")
 	}
 	if err != nil {
 		return nil, err
@@ -60,7 +61,7 @@ func (k queryServer) Proxy(ctx context.Context, req *QueryProxy) (*QueryProxyRes
 
 	proxy, found := k.baseKeeper.QueryProxy(wctx, req.GetValidator())
 	if !found {
-		return nil, errors.Wrap(errors.ErrNotFound, "query proxy")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "query proxy")
 	}
 
 	return &QueryProxyResponse{Validator: req.GetValidator(), ProxyAccount: proxy}, nil
@@ -71,7 +72,7 @@ func (k queryServer) ProxyReverse(ctx context.Context, req *QueryProxyReverse) (
 
 	validator, found := k.baseKeeper.QueryProxyReverse(wctx, req.GetProxyAccount())
 	if !found {
-		return nil, errors.Wrap(errors.ErrNotFound, "query proxy reverse")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "query proxy reverse")
 	}
 
 	return &QueryProxyReverseResponse{Validator: validator}, nil

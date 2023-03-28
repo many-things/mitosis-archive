@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/many-things/mitosis/x/multisig/keeper"
@@ -36,9 +37,9 @@ func (m msgServer) StartKeygen(ctx context.Context, msg *MsgStartKeygen) (*MsgSt
 	}
 
 	if kgObj.Status > types.Keygen_StatusExecute {
-		return nil, errors.Wrap(errors.ErrInvalidRequest, "keygen: cannot start finished keygen")
+		return nil, sdkerrors.Wrap(errors.ErrInvalidRequest, "keygen: cannot start finished keygen")
 	} else if !reflect.DeepEqual(msg.Participants, kgObj.Participants) {
-		return nil, errors.Wrap(errors.ErrInvalidRequest, "keygen: invalid participants")
+		return nil, sdkerrors.Wrap(errors.ErrInvalidRequest, "keygen: invalid participants")
 	}
 
 	// Change Keygen Status only Keygen Status Assigned
@@ -83,13 +84,13 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 		return nil, err
 	}
 
-	chainID, sigId, err := msg.GetSigID().ToInternalVariables()
+	chainID, sigID, err := msg.GetSigID().ToInternalVariables()
 	if err != nil {
 		return nil, err
 	}
 
 	wctx := sdk.UnwrapSDKContext(ctx)
-	if err := m.baseKeeper.RegisterSignature(wctx, chainID, sigId, msg.Participant, msg.Signature); err != nil {
+	if err := m.baseKeeper.RegisterSignature(wctx, chainID, sigID, msg.Participant, msg.Signature); err != nil {
 		return nil, err
 	}
 	return &MsgSubmitSignatureResponse{}, nil

@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/many-things/mitosis/x/event/server"
 
@@ -17,8 +18,8 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-// GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(queryRoute string) *cobra.Command {
+// GetQueryCmd returns the cli query commands for this module. (queryRoute string)
+func GetQueryCmd(_ string) *cobra.Command {
 	// Group event queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,

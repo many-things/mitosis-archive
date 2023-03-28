@@ -17,8 +17,8 @@ import (
 	"github.com/many-things/mitosis/x/context/types"
 )
 
-// GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(queryRoute string) *cobra.Command {
+// GetQueryCmd returns the cli query commands for this module (queryRoute string)
+func GetQueryCmd(_ string) *cobra.Command {
 	// Group context queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,

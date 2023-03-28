@@ -48,7 +48,7 @@ func NewKeeper(
 }
 
 // GetParams get all parameters as types.Params
-func (k keeper) GetParams(ctx sdk.Context) types.Params {
+func (k keeper) GetParams(_ sdk.Context) types.Params {
 	return types.NewParams()
 }
 

@@ -13,10 +13,8 @@ import (
 func TestProxy(t *testing.T) {
 	k, ctx := testkeeper.EventKeeper(t)
 
-	var (
-		val = sdk.ValAddress{}
-		acc = sdk.AccAddress{}
-	)
+	var val sdk.ValAddress
+	var acc sdk.AccAddress
 	{
 		tmp := make([]byte, 32)
 		_, err := crand.Read(tmp)
@@ -44,7 +42,7 @@ func TestProxy(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t,
 		[]mitotypes.KV[sdk.ValAddress, sdk.AccAddress]{
-			mitotypes.NewKV(sdk.ValAddress(val), sdk.AccAddress(acc)),
+			mitotypes.NewKV(val, acc),
 		},
 		proxySet,
 	)

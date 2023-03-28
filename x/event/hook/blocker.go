@@ -11,7 +11,6 @@ import (
 )
 
 func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.Keeper, stakingKeeper types.StakingKeeper) {
-
 	var (
 		total  = stakingKeeper.GetLastTotalPower(ctx)
 		powers []mitotypes.KV[sdk.ValAddress, int64]
@@ -37,7 +36,8 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 		return
 	}
 
-	epoch, err = baseKeeper.CreateSnapshot(ctx, total, powers)
+	// TODO: handle error
+	epoch, _ = baseKeeper.CreateSnapshot(ctx, total, powers)
 	_ = epoch
 
 	// TODO: emit event

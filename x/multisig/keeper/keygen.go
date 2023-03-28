@@ -8,24 +8,23 @@ import (
 	"github.com/many-things/mitosis/x/multisig/types"
 )
 
-// RegisterKeygenEvent is register keygen into chainId's KV store
-func (k keeper) RegisterKeygenEvent(ctx sdk.Context, chainId string, keygen *types.Keygen) (uint64, error) {
-	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+// RegisterKeygenEvent is register keygen into chainID's KV store
+func (k keeper) RegisterKeygenEvent(ctx sdk.Context, chainID string, keygen *types.Keygen) (uint64, error) {
+	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	keygenId, err := keygenRepo.Create(keygen)
+	keygenID, err := keygenRepo.Create(keygen)
 	if err != nil {
 		return 0, err
 	}
 
-	return keygenId, nil
+	return keygenID, nil
 }
 
 // RemoveKeygenEvent is remove keygen
-func (k keeper) RemoveKeygenEvent(ctx sdk.Context, chainId string, id uint64) error {
-	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) RemoveKeygenEvent(ctx sdk.Context, chainID string, id uint64) error {
+	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	err := keygenRepo.Delete(id)
-	if err != nil {
+	if err := keygenRepo.Delete(id); err != nil {
 		return err
 	}
 
@@ -33,8 +32,8 @@ func (k keeper) RemoveKeygenEvent(ctx sdk.Context, chainId string, id uint64) er
 }
 
 // UpdateKeygenStatus is change keygen status
-func (k keeper) UpdateKeygenStatus(ctx sdk.Context, chainId string, id uint64, newStatus types.Keygen_Status) (*types.Keygen, error) {
-	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) UpdateKeygenStatus(ctx sdk.Context, chainID string, id uint64, newStatus types.Keygen_Status) (*types.Keygen, error) {
+	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	keygen, err := keygenRepo.Load(id)
 	if err != nil {
@@ -52,8 +51,8 @@ func (k keeper) UpdateKeygenStatus(ctx sdk.Context, chainId string, id uint64, n
 }
 
 // QueryKeygen is fetch one keygen event from chain
-func (k keeper) QueryKeygen(ctx sdk.Context, chainId string, id uint64) (*types.Keygen, error) {
-	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) QueryKeygen(ctx sdk.Context, chainID string, id uint64) (*types.Keygen, error) {
+	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	keygen, err := keygenRepo.Load(id)
 	if err != nil {
@@ -64,8 +63,8 @@ func (k keeper) QueryKeygen(ctx sdk.Context, chainId string, id uint64) (*types.
 }
 
 // QueryKeygenList is fetch multiple keygens from chain
-func (k keeper) QueryKeygenList(ctx sdk.Context, chainId string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error) {
-	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) QueryKeygenList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error) {
+	keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	results, pageResp, err := keygenRepo.Paginate(page)
 	if err != nil {

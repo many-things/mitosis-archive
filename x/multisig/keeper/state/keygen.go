@@ -26,15 +26,15 @@ type kvKeygenRepo struct {
 	root store.KVStore
 }
 
-func NewKVChainKeygenRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) KeygenRepo {
+func NewKVChainKeygenRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) KeygenRepo {
 	return &kvKeygenRepo{
 		cdc:  cdc,
-		root: prefix.NewStore(root, append([]byte(chainId), kvKeygenRepoKey...)),
+		root: prefix.NewStore(root, append([]byte(chainID), kvKeygenRepoKey...)),
 	}
 }
 
 var (
-	kvKeygenRepoLatestId    = []byte{0x01}
+	kvKeygenRepolatestID    = []byte{0x01}
 	kvKeygenRepoItemsPrefix = []byte{0x02}
 )
 
@@ -54,19 +54,19 @@ func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 
 // Create is create new keygen with new id
 func (r kvKeygenRepo) Create(keygen *types.Keygen) (uint64, error) {
-	latestId := sdk.BigEndianToUint64(r.root.Get(kvKeygenRepoLatestId))
-	latestIdBz := sdk.Uint64ToBigEndian(latestId)
+	latestID := sdk.BigEndianToUint64(r.root.Get(kvKeygenRepolatestID))
+	latestIDBz := sdk.Uint64ToBigEndian(latestID)
 
-	keygen.KeyID = latestId
+	keygen.KeyID = latestID
 	keygenBz, err := keygen.Marshal()
 	if err != nil {
 		return 0, err
 	}
 
-	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(latestIdBz, keygenBz)
-	r.root.Set(kvKeygenRepoLatestId, sdk.Uint64ToBigEndian(latestId+1))
+	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(latestIDBz, keygenBz)
+	r.root.Set(kvKeygenRepolatestID, sdk.Uint64ToBigEndian(latestID+1))
 
-	return latestId, nil
+	return latestID, nil
 }
 
 func (r kvKeygenRepo) Save(keygen *types.Keygen) error {

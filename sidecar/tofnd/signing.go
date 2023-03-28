@@ -13,14 +13,14 @@ func (m *Manager) ProcessSingingStarted(eventKeyID string, eventSigID uint64, pa
 		return nil // TODO: Return Notfound Message
 	}
 
-	keyUID := fmt.Sprintf("#{eventKeyID}_#{0}")
+	keyUID := fmt.Sprintf("%s_%d", eventKeyID, eventSigID)
 
 	_, err := m.sign(keyUID, payload, partyUID, pubKey)
 	if err != nil {
 		return err
 	}
 
-	m.logger.Info(fmt.Sprintf("operator #{partyUID} sending signature for signing #{eventSigID}"))
+	m.logger.Info(fmt.Sprintf("operator %s sending signature for signing %d", partyUID, eventSigID))
 
 	// TODO: Broadcast
 	return nil

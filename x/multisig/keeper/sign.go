@@ -9,23 +9,22 @@ import (
 )
 
 // RegisterSignEvent is register new SignEvent
-func (k keeper) RegisterSignEvent(ctx sdk.Context, chainId string, sign *types.Sign) (uint64, error) {
-	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) RegisterSignEvent(ctx sdk.Context, chainID string, sign *types.Sign) (uint64, error) {
+	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	sigId, err := signRepo.Create(sign)
+	sigID, err := signRepo.Create(sign)
 	if err != nil {
 		return 0, err
 	}
 
-	return sigId, nil
+	return sigID, nil
 }
 
 // RemoveSignEvent is remove specific Sign Event
-func (k keeper) RemoveSignEvent(ctx sdk.Context, chainId string, id uint64) error {
-	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) RemoveSignEvent(ctx sdk.Context, chainID string, id uint64) error {
+	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	err := signRepo.Delete(id)
-	if err != nil {
+	if err := signRepo.Delete(id); err != nil {
 		return err
 	}
 
@@ -33,8 +32,8 @@ func (k keeper) RemoveSignEvent(ctx sdk.Context, chainId string, id uint64) erro
 }
 
 // UpdateSignStatus is update status of specific Event
-func (k keeper) UpdateSignStatus(ctx sdk.Context, chainId string, id uint64, newStatus types.Sign_Status) (*types.Sign, error) {
-	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus types.Sign_Status) (*types.Sign, error) {
+	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	sign, err := signRepo.Load(id)
 	if err != nil {
@@ -52,8 +51,8 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainId string, id uint64, new
 }
 
 // QuerySign is get specific Sign instance
-func (k keeper) QuerySign(ctx sdk.Context, chainId string, id uint64) (*types.Sign, error) {
-	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) QuerySign(ctx sdk.Context, chainID string, id uint64) (*types.Sign, error) {
+	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	sign, err := signRepo.Load(id)
 	if err != nil {
@@ -64,8 +63,8 @@ func (k keeper) QuerySign(ctx sdk.Context, chainId string, id uint64) (*types.Si
 }
 
 // QuerySignList returns sign list of specific chain
-func (k keeper) QuerySignList(ctx sdk.Context, chainId string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error) {
-	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainId)
+func (k keeper) QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error) {
+	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	results, pageResp, err := signRepo.Paginate(page)
 	if err != nil {

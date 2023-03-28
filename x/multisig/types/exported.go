@@ -3,10 +3,11 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/many-things/mitosis/pkg/utils"
 	"strconv"
 	"strings"
+
+	"github.com/btcsuite/btcd/btcec"
+	"github.com/many-things/mitosis/pkg/utils"
 )
 
 type KeyID string
@@ -22,7 +23,7 @@ const (
 
 func (k KeyID) ValidateBasic() error {
 	if err := utils.ValidateString(string(k)); err != nil {
-		return err
+		return fmt.Errorf("KeyID: %w", err)
 	}
 
 	if !strings.Contains(string(k), "-") {
@@ -44,7 +45,7 @@ func (k KeyID) ToInternalVariables() (string, uint64, error) {
 	chainID := strings.Join(splVal[:len(splVal)-1], "-")
 	id, err := strconv.ParseUint(splVal[len(splVal)-1], 10, 64)
 	if err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("cannot parse KeyID: %w", err)
 	}
 
 	return chainID, id, nil
@@ -52,7 +53,7 @@ func (k KeyID) ToInternalVariables() (string, uint64, error) {
 
 func (s SigID) ValidateBasic() error {
 	if err := utils.ValidateString(string(s)); err != nil {
-		return err
+		return fmt.Errorf("invalid string: %w", err)
 	}
 
 	if !strings.Contains(string(s), "-") {
@@ -69,7 +70,7 @@ func (s SigID) ToInternalVariables() (string, uint64, error) {
 	chainID := strings.Join(splVal[:len(splVal)-1], "-")
 	id, err := strconv.ParseUint(splVal[len(splVal)-1], 10, 64)
 	if err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("cannot parse SigID: %w", err)
 	}
 
 	return chainID, id, nil
@@ -78,7 +79,7 @@ func (s SigID) ToInternalVariables() (string, uint64, error) {
 func (p PublicKey) ValidateBasic() error {
 	btcecPubKey, err := btcec.ParsePubKey(p, btcec.S256())
 	if err != nil {
-		return err
+		return fmt.Errorf("publickey - cannot parse public key: %w", err)
 	}
 
 	if !bytes.Equal(p, btcecPubKey.SerializeCompressed()) {
