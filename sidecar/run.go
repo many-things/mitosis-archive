@@ -13,6 +13,7 @@ import (
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
 	"github.com/many-things/mitosis/sidecar/mito"
+	"github.com/many-things/mitosis/sidecar/storage"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/types"
@@ -24,8 +25,8 @@ import (
 	"time"
 )
 
-func connectGrpc(host string, port string, timeout time.Duration, logger log.Logger) (*grpc.ClientConn, error) {
-	serverAddr := fmt.Sprintf("%s:%s", host, port)
+func connectGrpc(host string, port int, timeout time.Duration, logger log.Logger) (*grpc.ClientConn, error) {
+	serverAddr := fmt.Sprintf("%s:%d", host, port)
 	logger.Info(fmt.Sprintf("initial connection to tofnd server: %s", serverAddr))
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -48,6 +49,29 @@ func dummyHandler(_ proto.Message) error {
 	return nil
 }
 
+func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, logger log.Logger) func(msg *multisigtypes.Keygen) error {
+	return func(msg *multisigtypes.Keygen) error {
+		if !utils.Any(msg.Participants, store.IsTarget) {
+			return nil // Just not targeted.
+		}
+
+		keyUID := fmt.Sprintf("%s-%d", msg.Chain, msg.KeyID)
+
+		// TODO: propagate match ctx
+		_, err := sigCli.Keygen(context.Background(), &types.KeygenRequest{
+			KeyUid:   keyUID,
+			PartyUid: store.GetValidator().String(),
+		})
+
+		if err != nil {
+			logger.Error(err.Error())
+			return err
+		}
+		// TODO: handle resp
+		return nil
+	}
+}
+
 func run() {
 	cfg := config.DefaultSidecarConfig()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -55,6 +79,17 @@ func run() {
 	logger := log.NewTMLogger(os.Stdout)
 
 	mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+
+	// TODO: make these Rpc robust
+	sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
+	sigRpc, err := grpc.Dial(sigDialURL)
+
+	if err != nil {
+		panic(fmt.Errorf("cannot dial to tofn network: %w", err))
+	}
+	sigCli := types.NewMultisigClient(sigRpc)
+	store := storage.GetStorage(&cfg)
+
 	// TODO: implement block getter
 	fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
 	if err != nil {
@@ -65,11 +100,11 @@ func run() {
 	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
-	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.PubKey]())
+	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
 	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Sign]())
 
 	jobs := []mito.Job{
-		mito.CreateTypedJob(keygenEventRecv, dummyHandler, cancel, logger),
+		mito.CreateTypedJob(keygenEventRecv, createKeygenHandler(store, sigCli, logger), cancel, logger),
 		mito.CreateTypedJob(signEventRecv, dummyHandler, cancel, logger),
 	}
 
