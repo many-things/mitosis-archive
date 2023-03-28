@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/x/context/keeper"
 	"google.golang.org/grpc/codes"
@@ -25,12 +26,14 @@ func (k queryServer) Params(goCtx context.Context, req *QueryParams) (*QueryPara
 	return &QueryParamsResponse{Params: k.GetParams(ctx)}, nil
 }
 
-func (k queryServer) Operation(ctx context.Context, operation *QueryOperation) (*QueryOperationResponse, error) {
-	//TODO implement me
+// Operation (ctx context.Context, operation *QueryOperation)
+func (k queryServer) Operation(_ context.Context, _ *QueryOperation) (*QueryOperationResponse, error) {
+	// TODO implement me
 	panic("implement me")
 }
 
-func (k queryServer) Operations(ctx context.Context, operations *QueryOperations) (*QueryOperationsResponse, error) {
-	//TODO implement me
+// Operations // Operation (ctx context.Context, operations *QueryOperations)
+func (k queryServer) Operations(_ context.Context, _ *QueryOperations) (*QueryOperationsResponse, error) {
+	// TODO implement me
 	panic("implement me")
 }

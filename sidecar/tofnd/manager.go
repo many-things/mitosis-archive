@@ -3,12 +3,13 @@ package tofnd
 import (
 	"context"
 	"fmt"
+	"time"
+
+	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/many-things/mitosis/sidecar/types"
 	"github.com/tendermint/tendermint/libs/log"
-	"time"
 )
 
 type Manager struct {
@@ -33,12 +34,12 @@ func (m Manager) isParticipant(p sdk.ValAddress) bool {
 	return m.participant.Equals(p)
 }
 
-func (m Manager) generateKey(KeyUID string) (types.PublicKey, error) {
+func (m Manager) generateKey(keyUID string) (types.PublicKey, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), m.timeout)
 	defer cancel()
 
 	res, err := m.client.Keygen(ctx, &types.KeygenRequest{
-		KeyUid:   KeyUID,
+		KeyUid:   keyUID,
 		PartyUid: m.participant.String(),
 	})
 
@@ -52,11 +53,12 @@ func (m Manager) generateKey(KeyUID string) (types.PublicKey, error) {
 	case *types.KeygenResponse_Error:
 		return nil, fmt.Errorf(res.GetError())
 	default:
-		panic(fmt.Errorf("unknown TofN keygen response: #{res.GetKeygenResponse()}"))
+		panic(fmt.Errorf("unknown TofN keygen response: %s", res.GetKeygenResponse()))
 	}
 }
 
-func (m Manager) sign(keyUID string, payloadHash types.Hash, partyUID string, pubKey types.PublicKey) (types.Signature, error) {
+// sign(keyUID string, payloadHash types.Hash, partyUID string, pubKey types.PublicKey)
+func (m Manager) sign(keyUID string, payloadHash types.Hash, _ string, pubKey types.PublicKey) (types.Signature, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), m.timeout)
 	defer cancel()
 
@@ -76,6 +78,6 @@ func (m Manager) sign(keyUID string, payloadHash types.Hash, partyUID string, pu
 	case *types.SignResponse_Error:
 		return nil, fmt.Errorf(res.GetError())
 	default:
-		panic(fmt.Errorf("unknown TofN sign response: #{res.GetSignResponse()}"))
+		panic(fmt.Errorf("unknown TofN sign response: %s", res.GetSignResponse()))
 	}
 }

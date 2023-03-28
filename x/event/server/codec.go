@@ -9,7 +9,7 @@ import (
 	"github.com/many-things/mitosis/x/event/types"
 )
 
-func RegisterServerLegacyAminoCodec(cdc *codec.LegacyAmino) {
+func RegisterServerLegacyAminoCodec(_ *codec.LegacyAmino) {
 }
 
 func RegisterServerInterfaces(reg cdctypes.InterfaceRegistry) {

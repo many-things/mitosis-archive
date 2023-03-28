@@ -1,13 +1,14 @@
 package queue
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"sync"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func setupMemQueue[T Message](t *testing.T, constructor func() T) Queue[T] {
+func setupMemQueue[T Message](_ *testing.T, constructor func() T) Queue[T] {
 	return NewMemoryQueue[T](constructor)
 }
 

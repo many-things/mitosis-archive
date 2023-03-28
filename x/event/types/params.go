@@ -1,8 +1,9 @@
 package types
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	cosmoserrors "github.com/cosmos/cosmos-sdk/types/errors"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"gopkg.in/yaml.v2"
@@ -41,9 +42,9 @@ func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 // Validate validates the set of params
 func (p *Params) Validate() error {
 	if p.PollThreshold.LT(sdk.ZeroDec()) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be positive")
+		return sdkerrors.Wrap(cosmoserrors.ErrInvalidType, "poll threshold must be positive")
 	} else if p.PollThreshold.GT(sdk.OneDec()) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidType, "poll threshold must be less than 1")
+		return sdkerrors.Wrap(cosmoserrors.ErrInvalidType, "poll threshold must be less than 1")
 	}
 
 	return nil

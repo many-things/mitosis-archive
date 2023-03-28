@@ -7,10 +7,10 @@ import (
 )
 
 type Storage interface {
-	SaveKey(keyId string, value string) error
-	GetKey(keyId string) (string, error)
+	SaveKey(keyID string, value string) error
+	GetKey(keyID string) (string, error)
 
-	IsTargetEvent(validator string, keyId string) bool
+	IsTargetEvent(validator string, keyID string) bool
 }
 
 type keyStorage struct {
@@ -24,7 +24,7 @@ var (
 	initConfig sync.Once
 )
 
-func newConfig(cfg *config.SidecarConfig) Storage {
+func newStorage(_ *config.SidecarConfig) Storage {
 	mgr := NewLocalFileMgr("")
 	savedKey, err := mgr.ImportKeyMap()
 	if err != nil {
@@ -42,17 +42,17 @@ func newConfig(cfg *config.SidecarConfig) Storage {
 // GetStorage returns global singleton storage variable
 func GetStorage(cfg *config.SidecarConfig) Storage {
 	initConfig.Do(func() {
-		storage = newConfig(cfg)
+		storage = newStorage(cfg)
 	})
 
 	return storage
 }
 
 // SaveKey save key, value on map and storage
-func (s keyStorage) SaveKey(keyId, value string) error {
-	s.Keys[keyId] = value
+func (s keyStorage) SaveKey(keyID, value string) error {
+	s.Keys[keyID] = value
 
-	err := s.fileMgr.ExportKey(keyId, value)
+	err := s.fileMgr.ExportKey(keyID, value)
 	if err != nil {
 		return err
 	}
@@ -61,21 +61,21 @@ func (s keyStorage) SaveKey(keyId, value string) error {
 }
 
 // GetKey returns target key in storage
-func (s keyStorage) GetKey(keyId string) (string, error) {
-	if val, ok := s.Keys[keyId]; ok {
+func (s keyStorage) GetKey(keyID string) (string, error) {
+	if val, ok := s.Keys[keyID]; ok {
 		return val, nil
 	}
 
-	return "", fmt.Errorf("cannot found key: %s", keyId)
+	return "", fmt.Errorf("cannot found key: %s", keyID)
 }
 
 // IsTargetEvent returns TF variable is given event info is valid for the validator {
-func (s keyStorage) IsTargetEvent(validator, keyId string) bool {
+func (s keyStorage) IsTargetEvent(validator, keyID string) bool {
 	if validator != s.ValidatorAddress {
 		return false
 	}
 
-	if _, ok := s.Keys[keyId]; ok {
+	if _, ok := s.Keys[keyID]; ok {
 		return true
 	}
 

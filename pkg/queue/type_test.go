@@ -3,9 +3,10 @@ package queue
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 var _ Message = &TestMessage{}

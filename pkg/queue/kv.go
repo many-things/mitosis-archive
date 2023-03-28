@@ -28,11 +28,11 @@ func NewKVQueue[T Message](root store.KVStore, constructor func() T) Queue[T] {
 }
 
 func (k kvq[T]) getFirstItem() uint64 {
-	if bz := k.root.Get(kvKeyFirstItem); bz == nil {
-		return 0
-	} else {
+	if bz := k.root.Get(kvKeyFirstItem); bz != nil {
 		return sdk.BigEndianToUint64(bz)
 	}
+
+	return 0
 }
 
 func (k kvq[T]) setFirstItem(firstItem uint64) {
@@ -43,11 +43,12 @@ func (k kvq[T]) setFirstItem(firstItem uint64) {
 }
 
 func (k kvq[T]) getLastItem() uint64 {
-	if bz := k.root.Get(kvKeyLastItem); bz == nil {
-		return 0
-	} else {
+	bz := k.root.Get(kvKeyLastItem)
+	if bz != nil {
 		return sdk.BigEndianToUint64(bz)
 	}
+
+	return 0
 }
 
 func (k kvq[T]) setLastItem(lastItem uint64) {
@@ -91,8 +92,9 @@ func (k kvq[T]) Get(i uint64) (T, error) {
 
 // Range iterates over the queue and calls the callback for each item.
 func (k kvq[T]) Range(amount *uint64, f func(T, uint64) error) error {
-	lastItem := k.getLastItem()
+	lastItem := k.getLastItem() // nolint: ifshort
 	firstItem := k.getFirstItem()
+
 	if lastItem == firstItem {
 		return errors.New("empty queue")
 	}
@@ -216,7 +218,7 @@ func (k kvq[T]) Update(i uint64, msg T) error {
 
 // Consume pops the given amount of items from the queue.
 func (k kvq[T]) Consume(amount uint64) ([]mitotypes.KV[uint64, T], error) {
-	lastItem := k.getLastItem()
+	lastItem := k.getLastItem() // nolint: ifshort
 	firstItem := k.getFirstItem()
 	if lastItem == firstItem {
 		return nil, errors.New("empty queue")

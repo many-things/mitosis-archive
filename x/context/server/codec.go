@@ -11,7 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-func RegisterServerLegacyAminoCodec(cdc *codec.LegacyAmino) {
+// RegisterServerLegacyAminoCodec (cdc *codec.LegacyAmino)
+func RegisterServerLegacyAminoCodec(_ *codec.LegacyAmino) {
 	// this line is used by starport scaffolding # 2
 }
 

@@ -23,9 +23,9 @@ type kvPubkeyRepo struct {
 	root store.KVStore
 }
 
-func NewKVChainPubKeyRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) PubKeyRepo {
+func NewKVChainPubKeyRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) PubKeyRepo {
 	return &kvPubkeyRepo{
-		cdc, prefix.NewStore(root, append([]byte(chainId), kvPubKeyRepoKey...)),
+		cdc, prefix.NewStore(root, append([]byte(chainID), kvPubKeyRepoKey...)),
 	}
 }
 
@@ -58,7 +58,7 @@ func (r kvPubkeyRepo) Create(pubKey *types.PubKey) error {
 		return err
 	}
 
-	prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, pubKey.KeyId)).Set(pubKey.Participant, pubKeyBz)
+	prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, pubKey.KeyID)).Set(pubKey.Participant, pubKeyBz)
 	return nil
 }
 

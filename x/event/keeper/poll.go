@@ -79,19 +79,18 @@ func (k keeper) SubmitPolls(
 			Confirmed:  mitotypes.Ref(sdk.NewInt(power)),
 		}
 
-		pollId, err := pollRepo.Create(*poll)
+		pollID, err := pollRepo.Create(*poll)
 		if err != nil {
 			return nil, err
 		}
-		pollRepo.SetVoted(pollId, val)
+		pollRepo.SetVoted(pollID, val)
 
 		checksum, err := poll.GetPayload().Hash()
 		if err != nil {
 			return nil, err
 		}
 
-		set[i] = mitotypes.NewKV(pollId, checksum)
-
+		set[i] = mitotypes.NewKV(pollID, checksum)
 	}
 
 	return set, nil

@@ -3,10 +3,11 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"github.com/btcsuite/btcd/btcec"
-	"github.com/many-things/mitosis/pkg/utils"
 	"strconv"
 	"strings"
+
+	"github.com/btcsuite/btcd/btcec"
+	"github.com/many-things/mitosis/pkg/utils"
 )
 
 type KeyID string
@@ -16,43 +17,43 @@ type Signature []byte
 type SigID string
 
 const (
-	KeyIDMinLength = 4
-	KeyIDMaxLength = 256
+	keyIDMinLength = 4
+	keyIDMaxLength = 256
 )
 
 func (k KeyID) ValidateBasic() error {
 	if err := utils.ValidateString(string(k)); err != nil {
-		return err
+		return fmt.Errorf("KeyID: %w", err)
 	}
 
 	if !strings.Contains(string(k), "-") {
 		return fmt.Errorf("keyID must format like \"string-number\"")
 	}
 
-	// length not in between [KeyIDMinLength, KeyIDMaxLength]
-	if KeyIDMinLength > len(k) || KeyIDMaxLength < len(k) {
-		return fmt.Errorf("KeyID length must between [%d, %d]: now %d", KeyIDMinLength, KeyIDMaxLength, len(k))
+	// length not in betgit ween [keyIDMinLength, keyIDMaxLength]
+	if keyIDMinLength > len(k) || keyIDMaxLength < len(k) {
+		return fmt.Errorf("keyID length must between [%d, %d]: now %d", keyIDMinLength, keyIDMaxLength, len(k))
 	}
 
 	return nil
 }
 
-// ToInternalVariables is make keyId into internal chainId / keyId
+// ToInternalVariables is make keyID into internal chainID / keyID
 func (k KeyID) ToInternalVariables() (string, uint64, error) {
-	// Expect KeyID format as chainName-KeyID
+	// Expect keyID format as chainName-keyID
 	splVal := strings.Split(string(k), "-")
-	chainId := strings.Join(splVal[:len(splVal)-1], "-")
+	chainID := strings.Join(splVal[:len(splVal)-1], "-")
 	id, err := strconv.ParseUint(splVal[len(splVal)-1], 10, 64)
 	if err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("cannot parse KeyID: %w", err)
 	}
 
-	return chainId, id, nil
+	return chainID, id, nil
 }
 
 func (s SigID) ValidateBasic() error {
 	if err := utils.ValidateString(string(s)); err != nil {
-		return err
+		return fmt.Errorf("invalid string: %w", err)
 	}
 
 	if !strings.Contains(string(s), "-") {
@@ -62,23 +63,23 @@ func (s SigID) ValidateBasic() error {
 	return nil
 }
 
-// ToInternalVariables is make keyId into internal chainId / keyId
+// ToInternalVariables is make keyID into internal chainID / keyID
 func (s SigID) ToInternalVariables() (string, uint64, error) {
-	// Expect KeyID format as chainName-KeyID
+	// Expect keyID format as chainName-keyID
 	splVal := strings.Split(string(s), "-")
-	chainId := strings.Join(splVal[:len(splVal)-1], "-")
+	chainID := strings.Join(splVal[:len(splVal)-1], "-")
 	id, err := strconv.ParseUint(splVal[len(splVal)-1], 10, 64)
 	if err != nil {
-		return "", 0, err
+		return "", 0, fmt.Errorf("cannot parse SigID: %w", err)
 	}
 
-	return chainId, id, nil
+	return chainID, id, nil
 }
 
 func (p PublicKey) ValidateBasic() error {
 	btcecPubKey, err := btcec.ParsePubKey(p, btcec.S256())
 	if err != nil {
-		return err
+		return fmt.Errorf("publickey - cannot parse public key: %w", err)
 	}
 
 	if !bytes.Equal(p, btcecPubKey.SerializeCompressed()) {

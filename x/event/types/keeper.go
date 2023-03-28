@@ -1,6 +1,7 @@
 package types
 
 import (
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
@@ -60,7 +61,7 @@ type ProxyKeeper interface {
 }
 
 type SnapshotKeeper interface {
-	CreateSnapshot(ctx sdk.Context, total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64]) (*EpochInfo, error)
+	CreateSnapshot(ctx sdk.Context, total sdkmath.Int, powers []mitotypes.KV[sdk.ValAddress, int64]) (*EpochInfo, error)
 
 	VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error)
 

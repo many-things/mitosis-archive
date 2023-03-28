@@ -1,8 +1,9 @@
 package keeper
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	cosmoserrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper/state"
@@ -16,7 +17,7 @@ func (k keeper) RegisterChain(ctx sdk.Context, chain string) (byte, error) {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	if _, err := chainRepo.Load(chain); err == nil {
-		return 0x0, sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "chain %s already registered", chain)
+		return 0x0, sdkerrors.Wrapf(cosmoserrors.ErrInvalidRequest, "chain %s already registered", chain)
 	}
 
 	prefix, err := chainRepo.Save(chain)
@@ -31,7 +32,7 @@ func (k keeper) UnregisterChain(ctx sdk.Context, chain string) error {
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	if _, err := chainRepo.Load(chain); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "chain %s is not registered", chain)
+		return sdkerrors.Wrapf(cosmoserrors.ErrInvalidRequest, "chain %s is not registered", chain)
 	}
 
 	if err := chainRepo.Delete(chain); err != nil {

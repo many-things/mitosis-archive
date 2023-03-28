@@ -2,8 +2,9 @@ package server
 
 import (
 	"context"
-	"github.com/many-things/mitosis/x/context/keeper"
 	"testing"
+
+	"github.com/many-things/mitosis/x/context/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"

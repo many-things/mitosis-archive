@@ -1,17 +1,17 @@
 package hook
 
 import (
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper"
 	"github.com/many-things/mitosis/x/event/types"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"strings"
 )
 
 func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.Keeper, stakingKeeper types.StakingKeeper) {
-
 	var (
 		total  = stakingKeeper.GetLastTotalPower(ctx)
 		powers []mitotypes.KV[sdk.ValAddress, int64]
@@ -37,7 +37,8 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 		return
 	}
 
-	epoch, err = baseKeeper.CreateSnapshot(ctx, total, powers)
+	// TODO: handle error
+	epoch, _ = baseKeeper.CreateSnapshot(ctx, total, powers)
 	_ = epoch
 
 	// TODO: emit event

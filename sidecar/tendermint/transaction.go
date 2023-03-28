@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -66,7 +67,7 @@ func WithHDPath(hdPath string) MnemonicDeriveOptionHandler {
 	}
 }
 
-func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialUrl string, interfaceRegistry codectypes.InterfaceRegistry, options ...MnemonicDeriveOptionHandler) (Wallet, error) {
+func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, dialURL string, interfaceRegistry codectypes.InterfaceRegistry, options ...MnemonicDeriveOptionHandler) (Wallet, error) {
 	deriveFn := hd.Secp256k1.Derive()
 	option := &MnemonicDeriveOption{
 		BIP39Passphrase: "",
@@ -86,12 +87,12 @@ func NewWalletWithMnemonic(mnemonic string, chainPrefix string, chainID string, 
 		privateKey:        &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix:       chainPrefix,
 		ChainID:           chainID,
-		DialURL:           dialUrl,
+		DialURL:           dialURL,
 		InterfaceRegistry: interfaceRegistry,
 	}, nil
 }
 
-func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl string, interfaceRegistry codectypes.InterfaceRegistry) (Wallet, error) {
+func NewWallet(privateKey string, chainPrefix string, chainID string, dialURL string, interfaceRegistry codectypes.InterfaceRegistry) (Wallet, error) {
 	privBytes, err := hex.DecodeString(privateKey)
 	if err != nil {
 		return nil, err
@@ -101,7 +102,7 @@ func NewWallet(privateKey string, chainPrefix string, chainID string, dialUrl st
 		privateKey:        &secp256k1.PrivKey{Key: privBytes},
 		ChainPrefix:       chainPrefix,
 		ChainID:           chainID,
-		DialURL:           dialUrl,
+		DialURL:           dialURL,
 		InterfaceRegistry: interfaceRegistry,
 	}, nil
 }
@@ -116,7 +117,7 @@ func (w wallet) GetAddress() (string, error) {
 }
 
 func (w wallet) Dial() *grpc.ClientConn {
-	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure())
+	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure()) // nolint: staticcheck
 	if err != nil {
 		panic(err)
 	}
@@ -153,7 +154,9 @@ func (w wallet) CreateSignedRawTx(msg sdk.Msg, accountInfo AccountInfo) ([]byte,
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
 
-	txBuilder.SetMsgs(msg)
+	if err := txBuilder.SetMsgs(msg); err != nil {
+		return nil, err
+	}
 	txBuilder.SetGasLimit(100000)
 
 	signerData := authsigning.SignerData{
@@ -195,7 +198,9 @@ func (w wallet) CreateSignedRawTx(msg sdk.Msg, accountInfo AccountInfo) ([]byte,
 		Sequence: accountInfo.SequenceNumber,
 	}
 
-	txBuilder.SetSignatures(signature)
+	if err := txBuilder.SetSignatures(signature); err != nil {
+		return nil, err
+	}
 	return txConfig.TxEncoder()(txBuilder.GetTx())
 }
 

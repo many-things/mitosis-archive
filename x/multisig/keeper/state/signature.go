@@ -1,6 +1,7 @@
 package state
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -30,10 +31,10 @@ var (
 	kvSignatureRepoItemPrefix = []byte{0x01}
 )
 
-func NewKVChainSignatureRepo(cdc codec.BinaryCodec, root store.KVStore, chainId string) SignatureRepo {
+func NewKVChainSignatureRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) SignatureRepo {
 	return &kvSignatureRepo{
 		cdc:  cdc,
-		root: prefix.NewStore(root, append([]byte(chainId), kvSignatureRepoKey...)),
+		root: prefix.NewStore(root, append([]byte(chainID), kvSignatureRepoKey...)),
 	}
 }
 
@@ -45,7 +46,7 @@ func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Sign
 	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
 
 	if bz != nil {
-		return nil, errors.Wrap(errors.ErrNotFound, "cannot find signature")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "cannot find signature")
 	}
 
 	return bz, nil
@@ -58,10 +59,9 @@ func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature
 
 func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
-	bz := ks.Get(participant)
 
-	if bz == nil {
-		return errors.Wrap(errors.ErrNotFound, "cannot find signature")
+	if bz := ks.Get(participant); bz == nil {
+		return sdkerrors.Wrap(errors.ErrNotFound, "cannot find signature")
 	}
 
 	ks.Delete(participant)

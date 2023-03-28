@@ -3,10 +3,12 @@ package sidecar
 import (
 	"context"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client"
-	sdkClient "github.com/cosmos/cosmos-sdk/client"
+	golog "log"
+	"os"
+
+	sdkerrors "cosmossdk.io/errors"
+	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
@@ -18,23 +20,21 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
-	golog "log"
-	"os"
 
 	"time"
 )
 
 func connectGrpc(host string, port string, timeout time.Duration, logger log.Logger) (*grpc.ClientConn, error) {
-	serverAddr := fmt.Sprintf("#{host}:#{port}")
-	logger.Info(fmt.Sprintf("initial connection to tofnd server: #{serverAddr}"))
+	serverAddr := fmt.Sprintf("%s:%s", host, port)
+	logger.Info(fmt.Sprintf("initial connection to tofnd server: %s", serverAddr))
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
-	return grpc.DialContext(ctx, serverAddr, grpc.WithInsecure(), grpc.WithBlock())
+	return grpc.DialContext(ctx, serverAddr, grpc.WithInsecure(), grpc.WithBlock()) // nolint: staticcheck
 }
 
-func createTofNManager(cliCtx client.Context, config config.SidecarConfig, logger log.Logger, valAddr sdk.ValAddress) *tofnd.Manager {
+func createTofNManager(cliCtx sdkclient.Context, config config.SidecarConfig, logger log.Logger, valAddr sdk.ValAddress) *tofnd.Manager {
 	conn, err := connectGrpc(config.TofNConfig.Host, config.TofNConfig.Port, config.TofNConfig.DialTimeout, logger)
 	if err != nil {
 		panic(sdkerrors.Wrapf(err, "failed to create multisig manager"))
@@ -44,7 +44,7 @@ func createTofNManager(cliCtx client.Context, config config.SidecarConfig, logge
 	return tofnd.NewManager(types.NewMultisigClient(conn), cliCtx, valAddr, logger, config.TofNConfig.DialTimeout)
 }
 
-func dummyHandler(event proto.Message) error {
+func dummyHandler(_ proto.Message) error {
 	return nil
 }
 
@@ -54,9 +54,9 @@ func run() {
 	eGroup, ctx := errgroup.WithContext(ctx)
 	logger := log.NewTMLogger(os.Stdout)
 
-	mitoDialUrl := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+	mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
 	// TODO: implement block getter
-	fetcher, err := sdkClient.NewClientFromNode(mitoDialUrl)
+	fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
 	if err != nil {
 		golog.Fatal(err)
 	}

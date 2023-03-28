@@ -30,7 +30,7 @@ message Keygen {
   string chain = 1;
 
   // key id
-  uint64 key_id = 2;
+  uint64 key_id = 2 [(gogoproto.customname) = "KeyID"];
 
   // keygen participants
   repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
@@ -45,7 +45,7 @@ message PubKey {
   string chain = 1;
 
   // key id
-  uint64 key_id = 2;
+  uint64 key_id = 2 [(gogoproto.customname) = "KeyID"];
 
   // participant id
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
@@ -81,10 +81,10 @@ message Sign {
   string chain = 1;
 
   // signature id
-  uint64 sig_id = 2;
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
 
   // try-to-sign key id
-  string key_id = 3;
+  string key_id = 3 [(gogoproto.customname) = "KeyID"];
 
   // participant_ids
   repeated string participants = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];

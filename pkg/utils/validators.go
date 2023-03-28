@@ -2,8 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"golang.org/x/text/unicode/norm"
 	"unicode/utf8"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // ValidateString validate string is not empty, utf8, and normalized utf8.

@@ -2,6 +2,7 @@ package tendermint
 
 import (
 	"context"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -42,7 +43,7 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 		for {
 			select {
 			case blockHeight = <-newBlockHeightChan:
-				block, err := tb.client.BlockResults(context.Background(), &blockHeight)
+				block, err := tb.client.BlockResults(ctx, &blockHeight)
 				if err != nil {
 					errChan <- err
 					return
@@ -63,7 +64,7 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 
 // publish iterate blockEvent and send to pubSub.Publish
 func (tb *TmEventBus) publish(block *coretypes.ResultBlockResults) error {
-	blockEvents := append(block.BeginBlockEvents, block.EndBlockEvents...)
+	blockEvents := append(block.BeginBlockEvents, block.EndBlockEvents...) // nolint: gocritic
 
 	for _, event := range blockEvents {
 		err := tb.pubSub.Publish(TmEvent{
@@ -99,7 +100,6 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 	blockResultChan, blockErr := tb.ListenBlock(ctx)
 
 	go func() {
-
 		for {
 			select {
 			case block, ok := <-blockResultChan:
@@ -137,6 +137,6 @@ func Filter[T proto.Message]() func(e TmEvent) bool {
 			return false
 		}
 
-		return proto.MessageName(typedEvent) == proto.MessageName(*new(T))
+		return proto.MessageName(typedEvent) == proto.MessageName(*new(T)) // nolint: gocritic
 	}
 }

@@ -2,11 +2,12 @@ package tendermint
 
 import (
 	"context"
-	coretypes "github.com/tendermint/tendermint/rpc/core/types"
-	"gotest.tools/assert"
 	"sync"
 	"testing"
 	"time"
+
+	coretypes "github.com/tendermint/tendermint/rpc/core/types"
+	"gotest.tools/assert"
 )
 
 type mockHTTP struct {
@@ -14,7 +15,7 @@ type mockHTTP struct {
 	lock   sync.Mutex
 }
 
-func (m *mockHTTP) BlockchainInfo(ctx context.Context, minHeight int64, maxHeight int64) (*coretypes.ResultBlockchainInfo, error) {
+func (m *mockHTTP) BlockchainInfo(_ context.Context, _ int64, _ int64) (*coretypes.ResultBlockchainInfo, error) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
@@ -32,10 +33,10 @@ func (m *mockHTTP) ChangeHeight(newHeight int64) {
 }
 
 func Test_GetLatestBlockHeight(t *testing.T) {
-	mHttp := mockHTTP{
+	mHTTP := mockHTTP{
 		Height: 10,
 	}
-	blockListener := NewBlockListener(context.Background(), &mHttp, time.Millisecond*500)
+	blockListener := NewBlockListener(context.Background(), &mHTTP, time.Millisecond*500)
 
 	height, err := blockListener.GetLatestBlockHeight()
 	assert.NilError(t, err)
@@ -43,38 +44,34 @@ func Test_GetLatestBlockHeight(t *testing.T) {
 }
 
 func Test_GetBlockHeight(t *testing.T) {
-	mHttp := mockHTTP{
+	mHTTP := mockHTTP{
 		Height: 10,
 	}
-	blockListener := NewBlockListener(context.Background(), &mHttp, time.Second)
+	blockListener := NewBlockListener(context.Background(), &mHTTP, time.Second)
 
 	heightChan, _ := blockListener.GetBlockHeight()
 	var i int64
 	for i = 10; i < 13; i++ {
-		mHttp.ChangeHeight(i)
-		select {
-		case elem := <-heightChan:
-			assert.Equal(t, i, elem)
-		}
+		mHTTP.ChangeHeight(i)
+		elem := <-heightChan
+		assert.Equal(t, i, elem)
 	}
 	blockListener.Close()
 }
 
 func Test_GetNewBlock(t *testing.T) {
-	mHttp := mockHTTP{
+	mHTTP := mockHTTP{
 		Height: 10,
 	}
-	blockListener := NewBlockListener(context.Background(), &mHttp, time.Millisecond*500)
+	blockListener := NewBlockListener(context.Background(), &mHTTP, time.Millisecond*500)
 
 	newBlockChan, _ := blockListener.NewBlockWatcher()
 	time.Sleep(time.Second)
-	mHttp.ChangeHeight(20)
+	mHTTP.ChangeHeight(20)
 
 	var i int64
 	for i = 11; i <= 20; i++ {
-		select {
-		case elem := <-newBlockChan:
-			assert.Equal(t, elem, i)
-		}
+		elem := <-newBlockChan
+		assert.Equal(t, elem, i)
 	}
 }

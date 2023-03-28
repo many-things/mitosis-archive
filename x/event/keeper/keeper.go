@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -48,7 +49,7 @@ func NewKeeper(
 }
 
 // GetParams get all parameters as types.Params
-func (k keeper) GetParams(ctx sdk.Context) types.Params {
+func (k keeper) GetParams(_ sdk.Context) types.Params {
 	return types.NewParams()
 }
 

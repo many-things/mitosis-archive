@@ -2,6 +2,7 @@ package libs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 )
@@ -19,13 +20,13 @@ func init() {
 	Client = http.DefaultClient
 }
 
-func JsonPost(url string, body interface{}) (*http.Response, error) {
+func JSONPost(url string, body interface{}) (*http.Response, error) {
 	jsonBytes, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonBytes))
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +35,8 @@ func JsonPost(url string, body interface{}) (*http.Response, error) {
 	return Client.Do(request)
 }
 
-func JsonGet(url string) (*http.Response, error) {
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+func JSONGet(url string) (*http.Response, error) {
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

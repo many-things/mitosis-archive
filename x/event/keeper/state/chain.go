@@ -27,7 +27,7 @@ type ChainRepo interface {
 }
 
 var (
-	kvChainRepoKeyLatestId = []byte{0x01}
+	kvChainRepoKeyLatestID = []byte{0x01}
 	kvChainRepoPrefixItems = []byte{0x02}
 )
 
@@ -55,13 +55,13 @@ func (k kvChainRepo) Load(chain string) (byte, error) {
 }
 
 func (k kvChainRepo) Save(chain string) (byte, error) {
-	v := k.root.Get(kvChainRepoKeyLatestId)
+	v := k.root.Get(kvChainRepoKeyLatestID)
 	if v == nil {
 		v = []byte{0x00}
 	}
 
 	prefix.NewStore(k.root, kvChainRepoPrefixItems).Set([]byte(chain), v)
-	k.root.Set(kvChainRepoKeyLatestId, []byte{v[0] + 0x01})
+	k.root.Set(kvChainRepoKeyLatestID, []byte{v[0] + 0x01})
 
 	return v[0], nil
 }
@@ -92,7 +92,7 @@ func (k kvChainRepo) Paginate(pageReq *query.PageRequest) ([]mitotypes.KV[string
 }
 
 func (k kvChainRepo) ExportGenesis() (*types.GenesisChain, error) {
-	latestId := k.root.Get(kvChainRepoKeyLatestId)
+	latestID := k.root.Get(kvChainRepoKeyLatestID)
 
 	var items []*types.GenesisChain_ItemSet
 	_, err := query.Paginate(
@@ -117,16 +117,16 @@ func (k kvChainRepo) ExportGenesis() (*types.GenesisChain, error) {
 	}
 
 	return &types.GenesisChain{
-		LatestId: latestId,
+		LatestId: latestID,
 		ItemSet:  items,
 	}, nil
 }
 
 func (k kvChainRepo) ImportGenesis(genState *types.GenesisChain) error {
 	if genState.GetLatestId() == nil {
-		k.root.Set(kvChainRepoKeyLatestId, []byte{0x0})
+		k.root.Set(kvChainRepoKeyLatestID, []byte{0x0})
 	} else {
-		k.root.Set(kvChainRepoKeyLatestId, genState.GetLatestId())
+		k.root.Set(kvChainRepoKeyLatestID, genState.GetLatestId())
 	}
 
 	ps := prefix.NewStore(k.root, kvChainRepoPrefixItems)

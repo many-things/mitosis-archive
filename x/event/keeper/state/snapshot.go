@@ -1,20 +1,23 @@
 package state
 
 import (
+	"sort"
+
+	sdkerrors "cosmossdk.io/errors"
+	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	cosmoserrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/types"
 	"github.com/pkg/errors"
-	"sort"
 )
 
 type SnapshotRepo interface {
-	Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error)
+	Create(total sdkmath.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error)
 
 	PowerOf(epoch uint64, val sdk.ValAddress) (int64, error)
 
@@ -80,7 +83,7 @@ func (r kvSnapshotRepo) setLatestEpoch(epoch *types.EpochInfo) error {
 	return nil
 }
 
-func (r kvSnapshotRepo) Create(total sdk.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error) {
+func (r kvSnapshotRepo) Create(total sdkmath.Int, powers []mitotypes.KV[sdk.ValAddress, int64], height uint64) (*types.EpochInfo, error) {
 	var (
 		valPowerStore = r.valPowerStore()
 		valSetStore   = r.valSetStore()
@@ -163,7 +166,7 @@ func (r kvSnapshotRepo) LatestPowers() ([]mitotypes.KV[sdk.ValAddress, int64], e
 
 	valSetBz := valSetStore.Get(sdk.Uint64ToBigEndian(latestEpoch.GetEpoch()))
 	if valSetBz == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "validator set")
+		return nil, sdkerrors.Wrap(cosmoserrors.ErrKeyNotFound, "validator set")
 	}
 
 	valSet := new(types.ValidatorSet)

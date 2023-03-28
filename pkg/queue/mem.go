@@ -1,11 +1,12 @@
 package queue
 
 import (
+	"sort"
+	"sync"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/pkg/errors"
-	"sort"
-	"sync"
 )
 
 type memq[T Message] struct {
@@ -84,7 +85,7 @@ func (k *memq[T]) Range(amount *uint64, f func(T, uint64) error) error {
 }
 
 // Paginate iterates over the queue and calls the callback for each item.
-func (k *memq[T]) Paginate(req *query.PageRequest, f func(T, uint64) error) (*query.PageResponse, error) {
+func (k *memq[T]) Paginate(_ *query.PageRequest, _ func(T, uint64) error) (*query.PageResponse, error) {
 	panic("unimplmented")
 }
 
@@ -139,7 +140,7 @@ func (k *memq[T]) Update(i uint64, msg T) error {
 func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {
 	ms := make([]T, len(arr))
 	for i := range ms {
-		ms[i] = *new(T)
+		ms[i] = *new(T) // nolint: gocritic
 		if err := ms[i].Unmarshal(arr[i]); err != nil {
 			return nil, err
 		}

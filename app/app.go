@@ -112,6 +112,7 @@ import (
 	multisigmodule "github.com/many-things/mitosis/x/multisig"
 	multisigmodulekeeper "github.com/many-things/mitosis/x/multisig/keeper"
 	multisigmoduletypes "github.com/many-things/mitosis/x/multisig/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/many-things/mitosis/app/params"
@@ -867,7 +868,7 @@ func (app *App) GetSubspace(moduleName string) paramstypes.Subspace {
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *App) RegisterAPIRoutes(apiSvr *api.Server, _ config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
