@@ -16,8 +16,8 @@ type Signature []byte
 type SigID string
 
 const (
-	KeyIDMinLength = 4
-	KeyIDMaxLength = 256
+	keyIDMinLength = 4
+	keyIDMaxLength = 256
 )
 
 func (k KeyID) ValidateBasic() error {
@@ -29,25 +29,25 @@ func (k KeyID) ValidateBasic() error {
 		return fmt.Errorf("keyID must format like \"string-number\"")
 	}
 
-	// length not in between [KeyIDMinLength, KeyIDMaxLength]
-	if KeyIDMinLength > len(k) || KeyIDMaxLength < len(k) {
-		return fmt.Errorf("KeyID length must between [%d, %d]: now %d", KeyIDMinLength, KeyIDMaxLength, len(k))
+	// length not in betgit ween [keyIDMinLength, keyIDMaxLength]
+	if keyIDMinLength > len(k) || keyIDMaxLength < len(k) {
+		return fmt.Errorf("keyID length must between [%d, %d]: now %d", keyIDMinLength, keyIDMaxLength, len(k))
 	}
 
 	return nil
 }
 
-// ToInternalVariables is make keyId into internal chainId / keyId
+// ToInternalVariables is make keyID into internal chainID / keyID
 func (k KeyID) ToInternalVariables() (string, uint64, error) {
-	// Expect KeyID format as chainName-KeyID
+	// Expect keyID format as chainName-keyID
 	splVal := strings.Split(string(k), "-")
-	chainId := strings.Join(splVal[:len(splVal)-1], "-")
+	chainID := strings.Join(splVal[:len(splVal)-1], "-")
 	id, err := strconv.ParseUint(splVal[len(splVal)-1], 10, 64)
 	if err != nil {
 		return "", 0, err
 	}
 
-	return chainId, id, nil
+	return chainID, id, nil
 }
 
 func (s SigID) ValidateBasic() error {
@@ -62,17 +62,17 @@ func (s SigID) ValidateBasic() error {
 	return nil
 }
 
-// ToInternalVariables is make keyId into internal chainId / keyId
+// ToInternalVariables is make keyID into internal chainID / keyID
 func (s SigID) ToInternalVariables() (string, uint64, error) {
-	// Expect KeyID format as chainName-KeyID
+	// Expect keyID format as chainName-keyID
 	splVal := strings.Split(string(s), "-")
-	chainId := strings.Join(splVal[:len(splVal)-1], "-")
+	chainID := strings.Join(splVal[:len(splVal)-1], "-")
 	id, err := strconv.ParseUint(splVal[len(splVal)-1], 10, 64)
 	if err != nil {
 		return "", 0, err
 	}
 
-	return chainId, id, nil
+	return chainID, id, nil
 }
 
 func (p PublicKey) ValidateBasic() error {

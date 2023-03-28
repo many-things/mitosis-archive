@@ -57,7 +57,7 @@ func (r kvKeygenRepo) Create(keygen *types.Keygen) (uint64, error) {
 	latestId := sdk.BigEndianToUint64(r.root.Get(kvKeygenRepoLatestId))
 	latestIdBz := sdk.Uint64ToBigEndian(latestId)
 
-	keygen.KeyId = latestId
+	keygen.KeyID = latestId
 	keygenBz, err := keygen.Marshal()
 	if err != nil {
 		return 0, err
@@ -75,7 +75,7 @@ func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
 		return err
 	}
 
-	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(sdk.Uint64ToBigEndian(keygen.KeyId), keygenBz)
+	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(sdk.Uint64ToBigEndian(keygen.KeyID), keygenBz)
 	return nil
 }
 
