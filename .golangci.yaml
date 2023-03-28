@@ -173,9 +173,9 @@ linters:
     - unconvert # remove unnecessary type conversions
     - wastedassign # finds wasted assignment statements.
     - whitespace # tool for detection of leading and trailing whitespace
+    - gocritic # provides diagnostics that check for bugs, performance and style issues. disabled for ci issue.
 
   disable:
-    - gocritic # provides diagnostics that check for bugs, performance and style issues. disabled for ci issue.
     - godot # check if comments end in a period
     - wrapcheck # temporary disabled.  # check that errors from external packages are wrapped during return to help identify the error source.
     - unused # temporary disabled.
