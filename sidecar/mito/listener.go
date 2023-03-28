@@ -3,6 +3,7 @@ package mito
 import (
 	"context"
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	goerr "github.com/go-errors/errors"
 	"github.com/gogo/protobuf/proto"
@@ -16,11 +17,11 @@ type EventListenMgr interface {
 	Run() error
 }
 
-func (m eventMgr) AddJob(job Job) {
+func (m *eventMgr) AddJob(job Job) {
 	m.jobs = append(m.jobs, job)
 }
 
-func (m eventMgr) Run() error {
+func (m *eventMgr) Run() error {
 	utils.ForEach(m.jobs, func(j Job) {
 		m.errGroup.Go(func() error { return j(m.eventCtx) })
 	})
@@ -55,7 +56,7 @@ func Consume[T any](sub <-chan T, handle func(event T)) Job {
 }
 
 func recovery(errChan chan<- error) {
-	if r := recover(); r != nil {
+	if r := recover(); r != nil { // nolint: revive
 		err := fmt.Errorf("panicked: %s\n%s", r, goerr.Wrap(r, 1).Stack())
 		errChan <- err
 	}

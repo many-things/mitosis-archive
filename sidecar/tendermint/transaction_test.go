@@ -2,16 +2,17 @@ package tendermint
 
 import (
 	"bytes"
-	sdkmath "cosmossdk.io/math"
 	"encoding/json"
+	"io"
+	"net/http"
+	"testing"
+
+	sdkmath "cosmossdk.io/math"
 	cosmostype "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/many-things/mitosis/sidecar/tendermint/libs"
 	"github.com/many-things/mitosis/sidecar/tendermint/libs/mocks"
 	"gotest.tools/assert"
-	"io"
-	"net/http"
-	"testing"
 )
 
 func Test_BroadCastRawTx(t *testing.T) {

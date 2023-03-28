@@ -3,9 +3,12 @@ package sidecar
 import (
 	"context"
 	"fmt"
+	golog "log"
+	"os"
+
+	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/gogo/protobuf/proto"
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
@@ -17,8 +20,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
-	golog "log"
-	"os"
 
 	"time"
 )
@@ -30,7 +31,7 @@ func connectGrpc(host string, port string, timeout time.Duration, logger log.Log
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
-	return grpc.DialContext(ctx, serverAddr, grpc.WithInsecure(), grpc.WithBlock())
+	return grpc.DialContext(ctx, serverAddr, grpc.WithInsecure(), grpc.WithBlock()) // nolint: staticcheck
 }
 
 func createTofNManager(cliCtx sdkclient.Context, config config.SidecarConfig, logger log.Logger, valAddr sdk.ValAddress) *tofnd.Manager {

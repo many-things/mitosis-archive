@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -116,7 +117,7 @@ func (w wallet) GetAddress() (string, error) {
 }
 
 func (w wallet) Dial() *grpc.ClientConn {
-	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure())
+	conn, err := grpc.Dial(w.DialURL, grpc.WithInsecure()) // nolint: staticcheck
 	if err != nil {
 		panic(err)
 	}

@@ -2,13 +2,14 @@ package tofnd
 
 import (
 	"context"
-	sdkerrors "cosmossdk.io/errors"
 	"fmt"
+	"time"
+
+	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/sidecar/types"
 	"github.com/tendermint/tendermint/libs/log"
-	"time"
 )
 
 type Manager struct {

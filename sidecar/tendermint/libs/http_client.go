@@ -2,6 +2,7 @@ package libs
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 )
@@ -25,7 +26,7 @@ func JSONPost(url string, body interface{}) (*http.Response, error) {
 		return nil, err
 	}
 
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(jsonBytes))
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +36,7 @@ func JSONPost(url string, body interface{}) (*http.Response, error) {
 }
 
 func JSONGet(url string) (*http.Response, error) {
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -2,9 +2,10 @@ package tendermint
 
 import (
 	"context"
-	coretypes "github.com/tendermint/tendermint/rpc/core/types"
 	"sync"
 	"time"
+
+	coretypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 type BlockHeightFetcher interface {
@@ -81,7 +82,7 @@ func (b *blockListener) GetBlockHeight() (<-chan int64, <-chan error) {
 			select {
 			// TODO: change into default
 			case blockHeightChan <- blockHeight:
-				break
+				break // nolint: revive
 			case <-b.ctx.Done():
 				return
 			}

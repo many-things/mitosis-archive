@@ -3,12 +3,13 @@ package mito
 import (
 	"context"
 	"fmt"
+	"time"
+
 	sdkClient "github.com/cosmos/cosmos-sdk/client"
 	"github.com/many-things/mitosis/sidecar/config"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/tendermint/tendermint/libs/log"
 	"golang.org/x/sync/errgroup"
-	"time"
 )
 
 type Job func(ctx context.Context) error

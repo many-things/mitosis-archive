@@ -112,6 +112,7 @@ import (
 	multisigmodule "github.com/many-things/mitosis/x/multisig"
 	multisigmodulekeeper "github.com/many-things/mitosis/x/multisig/keeper"
 	multisigmoduletypes "github.com/many-things/mitosis/x/multisig/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/many-things/mitosis/app/params"
