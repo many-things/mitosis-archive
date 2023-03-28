@@ -25,9 +25,10 @@ jobs:
             ${{ runner.os }}-golang-
 
       - name: Lint source code
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: v1.43.0
+          skip-go-installation: true
           args: --config .golangci.yaml
 
       - name: Saving Golang cache
