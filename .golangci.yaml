@@ -163,7 +163,6 @@ linters:
     - exportloopref # checks for pointers to enclosing loop variables
     - goconst # finds repeated strings that could be replaced by a constant
     - gofmt # checks whether code was gofmt-ed
-    - ifshort # checks that your code uses short syntax for if-statements whenever possible
     - misspell # finds commonly misspelled English words in comments
     - noctx # finds sending http request without context.Context
     - predeclared # find code that shadows one of Go's predeclared identifiers

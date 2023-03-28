@@ -23,12 +23,13 @@ jobs:
           key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-golang-
-
+      - name: echo
+        run: cat .golangci.yaml
+        
       - name: Lint source code
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.48.0
-          skip-cache: true
           args: --config .golangci.yaml
 
       - name: Saving Golang cache
