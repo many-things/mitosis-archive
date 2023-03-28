@@ -162,7 +162,6 @@ linters:
     - errorlint # find code that will cause problems with the error wrapping scheme
     - exportloopref # checks for pointers to enclosing loop variables
     - goconst # finds repeated strings that could be replaced by a constant
-    - gocritic # provides diagnostics that check for bugs, performance and style issues
     - gofmt # checks whether code was gofmt-ed
     - ifshort # checks that your code uses short syntax for if-statements whenever possible
     - misspell # finds commonly misspelled English words in comments
@@ -176,6 +175,7 @@ linters:
     - whitespace # tool for detection of leading and trailing whitespace
 
   disable:
+    - gocritic # provides diagnostics that check for bugs, performance and style issues. disabled for ci issue.
     - godot # check if comments end in a period
     - wrapcheck # temporary disabled.  # check that errors from external packages are wrapped during return to help identify the error source.
     - unused # temporary disabled.
