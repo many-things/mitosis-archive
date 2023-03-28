@@ -140,7 +140,7 @@ func (k *memq[T]) Update(i uint64, msg T) error {
 func (k *memq[T]) unmarshal(arr [][]byte) ([]T, error) {
 	ms := make([]T, len(arr))
 	for i := range ms {
-		ms[i] = *new(T)
+		ms[i] = *new(T) // nolint: gocritic
 		if err := ms[i].Unmarshal(arr[i]); err != nil {
 			return nil, err
 		}

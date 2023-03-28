@@ -137,6 +137,6 @@ func Filter[T proto.Message]() func(e TmEvent) bool {
 			return false
 		}
 
-		return proto.MessageName(typedEvent) == proto.MessageName(*new(T))
+		return proto.MessageName(typedEvent) == proto.MessageName(*new(T)) // nolint: gocritic
 	}
 }
