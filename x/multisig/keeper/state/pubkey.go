@@ -43,7 +43,7 @@ func (r kvPubkeyRepo) Load(id uint64, participant sdk.ValAddress) (*types.PubKey
 	bz := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id)).Get(participant)
 
 	if bz == nil {
-		return nil, fmt.Errorf("cannot find keygen: id %d", id)
+		return nil, fmt.Errorf("cannot find pubkey: %s for id %d", participant, id)
 	}
 
 	pubkey := new(types.PubKey)
@@ -66,12 +66,9 @@ func (r kvPubkeyRepo) Create(pubKey *types.PubKey) error {
 
 func (r kvPubkeyRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id))
-	bz := ks.Get(participant)
 
-	// check for obj is exists and valid
-	var pubKey types.Keygen
-	if err := pubKey.Unmarshal(bz); err != nil {
-		return err
+	if !ks.Has(participant) {
+		return fmt.Errorf("cannot find pubkey: %s for id %d", participant, id)
 	}
 
 	ks.Delete(participant)
