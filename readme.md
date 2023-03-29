@@ -1,10 +1,12 @@
 # Mitosis
 
+[![codecov](https://codecov.io/gh/many-things/mitosis/branch/main/graph/badge.svg?token=THBgwgnF8C)](https://codecov.io/gh/many-things/mitosis)
+
 ## For developers
 
 Please install pre-commit hooks for formatting projects.
 
-```sh 
+```sh
 ./scripts/install-pre-commit.sh
 ```
 
