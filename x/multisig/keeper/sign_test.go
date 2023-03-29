@@ -32,8 +32,33 @@ func Test_RegisterSignEvent(t *testing.T) {
 	require.Equal(t, savedSign, &sign)
 }
 
-func Test_RemoveSignEvent(_ *testing.T) {
-	// TODO: implements
+func Test_RemoveSignEvent(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := genValAddr(t)
+
+	// try to remove not exist sign event
+	err := k.RemoveSignEvent(ctx, chainID, 0)
+	assert.Error(t, err, "sign: not found")
+
+	// try to remove exist sign event
+	sign := types.Sign{
+		Chain:         chainID,
+		SigID:         0,
+		KeyID:         "1",
+		Participants:  []sdk.ValAddress{valAddr},
+		MessageToSign: []byte("test"),
+		Status:        types.Sign_StatusAssign,
+	}
+	err = repo.Save(&sign)
+	assert.NilError(t, err)
+
+	err = k.RemoveSignEvent(ctx, chainID, 0)
+	assert.NilError(t, err)
+
+	// try to check sign removed
+	_, err = repo.Load(0)
+	assert.Error(t, err, "sign: not found")
 }
 
 func Test_UpdateSignStatus(_ *testing.T) {

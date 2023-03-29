@@ -45,7 +45,7 @@ var (
 func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz == nil {
-		return nil, sdkerrors.Wrap(errors.ErrNotFound, "cannot find sign")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "sign")
 	}
 
 	sign := new(types.Sign)
@@ -83,11 +83,9 @@ func (r kvSignRepo) Save(sign *types.Sign) error {
 
 func (r kvSignRepo) Delete(id uint64) error {
 	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
-	bz := ks.Get(sdk.Uint64ToBigEndian(id))
 
-	var sign types.Sign
-	if err := sign.Unmarshal(bz); err != nil {
-		return fmt.Errorf("sign: cannot unmarshal. %w", err)
+	if !ks.Has(sdk.Uint64ToBigEndian(id)) {
+		return sdkerrors.Wrap(errors.ErrNotFound, "sign")
 	}
 
 	ks.Delete(sdk.Uint64ToBigEndian(id))
