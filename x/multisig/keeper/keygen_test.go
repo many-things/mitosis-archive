@@ -74,6 +74,30 @@ func Test_QueryKeygenEvent(t *testing.T) {
 	require.Equal(t, res, &keygen)
 }
 
+func Test_SaveKeygenEvent(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := genValAddr(t)
+
+	// try to update not exist value
+	_, err := k.UpdateKeygenStatus(ctx, chainID, 3, types.Keygen_StatusExecute)
+	assert.Error(t, err, genNotfoundErrMsg(3))
+
+	// try to update exist variable
+	keygen := types.Keygen{
+		Chain:        chainID,
+		KeyID:        0,
+		Participants: []sdk.ValAddress{valAddr},
+		Status:       1,
+	}
+	_, err = repo.Create(&keygen)
+	assert.NilError(t, err)
+
+	updatedKeygen, err := k.UpdateKeygenStatus(ctx, chainID, keygen.KeyID, types.Keygen_StatusExecute)
+	assert.NilError(t, err)
+	assert.Equal(t, updatedKeygen.Status, types.Keygen_StatusExecute)
+}
+
 func Test_RemoveKeygenEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	valAddr := genValAddr(t)

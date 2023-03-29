@@ -77,7 +77,13 @@ func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
 		return err
 	}
 
-	prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Set(sdk.Uint64ToBigEndian(keygen.KeyID), keygenBz)
+	store := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
+	keyIDBz := sdk.Uint64ToBigEndian(keygen.KeyID)
+	if !store.Has(keyIDBz) {
+		return fmt.Errorf("cannot find keygen: id %d", keygen.KeyID)
+	}
+
+	store.Set(keyIDBz, keygenBz)
 	return nil
 }
 
