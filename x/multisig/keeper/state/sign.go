@@ -44,7 +44,7 @@ var (
 
 func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
-	if bz != nil {
+	if bz == nil {
 		return nil, sdkerrors.Wrap(errors.ErrNotFound, "cannot find sign")
 	}
 
