@@ -19,13 +19,15 @@ func Test_RegisterKeygenEvent(t *testing.T) {
 	valAddr := testutils.GenValAddress(t)
 
 	keygen := types.Keygen{
-		Chain:        chainID,
-		KeyID:        0,
+		Chain: chainID,
+		KeyID: 0,
+
 		Participants: []sdk.ValAddress{valAddr},
 		Status:       1,
 	}
 	kgID, err := k.RegisterKeygenEvent(ctx, chainID, &keygen)
 	assert.NilError(t, err)
+
 	require.Equal(t, kgID, uint64(0))
 
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
@@ -134,4 +136,5 @@ func Test_QueryKeygenList(t *testing.T) {
 	// query
 	result, _, _ := k.QueryKeygenList(ctx, chainID, &query.PageRequest{Limit: query.MaxLimit})
 	require.Equal(t, keygens, result)
+
 }
