@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -124,4 +126,29 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 	// check keygen deleted
 	_, err = repo.Load(0)
 	assert.Error(t, err, genNotfoundErrMsg(0))
+}
+
+func Test_QueryKeygenList(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := genValAddr(t)
+
+	var keygens []mitosistype.KV[uint64, *types.Keygen]
+	// Gen data
+	var i uint64
+	for i = 0; i < 10; i++ {
+		keygen := types.Keygen{
+			Chain:        chainID,
+			KeyID:        i,
+			Participants: []sdk.ValAddress{valAddr},
+			Status:       types.Keygen_StatusComplete,
+		}
+		_, _ = repo.Create(&keygen)
+
+		keygens = append(keygens, mitosistype.NewKV(i, &keygen))
+	}
+
+	// query
+	result, _, _ := k.QueryKeygenList(ctx, chainID, &query.PageRequest{Limit: query.MaxLimit})
+	require.Equal(t, keygens, result)
 }
