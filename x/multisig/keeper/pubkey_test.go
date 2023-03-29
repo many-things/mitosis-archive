@@ -75,8 +75,28 @@ func Test_RemovePubKey(t *testing.T) {
 	assert.Error(t, err, genNotFoundPubKeyMsg(pubKey.KeyID, pubKey.Participant))
 }
 
-func Test_QueryPubKey(_ *testing.T) {
-	// TODO: implements
+func Test_QueryPubKey(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := genValAddr(t)
+
+	// try to query not exist pubKey
+	_, err := k.QueryPubKey(ctx, chainID, 0, valAddr)
+	assert.Error(t, err, genNotFoundPubKeyMsg(0, valAddr))
+
+	// try to query exist pubKey
+	pubKey := types.PubKey{
+		Chain:       chainID,
+		KeyID:       0,
+		Participant: valAddr,
+		PubKey:      genPublicKey(t),
+	}
+	err = repo.Create(&pubKey)
+	assert.NilError(t, err)
+
+	res, err := k.QueryPubKey(ctx, chainID, pubKey.KeyID, pubKey.Participant)
+	assert.NilError(t, err)
+	require.Equal(t, pubKey, *res)
 }
 
 func Test_QueryPubKeyList(_ *testing.T) {
