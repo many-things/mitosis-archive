@@ -2,11 +2,13 @@ package storage
 
 import (
 	"fmt"
-	"gotest.tools/assert"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/types"
+	"gotest.tools/assert"
 )
 
-func getMockedLocalFileMgr(validAddr string, keys map[string]string) Storage {
+func getMockedLocalFileMgr(validAddr types.ValAddress, keys map[string]string) Storage {
 	return keyStorage{
 		ValidatorAddress: validAddr,
 		Keys:             keys,
@@ -16,7 +18,7 @@ func getMockedLocalFileMgr(validAddr string, keys map[string]string) Storage {
 
 func Test_SaveKey(t *testing.T) {
 	keys := make(map[string]string)
-	mgr := getMockedLocalFileMgr("", keys)
+	mgr := getMockedLocalFileMgr([]byte(""), keys)
 
 	err := mgr.SaveKey("test_key", "test_value")
 	assert.NilError(t, err)
@@ -30,7 +32,7 @@ func Test_GetKey(t *testing.T) {
 
 	keys := make(map[string]string)
 	keys[existKey] = "existing_key"
-	mgr := getMockedLocalFileMgr("", keys)
+	mgr := getMockedLocalFileMgr([]byte(""), keys)
 
 	result, err := mgr.GetKey(existKey)
 	assert.NilError(t, err)
@@ -40,22 +42,4 @@ func Test_GetKey(t *testing.T) {
 	notExist, err := mgr.GetKey(notExistKey)
 	assert.Equal(t, notExist, "")
 	assert.Error(t, err, fmt.Sprintf("cannot found key: %s", notExistKey))
-}
-
-func Test_IsTargetEvent(t *testing.T) {
-	keys := make(map[string]string)
-	existKey := "exist_key"
-	validatorAddr := "validator1"
-
-	keys[existKey] = "exist_value"
-	mgr := getMockedLocalFileMgr(validatorAddr, keys)
-
-	notMatchValid := mgr.IsTargetEvent("validator2", existKey)
-	assert.Equal(t, notMatchValid, false)
-
-	notMatchKey := mgr.IsTargetEvent(validatorAddr, "not_exist_key")
-	assert.Equal(t, notMatchKey, false)
-
-	matched := mgr.IsTargetEvent(validatorAddr, existKey)
-	assert.Equal(t, matched, true)
 }

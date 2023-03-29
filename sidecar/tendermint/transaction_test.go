@@ -71,7 +71,7 @@ func Test_CreateSignedRawTx(t *testing.T) {
 		146, 193, 163, 210, 232, 247, 109, 40, 83, 211, 60, 5}
 
 	privKey := "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-	wallet, err := NewWallet(privKey, "mito", "", "https://test.com", nil)
+	wallet, err := NewWallet(privKey, "mitosis", "", "https://test.com", nil)
 	assert.NilError(t, err)
 
 	result, err := wallet.CreateSignedRawTx(&msg, accountInfo)
@@ -96,12 +96,12 @@ func Test_Mnemonic_And_PrivKey(t *testing.T) {
 	privKey := "f1cd941f44fb891eeb3d153e311fb0cf6291994e9678f2a2b9bf66adce137214"
 	mnemonic := "burst visa embark foam office album waste autumn remove tourist moment tail camp trumpet blue grunt catalog metal metal simple school item cotton apart"
 
-	wallet, err := NewWallet(privKey, "mito", "", "http://test.com", nil)
+	wallet, err := NewWallet(privKey, "mitosis", "", "http://test.com", nil)
 	assert.NilError(t, err)
 	walletAddress, err := wallet.GetAddress()
 	assert.NilError(t, err)
 
-	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mito", "", "http://test.com", nil)
+	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mitosis", "", "http://test.com", nil)
 	assert.NilError(t, err)
 	walletMnemonicAddress, err := walletMnemonic.GetAddress()
 	assert.NilError(t, err)

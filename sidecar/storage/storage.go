@@ -14,7 +14,6 @@ type Storage interface {
 	GetKey(keyID string) (string, error)
 	GetValidator() types.ValAddress
 
-	IsTargetEvent(validator types.ValAddress, keyID string) bool
 	IsTarget(validator types.ValAddress) bool
 }
 
@@ -72,19 +71,6 @@ func (s keyStorage) GetKey(keyID string) (string, error) {
 	}
 
 	return "", fmt.Errorf("cannot found key: %s", keyID)
-}
-
-// IsTargetEvent returns TF variable is given event info is valid for the validator {
-func (s keyStorage) IsTargetEvent(validator types.ValAddress, keyID string) bool {
-	if bytes.Equal(validator, s.ValidatorAddress) {
-		return false
-	}
-
-	if _, ok := s.Keys[keyID]; ok {
-		return true
-	}
-
-	return false
 }
 
 // IsTarget returns given address is matches with storage Validator
