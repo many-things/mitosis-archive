@@ -17,7 +17,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.MultisigKeeper(t)
+	k, ctx, _, _ := keepertest.MultisigKeeper(t)
 	multisig.InitGenesis(ctx, k, genesisState)
 	got := multisig.ExportGenesis(ctx, k)
 	require.NotNil(t, got)

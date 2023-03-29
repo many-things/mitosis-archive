@@ -17,7 +17,7 @@ import (
 	tmdb "github.com/tendermint/tm-db"
 )
 
-func MultisigKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
+func MultisigKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *codec.ProtoCodec, *storetypes.KVStoreKey) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -48,5 +48,5 @@ func MultisigKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())
 
-	return k, ctx
+	return k, ctx, cdc, storeKey
 }
