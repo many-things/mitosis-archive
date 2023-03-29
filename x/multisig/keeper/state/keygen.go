@@ -1,7 +1,12 @@
 package state
 
 import (
+<<<<<<< HEAD
 	sdkerrors "cosmossdk.io/errors"
+=======
+	"fmt"
+
+>>>>>>> 05ca526 (test: add querykeygen)
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -43,7 +48,11 @@ var (
 func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 	bz := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz == nil {
+<<<<<<< HEAD
 		return nil, sdkerrors.Wrap(errors.ErrNotFound, "keygen")
+=======
+		return nil, fmt.Errorf("cannot find keygen: id %d", id)
+>>>>>>> 05ca526 (test: add querykeygen)
 	}
 
 	keygen := new(types.Keygen)
@@ -92,7 +101,11 @@ func (r kvKeygenRepo) Delete(id uint64) error {
 	bz := ks.Get(sdk.Uint64ToBigEndian(id))
 
 	if bz == nil {
+<<<<<<< HEAD
 		return sdkerrors.Wrap(errors.ErrNotFound, "keygen")
+=======
+		return fmt.Errorf("cannot find keygen: id %d", id)
+>>>>>>> 05ca526 (test: add querykeygen)
 	}
 
 	// check for obj is exists and valid

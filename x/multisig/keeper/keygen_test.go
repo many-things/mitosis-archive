@@ -19,9 +19,8 @@ func Test_RegisterKeygenEvent(t *testing.T) {
 	valAddr := testutils.GenValAddress(t)
 
 	keygen := types.Keygen{
-		Chain: chainID,
-		KeyID: 0,
-
+		Chain:        chainID,
+		KeyID:        0,
 		Participants: []sdk.ValAddress{valAddr},
 		Status:       1,
 	}
@@ -103,6 +102,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 	// try to delete exist keygen
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
 	_, err = repo.Create(&keygen)
+
 	assert.NilError(t, err)
 
 	err = k.RemoveKeygenEvent(ctx, chainID, 0)
@@ -136,5 +136,4 @@ func Test_QueryKeygenList(t *testing.T) {
 	// query
 	result, _, _ := k.QueryKeygenList(ctx, chainID, &query.PageRequest{Limit: query.MaxLimit})
 	require.Equal(t, keygens, result)
-
 }
