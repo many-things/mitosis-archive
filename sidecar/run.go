@@ -16,6 +16,7 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/types"
+	multisigserver "github.com/many-things/mitosis/x/multisig/server"
 	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
 	"golang.org/x/sync/errgroup"
@@ -44,7 +45,7 @@ func createTofNManager(cliCtx sdkclient.Context, config config.SidecarConfig, lo
 	return tofnd.NewManager(types.NewMultisigClient(conn), cliCtx, valAddr, logger, config.TofNConfig.DialTimeout)
 }
 
-func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, _ tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Keygen) error {
+func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Keygen) error {
 	return func(msg *multisigtypes.Keygen) error {
 		if !utils.Any(msg.Participants, store.IsTarget) {
 			return nil // Just not targeted.
@@ -53,7 +54,7 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, _ t
 		keyUID := fmt.Sprintf("%s-%d", msg.Chain, msg.KeyID)
 
 		// TODO: propagate match ctx
-		_, err := sigCli.Keygen(context.Background(), &types.KeygenRequest{
+		resp, err := sigCli.Keygen(context.Background(), &types.KeygenRequest{
 			KeyUid:   keyUID,
 			PartyUid: store.GetValidator().String(),
 		})
@@ -63,11 +64,26 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, _ t
 			return err
 		}
 
+		switch r := resp.GetKeygenResponse().(type) {
+		case *types.KeygenResponse_PubKey:
+			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
+				Module:      "sidecar",
+				KeyID:       multisigtypes.KeyID(keyUID),
+				Participant: store.GetValidator(),
+				PubKey:      r.PubKey,
+			})
+
+			if err != nil {
+				return err
+			}
+		case *types.KeygenResponse_Error:
+			return fmt.Errorf("keygen: %v", r) // TODO: add MsgKeygenErr
+		}
 		return nil
 	}
 }
 
-func createSignHandler(store storage.Storage, sigCli types.MultisigClient, _ tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Sign) error {
+func createSignHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Sign) error {
 	return func(msg *multisigtypes.Sign) error {
 		if !utils.Any(msg.Participants, store.IsTarget) {
 			return nil
@@ -80,7 +96,7 @@ func createSignHandler(store storage.Storage, sigCli types.MultisigClient, _ ten
 			return err
 		}
 
-		_, err = sigCli.Sign(context.Background(), &types.SignRequest{
+		resp, err := sigCli.Sign(context.Background(), &types.SignRequest{
 			KeyUid:    msg.KeyID,
 			MsgToSign: msg.MessageToSign,
 			PartyUid:  store.GetValidator().String(),
@@ -91,7 +107,23 @@ func createSignHandler(store storage.Storage, sigCli types.MultisigClient, _ ten
 			return err
 		}
 
-		// TODO: handle resp
+		sigID := fmt.Sprintf("%s-%d", msg.Chain, msg.SigID)
+
+		switch r := resp.GetSignResponse().(type) {
+		case *types.SignResponse_Signature:
+			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
+				Module:      "sidecar",
+				SigID:       multisigtypes.SigID(sigID),
+				Participant: store.GetValidator(),
+				Signature:   r.Signature,
+			})
+			if err != nil {
+				return err
+			}
+		case *types.SignResponse_Error:
+			return fmt.Errorf("sign: %v", r) // TODO: add MsgKeygenErr
+		}
+
 		return nil
 	}
 }
