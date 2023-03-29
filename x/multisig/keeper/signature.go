@@ -25,9 +25,10 @@ func (k keeper) RemoveSignature(ctx sdk.Context, chainID string, sigID uint64, p
 
 	err := signatureRepo.Delete(sigID, participant)
 	if err != nil {
-		return nil
+		return err
 	}
-	return err
+
+	return nil
 }
 
 // QuerySignature is query specific signature

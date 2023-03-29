@@ -24,8 +24,25 @@ func Test_RegisterSignature(t *testing.T) {
 	assert.DeepEqual(t, sig, res)
 }
 
-func Test_RemoveSignature(_ *testing.T) {
-	// TODO: implements
+func Test_RemoveSignature(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainSignatureRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := genValAddr(t)
+
+	// try to remove not exist signature
+	err := k.RemoveSignature(ctx, chainID, 0, valAddr)
+	assert.Error(t, err, "signature: not found")
+
+	// try to remove exist signature
+	sig := types.Signature("signature")
+	_ = repo.Create(0, valAddr, sig)
+
+	err = k.RemoveSignature(ctx, chainID, 0, valAddr)
+	assert.NilError(t, err)
+
+	// validate signature not exists
+	_, err = repo.Load(0, valAddr)
+	assert.Error(t, err, "signature: not found")
 }
 
 func Test_QuerySignature(_ *testing.T) {
