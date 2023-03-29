@@ -69,6 +69,7 @@ func Test_SaveKeygenEvent(t *testing.T) {
 	// try to update not exist value
 	_, err := k.UpdateKeygenStatus(ctx, chainID, 3, types.Keygen_StatusExecute)
 	assert.Error(t, err, "keygen: not found")
+
 	// try to update exist variable
 	keygen := types.Keygen{
 		Chain:        chainID,
