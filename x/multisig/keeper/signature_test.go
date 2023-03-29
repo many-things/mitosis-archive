@@ -1,8 +1,12 @@
 package keeper_test
 
 import (
+	"fmt"
 	"testing"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -63,6 +67,21 @@ func Test_QuerySignature(t *testing.T) {
 	assert.DeepEqual(t, res, sig)
 }
 
-func Test_QuerySignatureList(_ *testing.T) {
-	// TODO: implements
+func Test_QuerySignatureList(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainSignatureRepo(cdc, ctx.KVStore(storeKey), chainID)
+
+	var signatures []mitosistype.KV[sdk.ValAddress, types.Signature]
+	var i uint64
+	for i = 0; i < 10; i++ {
+		sig := types.Signature(fmt.Sprintf("signature%d", i))
+		valAddr := sdk.ValAddress(fmt.Sprintf("addr%d", i))
+
+		_ = repo.Create(0, valAddr, sig)
+		signatures = append(signatures, mitosistype.NewKV(valAddr, sig))
+	}
+
+	res, _, err := k.QuerySignatureList(ctx, chainID, 0, &query.PageRequest{Limit: query.MaxLimit})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res, signatures)
 }
