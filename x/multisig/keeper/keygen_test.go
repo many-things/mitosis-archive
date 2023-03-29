@@ -56,7 +56,7 @@ func Test_QueryKeygenEvent(t *testing.T) {
 	assert.Error(t, err, genNotfoundErrMsg(0))
 
 	// try to load exist keygen
-	err = repo.Save(&keygen)
+	_, err = repo.Create(&keygen)
 	assert.NilError(t, err)
 
 	res, err := k.QueryKeygen(ctx, chainID, 0)
@@ -105,7 +105,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 
 	// try to delete exist keygen
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
-	err = repo.Save(&keygen)
+	_, err = repo.Create(&keygen)
 	assert.NilError(t, err)
 
 	err = k.RemoveKeygenEvent(ctx, chainID, 0)
