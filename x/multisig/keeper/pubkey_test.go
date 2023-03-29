@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -99,6 +100,21 @@ func Test_QueryPubKey(t *testing.T) {
 	require.Equal(t, pubKey, *res)
 }
 
-func Test_QueryPubKeyList(_ *testing.T) {
-	// TODO: implements
+func Test_QueryPubKeyList(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
+
+	for i := 0; i < 10; i++ {
+		pubKey := types.PubKey{
+			Chain:       chainID,
+			KeyID:       1,
+			Participant: genValAddr(t),
+			PubKey:      genPublicKey(t),
+		}
+		_ = repo.Create(&pubKey)
+	}
+
+	res, _, err := k.QueryPubKeyList(ctx, chainID, 1, &query.PageRequest{Limit: query.MaxLimit})
+	assert.NilError(t, err)
+	require.Equal(t, len(res), 10)
 }
