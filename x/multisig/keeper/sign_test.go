@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -111,6 +113,28 @@ func Test_QuerySign(t *testing.T) {
 	require.Equal(t, res, &sign)
 }
 
-func Test_QuerySignList(_ *testing.T) {
-	// TODO: implements
+func Test_QuerySignList(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := genValAddr(t)
+
+	var signs []mitosistype.KV[uint64, *types.Sign]
+	var i uint64
+	for i = 0; i < 10; i++ {
+		sign := types.Sign{
+			Chain:         chainID,
+			SigID:         i,
+			KeyID:         "1",
+			Participants:  []sdk.ValAddress{valAddr},
+			MessageToSign: []byte("test"),
+			Status:        types.Sign_StatusAssign,
+		}
+		_ = repo.Save(&sign)
+
+		signs = append(signs, mitosistype.NewKV(i, &sign))
+	}
+
+	res, _, err := k.QuerySignList(ctx, chainID, &query.PageRequest{Limit: query.MaxLimit})
+	assert.NilError(t, err)
+	require.Equal(t, res, signs)
 }
