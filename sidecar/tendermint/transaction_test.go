@@ -96,12 +96,12 @@ func Test_Mnemonic_And_PrivKey(t *testing.T) {
 	privKey := "f1cd941f44fb891eeb3d153e311fb0cf6291994e9678f2a2b9bf66adce137214"
 	mnemonic := "burst visa embark foam office album waste autumn remove tourist moment tail camp trumpet blue grunt catalog metal metal simple school item cotton apart"
 
-	wallet, err := NewWallet(privKey, "mitosis", "", "http://test.com", nil)
+	wallet, err := NewWallet(privKey, "mito", "", "http://test.com", nil)
 	assert.NilError(t, err)
 	walletAddress, err := wallet.GetAddress()
 	assert.NilError(t, err)
 
-	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mitosis", "", "http://test.com", nil)
+	walletMnemonic, err := NewWalletWithMnemonic(mnemonic, "mito", "", "http://test.com", nil)
 	assert.NilError(t, err)
 	walletMnemonicAddress, err := walletMnemonic.GetAddress()
 	assert.NilError(t, err)

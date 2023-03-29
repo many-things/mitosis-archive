@@ -21,7 +21,7 @@ type TmConfig struct {
 // SidecarConfig contains configuration for all Sidecar Program
 type SidecarConfig struct {
 	TofNConfig TofNConfig `mapstructure:"tofn"`
-	MitoConfig TmConfig   `mapstructure:"mitosis"`
+	MitoConfig TmConfig   `mapstructure:"mito"`
 }
 
 func DefaultTofNConfig() TofNConfig {
@@ -36,8 +36,8 @@ func DefaultMitoConfig() TmConfig {
 	return TmConfig{
 		Host:    "localhost",
 		Port:    9090,
-		Denom:   "mitosis",
-		Prefix:  "mitosis",
+		Denom:   "mito",
+		Prefix:  "mito",
 		ChainID: "",
 		PrivKey: "",
 	}

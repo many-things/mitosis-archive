@@ -120,8 +120,8 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "mitosis"
-	Name                 = "mitosis"
+	AccountAddressPrefix = "mito"
+	Name                 = "mito"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
