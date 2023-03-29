@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	crand "crypto/rand"
 	"fmt"
 	"testing"
 
@@ -14,17 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
 )
-
-const (
-	chainID = "chain"
-)
-
-func genValAddr(t *testing.T) sdk.ValAddress {
-	bz := make([]byte, 32)
-	_, err := crand.Read(bz)
-	require.NoError(t, err)
-	return bz
-}
 
 func genNotfoundErrMsg(id uint64) string {
 	return fmt.Sprintf("cannot find keygen: id %d", id)

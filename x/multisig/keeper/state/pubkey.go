@@ -1,6 +1,8 @@
 package state
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -40,8 +42,8 @@ func (r kvPubkeyRepo) getPrefix(prefix []byte, id uint64) []byte {
 func (r kvPubkeyRepo) Load(id uint64, participant sdk.ValAddress) (*types.PubKey, error) {
 	bz := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id)).Get(participant)
 
-	if bz != nil {
-		return nil, nil
+	if bz == nil {
+		return nil, fmt.Errorf("cannot find keygen: id %d", id)
 	}
 
 	pubkey := new(types.PubKey)
