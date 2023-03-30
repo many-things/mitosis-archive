@@ -1,10 +1,12 @@
 package state
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -40,8 +42,8 @@ func (r kvPubkeyRepo) getPrefix(prefix []byte, id uint64) []byte {
 func (r kvPubkeyRepo) Load(id uint64, participant sdk.ValAddress) (*types.PubKey, error) {
 	bz := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id)).Get(participant)
 
-	if bz != nil {
-		return nil, nil
+	if bz == nil {
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "pubkey")
 	}
 
 	pubkey := new(types.PubKey)
@@ -64,12 +66,9 @@ func (r kvPubkeyRepo) Create(pubKey *types.PubKey) error {
 
 func (r kvPubkeyRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id))
-	bz := ks.Get(participant)
 
-	// check for obj is exists and valid
-	var pubKey types.Keygen
-	if err := pubKey.Unmarshal(bz); err != nil {
-		return err
+	if !ks.Has(participant) {
+		return sdkerrors.Wrap(errors.ErrNotFound, "pubkey")
 	}
 
 	ks.Delete(participant)

@@ -9,6 +9,6 @@ import (
 )
 
 func setupMsgServer(t testing.TB) (MsgServer, context.Context) {
-	k, ctx := keepertest.MultisigKeeper(t)
+	k, ctx, _, _ := keepertest.MultisigKeeper(t)
 	return NewMsgServer(k), sdk.WrapSDKContext(ctx)
 }

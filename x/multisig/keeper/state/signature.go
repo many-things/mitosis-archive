@@ -45,8 +45,8 @@ func (r kvSignatureRepo) getPrefix(prefix []byte, id uint64) []byte {
 func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Signature, error) {
 	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
 
-	if bz != nil {
-		return nil, sdkerrors.Wrap(errors.ErrNotFound, "cannot find signature")
+	if bz == nil {
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "signature")
 	}
 
 	return bz, nil
@@ -60,8 +60,8 @@ func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature
 func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
 
-	if bz := ks.Get(participant); bz == nil {
-		return sdkerrors.Wrap(errors.ErrNotFound, "cannot find signature")
+	if !ks.Has(participant) {
+		return sdkerrors.Wrap(errors.ErrNotFound, "signature")
 	}
 
 	ks.Delete(participant)

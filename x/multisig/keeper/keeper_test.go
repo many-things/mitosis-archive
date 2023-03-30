@@ -8,8 +8,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	chainID = "chain"
+)
+
 func TestGetParams(t *testing.T) {
-	k, ctx := testkeeper.MultisigKeeper(t)
+	k, ctx, _, _ := testkeeper.MultisigKeeper(t)
 	params := types.DefaultParams()
 
 	k.SetParams(ctx, params)
