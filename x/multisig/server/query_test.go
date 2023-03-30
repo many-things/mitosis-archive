@@ -149,8 +149,34 @@ func Test_PubKeyList(t *testing.T) {
 	assert.DeepEqual(t, res.List, pubKeyList)
 }
 
-func Test_Sign(_ *testing.T) {
-	// TODO: implement
+func Test_Sign(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+
+	// try query not exist sign
+	_, err := s.Sign(wctx, &QuerySign{
+		Chain: chainID,
+		Id:    0,
+	})
+	assert.Error(t, err, "sign: not found")
+
+	// try query exist sign
+	sign := types.Sign{
+		Chain:         chainID,
+		SigID:         0,
+		KeyID:         fmt.Sprintf("%s-%d", chainID, 1),
+		Participants:  []sdk.ValAddress{sdk.ValAddress("addr")},
+		MessageToSign: types.Hash("msgToSign"),
+		Status:        0,
+	}
+	_, _ = k.RegisterSignEvent(wctx, chainID, &sign)
+
+	res, err := s.Sign(wctx, &QuerySign{
+		Chain: chainID,
+		Id:    0,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, *res.Sign, sign)
 }
 
 func Test_SignList(_ *testing.T) {
