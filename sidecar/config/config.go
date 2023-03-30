@@ -5,7 +5,7 @@ import "time"
 // TofNConfig contains connection configuration of T-of-N Daemon
 type TofNConfig struct {
 	Host        string        `mapstructure:"tofnd-host"`
-	Port        string        `mapstructure:"tofnd-port"`
+	Port        int           `mapstructure:"tofnd-port"`
 	DialTimeout time.Duration `mapstrcture:"tofnd-dial-timeout"`
 }
 
@@ -27,7 +27,7 @@ type SidecarConfig struct {
 func DefaultTofNConfig() TofNConfig {
 	return TofNConfig{
 		Host:        "localhost",
-		Port:        "50051",
+		Port:        50051,
 		DialTimeout: 15 * time.Second,
 	}
 }

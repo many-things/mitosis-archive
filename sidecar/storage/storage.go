@@ -1,20 +1,24 @@
 package storage
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/many-things/mitosis/sidecar/config"
 	"sync"
+
+	"github.com/cosmos/cosmos-sdk/types"
+	"github.com/many-things/mitosis/sidecar/config"
 )
 
 type Storage interface {
 	SaveKey(keyID string, value string) error
 	GetKey(keyID string) (string, error)
+	GetValidator() types.ValAddress
 
-	IsTargetEvent(validator string, keyID string) bool
+	IsTarget(validator types.ValAddress) bool
 }
 
 type keyStorage struct {
-	ValidatorAddress string
+	ValidatorAddress []byte
 	Keys             map[string]string
 	fileMgr          LocalFileMgr
 }
@@ -33,7 +37,7 @@ func newStorage(_ *config.SidecarConfig) Storage {
 
 	// TODO: add adoptable variables
 	return keyStorage{
-		ValidatorAddress: "",
+		ValidatorAddress: []byte(""),
 		Keys:             savedKey,
 		fileMgr:          mgr,
 	}
@@ -69,15 +73,12 @@ func (s keyStorage) GetKey(keyID string) (string, error) {
 	return "", fmt.Errorf("cannot found key: %s", keyID)
 }
 
-// IsTargetEvent returns TF variable is given event info is valid for the validator {
-func (s keyStorage) IsTargetEvent(validator, keyID string) bool {
-	if validator != s.ValidatorAddress {
-		return false
-	}
+// IsTarget returns given address is matches with storage Validator
+func (s keyStorage) IsTarget(validator types.ValAddress) bool {
+	return bytes.Equal(validator, s.ValidatorAddress)
+}
 
-	if _, ok := s.Keys[keyID]; ok {
-		return true
-	}
-
-	return false
+// GetValidator returns validator info
+func (s keyStorage) GetValidator() types.ValAddress {
+	return s.ValidatorAddress
 }

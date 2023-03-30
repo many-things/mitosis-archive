@@ -71,7 +71,7 @@ func Test_CreateSignedRawTx(t *testing.T) {
 		146, 193, 163, 210, 232, 247, 109, 40, 83, 211, 60, 5}
 
 	privKey := "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-	wallet, err := NewWallet(privKey, "mito", "", "https://test.com", nil)
+	wallet, err := NewWallet(privKey, "mitosis", "", "https://test.com", nil)
 	assert.NilError(t, err)
 
 	result, err := wallet.CreateSignedRawTx(&msg, accountInfo)
