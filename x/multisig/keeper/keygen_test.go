@@ -1,7 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,10 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
 )
-
-func genNotfoundErrMsg(id uint64) string {
-	return fmt.Sprintf("cannot find keygen: id %d", id)
-}
 
 func Test_RegisterKeygenEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
@@ -53,7 +48,7 @@ func Test_QueryKeygenEvent(t *testing.T) {
 
 	// try to load not exist keygen
 	_, err := k.QueryKeygen(ctx, chainID, 0)
-	assert.Error(t, err, genNotfoundErrMsg(0))
+	assert.Error(t, err, "keygen: not found")
 
 	// try to load exist keygen
 	_, err = repo.Create(&keygen)
@@ -71,8 +66,7 @@ func Test_SaveKeygenEvent(t *testing.T) {
 
 	// try to update not exist value
 	_, err := k.UpdateKeygenStatus(ctx, chainID, 3, types.Keygen_StatusExecute)
-	assert.Error(t, err, genNotfoundErrMsg(3))
-
+	assert.Error(t, err, "keygen: not found")
 	// try to update exist variable
 	keygen := types.Keygen{
 		Chain:        chainID,
@@ -101,7 +95,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 
 	// try to delete not exist keygen
 	err := k.RemoveKeygenEvent(ctx, chainID, uint64(27))
-	assert.Error(t, err, genNotfoundErrMsg(27))
+	assert.Error(t, err, "keygen: not found")
 
 	// try to delete exist keygen
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
@@ -113,7 +107,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 
 	// check keygen deleted
 	_, err = repo.Load(0)
-	assert.Error(t, err, genNotfoundErrMsg(0))
+	assert.Error(t, err, "keygen: not found")
 }
 
 func Test_QueryKeygenList(t *testing.T) {

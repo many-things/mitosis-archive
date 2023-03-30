@@ -1,12 +1,12 @@
 package state
 
 import (
-	"fmt"
-
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -43,7 +43,7 @@ var (
 func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 	bz := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz == nil {
-		return nil, fmt.Errorf("cannot find keygen: id %d", id)
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "keygen")
 	}
 
 	keygen := new(types.Keygen)
@@ -80,7 +80,7 @@ func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
 	store := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
 	keyIDBz := sdk.Uint64ToBigEndian(keygen.KeyID)
 	if !store.Has(keyIDBz) {
-		return fmt.Errorf("cannot find keygen: id %d", keygen.KeyID)
+		return sdkerrors.Wrap(errors.ErrNotFound, "keygen")
 	}
 
 	store.Set(keyIDBz, keygenBz)
@@ -92,7 +92,7 @@ func (r kvKeygenRepo) Delete(id uint64) error {
 	bz := ks.Get(sdk.Uint64ToBigEndian(id))
 
 	if bz == nil {
-		return fmt.Errorf("cannot find keygen: id %d", id)
+		return sdkerrors.Wrap(errors.ErrNotFound, "keygen")
 	}
 
 	// check for obj is exists and valid

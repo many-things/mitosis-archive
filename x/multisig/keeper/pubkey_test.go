@@ -2,10 +2,8 @@ package keeper_test
 
 import (
 	crand "crypto/rand"
-	"fmt"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
@@ -24,10 +22,6 @@ func genPublicKey(t *testing.T) types.PublicKey {
 var (
 	kvPubKeyRepoKey = []byte{0x02}
 )
-
-func genNotFoundPubKeyMsg(id uint64, participant sdk.ValAddress) string {
-	return fmt.Sprintf("cannot find pubkey: %s for id %d", participant, id)
-}
 
 func Test_RegisterPubKey(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
@@ -56,7 +50,7 @@ func Test_RemovePubKey(t *testing.T) {
 
 	// try to delete not exist pubKey
 	err := k.RemovePubKey(ctx, chainID, 0, valAddr)
-	assert.Error(t, err, genNotFoundPubKeyMsg(0, valAddr))
+	assert.Error(t, err, "pubkey: not found")
 
 	// try to delete exist pubKey
 	pubKey := types.PubKey{
@@ -73,7 +67,7 @@ func Test_RemovePubKey(t *testing.T) {
 
 	// validate
 	_, err = repo.Load(pubKey.KeyID, pubKey.Participant)
-	assert.Error(t, err, genNotFoundPubKeyMsg(pubKey.KeyID, pubKey.Participant))
+	assert.Error(t, err, "pubkey: not found")
 }
 
 func Test_QueryPubKey(t *testing.T) {
@@ -83,7 +77,7 @@ func Test_QueryPubKey(t *testing.T) {
 
 	// try to query not exist pubKey
 	_, err := k.QueryPubKey(ctx, chainID, 0, valAddr)
-	assert.Error(t, err, genNotFoundPubKeyMsg(0, valAddr))
+	assert.Error(t, err, "pubkey: not found")
 
 	// try to query exist pubKey
 	pubKey := types.PubKey{

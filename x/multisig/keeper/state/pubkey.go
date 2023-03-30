@@ -1,12 +1,12 @@
 package state
 
 import (
-	"fmt"
-
+	sdkerrors "cosmossdk.io/errors"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -43,7 +43,7 @@ func (r kvPubkeyRepo) Load(id uint64, participant sdk.ValAddress) (*types.PubKey
 	bz := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id)).Get(participant)
 
 	if bz == nil {
-		return nil, fmt.Errorf("cannot find pubkey: %s for id %d", participant, id)
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "pubkey")
 	}
 
 	pubkey := new(types.PubKey)
@@ -68,7 +68,7 @@ func (r kvPubkeyRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, id))
 
 	if !ks.Has(participant) {
-		return fmt.Errorf("cannot find pubkey: %s for id %d", participant, id)
+		return sdkerrors.Wrap(errors.ErrNotFound, "pubkey")
 	}
 
 	ks.Delete(participant)
