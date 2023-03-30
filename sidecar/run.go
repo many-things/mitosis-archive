@@ -3,6 +3,7 @@ package sidecar
 import (
 	"context"
 	"fmt"
+	"github.com/tendermint/tendermint/rpc/client"
 	golog "log"
 	"os"
 
@@ -149,13 +150,25 @@ func run() {
 	store := storage.GetStorage(&cfg)
 
 	// TODO: implement block getter
-	mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
-	fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
-	if err != nil {
-		golog.Fatal(err)
-	}
 
-	listener := tendermint.NewBlockListener(ctx, fetcher, time.Second*5)
+	robustClient := tendermint.NewRobustTmClient(func() (client.Client, error) {
+		mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
+		if err != nil {
+			golog.Fatal(err)
+			return nil, err
+		}
+
+		err = fetcher.Start()
+		if err != nil {
+			golog.Fatal(err)
+			return nil, err
+		}
+
+		return fetcher, err
+	})
+
+	listener := tendermint.NewBlockListener(ctx, robustClient, time.Second*5)
 	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
