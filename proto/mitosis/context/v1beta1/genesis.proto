@@ -4,8 +4,22 @@ package manythings.mitosis.v1beta1.context;
 
 import "gogoproto/gogo.proto";
 import "mitosis/context/v1beta1/params.proto";
+import "mitosis/context/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/types";
+
+// Genesis state of operation repository
+message GenesisOperation {
+  // Key-Value set of item
+  message ItemSet {
+    uint64 id = 1;
+    Operation operation = 2;
+  }
+
+  uint64 first_id = 1;
+  uint64 last_id = 2;
+  repeated ItemSet item_set = 3;
+}
 
 // GenesisState defines the context module's genesis state.
 message GenesisState {
