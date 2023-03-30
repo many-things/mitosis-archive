@@ -28,3 +28,35 @@ func TestParamsQuery(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, &QueryParamsResponse{Params: params}, response)
 }
+
+func Test_Keygen(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_KeygenList(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_PubKey(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_PubKeyList(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_Sign(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_SignList(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_Signature(_ *testing.T) {
+	// TODO: implement
+}
+
+func Test_SignatureList(_ *testing.T) {
+	// TODO: implement
+}
