@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/pkg/testutils"
+
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"

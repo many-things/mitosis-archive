@@ -26,6 +26,7 @@ func Test_RegisterKeygenEvent(t *testing.T) {
 	}
 	kgID, err := k.RegisterKeygenEvent(ctx, chainID, &keygen)
 	assert.NilError(t, err)
+
 	require.Equal(t, kgID, uint64(0))
 
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
@@ -68,6 +69,7 @@ func Test_SaveKeygenEvent(t *testing.T) {
 	// try to update not exist value
 	_, err := k.UpdateKeygenStatus(ctx, chainID, 3, types.Keygen_StatusExecute)
 	assert.Error(t, err, "keygen: not found")
+
 	// try to update exist variable
 	keygen := types.Keygen{
 		Chain:        chainID,
@@ -101,6 +103,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 	// try to delete exist keygen
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
 	_, err = repo.Create(&keygen)
+
 	assert.NilError(t, err)
 
 	err = k.RemoveKeygenEvent(ctx, chainID, 0)
