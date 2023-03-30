@@ -11,6 +11,9 @@ type BaseKeeper interface {
 }
 
 type OperationKeeper interface {
+	SubmitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error)
+
+	UpdateOperationStatus(ctx sdk.Context, id uint64, status Operation_Status) error
 }
 
 type GenesisKeeper interface {
