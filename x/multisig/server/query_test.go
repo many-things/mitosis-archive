@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -93,8 +94,32 @@ func Test_KeygenList(t *testing.T) {
 	assert.DeepEqual(t, res.List, keygens)
 }
 
-func Test_PubKey(_ *testing.T) {
-	// TODO: implement
+func Test_PubKey(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+	valAddr := sdk.ValAddress("address")
+
+	// try to query not exist pubkey
+	_, err := s.PubKey(wctx, &QueryPubKey{
+		KeyId:     fmt.Sprintf("%s-%d", chainID, 0),
+		Validator: valAddr,
+	})
+	assert.Error(t, err, "pubkey: not found")
+
+	// try to query exist pubkey
+	pubKey := types.PubKey{
+		Chain:       chainID,
+		KeyID:       0,
+		Participant: valAddr,
+		PubKey:      types.PublicKey("publickey"),
+	}
+	_ = k.RegisterPubKey(wctx, chainID, &pubKey)
+	res, err := s.PubKey(wctx, &QueryPubKey{
+		KeyId:     fmt.Sprintf("%s-%d", chainID, 0),
+		Validator: valAddr,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res.PubKey, &pubKey)
 }
 
 func Test_PubKeyList(_ *testing.T) {
