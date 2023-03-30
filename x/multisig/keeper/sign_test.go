@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/testutils"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
@@ -16,7 +17,7 @@ import (
 func Test_RegisterSignEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	sign := types.Sign{
 		Chain:         chainID,
@@ -37,7 +38,7 @@ func Test_RegisterSignEvent(t *testing.T) {
 func Test_RemoveSignEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to remove not exist sign event
 	err := k.RemoveSignEvent(ctx, chainID, 0)
@@ -66,7 +67,7 @@ func Test_RemoveSignEvent(t *testing.T) {
 func Test_UpdateSignStatus(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to update not exist sign event
 	_, err := k.UpdateSignStatus(ctx, chainID, 0, types.Sign_StatusComplete)
@@ -91,7 +92,7 @@ func Test_UpdateSignStatus(t *testing.T) {
 func Test_QuerySign(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to query not exist sign event
 	_, err := k.QuerySign(ctx, chainID, 0)
@@ -116,7 +117,7 @@ func Test_QuerySign(t *testing.T) {
 func Test_QuerySignList(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	var signs []mitosistype.KV[uint64, *types.Sign]
 	var i uint64

@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/testutils"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
@@ -15,7 +16,7 @@ import (
 
 func Test_RegisterKeygenEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	keygen := types.Keygen{
 		Chain:        chainID,
@@ -37,7 +38,7 @@ func Test_RegisterKeygenEvent(t *testing.T) {
 func Test_QueryKeygenEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	keygen := types.Keygen{
 		Chain:        chainID,
@@ -62,7 +63,7 @@ func Test_QueryKeygenEvent(t *testing.T) {
 func Test_SaveKeygenEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to update not exist value
 	_, err := k.UpdateKeygenStatus(ctx, chainID, 3, types.Keygen_StatusExecute)
@@ -84,7 +85,7 @@ func Test_SaveKeygenEvent(t *testing.T) {
 
 func Test_RemoveKeygenEvent(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	keygen := types.Keygen{
 		Chain:        chainID,
@@ -113,7 +114,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 func Test_QueryKeygenList(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainKeygenRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	var keygens []mitosistype.KV[uint64, *types.Keygen]
 	// Gen data

@@ -1,23 +1,16 @@
 package keeper_test
 
 import (
-	crand "crypto/rand"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/testutils"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/many-things/mitosis/x/multisig/types"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
 )
-
-func genPublicKey(t *testing.T) types.PublicKey {
-	bz := make([]byte, 32)
-	_, err := crand.Read(bz)
-	require.NoError(t, err)
-	return bz
-}
 
 var (
 	kvPubKeyRepoKey = []byte{0x02}
@@ -26,13 +19,13 @@ var (
 func Test_RegisterPubKey(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	pubKey := types.PubKey{
 		Chain:       chainID,
 		KeyID:       0,
 		Participant: valAddr,
-		PubKey:      genPublicKey(t),
+		PubKey:      testutils.GenPublicKey(t),
 	}
 	err := k.RegisterPubKey(ctx, chainID, &pubKey)
 	assert.NilError(t, err)
@@ -46,7 +39,7 @@ func Test_RegisterPubKey(t *testing.T) {
 func Test_RemovePubKey(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to delete not exist pubKey
 	err := k.RemovePubKey(ctx, chainID, 0, valAddr)
@@ -57,7 +50,7 @@ func Test_RemovePubKey(t *testing.T) {
 		Chain:       chainID,
 		KeyID:       0,
 		Participant: valAddr,
-		PubKey:      genPublicKey(t),
+		PubKey:      testutils.GenPublicKey(t),
 	}
 	err = repo.Create(&pubKey)
 	assert.NilError(t, err)
@@ -73,7 +66,7 @@ func Test_RemovePubKey(t *testing.T) {
 func Test_QueryPubKey(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to query not exist pubKey
 	_, err := k.QueryPubKey(ctx, chainID, 0, valAddr)
@@ -84,7 +77,7 @@ func Test_QueryPubKey(t *testing.T) {
 		Chain:       chainID,
 		KeyID:       0,
 		Participant: valAddr,
-		PubKey:      genPublicKey(t),
+		PubKey:      testutils.GenPublicKey(t),
 	}
 	err = repo.Create(&pubKey)
 	assert.NilError(t, err)
@@ -102,8 +95,8 @@ func Test_QueryPubKeyList(t *testing.T) {
 		pubKey := types.PubKey{
 			Chain:       chainID,
 			KeyID:       1,
-			Participant: genValAddr(t),
-			PubKey:      genPublicKey(t),
+			Participant: testutils.GenValAddress(t),
+			PubKey:      testutils.GenPublicKey(t),
 		}
 		_ = repo.Create(&pubKey)
 	}

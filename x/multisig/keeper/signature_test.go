@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/testutils"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
@@ -16,7 +17,7 @@ import (
 func Test_RegisterSignature(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignatureRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	sig := types.Signature("signature")
 	err := k.RegisterSignature(ctx, chainID, 0, valAddr, sig)
@@ -31,7 +32,7 @@ func Test_RegisterSignature(t *testing.T) {
 func Test_RemoveSignature(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignatureRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to remove not exist signature
 	err := k.RemoveSignature(ctx, chainID, 0, valAddr)
@@ -52,7 +53,7 @@ func Test_RemoveSignature(t *testing.T) {
 func Test_QuerySignature(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainSignatureRepo(cdc, ctx.KVStore(storeKey), chainID)
-	valAddr := genValAddr(t)
+	valAddr := testutils.GenValAddress(t)
 
 	// try to query not exist signature
 	_, err := k.QuerySignature(ctx, chainID, 0, valAddr)
