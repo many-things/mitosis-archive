@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"gotest.tools/assert"
 
@@ -63,8 +64,33 @@ func Test_Keygen(t *testing.T) {
 	assert.DeepEqual(t, res, &QueryKeygenResponse{Keygen: &keygen})
 }
 
-func Test_KeygenList(_ *testing.T) {
-	// TODO: implement
+func Test_KeygenList(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+	valAddr := sdk.ValAddress("address")
+
+	var keygens []*types.Keygen
+	var i uint64
+	for i = 0; i < 5; i++ {
+		keygen := types.Keygen{
+			Chain:        chainID,
+			KeyID:        i,
+			Participants: []sdk.ValAddress{valAddr},
+			Status:       1,
+		}
+
+		_, _ = k.RegisterKeygenEvent(wctx, chainID, &keygen)
+		keygens = append(keygens, &keygen)
+	}
+
+	res, err := s.KeygenList(wctx, &QueryKeygenList{
+		Chain: chainID,
+		Pagination: &query.PageRequest{
+			Limit: query.MaxLimit,
+		},
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res.List, keygens)
 }
 
 func Test_PubKey(_ *testing.T) {
