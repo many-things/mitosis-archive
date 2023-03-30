@@ -122,8 +122,31 @@ func Test_PubKey(t *testing.T) {
 	assert.DeepEqual(t, res.PubKey, &pubKey)
 }
 
-func Test_PubKeyList(_ *testing.T) {
-	// TODO: implement
+func Test_PubKeyList(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+
+	var pubKeyList []*types.PubKey
+	for i := 0; i < 5; i++ {
+		pubKey := types.PubKey{
+			Chain:       chainID,
+			KeyID:       0,
+			Participant: sdk.ValAddress(fmt.Sprintf("addr%d", i)),
+			PubKey:      types.PublicKey("publickey"),
+		}
+		_ = k.RegisterPubKey(wctx, chainID, &pubKey)
+
+		pubKeyList = append(pubKeyList, &pubKey)
+	}
+
+	res, err := s.PubKeyList(ctx, &QueryPubKeyList{
+		KeyId: fmt.Sprintf("%s-%d", chainID, 0),
+		Pagination: &query.PageRequest{
+			Limit: query.MaxLimit,
+		},
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res.List, pubKeyList)
 }
 
 func Test_Sign(_ *testing.T) {
