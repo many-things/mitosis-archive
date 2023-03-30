@@ -232,6 +232,28 @@ func Test_Signature(t *testing.T) {
 	assert.DeepEqual(t, res.Signature, []uint8("signature"))
 }
 
-func Test_SignatureList(_ *testing.T) {
-	// TODO: implement
+func Test_SignatureList(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+
+	var signs []types.Signature
+	for i := 0; i < 5; i++ {
+		sign := types.Signature(fmt.Sprintf("signature-%d", i))
+		_ = k.RegisterSignature(
+			wctx,
+			chainID,
+			0,
+			sdk.ValAddress(fmt.Sprintf("val-%d", i)),
+			sign,
+		)
+
+		signs = append(signs, sign)
+	}
+
+	res, err := s.SignatureList(wctx, &QuerySignatureList{
+		SigId:      fmt.Sprintf("%s-%d", chainID, 0),
+		Pagination: &query.PageRequest{Limit: query.MaxLimit},
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res.List, signs)
 }
