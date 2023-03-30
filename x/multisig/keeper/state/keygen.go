@@ -45,7 +45,6 @@ func (r kvKeygenRepo) Load(id uint64) (*types.Keygen, error) {
 	bz := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz == nil {
 		return nil, sdkerrors.Wrap(errors.ErrNotFound, "keygen")
-
 	}
 
 	keygen := new(types.Keygen)
@@ -83,7 +82,6 @@ func (r kvKeygenRepo) Save(keygen *types.Keygen) error {
 	keyIDBz := sdk.Uint64ToBigEndian(keygen.KeyID)
 	if !store.Has(keyIDBz) {
 		return sdkerrors.Wrap(errors.ErrNotFound, "keygen")
-
 	}
 
 	store.Set(keyIDBz, keygenBz)
@@ -96,7 +94,6 @@ func (r kvKeygenRepo) Delete(id uint64) error {
 
 	if bz == nil {
 		return sdkerrors.Wrap(errors.ErrNotFound, "keygen")
-
 	}
 
 	// check for obj is exists and valid
