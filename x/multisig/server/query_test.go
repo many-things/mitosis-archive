@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/many-things/mitosis/x/multisig/keeper"
+	"gotest.tools/assert"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
@@ -29,8 +30,37 @@ func TestParamsQuery(t *testing.T) {
 	require.Equal(t, &QueryParamsResponse{Params: params}, response)
 }
 
-func Test_Keygen(_ *testing.T) {
-	// TODO: implement
+const (
+	chainID = "chainID"
+)
+
+func Test_Keygen(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+	valAddr := sdk.ValAddress("address")
+
+	// try to query not exist keygen
+	_, err := s.Keygen(ctx, &QueryKeygen{
+		Chain: chainID,
+		Id:    0,
+	})
+	assert.Error(t, err, "keygen: not found")
+
+	// try to query exist keygen
+	keygen := types.Keygen{
+		Chain:        chainID,
+		KeyID:        0,
+		Participants: []sdk.ValAddress{valAddr},
+		Status:       1,
+	}
+	_, _ = k.RegisterKeygenEvent(wctx, chainID, &keygen)
+
+	res, err := s.Keygen(ctx, &QueryKeygen{
+		Chain: chainID,
+		Id:    0,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res, &QueryKeygenResponse{Keygen: &keygen})
 }
 
 func Test_KeygenList(_ *testing.T) {
