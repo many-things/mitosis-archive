@@ -208,8 +208,28 @@ func Test_SignList(t *testing.T) {
 	assert.DeepEqual(t, res.List, signs)
 }
 
-func Test_Signature(_ *testing.T) {
-	// TODO: implement
+func Test_Signature(t *testing.T) {
+	k, s, ctx := setupQueryServer(t)
+	wctx := ctx.(sdk.Context)
+	val := sdk.ValAddress("val")
+
+	// try to query not exist signature
+	_, err := s.Signature(wctx, &QuerySignature{
+		SigId:     fmt.Sprintf("%s-%d", chainID, 0),
+		Validator: val,
+	})
+	assert.Error(t, err, "signature: not found")
+
+	// try to query exist signature
+	sig := types.Signature("signature")
+	_ = k.RegisterSignature(wctx, chainID, 0, val, sig)
+
+	res, err := s.Signature(wctx, &QuerySignature{
+		SigId:     fmt.Sprintf("%s-%d", chainID, 0),
+		Validator: val,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res.Signature, []uint8("signature"))
 }
 
 func Test_SignatureList(_ *testing.T) {
