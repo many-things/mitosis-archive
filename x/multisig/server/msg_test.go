@@ -19,7 +19,44 @@ func setupMsgServer(t testing.TB) (keeper.Keeper, MsgServer, context.Context) {
 }
 
 func Test_StartKeygen_Failure(t *testing.T) {
-	// TODO: impelment
+	k, s, ctx := setupMsgServer(t)
+	wctx := ctx.(sdk.Context)
+	valAddr := testutils.GenValAddress(t)
+	otherAddr := testutils.GenValAddress(t)
+	keyID := types.KeyID(fmt.Sprintf("%s-%d", chainID, 0))
+
+	// Request not exist Keygen event
+	_, err := s.StartKeygen(wctx, &MsgStartKeygen{
+		Module:       "module",
+		KeyID:        keyID,
+		Participants: []sdk.ValAddress{valAddr},
+	})
+	assert.Error(t, err, "keygen: not found")
+
+	// Request Already finished Keygen event
+	kg := types.Keygen{
+		Chain:        chainID,
+		KeyID:        0,
+		Participants: []sdk.ValAddress{valAddr},
+		Status:       types.Keygen_StatusComplete,
+	}
+	_, _ = k.RegisterKeygenEvent(wctx, chainID, &kg)
+
+	_, err = s.StartKeygen(wctx, &MsgStartKeygen{
+		Module:       "module",
+		KeyID:        keyID,
+		Participants: []sdk.ValAddress{valAddr},
+	})
+	assert.Error(t, err, "keygen: cannot start finished keygen: invalid request")
+
+	// Request wrong participant
+	_, _ = k.UpdateKeygenStatus(wctx, chainID, 0, types.Keygen_StatusAssign)
+	_, err = s.StartKeygen(wctx, &MsgStartKeygen{
+		Module:       "module",
+		KeyID:        keyID,
+		Participants: []sdk.ValAddress{otherAddr},
+	})
+	assert.Error(t, err, "keygen: invalid participants: invalid request")
 }
 
 func Test_StartKeygen_Success(t *testing.T) {
