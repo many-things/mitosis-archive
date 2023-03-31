@@ -123,6 +123,27 @@ func Test_SubmitPubKey(t *testing.T) {
 	assert.DeepEqual(t, res.PubKey, pubKey)
 }
 
-func Test_SubmitSignature(_ *testing.T) {
-	// TODO: implement
+func Test_SubmitSignature(t *testing.T) {
+	k, s, ctx := setupMsgServer(t)
+	wctx := ctx.(sdk.Context)
+	valAddr := testutils.GenValAddress(t)
+	signature := types.Signature("signature")
+
+	// ensure signature not exist yet
+	_, err := k.QuerySignature(wctx, chainID, 0, valAddr)
+	assert.Error(t, err, "signature: not found")
+
+	// request signature
+	_, err = s.SubmitSignature(wctx, &MsgSubmitSignature{
+		Module:      "module",
+		SigID:       types.SigID(fmt.Sprintf("%s-%d", chainID, 0)),
+		Participant: valAddr,
+		Signature:   signature,
+	})
+	assert.NilError(t, err)
+
+	// ensure signature exists
+	res, err := k.QuerySignature(wctx, chainID, 0, valAddr)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res, signature)
 }
