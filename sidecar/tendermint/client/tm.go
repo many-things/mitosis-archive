@@ -1,10 +1,11 @@
-package tendermint
+package client
 
 import (
 	"context"
+	"strings"
+
 	"github.com/tendermint/tendermint/rpc/client"
 	coretypes "github.com/tendermint/tendermint/rpc/core/types"
-	"strings"
 )
 
 type RobustTmClient struct {

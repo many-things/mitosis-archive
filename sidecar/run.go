@@ -3,9 +3,11 @@ package sidecar
 import (
 	"context"
 	"fmt"
-	"github.com/tendermint/tendermint/rpc/client"
 	golog "log"
 	"os"
+
+	client2 "github.com/many-things/mitosis/sidecar/tendermint/client"
+	"github.com/tendermint/tendermint/rpc/client"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
@@ -151,7 +153,7 @@ func run() {
 
 	// TODO: implement block getter
 
-	robustClient := tendermint.NewRobustTmClient(func() (client.Client, error) {
+	robustClient := client2.NewRobustTmClient(func() (client.Client, error) {
 		mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
 		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
 		if err != nil {
