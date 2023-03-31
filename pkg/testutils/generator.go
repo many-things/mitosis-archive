@@ -1,7 +1,9 @@
 package testutils
 
 import (
+	"crypto/ecdsa"
 	crand "crypto/rand"
+	"github.com/btcsuite/btcd/btcec"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,8 +26,15 @@ func GenAccAddress(t *testing.T) sdk.AccAddress {
 }
 
 func GenPublicKey(t *testing.T) types.PublicKey {
-	bz := make([]byte, 32)
-	_, err := crand.Read(bz)
+	curve := btcec.S256()
+	key, err := ecdsa.GenerateKey(curve, crand.Reader)
 	require.NoError(t, err)
-	return bz
+
+	pubKey := btcec.PublicKey{
+		Curve: curve,
+		X:     key.PublicKey.X,
+		Y:     key.PublicKey.Y,
+	}
+
+	return pubKey.SerializeCompressed()
 }

@@ -100,9 +100,29 @@ func Test_StartKeygen_Success(t *testing.T) {
 }
 
 func Test_SubmitPubKey(t *testing.T) {
-	// TODO: implement
+	k, s, ctx := setupMsgServer(t)
+	wctx := ctx.(sdk.Context)
+	valAddr := testutils.GenValAddress(t)
+	pubKey := testutils.GenPublicKey(t)
+
+	// ensure pubkey not exist yet
+	_, err := k.QueryPubKey(wctx, chainID, 0, valAddr)
+	assert.Error(t, err, "pubkey: not found")
+
+	_, err = s.SubmitPubkey(wctx, &MsgSubmitPubkey{
+		Module:      "module",
+		KeyID:       types.KeyID(fmt.Sprintf("%s-%d", chainID, 0)),
+		Participant: valAddr,
+		PubKey:      pubKey,
+	})
+	assert.NilError(t, err)
+
+	// check pubKey
+	res, err := k.QueryPubKey(wctx, chainID, 0, valAddr)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res.PubKey, pubKey)
 }
 
-func Test_SubmitSignature(t *testing.T) {
+func Test_SubmitSignature(_ *testing.T) {
 	// TODO: implement
 }
