@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
@@ -8,10 +9,10 @@ import (
 )
 
 func TestGetParams(t *testing.T) {
-	k, ctx := testkeeper.ContextKeeper(t)
+	k, ctx, _, _ := testkeeper.ContextKeeper(t)
 	params := types.DefaultParams()
 
-	//k.SetParams(ctx, params)
-	//
-	//require.EqualValues(t, params, k.GetParams(ctx))
+	k.SetParams(ctx, params)
+
+	require.EqualValues(t, params, k.GetParams(ctx))
 }
