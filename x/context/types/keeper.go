@@ -11,12 +11,17 @@ type BaseKeeper interface {
 }
 
 type OperationKeeper interface {
-	SubmitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error)
+	InitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error)
 
-	UpdateOperationStatus(ctx sdk.Context, id uint64, status Operation_Status) error
+	StartKeygenOperation(ctx sdk.Context, id uint64) error
+
+	FinishKeygenOperation(ctx sdk.Context, id uint64) error
+
+	FinishOperation(ctx sdk.Context, id uint64, receipt []uint64) error
 }
 
 type GenesisKeeper interface {
 	ExportGenesis(ctx sdk.Context) (genesis *GenesisState, err error)
+
 	ImportGenesis(ctx sdk.Context, genesis *GenesisState) error
 }

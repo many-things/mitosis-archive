@@ -7,12 +7,18 @@ import (
 
 var _ types.OperationKeeper = &keeper{}
 
-func (k keeper) SubmitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error) {
-	//TODO implement me
-	panic("implement me")
+func (k keeper) InitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error) {
+	return 0, nil
 }
 
-func (k keeper) UpdateOperationStatus(ctx sdk.Context, id uint64, status types.Operation_Status) error {
-	//TODO implement me
-	panic("implement me")
+func (k keeper) StartKeygenOperation(ctx sdk.Context, id uint64) error {
+	return nil
+}
+
+func (k keeper) FinishKeygenOperation(ctx sdk.Context, id uint64) error {
+	return nil
+}
+
+func (k keeper) FinishOperation(ctx sdk.Context, id uint64, receipt []uint64) error {
+	return nil
 }
