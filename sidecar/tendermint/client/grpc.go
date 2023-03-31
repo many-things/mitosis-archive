@@ -18,10 +18,10 @@ type RobustGRPCClient interface {
 type robustGRPCClient struct {
 	client  gorpc.ClientConn
 	healthy chan bool
-	factory func() (gorpc.ClientConn, error)
+	factory func() (*gorpc.ClientConn, error)
 }
 
-func NewRobustGRPCClient(factory func() (gorpc.ClientConn, error)) RobustGRPCClient {
+func NewRobustGRPCClient(factory func() (*gorpc.ClientConn, error)) RobustGRPCClient {
 	healthy := make(chan bool, 1)
 	healthy <- false
 
@@ -40,7 +40,7 @@ func (r *robustGRPCClient) resetClient() error {
 		}
 
 		//TODO: resolve this mutex problem
-		r.client = cli //nolint: govet
+		r.client = *cli //nolint: govet
 	}
 
 	r.healthy <- true

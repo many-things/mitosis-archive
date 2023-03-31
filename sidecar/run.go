@@ -142,8 +142,19 @@ func run() {
 		panic(err)
 	}
 	// TODO: make these Rpc robust
-	sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
-	sigRPC, err := grpc.Dial(sigDialURL)
+
+	sigRPC := client2.NewRobustGRPCClient(func() (*grpc.ClientConn, error) {
+		sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
+		sigRPC, err := grpc.Dial(sigDialURL)
+
+		if err != nil {
+			golog.Fatal(err)
+			return nil, err
+		}
+
+		// TODO: use state
+		return sigRPC, nil
+	})
 
 	if err != nil {
 		panic(fmt.Errorf("cannot dial to tofn network: %w", err))
