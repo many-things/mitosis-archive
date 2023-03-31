@@ -32,10 +32,10 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 
 ) Keeper {
-	// set KeyTablfe if it has not already been set
+	// set KeyTable if it has not already been sets
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
-	}f
+	}
 
 	return &keeper{
 		cdc:        cdc,
