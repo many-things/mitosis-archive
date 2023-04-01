@@ -17,6 +17,10 @@ type OperationKeeper interface {
 
 	FinishKeygenOperation(ctx sdk.Context, id uint64) error
 
+	StartSignOperation(ctx sdk.Context, id uint64) error
+
+	FinishSignOperation(ctx sdk.Context, id uint64) error
+
 	FinishOperation(ctx sdk.Context, id uint64, receipt []uint64) error
 }
 
