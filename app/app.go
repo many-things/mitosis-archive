@@ -510,7 +510,7 @@ func New(
 		govConfig,
 	)
 
-	app.ContextKeeper = *contextmodulekeeper.NewKeeper(
+	app.ContextKeeper = contextmodulekeeper.NewKeeper(
 		appCodec,
 		keys[contextmoduletypes.StoreKey],
 		keys[contextmoduletypes.MemStoreKey],

@@ -7,10 +7,10 @@ import (
 
 var _ types.GenesisKeeper = &keeper{}
 
-func (k keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err error) {
+func (k keeper) ExportGenesis(_ sdk.Context) (genesis *types.GenesisState, err error) {
 	return
 }
 
-func (k keeper) ImportGenesis(ctx sdk.Context, genesis *types.GenesisState) (err error) {
+func (k keeper) ImportGenesis(_ sdk.Context, _ *types.GenesisState) (err error) {
 	return
 }
