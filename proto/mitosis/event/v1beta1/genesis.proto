@@ -97,4 +97,6 @@ message GenesisState {
   GenesisChain chain = 4;
 
   GenesisSnapshot snapshot = 5;
+
+  GenesisTxPayload tx_payload = 6;
 }
