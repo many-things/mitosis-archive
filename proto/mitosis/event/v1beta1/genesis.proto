@@ -72,6 +72,20 @@ message GenesisSnapshot {
   repeated PowerSet power_set = 2;
 }
 
+message GenesisTxPayload {
+  message ItemSet {
+    uint64 poll_id = 1;
+    bytes tx_payload = 2;
+  }
+
+  message ChainSet {
+    bytes chain = 1;
+    repeated ItemSet item_set = 2;
+  }
+
+  repeated ChainSet chain_set = 1;
+}
+
 // GenesisState defines the event module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
