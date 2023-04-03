@@ -37,4 +37,8 @@ message Operation {
 
   // Operation status
   Status status = 4;
+
+  bytes tx_payload = 5;
+
+  bytes tx_bytes_to_sign = 6;
 }

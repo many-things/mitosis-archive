@@ -11,7 +11,7 @@ option go_package = "github.com/many-things/mitosis/x/event/types";
 message TxReqEvent {
   string dest_chain = 1;
   bytes dest_addr = 2;
-  uint32 op_id = 3;
+  uint64 op_id = 3;
   repeated bytes op_args = 4;
 
   repeated mitosis.v1beta1.common.Coin funds = 5;
