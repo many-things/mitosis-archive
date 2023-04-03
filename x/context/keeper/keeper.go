@@ -12,14 +12,18 @@ import (
 	"github.com/many-things/mitosis/x/context/types"
 )
 
-type (
-	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
-	}
-)
+type Keeper interface {
+	types.BaseKeeper
+	types.OperationKeeper
+	types.GenesisKeeper
+}
+
+type keeper struct {
+	cdc        codec.BinaryCodec
+	storeKey   storetypes.StoreKey
+	memKey     storetypes.StoreKey
+	paramstore paramtypes.Subspace
+}
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
@@ -27,13 +31,13 @@ func NewKeeper(
 	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 
-) *Keeper {
-	// set KeyTable if it has not already been set
+) Keeper {
+	// set KeyTable if it has not already been sets
 	if !ps.HasKeyTable() {
 		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return &Keeper{
+	return &keeper{
 		cdc:        cdc,
 		storeKey:   storeKey,
 		memKey:     memKey,
@@ -41,6 +45,6 @@ func NewKeeper(
 	}
 }
 
-func (k Keeper) Logger(ctx sdk.Context) log.Logger {
+func (k keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
