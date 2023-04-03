@@ -32,3 +32,12 @@ func MapKV[K, V, R any](kvs []KV[K, V], f func(k K, v V, i int) R) []R {
 		return f(kv.Key, kv.Value, i)
 	})
 }
+
+func FindKV[K, V any](kvs []KV[K, V], f func(k K, v V, i int) bool) *KV[K, V] {
+	for i, kv := range kvs {
+		if f(kv.Key, kv.Value, i) {
+			return &kv
+		}
+	}
+	return nil
+}
