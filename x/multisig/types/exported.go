@@ -13,7 +13,6 @@ import (
 type KeyID string
 type PublicKey []byte
 type Hash []byte
-type Signature []byte
 type SigID string
 
 const (
