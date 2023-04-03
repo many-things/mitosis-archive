@@ -6,8 +6,8 @@ import (
 	golog "log"
 	"os"
 
-	tmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
-	"github.com/tendermint/tendermint/rpc/client"
+	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
+	tmclient "github.com/tendermint/tendermint/rpc/client"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
@@ -143,7 +143,7 @@ func run() {
 	}
 	// TODO: make these Rpc robust
 
-	sigRPC := tmclient.NewRobustGRPCClient(func() (*grpc.ClientConn, error) {
+	sigRPC := mitotmclient.NewRobustGRPCClient(func() (*grpc.ClientConn, error) {
 		sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
 		sigRPC, err := grpc.Dial(sigDialURL)
 
@@ -164,7 +164,7 @@ func run() {
 
 	// TODO: implement block getter
 
-	robustClient := tmclient.NewRobustTmClient(func() (client.Client, error) {
+	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
 		mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
 		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
 		if err != nil {
