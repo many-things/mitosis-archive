@@ -524,9 +524,10 @@ func New(
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
 
 	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
+
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],
@@ -562,7 +563,7 @@ func New(
 
 	app.GovKeeper.SetHooks(
 		govtypes.NewMultiGovHooks(
-		// insert governance hooks receivers here
+			// insert governance hooks receivers here
 		),
 	)
 
