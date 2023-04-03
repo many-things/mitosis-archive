@@ -11,11 +11,15 @@ type BaseKeeper interface {
 }
 
 type OperationKeeper interface {
-	InitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error)
+	InitOperation(ctx sdk.Context, chain string, evtID uint64) (uint64, error)
 
 	StartKeygenOperation(ctx sdk.Context, id uint64) error
 
 	FinishKeygenOperation(ctx sdk.Context, id uint64) error
+
+	StartSignOperation(ctx sdk.Context, id uint64) error
+
+	FinishSignOperation(ctx sdk.Context, id uint64) error
 
 	FinishOperation(ctx sdk.Context, id uint64, receipt []uint64) error
 }

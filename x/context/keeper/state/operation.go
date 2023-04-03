@@ -33,8 +33,8 @@ type kvOperationRepo struct {
 	queue queue.Queue[*types.Operation]
 }
 
-func NewKVOperationRepo(cdc codec.BinaryCodec, chain byte, store store.KVStore) OperationRepo {
-	root := prefix.NewStore(store, append(kvOperationRepoKey, chain))
+func NewKVOperationRepo(cdc codec.BinaryCodec, store store.KVStore) OperationRepo {
+	root := prefix.NewStore(store, kvOperationRepoKey)
 
 	return &kvOperationRepo{
 		cdc,
