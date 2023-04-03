@@ -2,10 +2,10 @@ package cosmos
 
 import (
 	sdkerrutils "cosmossdk.io/errors"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/many-things/mitosis/app"
 	txconvtypes "github.com/many-things/mitosis/pkg/txconv/types"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 )
@@ -65,7 +65,7 @@ func AddOperation(id uint64, op Operation) ChainInfoOption {
 	}
 }
 
-func MakeChainInfo(chainID, chainName string, opts ...ChainInfoOption) mitotypes.KV[string, txconvtypes.ChainInfo] {
+func MakeChainInfo(chainID, chainName string, encoder client.TxConfig, opts ...ChainInfoOption) mitotypes.KV[string, txconvtypes.ChainInfo] {
 	config := ChainInfoConfig{
 		fee: DefaultOsmosisFee,
 		ops: DefaultOsmosisOps,
@@ -74,7 +74,6 @@ func MakeChainInfo(chainID, chainName string, opts ...ChainInfoOption) mitotypes
 		opt(&config)
 	}
 
-	encoder := app.MakeEncodingConfig().TxConfig
 	chainInfo := txconvtypes.ChainInfo{
 		Type:      txconvtypes.ChainTypeCosmos,
 		ChainID:   chainID,

@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"github.com/many-things/mitosis/pkg/txconv"
 	"io"
 	"os"
 	"path/filepath"
@@ -196,11 +197,24 @@ var (
 	_ simapp.App              = (*App)(nil)
 )
 
+func must(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
 func init() {
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}
+
+	encoder := MakeEncodingConfig().TxConfig
+	converter := txconv.Converter
+	must(converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
+	must(converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
+	must(converter.RegisterEvmChain("evm-1", "eth-mainnet"))
+	must(converter.RegisterEvmChain("evm-1", "eth-testnet-goerli"))
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 }
@@ -563,7 +577,7 @@ func New(
 
 	app.GovKeeper.SetHooks(
 		govtypes.NewMultiGovHooks(
-			// insert governance hooks receivers here
+		// insert governance hooks receivers here
 		),
 	)
 
