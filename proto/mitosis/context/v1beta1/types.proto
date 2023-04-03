@@ -32,8 +32,8 @@ message Operation {
   // Operation id
   uint64 id = 2;
 
-  // Event ids
-  repeated uint64 evt_ids = 3;
+  // Event id
+  uint64 evt_id = 3;
 
   // Operation status
   Status status = 4;

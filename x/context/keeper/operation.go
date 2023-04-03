@@ -9,13 +9,13 @@ import (
 var _ types.OperationKeeper = &keeper{}
 
 // InitOperation generate operation. I guess ids means Poll id.
-func (k keeper) InitOperation(ctx sdk.Context, chain string, ids []uint64) (uint64, error) {
+func (k keeper) InitOperation(ctx sdk.Context, chain string, evtID uint64) (uint64, error) {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	op := types.Operation{
 		Chain:  chain,
 		Id:     0, // go filled by Load
-		EvtIds: ids,
+		EvtId:  evtID,
 		Status: types.Operation_StatusPending,
 	}
 
