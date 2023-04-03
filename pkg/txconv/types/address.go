@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
-	"golang.org/x/crypto/ripemd160"
+	"golang.org/x/crypto/ripemd160" // nolint
 	"golang.org/x/crypto/sha3"
 )
 
