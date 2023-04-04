@@ -65,15 +65,24 @@ func (m msgServer) SubmitPubkey(ctx context.Context, msg *MsgSubmitPubkey) (*Msg
 	}
 
 	wctx := sdk.UnwrapSDKContext(ctx)
-	pubKey := types.PubKey{
-		Chain:       chainID,
-		KeyID:       keyID,
-		Participant: msg.Participant,
-		PubKey:      msg.PubKey,
-	}
 
-	if err := m.baseKeeper.RegisterPubKey(wctx, chainID, &pubKey); err != nil {
-		return nil, err
+	if !m.baseKeeper.HasPubKey(wctx, chainID, keyID) {
+		pubKey := types.PubKey{
+			Chain: chainID,
+			KeyID: keyID,
+			Items: []*types.PubKey_Item{{
+				Participant: msg.Participant,
+				PubKey:      msg.PubKey,
+			}},
+		}
+
+		if err := m.baseKeeper.RegisterPubKey(wctx, chainID, &pubKey); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := m.baseKeeper.AddParticipantPubKey(wctx, chainID, keyID, msg.Participant, msg.PubKey); err != nil {
+			return nil, err
+		}
 	}
 
 	return &MsgSubmitPubkeyResponse{}, nil

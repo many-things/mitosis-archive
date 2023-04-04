@@ -65,7 +65,7 @@ func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKey
 		return nil, fmt.Errorf("keyId has invalid format")
 	}
 
-	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id, msg.Validator)
+	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +78,7 @@ func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKey
 func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*QueryPubKeyListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	keyID := exported.KeyID(msg.KeyId)
-	chainID, id, err := keyID.ToInternalVariables()
-	if err != nil {
-		return nil, fmt.Errorf("keyId has invalid format: chainId-sequence")
-	}
-
-	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, chainID, id, msg.Pagination)
+	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}

@@ -47,13 +47,10 @@ message GenesisPubKey {
 }
 
 // GenesisSign define the multisig sign genesis state.
-message GenesisSign {
-
-}
+message GenesisSign {}
 
 // GenesisSignature define the multisig signature genesis state.
-message GenesisSignature {
-}
+message GenesisSignature {}
 
 // GenesisState defines the multisig module's genesis state.
 message GenesisState {

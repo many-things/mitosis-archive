@@ -49,10 +49,9 @@ message Sign {
 
 // SignSignature Message
 message SignSignature {
-
   // SignSignature result message
   message Item {
-    string participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
     bytes signature = 2 [(gogoproto.casttype) = "Signature"];
   }
 

@@ -56,7 +56,7 @@ message QueryPubKeyResponse {
 
 // QueryPubKeyList is request type for Query Specific Key's PubKey List RPC method
 message QueryPubKeyList {
-  string key_id = 1;
+  string chain_id = 1;
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 

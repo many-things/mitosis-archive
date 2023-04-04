@@ -38,10 +38,13 @@ type KeygenKeeper interface {
 
 type PubKeyKeeper interface {
 	RegisterPubKey(ctx sdk.Context, chainID string, pubKey *PubKey) error
-	RemovePubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	DeletePubKey(ctx sdk.Context, chainID string, keyID uint64) error
+	AddParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress, publicKey exported.PublicKey) error
+	RemoveParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	HasPubKey(ctx sdk.Context, chainID string, keyID uint64) bool
 
-	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) (*PubKey, error)
-	QueryPubKeyList(ctx sdk.Context, chainID string, keyID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
+	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64) (*PubKey, error)
+	QueryPubKeyList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
 }
 
 type SignKeeper interface {
