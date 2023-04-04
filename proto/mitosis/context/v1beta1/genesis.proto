@@ -16,9 +16,17 @@ message GenesisOperation {
     Operation operation = 2;
   }
 
-  uint64 first_id = 1 [(gogoproto.customname) = "FirstID"];
-  uint64 last_id = 2 [(gogoproto.customname) = "LastID"];
-  repeated ItemSet item_set = 3;
+  // Index set
+  message IndexSet {
+    Operation.Status status = 1;
+    uint64 op_id = 2 [(gogoproto.customname) = "OpID"];
+  }
+
+  uint64 last_id = 1;
+
+  repeated ItemSet item_set = 2;
+
+  repeated IndexSet index_set = 3;
 }
 
 // GenesisState defines the context module's genesis state.

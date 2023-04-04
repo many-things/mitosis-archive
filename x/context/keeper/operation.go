@@ -62,7 +62,10 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id uint64) error {
 
 	op.Status = types.Operation_StatusInitSign
 
-	if err = opRepo.Save(op); err != nil {
+	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+	if err = opRepo.Shift(op.ID, types.Operation_StatusInitSign); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
@@ -80,6 +83,9 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 	op.Status = types.Operation_StatusFinishSign
 
 	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+	if err := opRepo.Shift(op.ID, types.Operation_StatusFinishSign); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
@@ -104,8 +110,10 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 		Ok:     res.Ok,
 		Result: res.Result,
 	}
-
-	if err = opRepo.Save(op); err != nil {
+	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+	if err := opRepo.Shift(op.ID, types.Operation_StatusFinalized); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
