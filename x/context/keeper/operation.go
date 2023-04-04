@@ -41,6 +41,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		Status:        types.Operation_StatusPending,
 		TxPayload:     txPayload,
 		TxBytesToSign: txBytesToSign,
+		Result:        nil,
 	}
 
 	opID, err := opRepo.Create(&op)
@@ -93,9 +94,6 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 	if res == nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
-	_ = res
-
-	// TODO: res -> archive and finalize
 
 	op, err := opRepo.Load(id)
 	if err != nil {
@@ -103,13 +101,10 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 	}
 
 	op.Status = types.Operation_StatusFinalized
-	err = opRepo.Save(op)
-
-	if err != nil {
-		return err
+	op.Result = &types.OperationResult{
+		Ok:     res.Ok,
+		Result: res.Result,
 	}
 
-	// TODO: save receipt
-
-	return nil
+	return opRepo.Save(op)
 }
