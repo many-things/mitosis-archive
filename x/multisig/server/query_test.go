@@ -162,7 +162,7 @@ func Test_Sign(t *testing.T) {
 	assert.Error(t, err, "sign: not found")
 
 	// try query exist sign
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         fmt.Sprintf("%s-%d", chainID, 1),
@@ -185,10 +185,10 @@ func Test_SignList(t *testing.T) {
 	wctx := ctx.(sdk.Context)
 	valAddr := sdk.ValAddress("addr")
 
-	var signs []*types.Sign
+	var signs []*exported.Sign
 	var i uint64
 	for i = 0; i < 5; i++ {
-		sign := types.Sign{
+		sign := exported.Sign{
 			Chain:         chainID,
 			SigID:         i,
 			KeyID:         fmt.Sprintf("%s-%d", chainID, i%3),

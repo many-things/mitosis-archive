@@ -7,7 +7,6 @@ import (
 	"os"
 
 	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
-	"github.com/many-things/mitosis/x/multisig/exported"
 	tmclient "github.com/tendermint/tendermint/rpc/client"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -20,6 +19,7 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/types"
+	multisigexport "github.com/many-things/mitosis/x/multisig/exported"
 	multisigserver "github.com/many-things/mitosis/x/multisig/server"
 	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -72,7 +72,7 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wal
 		case *types.KeygenResponse_PubKey:
 			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
 				Module:      "sidecar",
-				KeyID:       exported.KeyID(keyUID),
+				KeyID:       multisigexport.KeyID(keyUID),
 				Participant: store.GetValidator(),
 				PubKey:      r.PubKey,
 			})
@@ -87,8 +87,8 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wal
 	}
 }
 
-func createSignHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Sign) error {
-	return func(msg *multisigtypes.Sign) error {
+func createSignHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigexport.Sign) error {
+	return func(msg *multisigexport.Sign) error {
 		if !utils.Any(msg.Participants, store.IsTarget) {
 			return nil
 		}
@@ -117,7 +117,7 @@ func createSignHandler(store storage.Storage, sigCli types.MultisigClient, walle
 		case *types.SignResponse_Signature:
 			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
 				Module:      "sidecar",
-				SigID:       exported.SigID(sigID),
+				SigID:       multisigexport.SigID(sigID),
 				Participant: store.GetValidator(),
 				Signature:   r.Signature,
 			})
@@ -187,7 +187,7 @@ func run() {
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
 	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
-	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Sign]())
+	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigexport.Sign]())
 
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(store, sigCli, wallet, logger), cancel, logger),

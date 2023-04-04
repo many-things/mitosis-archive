@@ -5,6 +5,7 @@ package manythings.mitosis.v1beta1.multisig.server;
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "mitosis/multisig/v1beta1/exported/types.proto";
 import "mitosis/multisig/v1beta1/params.proto";
 import "mitosis/multisig/v1beta1/types.proto";
 
@@ -107,6 +108,6 @@ message QuerySignatureList {
 
 // QuerySignatureListResponse is response type for Query Signature List RPC method
 message QuerySignatureListResponse {
-  repeated bytes list = 1 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Signature"];
+  repeated bytes list = 1 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.Signature"];
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }

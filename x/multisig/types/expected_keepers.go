@@ -45,12 +45,12 @@ type PubKeyKeeper interface {
 }
 
 type SignKeeper interface {
-	RegisterSignEvent(ctx sdk.Context, chainID string, sign *Sign) (uint64, error)
+	RegisterSignEvent(ctx sdk.Context, chainID string, sign *exported.Sign) (uint64, error)
 	RemoveSignEvent(ctx sdk.Context, chainID string, id uint64) error
-	UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus Sign_Status) (*Sign, error)
+	UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus exported.Sign_Status) (*exported.Sign, error)
 
-	QuerySign(ctx sdk.Context, chainID string, id uint64) (*Sign, error)
-	QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *Sign], *query.PageResponse, error)
+	QuerySign(ctx sdk.Context, chainID string, id uint64) (*exported.Sign, error)
+	QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error)
 }
 
 type SignatureKeeper interface {
