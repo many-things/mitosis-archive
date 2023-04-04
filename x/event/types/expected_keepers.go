@@ -33,4 +33,6 @@ type StakingKeeper interface {
 // ContextKeeper defined the expected context keeper used for push confirmed event to operation queue
 type ContextKeeper interface {
 	InitOperation(ctx sdk.Context, chain string, poll *Poll) (uint64, error)
+
+	FinishOperation(ctx sdk.Context, id uint64, poll *Poll) error
 }
