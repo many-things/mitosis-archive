@@ -29,3 +29,8 @@ type StakingKeeper interface {
 
 	IterateLastValidatorPowers(ctx sdk.Context, handler func(operator sdk.ValAddress, power int64) (stop bool))
 }
+
+// ContextKeeper defined the expected context keeper used for push confirmed event to operation queue
+type ContextKeeper interface {
+	InitOperation(ctx sdk.Context, chain string, poll *Poll) (uint64, error)
+}

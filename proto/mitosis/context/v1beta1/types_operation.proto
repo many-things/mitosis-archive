@@ -30,11 +30,15 @@ message Operation {
   string chain = 1;
 
   // Operation id
-  uint64 id = 2;
+  uint64 id = 2 [(gogoproto.customname) = "ID"];
 
   // Event id
-  uint64 evt_id = 3;
+  uint64 poll_id = 3 [(gogoproto.customname) = "PollID"];
 
   // Operation status
   Status status = 4;
+
+  bytes tx_payload = 5;
+
+  bytes tx_bytes_to_sign = 6;
 }

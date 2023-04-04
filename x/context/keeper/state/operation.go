@@ -51,7 +51,7 @@ func (k kvOperationRepo) Load(id uint64) (*types.Operation, error) {
 }
 
 func (k kvOperationRepo) Create(op *types.Operation) (uint64, error) {
-	op.Id = k.queue.LastIndex()
+	op.ID = k.queue.LastIndex()
 
 	ids, err := k.queue.Produce(op)
 	if err != nil {
@@ -67,7 +67,7 @@ func (k kvOperationRepo) Create(op *types.Operation) (uint64, error) {
 }
 
 func (k kvOperationRepo) Save(op *types.Operation) error {
-	return k.queue.Update(op.Id, op)
+	return k.queue.Update(op.ID, op)
 }
 
 func (k kvOperationRepo) Take(amount uint64) ([]mitotypes.KV[uint64, *types.Operation], error) {
@@ -99,13 +99,13 @@ func (k kvOperationRepo) ExportGenesis() (genState *types.GenesisOperation, err 
 		return nil, err
 	}
 
-	genState.FirstId = queueGenesis.FirstIndex
-	genState.LastId = queueGenesis.LastIndex
+	genState.FirstID = queueGenesis.FirstIndex
+	genState.LastID = queueGenesis.LastIndex
 	genState.ItemSet = mitotypes.MapKV(
 		queueGenesis.Items,
 		func(k uint64, v *types.Operation, _ int) *types.GenesisOperation_ItemSet {
 			return &types.GenesisOperation_ItemSet{
-				Id:        k,
+				ID:        k,
 				Operation: v,
 			}
 		},
@@ -116,10 +116,10 @@ func (k kvOperationRepo) ExportGenesis() (genState *types.GenesisOperation, err 
 
 func (k kvOperationRepo) ImportGenesis(genState *types.GenesisOperation) error {
 	queueGenesis := queue.GenesisState[*types.Operation]{
-		LastIndex:  genState.LastId,
-		FirstIndex: genState.FirstId,
+		LastIndex:  genState.LastID,
+		FirstIndex: genState.FirstID,
 		Items: mitotypes.Map(genState.GetItemSet(), func(t *types.GenesisOperation_ItemSet, _ int) mitotypes.KV[uint64, *types.Operation] {
-			return mitotypes.NewKV(t.Id, t.Operation)
+			return mitotypes.NewKV(t.ID, t.Operation)
 		}),
 	}
 	if err := k.queue.ImportGenesis(queueGenesis); err != nil {

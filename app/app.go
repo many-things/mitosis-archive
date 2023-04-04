@@ -2,6 +2,8 @@ package app
 
 import (
 	"fmt"
+	"github.com/many-things/mitosis/pkg/txconv"
+	"github.com/many-things/mitosis/pkg/utils"
 	"io"
 	"os"
 	"path/filepath"
@@ -201,6 +203,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	encoder := MakeEncodingConfig().TxConfig
+	converter := txconv.Converter
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-1", "eth-mainnet"))
+	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 }
@@ -524,9 +533,10 @@ func New(
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
 
 	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
+
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],

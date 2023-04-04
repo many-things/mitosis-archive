@@ -102,6 +102,7 @@ type AppModule struct {
 	keeper        keeper.Keeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	contextKeeper types.ContextKeeper
 	stakingKeeper types.StakingKeeper
 }
 
@@ -110,14 +111,18 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	contextKeeper types.ContextKeeper,
 	stakingKeeper types.StakingKeeper,
 ) AppModule {
 	return AppModule{
+		// overrides
 		AppModuleBasic: NewAppModuleBasic(cdc),
-		keeper:         keeper,
-		accountKeeper:  accountKeeper,
-		bankKeeper:     bankKeeper,
-		stakingKeeper:  stakingKeeper,
+
+		keeper:        keeper,
+		accountKeeper: accountKeeper,
+		bankKeeper:    bankKeeper,
+		contextKeeper: contextKeeper,
+		stakingKeeper: stakingKeeper,
 	}
 }
 
@@ -168,5 +173,5 @@ func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
 func (am AppModule) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return hook.EndBlocker(ctx, req, am.keeper)
+	return hook.EndBlocker(ctx, req, am.keeper, am.contextKeeper)
 }

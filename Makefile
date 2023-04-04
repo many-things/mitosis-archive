@@ -7,13 +7,16 @@ test:
 	@cat coverage.out.tmp | grep -v '.pb.go' | grep -v '.pb.gw.go' > coverage.out
 	@rm coverage.out.tmp
 
-build: proto
+lint:
+	@golangci-lint run
+
+build: proto lint
 	@ignite chain build --skip-proto
 
-run-local: proto
+run-local: proto lint
 	@ignite chain serve --skip-proto --quit-on-fail --verbose
 
-run-local-clean: proto
+run-local-clean: proto lint
 	@ignite chain serve --skip-proto --quit-on-fail --verbose --reset-once
 
 proto: proto-fmt proto-go proto-openapi

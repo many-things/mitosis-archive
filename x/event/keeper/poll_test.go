@@ -46,7 +46,7 @@ func mockEvent(t *testing.T) *types.Event {
 			Req: &types.TxReqEvent{
 				DestChain: Chains[rand.Int()%len(Chains)],
 				DestAddr:  bz,
-				OpId:      rand.Uint32(),
+				OpId:      rand.Uint64(),
 				OpArgs:    [][]byte{bz},
 				Funds: []*mitotypes.Coin{
 					{
