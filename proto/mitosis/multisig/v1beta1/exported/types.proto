@@ -46,3 +46,18 @@ message Sign {
 
   Status status = 6;
 }
+
+// SignSignature Message
+message SignSignature {
+
+  // SignSignature result message
+  message Item {
+    string participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes signature = 2 [(gogoproto.casttype) = "Signature"];
+  }
+
+  string chain = 1;
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+
+  repeated Item items = 3;
+}

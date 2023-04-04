@@ -4,8 +4,56 @@ package manythings.mitosis.v1beta1.multisig;
 
 import "gogoproto/gogo.proto";
 import "mitosis/multisig/v1beta1/params.proto";
+import "mitosis/multisig/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/types";
+
+// GenesisKeygen defines the multisig keygen genesis state.
+message GenesisKeygen {
+  // Key-Value set of item
+  message ItemSet {
+    uint64 id = 1;
+    Keygen keygen = 2;
+  }
+
+  // Key-Value set of chain
+  message ChainSet {
+    bytes chain = 1;
+    uint64 first_id = 2;
+    uint64 last_id = 3;
+    repeated ItemSet item_set = 4;
+  }
+
+  repeated ChainSet chain_set = 1;
+}
+
+// GenesisPubKey defines the multisig pubkey genesis state.
+message GenesisPubKey {
+  // Key-Value set of item
+  message ItemSet {
+    uint64 keygen_id = 1;
+    repeated PubKey pub_key = 2;
+  }
+
+  // Key-Value set of chain
+  message ChainSet {
+    bytes chain = 1;
+    uint64 first_id = 2;
+    uint64 last_id = 3;
+    repeated ItemSet item_set = 4;
+  }
+
+  repeated ChainSet chain_set = 4;
+}
+
+// GenesisSign define the multisig sign genesis state.
+message GenesisSign {
+
+}
+
+// GenesisSignature define the multisig signature genesis state.
+message GenesisSignature {
+}
 
 // GenesisState defines the multisig module's genesis state.
 message GenesisState {
