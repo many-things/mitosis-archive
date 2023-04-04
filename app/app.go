@@ -214,7 +214,7 @@ func init() {
 	must(converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
 	must(converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
 	must(converter.RegisterEvmChain("evm-1", "eth-mainnet"))
-	must(converter.RegisterEvmChain("evm-1", "eth-testnet-goerli"))
+	must(converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 }
