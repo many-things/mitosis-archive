@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"github.com/many-things/mitosis/pkg/txconv"
 	"io"
 	"os"
 	"path/filepath"
@@ -104,6 +103,8 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/many-things/mitosis/pkg/txconv"
+	"github.com/many-things/mitosis/pkg/utils"
 	contextmodule "github.com/many-things/mitosis/x/context"
 	contextmodulekeeper "github.com/many-things/mitosis/x/context/keeper"
 	contextmoduletypes "github.com/many-things/mitosis/x/context/types"
@@ -211,10 +212,10 @@ func init() {
 
 	encoder := MakeEncodingConfig().TxConfig
 	converter := txconv.Converter
-	must(converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
-	must(converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
-	must(converter.RegisterEvmChain("evm-1", "eth-mainnet"))
-	must(converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-1", "eth-mainnet"))
+	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 }
@@ -577,7 +578,7 @@ func New(
 
 	app.GovKeeper.SetHooks(
 		govtypes.NewMultiGovHooks(
-		// insert governance hooks receivers here
+			// insert governance hooks receivers here
 		),
 	)
 
