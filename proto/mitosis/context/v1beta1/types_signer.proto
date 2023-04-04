@@ -36,20 +36,17 @@ message Signer {
   // Signer chain
   string chain = 1;
 
-  // Signer ID
-  uint64 id = 2 [(gogoproto.customname) = "ID"];
-
   // Signer public key
-  bytes pub_key = 3;
+  bytes pub_key = 2;
 
   // Signer status
-  Status status = 4;
+  Status status = 3;
 
-  common.ChainType type = 5;
+  common.ChainType type = 4;
 
   // Signer payload
   oneof payload {
-    CosmosSigner cosmos = 6;
-    EvmSigner evm = 7;
+    CosmosSigner cosmos = 5;
+    EvmSigner evm = 6;
   }
 }

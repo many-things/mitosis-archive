@@ -15,6 +15,7 @@ import (
 type Keeper interface {
 	types.BaseKeeper
 	types.OperationKeeper
+	types.SignerKeeper
 	types.GenesisKeeper
 }
 

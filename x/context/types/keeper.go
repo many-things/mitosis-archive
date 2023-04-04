@@ -11,6 +11,14 @@ type BaseKeeper interface {
 	SetParams(ctx sdk.Context, params Params)
 }
 
+type SignerKeeper interface {
+	SetReadyToSigner(ctx sdk.Context, chain string) error
+
+	RegisterCosmosSigner(ctx sdk.Context, chain string, pubKey []byte, accountNumber uint64) error
+
+	RegisterEVMSigner(ctx sdk.Context, chain string, pubKey []byte) error
+}
+
 type OperationKeeper interface {
 	InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll) (uint64, error)
 

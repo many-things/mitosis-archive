@@ -21,7 +21,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
 
-	signer, err := signerRepo.LoadByChain(chain)
+	signer, err := signerRepo.Load(chain)
 	if err != nil {
 		return 0, sdkerrutils.Wrapf(sdkerrors.ErrNotFound, "signer not found for chain %s", chain)
 	}
