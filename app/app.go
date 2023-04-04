@@ -198,12 +198,6 @@ var (
 	_ simapp.App              = (*App)(nil)
 )
 
-func must(err error) {
-	if err != nil {
-		panic(err.Error())
-	}
-}
-
 func init() {
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -578,7 +572,7 @@ func New(
 
 	app.GovKeeper.SetHooks(
 		govtypes.NewMultiGovHooks(
-			// insert governance hooks receivers here
+		// insert governance hooks receivers here
 		),
 	)
 
