@@ -11,16 +11,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
-	"github.com/many-things/mitosis/x/multisig/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 )
 
 type SignRepo interface {
-	Load(id uint64) (*types.Sign, error)
-	Create(sign *types.Sign) (uint64, error)
-	Save(sign *types.Sign) error
+	Load(id uint64) (*exported.Sign, error)
+	Create(sign *exported.Sign) (uint64, error)
+	Save(sign *exported.Sign) error
 	Delete(id uint64) error
 
-	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error)
+	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error)
 
 	// TODO: Implement Genesis Tool
 }
@@ -42,13 +42,13 @@ var (
 	kvSignRepoItemPrefix = []byte{0x02}
 )
 
-func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
+func (r kvSignRepo) Load(id uint64) (*exported.Sign, error) {
 	bz := prefix.NewStore(r.root, kvSignRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 	if bz == nil {
 		return nil, sdkerrors.Wrap(errors.ErrNotFound, "sign")
 	}
 
-	sign := new(types.Sign)
+	sign := new(exported.Sign)
 	if err := sign.Unmarshal(bz); err != nil {
 		return nil, fmt.Errorf("cannot unmarshal sign: %w", err)
 	}
@@ -56,7 +56,7 @@ func (r kvSignRepo) Load(id uint64) (*types.Sign, error) {
 	return sign, nil
 }
 
-func (r kvSignRepo) Create(sign *types.Sign) (uint64, error) {
+func (r kvSignRepo) Create(sign *exported.Sign) (uint64, error) {
 	latestIDPrefix := kvSignRepoLatestID
 	latestID := sdk.BigEndianToUint64(r.root.Get(latestIDPrefix))
 
@@ -71,7 +71,7 @@ func (r kvSignRepo) Create(sign *types.Sign) (uint64, error) {
 	return latestID, nil
 }
 
-func (r kvSignRepo) Save(sign *types.Sign) error {
+func (r kvSignRepo) Save(sign *exported.Sign) error {
 	signBz, err := sign.Marshal()
 	if err != nil {
 		return fmt.Errorf("sign: cannot marshal. %w", err)
@@ -92,12 +92,12 @@ func (r kvSignRepo) Delete(id uint64) error {
 	return nil
 }
 
-func (r kvSignRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error) {
+func (r kvSignRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error) {
 	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
 
-	var results []mitosistype.KV[uint64, *types.Sign]
+	var results []mitosistype.KV[uint64, *exported.Sign]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
-		sign := new(types.Sign)
+		sign := new(exported.Sign)
 
 		if err := sign.Unmarshal(value); err != nil {
 			return fmt.Errorf("sign: cannot unmarshal signkey %d. err: %w", key, err)

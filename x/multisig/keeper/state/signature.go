@@ -9,15 +9,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
-	"github.com/many-things/mitosis/x/multisig/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 )
 
 type SignatureRepo interface {
-	Load(id uint64, participant sdk.ValAddress) (types.Signature, error)
-	Create(id uint64, participant sdk.ValAddress, signature types.Signature) error
+	Load(id uint64, participant sdk.ValAddress) (exported.Signature, error)
+	Create(id uint64, participant sdk.ValAddress, signature exported.Signature) error
 	Delete(id uint64, participant sdk.ValAddress) error
 
-	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error)
+	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error)
 
 	// TODO: Implement Genesis Tool
 }
@@ -42,7 +42,7 @@ func (r kvSignatureRepo) getPrefix(prefix []byte, id uint64) []byte {
 	return append(prefix, sdk.Uint64ToBigEndian(id)...)
 }
 
-func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Signature, error) {
+func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (exported.Signature, error) {
 	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
 
 	if bz == nil {
@@ -52,7 +52,7 @@ func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (types.Sign
 	return bz, nil
 }
 
-func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature types.Signature) error {
+func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature exported.Signature) error {
 	prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Set(participant, signature)
 	return nil
 }
@@ -68,12 +68,12 @@ func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
 	return nil
 }
 
-func (r kvSignatureRepo) Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, types.Signature], *query.PageResponse, error) {
+func (r kvSignatureRepo) Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error) {
 	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
 
-	var results []mitosistype.KV[sdk.ValAddress, types.Signature]
+	var results []mitosistype.KV[sdk.ValAddress, exported.Signature]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
-		results = append(results, mitosistype.NewKV(sdk.ValAddress(key), types.Signature(value)))
+		results = append(results, mitosistype.NewKV(sdk.ValAddress(key), exported.Signature(value)))
 		return nil
 	})
 

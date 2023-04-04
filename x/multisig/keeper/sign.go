@@ -4,12 +4,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
-	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 // RegisterSignEvent is register new SignEvent
-func (k keeper) RegisterSignEvent(ctx sdk.Context, chainID string, sign *types.Sign) (uint64, error) {
+func (k keeper) RegisterSignEvent(ctx sdk.Context, chainID string, sign *exported.Sign) (uint64, error) {
 	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	sigID, err := signRepo.Create(sign)
@@ -32,7 +32,7 @@ func (k keeper) RemoveSignEvent(ctx sdk.Context, chainID string, id uint64) erro
 }
 
 // UpdateSignStatus is update status of specific Event
-func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus types.Sign_Status) (*types.Sign, error) {
+func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus exported.Sign_Status) (*exported.Sign, error) {
 	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	sign, err := signRepo.Load(id)
@@ -51,7 +51,7 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 }
 
 // QuerySign is get specific Sign instance
-func (k keeper) QuerySign(ctx sdk.Context, chainID string, id uint64) (*types.Sign, error) {
+func (k keeper) QuerySign(ctx sdk.Context, chainID string, id uint64) (*exported.Sign, error) {
 	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	sign, err := signRepo.Load(id)
@@ -63,7 +63,7 @@ func (k keeper) QuerySign(ctx sdk.Context, chainID string, id uint64) (*types.Si
 }
 
 // QuerySignList returns sign list of specific chain
-func (k keeper) QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Sign], *query.PageResponse, error) {
+func (k keeper) QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error) {
 	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
 	results, pageResp, err := signRepo.Paginate(page)

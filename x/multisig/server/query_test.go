@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"gotest.tools/assert"
 
@@ -111,7 +112,7 @@ func Test_PubKey(t *testing.T) {
 		Chain:       chainID,
 		KeyID:       0,
 		Participant: valAddr,
-		PubKey:      types.PublicKey("publickey"),
+		PubKey:      exported.PublicKey("publickey"),
 	}
 	_ = k.RegisterPubKey(wctx, chainID, &pubKey)
 	res, err := s.PubKey(wctx, &QueryPubKey{
@@ -132,7 +133,7 @@ func Test_PubKeyList(t *testing.T) {
 			Chain:       chainID,
 			KeyID:       0,
 			Participant: sdk.ValAddress(fmt.Sprintf("addr%d", i)),
-			PubKey:      types.PublicKey("publickey"),
+			PubKey:      exported.PublicKey("publickey"),
 		}
 		_ = k.RegisterPubKey(wctx, chainID, &pubKey)
 
@@ -161,12 +162,12 @@ func Test_Sign(t *testing.T) {
 	assert.Error(t, err, "sign: not found")
 
 	// try query exist sign
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         fmt.Sprintf("%s-%d", chainID, 1),
 		Participants:  []sdk.ValAddress{sdk.ValAddress("addr")},
-		MessageToSign: types.Hash("msgToSign"),
+		MessageToSign: exported.Hash("msgToSign"),
 		Status:        0,
 	}
 	_, _ = k.RegisterSignEvent(wctx, chainID, &sign)
@@ -184,15 +185,15 @@ func Test_SignList(t *testing.T) {
 	wctx := ctx.(sdk.Context)
 	valAddr := sdk.ValAddress("addr")
 
-	var signs []*types.Sign
+	var signs []*exported.Sign
 	var i uint64
 	for i = 0; i < 5; i++ {
-		sign := types.Sign{
+		sign := exported.Sign{
 			Chain:         chainID,
 			SigID:         i,
 			KeyID:         fmt.Sprintf("%s-%d", chainID, i%3),
 			Participants:  []sdk.ValAddress{valAddr},
-			MessageToSign: types.Hash("msg"),
+			MessageToSign: exported.Hash("msg"),
 			Status:        1,
 		}
 
@@ -221,7 +222,7 @@ func Test_Signature(t *testing.T) {
 	assert.Error(t, err, "signature: not found")
 
 	// try to query exist signature
-	sig := types.Signature("signature")
+	sig := exported.Signature("signature")
 	_ = k.RegisterSignature(wctx, chainID, 0, val, sig)
 
 	res, err := s.Signature(wctx, &QuerySignature{
@@ -236,9 +237,9 @@ func Test_SignatureList(t *testing.T) {
 	k, s, ctx := setupQueryServer(t)
 	wctx := ctx.(sdk.Context)
 
-	var signs []types.Signature
+	var signs []exported.Signature
 	for i := 0; i < 5; i++ {
-		sign := types.Signature(fmt.Sprintf("signature-%d", i))
+		sign := exported.Signature(fmt.Sprintf("signature-%d", i))
 		_ = k.RegisterSignature(
 			wctx,
 			chainID,

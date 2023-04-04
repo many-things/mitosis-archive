@@ -5,6 +5,7 @@ package manythings.mitosis.v1beta1.multisig.server;
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "mitosis/multisig/v1beta1/exported/types.proto";
 import "mitosis/multisig/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/server";
@@ -14,7 +15,7 @@ message MsgStartKeygen {
   string module = 1;
   string key_id = 2 [
     (gogoproto.customname) = "KeyID",
-    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.KeyID"
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.KeyID"
   ];
   repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 }
@@ -24,10 +25,10 @@ message MsgSubmitPubkey {
   string module = 1;
   string key_id = 2 [
     (gogoproto.customname) = "KeyID",
-    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.KeyID"
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.KeyID"
   ];
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
-  bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.PublicKey"];
+  bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"];
 }
 
 // MsgStartKeygenResponse is message for StartKeygen Response
@@ -41,10 +42,10 @@ message MsgSubmitSignature {
   string module = 1;
   string sig_id = 2 [
     (gogoproto.customname) = "SigID",
-    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.SigID"
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.SigID"
   ];
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
-  bytes signature = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/types.Signature"];
+  bytes signature = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.Signature"];
 }
 
 // MsgSubmitSignatureResponse is message for SubmitSignature Response
