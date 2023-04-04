@@ -63,13 +63,28 @@ func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keepe
 		for _, kv := range flushed[i] {
 			pollID, poll := kv.Key, kv.Value
 
-			opID, err := contextKeeper.InitOperation(ctx, chain.Key, poll)
-			if err != nil {
-				panic(err.Error())
-			}
+			switch v := any(poll.GetPayload()).(type) {
+			case types.Event_Req:
+				opID, err := contextKeeper.InitOperation(ctx, chain.Key, poll)
+				if err != nil {
+					panic(err.Error())
+				}
 
-			// TODO: log correctly
-			log.Println("init operation", opID, "for poll", pollID)
+				// TODO: log correctly
+				log.Println("init operation", opID, "for poll", pollID)
+				poll.OpId = opID
+			case types.Event_Res:
+				originPoll, err := baseKeeper.QueryPoll(ctx, chain.Key, v.Res.ReqEvtId)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				if err := contextKeeper.FinishOperation(ctx, originPoll.OpId, poll); err != nil {
+					panic(err.Error())
+				}
+			default:
+				panic("unexpected payload type")
+			}
 		}
 	}
 

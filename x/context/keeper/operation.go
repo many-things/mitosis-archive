@@ -4,7 +4,9 @@ import (
 	sdkerrutils "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/pkg/txconv"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/context/keeper/state"
 	"github.com/many-things/mitosis/x/context/types"
 	evttypes "github.com/many-things/mitosis/x/event/types"
@@ -21,7 +23,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
 
-	signer, err := signerRepo.LoadByChain(chain)
+	signer, err := signerRepo.Load(chain)
 	if err != nil {
 		return 0, sdkerrutils.Wrapf(sdkerrors.ErrNotFound, "signer not found for chain %s", chain)
 	}
@@ -41,6 +43,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		Status:        types.Operation_StatusPending,
 		TxPayload:     txPayload,
 		TxBytesToSign: txBytesToSign,
+		Result:        nil,
 	}
 
 	opID, err := opRepo.Create(&op)
@@ -51,7 +54,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 	return opID, nil
 }
 
-func (k keeper) StartSignOperation(ctx sdk.Context, id uint64) error {
+func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	op, err := opRepo.Load(id)
@@ -60,9 +63,13 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id uint64) error {
 	}
 
 	op.Status = types.Operation_StatusInitSign
+	op.SigID = sigID
 
-	if err = opRepo.Save(op); err != nil {
-		return err // TODO: require wrap error
+	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+	if err = opRepo.Shift(op.ID, types.Operation_StatusInitSign); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
 	return nil
@@ -77,10 +84,12 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 	}
 
 	op.Status = types.Operation_StatusFinishSign
-	err = opRepo.Save(op)
 
-	if err != nil {
-		return err // TODO: require wrap error
+	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+	if err := opRepo.Shift(op.ID, types.Operation_StatusFinishSign); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
 	return nil
@@ -93,9 +102,6 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 	if res == nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
-	_ = res
-
-	// TODO: res -> archive and finalize
 
 	op, err := opRepo.Load(id)
 	if err != nil {
@@ -103,13 +109,54 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 	}
 
 	op.Status = types.Operation_StatusFinalized
-	err = opRepo.Save(op)
-
-	if err != nil {
-		return err
+	op.Result = &types.OperationResult{
+		Ok:     res.Ok,
+		Result: res.Result,
+	}
+	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+	if err := opRepo.Shift(op.ID, types.Operation_StatusFinalized); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
-	// TODO: save receipt
-
 	return nil
+}
+
+func (k keeper) QueryOperation(ctx sdk.Context, id uint64) (*types.Operation, error) {
+	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+
+	return opRepo.Load(id)
+}
+
+func (k keeper) QueryOperations(ctx sdk.Context, pageReq *query.PageRequest) ([]*types.Operation, *query.PageResponse, error) {
+	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+
+	ops, pageResp, err := opRepo.Paginate(pageReq)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rtn := mitotypes.MapKV(
+		ops,
+		func(_ uint64, v *types.Operation, _ int) *types.Operation { return v },
+	)
+
+	return rtn, pageResp, nil
+}
+
+func (k keeper) QueryOperationsByStatus(ctx sdk.Context, status types.Operation_Status, pageReq *query.PageRequest) ([]*types.Operation, *query.PageResponse, error) {
+	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+
+	ops, pageResp, err := opRepo.PaginateStatus(status, pageReq)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rtn := mitotypes.MapKV(
+		ops,
+		func(_ uint64, v *types.Operation, _ int) *types.Operation { return v },
+	)
+
+	return rtn, pageResp, nil
 }

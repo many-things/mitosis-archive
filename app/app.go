@@ -2,8 +2,6 @@ package app
 
 import (
 	"fmt"
-	"github.com/many-things/mitosis/pkg/txconv"
-	"github.com/many-things/mitosis/pkg/utils"
 	"io"
 	"os"
 	"path/filepath"
@@ -105,6 +103,8 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/many-things/mitosis/pkg/txconv"
+	"github.com/many-things/mitosis/pkg/utils"
 	contextmodule "github.com/many-things/mitosis/x/context"
 	contextmodulekeeper "github.com/many-things/mitosis/x/context/keeper"
 	contextmoduletypes "github.com/many-things/mitosis/x/context/types"
@@ -525,7 +525,7 @@ func New(
 		keys[contextmoduletypes.MemStoreKey],
 		app.GetSubspace(contextmoduletypes.ModuleName),
 	)
-	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper)
+	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
 
 	app.EventKeeper = eventmodulekeeper.NewKeeper(
 		appCodec,

@@ -6,6 +6,13 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/types";
 
+// Operation Result
+message OperationResult {
+  bool ok = 1;
+
+  bytes result = 2;
+}
+
 // Operation message
 message Operation {
   // OperationStatus
@@ -41,4 +48,11 @@ message Operation {
   bytes tx_payload = 5;
 
   bytes tx_bytes_to_sign = 6;
+
+  uint64 sig_id = 7 [
+    (gogoproto.customname) = "SigID",
+    (gogoproto.nullable) = true
+  ];
+
+  OperationResult result = 8 [(gogoproto.nullable) = true];
 }
