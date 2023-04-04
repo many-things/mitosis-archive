@@ -12,6 +12,8 @@ import (
 var Converter ConverterI = &converter{}
 
 type ConverterI interface {
+	FindChain(chainID string) *mitotypes.KV[string, txconvtypes.ChainInfo]
+
 	RegisterEvmChain(chainID, chainName string) error
 	RegisterCosmosChain(chainID, chainName string, encoder client.TxConfig) error
 
@@ -22,7 +24,7 @@ type converter struct {
 	chainReg []mitotypes.KV[string, txconvtypes.ChainInfo]
 }
 
-func (c *converter) findChain(chainID string) *mitotypes.KV[string, txconvtypes.ChainInfo] {
+func (c *converter) FindChain(chainID string) *mitotypes.KV[string, txconvtypes.ChainInfo] {
 	return mitotypes.FindKV(
 		c.chainReg,
 		func(k string, _ txconvtypes.ChainInfo, _ int) bool { return k == chainID },
@@ -30,7 +32,7 @@ func (c *converter) findChain(chainID string) *mitotypes.KV[string, txconvtypes.
 }
 
 func (c *converter) RegisterEvmChain(chainID, chainName string) error {
-	if chain := c.findChain(chainID); chain != nil {
+	if chain := c.FindChain(chainID); chain != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrConflict, "chain already registered")
 	}
 
@@ -39,7 +41,7 @@ func (c *converter) RegisterEvmChain(chainID, chainName string) error {
 }
 
 func (c *converter) RegisterCosmosChain(chainID, chainName string, encoder client.TxConfig) error {
-	if chain := c.findChain(chainID); chain != nil {
+	if chain := c.FindChain(chainID); chain != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrConflict, "chain already registered")
 	}
 
@@ -49,7 +51,7 @@ func (c *converter) RegisterCosmosChain(chainID, chainName string, encoder clien
 
 // Convert returns the full bytes of tx, and it's hash
 func (c *converter) Convert(signer txconvtypes.Signer, chainID string, id uint64, args ...[]byte) ([]byte, []byte, error) {
-	chain := c.findChain(chainID)
+	chain := c.FindChain(chainID)
 	if chain == nil {
 		return nil, nil, sdkerrutils.Wrap(sdkerrors.ErrNotFound, "supported chain")
 	}

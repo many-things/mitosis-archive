@@ -7,7 +7,7 @@ import (
 
 func makeEvmInfo(chainID, chainName string) mitotypes.KV[string, txconvtypes.ChainInfo] {
 	chainInfo := txconvtypes.ChainInfo{
-		Type:      txconvtypes.ChainTypeEvm,
+		Type:      mitotypes.ChainType_TypeEvm,
 		ChainID:   chainID,
 		ChainName: chainName,
 

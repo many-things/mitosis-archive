@@ -1,5 +1,7 @@
 package types
 
+import mitotypes "github.com/many-things/mitosis/pkg/types"
+
 type CosmosSigner struct {
 	pubKey        []byte
 	prefix        string
@@ -18,8 +20,8 @@ func NewCosmosSigner(pubKey []byte, prefix string, accountNumber, sequence uint6
 	}
 }
 
-func (s CosmosSigner) Type() ChainType {
-	return ChainTypeCosmos
+func (s CosmosSigner) Type() mitotypes.ChainType {
+	return mitotypes.ChainType_TypeCosmos
 }
 
 func (s CosmosSigner) PubKey() []byte {
@@ -44,8 +46,8 @@ func NewEvmSigner(pubKey []byte, nonce uint64) Signer {
 	}
 }
 
-func (s EvmSigner) Type() ChainType {
-	return ChainTypeEvm
+func (s EvmSigner) Type() mitotypes.ChainType {
+	return mitotypes.ChainType_TypeEvm
 }
 
 func (s EvmSigner) PubKey() []byte {
@@ -57,7 +59,7 @@ func (s EvmSigner) Address() string {
 }
 
 type Signer interface {
-	Type() ChainType
+	Type() mitotypes.ChainType
 	PubKey() []byte
 	Address() string
 }

@@ -75,7 +75,7 @@ func MakeChainInfo(chainID, chainName string, encoder client.TxConfig, opts ...C
 	}
 
 	chainInfo := txconvtypes.ChainInfo{
-		Type:      txconvtypes.ChainTypeCosmos,
+		Type:      mitotypes.ChainType_TypeCosmos,
 		ChainID:   chainID,
 		ChainName: chainName,
 

@@ -1,16 +1,11 @@
 package types
 
-type ChainType string
-
-const (
-	ChainTypeCosmos ChainType = "cosmos"
-	ChainTypeEvm    ChainType = "evm"
-)
+import mitotypes "github.com/many-things/mitosis/pkg/types"
 
 type TxConverter func(signer Signer, opID uint64, opArgs ...[]byte) ([]byte, []byte, error)
 
 type ChainInfo struct {
-	Type      ChainType
+	Type      mitotypes.ChainType
 	ChainID   string
 	ChainName string
 
