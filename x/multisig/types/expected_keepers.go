@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
@@ -53,9 +54,9 @@ type SignKeeper interface {
 }
 
 type SignatureKeeper interface {
-	RegisterSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature Signature) error
+	RegisterSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
 	RemoveSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
 
-	QuerySignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) (Signature, error)
-	QuerySignatureList(ctx sdk.Context, chainID string, sigID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, Signature], *query.PageResponse, error)
+	QuerySignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) (exported.Signature, error)
+	QuerySignatureList(ctx sdk.Context, chainID string, sigID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error)
 }

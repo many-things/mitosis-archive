@@ -5,16 +5,17 @@ package server
 
 import (
 	fmt "fmt"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	query "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_many_things_mitosis_x_multisig_types "github.com/many-things/mitosis/x/multisig/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	types "github.com/many-things/mitosis/x/multisig/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
-	io "io"
-	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -876,8 +877,8 @@ func (m *QuerySignatureList) GetPagination() *query.PageRequest {
 
 // QuerySignatureListResponse is response type for Query Signature List RPC method
 type QuerySignatureListResponse struct {
-	List []github_com_many_things_mitosis_x_multisig_types.Signature `protobuf:"bytes,1,rep,name=list,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"list,omitempty"`
-	Page *query.PageResponse                                         `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	List []exported.Signature `protobuf:"bytes,1,rep,name=list,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"list,omitempty"`
+	Page *query.PageResponse  `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 }
 
 func (m *QuerySignatureListResponse) Reset()         { *m = QuerySignatureListResponse{} }
@@ -913,7 +914,7 @@ func (m *QuerySignatureListResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QuerySignatureListResponse proto.InternalMessageInfo
 
-func (m *QuerySignatureListResponse) GetList() []github_com_many_things_mitosis_x_multisig_types.Signature {
+func (m *QuerySignatureListResponse) GetList() []exported.Signature {
 	if m != nil {
 		return m.List
 	}

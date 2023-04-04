@@ -1,11 +1,9 @@
-package types
+package exported
 
 import (
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/many-things/mitosis/pkg/utils"
 )
-
-type Signature []byte
 
 func (sig Signature) ValidateBasic() error {
 	_, err := btcec.ParseDERSignature(sig, btcec.S256())

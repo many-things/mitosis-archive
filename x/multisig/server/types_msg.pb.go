@@ -5,16 +5,17 @@ package server
 
 import (
 	fmt "fmt"
+	io "io"
+	math "math"
+	math_bits "math/bits"
+
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	_ "github.com/many-things/mitosis/x/multisig/types"
-	github_com_many_things_mitosis_x_multisig_types "github.com/many-things/mitosis/x/multisig/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
-	io "io"
-	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -30,9 +31,9 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgStartKeygen is message for startkeygen event
 type MsgStartKeygen struct {
-	Module       string                                                `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
-	KeyID        github_com_many_things_mitosis_x_multisig_types.KeyID `protobuf:"bytes,2,opt,name=key_id,json=keyId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.KeyID" json:"key_id,omitempty"`
-	Participants []github_com_cosmos_cosmos_sdk_types.ValAddress       `protobuf:"bytes,3,rep,name=participants,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participants,omitempty"`
+	Module       string                                          `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
+	KeyID        exported.KeyID                                  `protobuf:"bytes,2,opt,name=key_id,json=keyId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.KeyID" json:"key_id,omitempty"`
+	Participants []github_com_cosmos_cosmos_sdk_types.ValAddress `protobuf:"bytes,3,rep,name=participants,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participants,omitempty"`
 }
 
 func (m *MsgStartKeygen) Reset()         { *m = MsgStartKeygen{} }
@@ -75,7 +76,7 @@ func (m *MsgStartKeygen) GetModule() string {
 	return ""
 }
 
-func (m *MsgStartKeygen) GetKeyID() github_com_many_things_mitosis_x_multisig_types.KeyID {
+func (m *MsgStartKeygen) GetKeyID() exported.KeyID {
 	if m != nil {
 		return m.KeyID
 	}
@@ -91,10 +92,10 @@ func (m *MsgStartKeygen) GetParticipants() []github_com_cosmos_cosmos_sdk_types.
 
 // MsgSubmitPubkey is message for submitMessage event
 type MsgSubmitPubkey struct {
-	Module      string                                                    `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
-	KeyID       github_com_many_things_mitosis_x_multisig_types.KeyID     `protobuf:"bytes,2,opt,name=key_id,json=keyId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.KeyID" json:"key_id,omitempty"`
-	Participant github_com_cosmos_cosmos_sdk_types.ValAddress             `protobuf:"bytes,3,opt,name=participant,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participant,omitempty"`
-	PubKey      github_com_many_things_mitosis_x_multisig_types.PublicKey `protobuf:"bytes,4,opt,name=pub_key,json=pubKey,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.PublicKey" json:"pub_key,omitempty"`
+	Module      string                                        `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
+	KeyID       exported.KeyID                                `protobuf:"bytes,2,opt,name=key_id,json=keyId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.KeyID" json:"key_id,omitempty"`
+	Participant github_com_cosmos_cosmos_sdk_types.ValAddress `protobuf:"bytes,3,opt,name=participant,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participant,omitempty"`
+	PubKey      exported.PublicKey                            `protobuf:"bytes,4,opt,name=pub_key,json=pubKey,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.PublicKey" json:"pub_key,omitempty"`
 }
 
 func (m *MsgSubmitPubkey) Reset()         { *m = MsgSubmitPubkey{} }
@@ -137,7 +138,7 @@ func (m *MsgSubmitPubkey) GetModule() string {
 	return ""
 }
 
-func (m *MsgSubmitPubkey) GetKeyID() github_com_many_things_mitosis_x_multisig_types.KeyID {
+func (m *MsgSubmitPubkey) GetKeyID() exported.KeyID {
 	if m != nil {
 		return m.KeyID
 	}
@@ -151,7 +152,7 @@ func (m *MsgSubmitPubkey) GetParticipant() github_com_cosmos_cosmos_sdk_types.Va
 	return nil
 }
 
-func (m *MsgSubmitPubkey) GetPubKey() github_com_many_things_mitosis_x_multisig_types.PublicKey {
+func (m *MsgSubmitPubkey) GetPubKey() exported.PublicKey {
 	if m != nil {
 		return m.PubKey
 	}
@@ -234,10 +235,10 @@ var xxx_messageInfo_MsgSubmitPubkeyResponse proto.InternalMessageInfo
 
 // MsgSubmitSignature is message for SubmitSignature event
 type MsgSubmitSignature struct {
-	Module      string                                                    `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
-	SigID       github_com_many_things_mitosis_x_multisig_types.SigID     `protobuf:"bytes,2,opt,name=sig_id,json=sigId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.SigID" json:"sig_id,omitempty"`
-	Participant github_com_cosmos_cosmos_sdk_types.ValAddress             `protobuf:"bytes,3,opt,name=participant,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participant,omitempty"`
-	Signature   github_com_many_things_mitosis_x_multisig_types.Signature `protobuf:"bytes,4,opt,name=signature,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"signature,omitempty"`
+	Module      string                                        `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
+	SigID       exported.SigID                                `protobuf:"bytes,2,opt,name=sig_id,json=sigId,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.SigID" json:"sig_id,omitempty"`
+	Participant github_com_cosmos_cosmos_sdk_types.ValAddress `protobuf:"bytes,3,opt,name=participant,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participant,omitempty"`
+	Signature   exported.Signature                            `protobuf:"bytes,4,opt,name=signature,proto3,casttype=github.com/many-things/mitosis/x/multisig/types.Signature" json:"signature,omitempty"`
 }
 
 func (m *MsgSubmitSignature) Reset()         { *m = MsgSubmitSignature{} }
@@ -280,7 +281,7 @@ func (m *MsgSubmitSignature) GetModule() string {
 	return ""
 }
 
-func (m *MsgSubmitSignature) GetSigID() github_com_many_things_mitosis_x_multisig_types.SigID {
+func (m *MsgSubmitSignature) GetSigID() exported.SigID {
 	if m != nil {
 		return m.SigID
 	}
@@ -294,7 +295,7 @@ func (m *MsgSubmitSignature) GetParticipant() github_com_cosmos_cosmos_sdk_types
 	return nil
 }
 
-func (m *MsgSubmitSignature) GetSignature() github_com_many_things_mitosis_x_multisig_types.Signature {
+func (m *MsgSubmitSignature) GetSignature() exported.Signature {
 	if m != nil {
 		return m.Signature
 	}
@@ -812,7 +813,7 @@ func (m *MsgStartKeygen) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_many_things_mitosis_x_multisig_types.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -958,7 +959,7 @@ func (m *MsgSubmitPubkey) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.KeyID = github_com_many_things_mitosis_x_multisig_types.KeyID(dAtA[iNdEx:postIndex])
+			m.KeyID = exported.KeyID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -1240,7 +1241,7 @@ func (m *MsgSubmitSignature) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SigID = github_com_many_things_mitosis_x_multisig_types.SigID(dAtA[iNdEx:postIndex])
+			m.SigID = exported.SigID(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {

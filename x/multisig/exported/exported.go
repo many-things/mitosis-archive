@@ -1,4 +1,4 @@
-package types
+package exported
 
 import (
 	"bytes"
@@ -14,6 +14,7 @@ type KeyID string
 type PublicKey []byte
 type Hash []byte
 type SigID string
+type Signature []byte
 
 const (
 	keyIDMinLength = 4

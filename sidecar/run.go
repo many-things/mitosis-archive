@@ -7,6 +7,7 @@ import (
 	"os"
 
 	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	tmclient "github.com/tendermint/tendermint/rpc/client"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -71,7 +72,7 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wal
 		case *types.KeygenResponse_PubKey:
 			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
 				Module:      "sidecar",
-				KeyID:       multisigtypes.KeyID(keyUID),
+				KeyID:       exported.KeyID(keyUID),
 				Participant: store.GetValidator(),
 				PubKey:      r.PubKey,
 			})
@@ -116,7 +117,7 @@ func createSignHandler(store storage.Storage, sigCli types.MultisigClient, walle
 		case *types.SignResponse_Signature:
 			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
 				Module:      "sidecar",
-				SigID:       multisigtypes.SigID(sigID),
+				SigID:       exported.SigID(sigID),
 				Participant: store.GetValidator(),
 				Signature:   r.Signature,
 			})

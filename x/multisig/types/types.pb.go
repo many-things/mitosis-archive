@@ -5,9 +5,12 @@ package types
 
 import (
 	fmt "fmt"
+
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	"github.com/many-things/mitosis/x/multisig/exported"
+
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -190,7 +193,7 @@ type PubKey struct {
 	// participant id
 	Participant github_com_cosmos_cosmos_sdk_types.ValAddress `protobuf:"bytes,3,opt,name=participant,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participant,omitempty"`
 	// pub key
-	PubKey PublicKey `protobuf:"bytes,4,opt,name=pub_key,json=pubKey,proto3,casttype=PublicKey" json:"pub_key,omitempty"`
+	PubKey exported.PublicKey `protobuf:"bytes,4,opt,name=pub_key,json=pubKey,proto3,casttype=PublicKey" json:"pub_key,omitempty"`
 }
 
 func (m *PubKey) Reset()         { *m = PubKey{} }
@@ -247,7 +250,7 @@ func (m *PubKey) GetParticipant() github_com_cosmos_cosmos_sdk_types.ValAddress 
 	return nil
 }
 
-func (m *PubKey) GetPubKey() PublicKey {
+func (m *PubKey) GetPubKey() exported.PublicKey {
 	if m != nil {
 		return m.PubKey
 	}
@@ -265,8 +268,8 @@ type Sign struct {
 	// participant_ids
 	Participants []github_com_cosmos_cosmos_sdk_types.ValAddress `protobuf:"bytes,4,rep,name=participants,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"participants,omitempty"`
 	// Message to sign
-	MessageToSign Hash        `protobuf:"bytes,5,opt,name=message_to_sign,json=messageToSign,proto3,casttype=Hash" json:"message_to_sign,omitempty"`
-	Status        Sign_Status `protobuf:"varint,6,opt,name=status,proto3,enum=manythings.mitosis.v1beta1.multisig.Sign_Status" json:"status,omitempty"`
+	MessageToSign exported.Hash `protobuf:"bytes,5,opt,name=message_to_sign,json=messageToSign,proto3,casttype=Hash" json:"message_to_sign,omitempty"`
+	Status        Sign_Status   `protobuf:"varint,6,opt,name=status,proto3,enum=manythings.mitosis.v1beta1.multisig.Sign_Status" json:"status,omitempty"`
 }
 
 func (m *Sign) Reset()         { *m = Sign{} }
@@ -330,7 +333,7 @@ func (m *Sign) GetParticipants() []github_com_cosmos_cosmos_sdk_types.ValAddress
 	return nil
 }
 
-func (m *Sign) GetMessageToSign() Hash {
+func (m *Sign) GetMessageToSign() exported.Hash {
 	if m != nil {
 		return m.MessageToSign
 	}
