@@ -3,13 +3,15 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.context;
 
 import "gogoproto/gogo.proto";
+import "mitosis/common/v1beta1/types.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/types";
 
 // Signer payload for Cosmos chains
 message CosmosSigner {
-  uint64 account_number = 1;
-  uint64 sequence_number = 2;
+  string prefix = 1;
+  uint64 account_number = 2;
+  uint64 sequence_number = 3;
 }
 
 // Signer payload for EVM based chains
@@ -35,7 +37,7 @@ message Signer {
   string chain = 1;
 
   // Signer ID
-  uint64 id = 2;
+  uint64 id = 2 [(gogoproto.customname) = "ID"];
 
   // Signer public key
   bytes pub_key = 3;
@@ -43,9 +45,11 @@ message Signer {
   // Signer status
   Status status = 4;
 
+  common.ChainType type = 5;
+
   // Signer payload
   oneof payload {
-    CosmosSigner cosmos = 5;
-    EvmSigner evm = 6;
+    CosmosSigner cosmos = 6;
+    EvmSigner evm = 7;
   }
 }

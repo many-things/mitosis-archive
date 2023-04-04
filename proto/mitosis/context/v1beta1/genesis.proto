@@ -12,12 +12,12 @@ option go_package = "github.com/many-things/mitosis/x/context/types";
 message GenesisOperation {
   // Key-Value set of item
   message ItemSet {
-    uint64 id = 1;
+    uint64 id = 1 [(gogoproto.customname) = "ID"];
     Operation operation = 2;
   }
 
-  uint64 first_id = 1;
-  uint64 last_id = 2;
+  uint64 first_id = 1 [(gogoproto.customname) = "FirstID"];
+  uint64 last_id = 2 [(gogoproto.customname) = "LastID"];
   repeated ItemSet item_set = 3;
 }
 

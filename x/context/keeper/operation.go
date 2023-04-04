@@ -5,7 +5,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/many-things/mitosis/pkg/txconv"
-	txconvtypes "github.com/many-things/mitosis/pkg/txconv/types"
 	"github.com/many-things/mitosis/x/context/keeper/state"
 	"github.com/many-things/mitosis/x/context/types"
 	evttypes "github.com/many-things/mitosis/x/event/types"
@@ -15,33 +14,38 @@ var _ types.OperationKeeper = &keeper{}
 
 func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll) (uint64, error) {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+	signerRepo := state.NewKVSignerRepo(k.cdc, ctx.KVStore(k.storeKey))
 
-	wreq, ok := poll.GetPayload().GetEvent().(*evttypes.Event_Req)
-	if !ok {
+	req := poll.GetPayload().GetReq()
+	if req == nil {
 		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
-	req := wreq.Req
 
-	signer := txconvtypes.NewCosmosSigner(nil, "osmo", 0, 0)
-
-	unsignedTx, bytesToSign, err := txconv.Converter.Convert(signer, req.DestChain, req.OpId, req.OpArgs...)
+	signer, err := signerRepo.LoadByChain(chain)
 	if err != nil {
-		return 0, err // TODO: require wrap errors
+		return 0, sdkerrutils.Wrapf(sdkerrors.ErrNotFound, "signer not found for chain %s", chain)
 	}
 
-	_ = unsignedTx
-	_ = bytesToSign
+	txPayload, txBytesToSign, err := txconv.Converter.Convert(
+		signer.TxConvSigner(),
+		req.DestChain, req.OpId, req.OpArgs...,
+	)
+	if err != nil {
+		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "convert event to sign target")
+	}
 
 	op := types.Operation{
-		Chain:  chain,
-		Id:     0, // go filled by Load
-		EvtId:  poll.GetId(),
-		Status: types.Operation_StatusPending,
+		Chain:         chain,
+		ID:            0, // go filled by Load
+		PollID:        poll.GetId(),
+		Status:        types.Operation_StatusPending,
+		TxPayload:     txPayload,
+		TxBytesToSign: txBytesToSign,
 	}
 
 	opID, err := opRepo.Create(&op)
 	if err != nil {
-		return 0, err // TODO: require wrap errors
+		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "create operation")
 	}
 
 	return opID, nil
@@ -56,9 +60,8 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id uint64) error {
 	}
 
 	op.Status = types.Operation_StatusInitSign
-	err = opRepo.Save(op)
 
-	if err != nil {
+	if err = opRepo.Save(op); err != nil {
 		return err // TODO: require wrap error
 	}
 
@@ -86,8 +89,8 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll) error {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 
-	res, ok := poll.GetPayload().GetEvent().(*evttypes.Event_Res)
-	if !ok {
+	res := poll.GetPayload().GetRes()
+	if res == nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
 	_ = res
