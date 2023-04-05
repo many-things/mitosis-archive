@@ -45,14 +45,16 @@ message Operation {
   // Operation status
   Status status = 4;
 
-  bytes tx_payload = 5;
+  bytes signer_pubkey = 5;
 
-  bytes tx_bytes_to_sign = 6;
+  bytes tx_payload = 6;
 
-  uint64 sig_id = 7 [
+  bytes tx_bytes_to_sign = 7;
+
+  uint64 sig_id = 8 [
     (gogoproto.customname) = "SigID",
     (gogoproto.nullable) = true
   ];
 
-  OperationResult result = 8 [(gogoproto.nullable) = true];
+  OperationResult result = 9 [(gogoproto.nullable) = true];
 }

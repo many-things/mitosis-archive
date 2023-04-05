@@ -10,6 +10,7 @@ import (
 	"github.com/many-things/mitosis/x/context/keeper/state"
 	"github.com/many-things/mitosis/x/context/types"
 	evttypes "github.com/many-things/mitosis/x/event/types"
+	"github.com/pkg/errors"
 )
 
 var _ types.OperationKeeper = &keeper{}
@@ -41,6 +42,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		ID:            0, // go filled by Load
 		PollID:        poll.GetId(),
 		Status:        types.Operation_StatusPending,
+		SignerPubkey:  signer.PubKey,
 		TxPayload:     txPayload,
 		TxBytesToSign: txBytesToSign,
 		Result:        nil,
@@ -49,6 +51,16 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 	opID, err := opRepo.Create(&op)
 	if err != nil {
 		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "create operation")
+	}
+
+	err = ctx.EventManager().EmitTypedEvent(
+		&types.EventOperationInitialized{
+			PollID:      poll.Id,
+			OperationID: opID,
+		},
+	)
+	if err != nil {
+		return 0, errors.Wrap(err, "emit event")
 	}
 
 	return opID, nil
@@ -72,6 +84,17 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
+	err = ctx.EventManager().EmitTypedEvent(
+		&types.EventOperationSigningStarted{
+			OperationID: op.ID,
+			SignID:      op.SigID,
+			Signer:      op.SignerPubkey,
+		},
+	)
+	if err != nil {
+		return errors.Wrap(err, "emit event")
+	}
+
 	return nil
 }
 
@@ -90,6 +113,17 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 	}
 	if err := opRepo.Shift(op.ID, types.Operation_StatusFinishSign); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+
+	err = ctx.EventManager().EmitTypedEvent(
+		&types.EventOperationSigningFinished{
+			OperationID: op.ID,
+			SignID:      op.SigID,
+			Signer:      op.SignerPubkey,
+		},
+	)
+	if err != nil {
+		return errors.Wrap(err, "emit event")
 	}
 
 	return nil
@@ -118,6 +152,17 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 	}
 	if err := opRepo.Shift(op.ID, types.Operation_StatusFinalized); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+
+	err = ctx.EventManager().EmitTypedEvent(
+		&types.EventOperationFinalized{
+			OperationID: op.ID,
+			ReqPollID:   op.PollID,
+			RespPollID:  poll.Id,
+		},
+	)
+	if err != nil {
+		return errors.Wrap(err, "emit event")
 	}
 
 	return nil

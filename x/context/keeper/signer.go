@@ -42,6 +42,16 @@ func (k keeper) RegisterCosmosSigner(ctx sdk.Context, chain string, pubKey []byt
 		return errors.Wrap(err, "save cosmos signer")
 	}
 
+	err := ctx.EventManager().EmitTypedEvent(
+		&types.EventSignerRegistered{
+			ChainType: signer.TxConvSigner().Type(),
+			Pubkey:    signer.PubKey,
+		},
+	)
+	if err != nil {
+		return errors.Wrap(err, "emit event")
+	}
+
 	return nil
 }
 
@@ -59,6 +69,16 @@ func (k keeper) RegisterEVMSigner(ctx sdk.Context, chain string, pubKey []byte) 
 	}
 	if err := signerStore.Save(&signer); err != nil {
 		return errors.Wrap(err, "save evm signer")
+	}
+
+	err := ctx.EventManager().EmitTypedEvent(
+		&types.EventSignerRegistered{
+			ChainType: signer.TxConvSigner().Type(),
+			Pubkey:    signer.PubKey,
+		},
+	)
+	if err != nil {
+		return errors.Wrap(err, "emit event")
 	}
 
 	return nil
