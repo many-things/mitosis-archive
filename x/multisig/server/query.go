@@ -120,7 +120,7 @@ func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*Query
 		return nil, fmt.Errorf("sigId has invalid format: must be chainId-sequence")
 	}
 
-	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id, msg.Validator)
+	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
@@ -130,14 +130,7 @@ func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*Query
 
 func (k queryServer) SignatureList(ctx context.Context, msg *QuerySignatureList) (*QuerySignatureListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
-
-	sigID := exported.SigID(msg.SigId)
-	chainID, id, err := sigID.ToInternalVariables()
-	if err != nil {
-		return nil, fmt.Errorf("sigId has invalid foramt: must be chainId-sequence")
-	}
-
-	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, chainID, id, msg.Pagination)
+	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}

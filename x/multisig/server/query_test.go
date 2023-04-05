@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/testutils"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"gotest.tools/assert"
@@ -221,43 +222,54 @@ func Test_Signature(t *testing.T) {
 
 	// try to query not exist signature
 	_, err := s.Signature(wctx, &QuerySignature{
-		SigId:     fmt.Sprintf("%s-%d", chainID, 0),
-		Validator: val,
+		SigId: fmt.Sprintf("%s-%d", chainID, 0),
 	})
-	assert.Error(t, err, "signature: not found")
+	assert.Error(t, err, "sign_signature: not found")
 
 	// try to query exist signature
-	sig := exported.Signature("signature")
-	_ = k.RegisterSignature(wctx, chainID, 0, val, sig)
+	signature := exported.SignSignature{
+		Chain: chainID,
+		SigID: 0,
+		Items: []*exported.SignSignature_Item{{
+			Participant: val,
+			Signature:   exported.Signature("Signature"),
+		}},
+	}
+	_ = k.RegisterSignature(wctx, chainID, &signature)
 
 	res, err := s.Signature(wctx, &QuerySignature{
-		SigId:     fmt.Sprintf("%s-%d", chainID, 0),
-		Validator: val,
+		SigId: fmt.Sprintf("%s-%d", chainID, 0),
 	})
 	assert.NilError(t, err)
-	assert.DeepEqual(t, res.Signature, []uint8("signature"))
+	assert.DeepEqual(t, res.Signature, &signature)
 }
 
 func Test_SignatureList(t *testing.T) {
 	k, s, ctx := setupQueryServer(t)
 	wctx := ctx.(sdk.Context)
 
-	var signs []exported.Signature
-	for i := 0; i < 5; i++ {
-		sign := exported.Signature(fmt.Sprintf("signature-%d", i))
+	var signs []*exported.SignSignature
+	var i uint64
+	for i = 0; i < 5; i++ {
+		signature := exported.SignSignature{
+			Chain: chainID,
+			SigID: i,
+			Items: []*exported.SignSignature_Item{{
+				Participant: testutils.GenValAddress(t),
+				Signature:   exported.Signature("Signature"),
+			}},
+		}
 		_ = k.RegisterSignature(
 			wctx,
 			chainID,
-			0,
-			sdk.ValAddress(fmt.Sprintf("val-%d", i)),
-			sign,
+			&signature,
 		)
 
-		signs = append(signs, sign)
+		signs = append(signs, &signature)
 	}
 
 	res, err := s.SignatureList(wctx, &QuerySignatureList{
-		SigId:      fmt.Sprintf("%s-%d", chainID, 0),
+		ChainId:    chainID,
 		Pagination: &query.PageRequest{Limit: query.MaxLimit},
 	})
 	assert.NilError(t, err)

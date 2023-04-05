@@ -92,22 +92,21 @@ message QuerySignListResponse {
 // QuerySignature is request type for Query Signature RPC method
 message QuerySignature {
   string sig_id = 1;
-  bytes validator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 }
 
 // QuerySignatureResponse is response type for Query Signature RPC method
 message QuerySignatureResponse {
-  bytes signature = 1;
+  SignSignature signature = 1;
 }
 
 // QuerySignatureList is request type for Query Signature List RPC method
 message QuerySignatureList {
-  string sig_id = 1;
+  string chain_id = 1;
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QuerySignatureListResponse is response type for Query Signature List RPC method
 message QuerySignatureListResponse {
-  repeated bytes list = 1 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.Signature"];
+  repeated SignSignature list = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }

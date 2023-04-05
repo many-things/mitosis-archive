@@ -46874,7 +46874,7 @@ paths:
           format: uint64
       tags:
         - Query
-  /mitosis/multisig/v1beta1/signature/{sig_id}/{validator}:
+  /mitosis/multisig/v1beta1/signature/{sig_id}:
     get:
       summary: specific signature query
       operationId: ManythingsMitosisV1Beta1MultisigServerSignature
@@ -46885,8 +46885,26 @@ paths:
             type: object
             properties:
               signature:
-                type: string
-                format: byte
+                type: object
+                properties:
+                  chain:
+                    type: string
+                  sig_id:
+                    type: string
+                    format: uint64
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        participant:
+                          type: string
+                          format: byte
+                        signature:
+                          type: string
+                          format: byte
+                      title: SignSignature result message
+                title: SignSignature Message
             title: >-
               QuerySignatureResponse is response type for Query Signature RPC
               method
@@ -46913,14 +46931,9 @@ paths:
           in: path
           required: true
           type: string
-        - name: validator
-          in: path
-          required: true
-          type: string
-          format: byte
       tags:
         - Query
-  /mitosis/multisig/v1beta1/signatures/{sig_id}:
+  /mitosis/multisig/v1beta1/signatures/{chain_id}:
     get:
       summary: list signature query
       operationId: ManythingsMitosisV1Beta1MultisigServerSignatureList
@@ -46933,8 +46946,26 @@ paths:
               list:
                 type: array
                 items:
-                  type: string
-                  format: byte
+                  type: object
+                  properties:
+                    chain:
+                      type: string
+                    sig_id:
+                      type: string
+                      format: uint64
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          participant:
+                            type: string
+                            format: byte
+                          signature:
+                            type: string
+                            format: byte
+                        title: SignSignature result message
+                  title: SignSignature Message
               page:
                 type: object
                 properties:
@@ -46985,7 +47016,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: sig_id
+        - name: chain_id
           in: path
           required: true
           type: string
@@ -77792,6 +77823,37 @@ definitions:
        - STATUS_SUCCESS: Sign event Success
        - STATUS_FAILED: Sign event Failed
     title: Sign Status
+  manythings.mitosis.v1beta1.multisig.SignSignature:
+    type: object
+    properties:
+      chain:
+        type: string
+      sig_id:
+        type: string
+        format: uint64
+      items:
+        type: array
+        items:
+          type: object
+          properties:
+            participant:
+              type: string
+              format: byte
+            signature:
+              type: string
+              format: byte
+          title: SignSignature result message
+    title: SignSignature Message
+  manythings.mitosis.v1beta1.multisig.SignSignature.Item:
+    type: object
+    properties:
+      participant:
+        type: string
+        format: byte
+      signature:
+        type: string
+        format: byte
+    title: SignSignature result message
   manythings.mitosis.v1beta1.multisig.server.MsgStartKeygenResponse:
     type: object
     title: MsgStartKeygenResponse is message for StartKeygen Response
@@ -78122,8 +78184,26 @@ definitions:
       list:
         type: array
         items:
-          type: string
-          format: byte
+          type: object
+          properties:
+            chain:
+              type: string
+            sig_id:
+              type: string
+              format: uint64
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  participant:
+                    type: string
+                    format: byte
+                  signature:
+                    type: string
+                    format: byte
+                title: SignSignature result message
+          title: SignSignature Message
       page:
         type: object
         properties:
@@ -78157,6 +78237,24 @@ definitions:
     type: object
     properties:
       signature:
-        type: string
-        format: byte
+        type: object
+        properties:
+          chain:
+            type: string
+          sig_id:
+            type: string
+            format: uint64
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                participant:
+                  type: string
+                  format: byte
+                signature:
+                  type: string
+                  format: byte
+              title: SignSignature result message
+        title: SignSignature Message
     title: QuerySignatureResponse is response type for Query Signature RPC method

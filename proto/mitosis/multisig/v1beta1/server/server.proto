@@ -58,11 +58,11 @@ service Query {
 
   // specific signature query
   rpc Signature(QuerySignature) returns (QuerySignatureResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signature/{sig_id}/{validator}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signature/{sig_id}"};
   }
 
   // list signature query
   rpc SignatureList(QuerySignatureList) returns (QuerySignatureListResponse) {
-    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signatures/{sig_id}"};
+    option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signatures/{chain_id}"};
   }
 }
