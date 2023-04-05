@@ -9,10 +9,10 @@ import (
 )
 
 // RegisterSignature is register new signature of the sign
-func (k keeper) RegisterSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error {
+func (k keeper) RegisterSignature(ctx sdk.Context, chainID string, signSignature *exported.SignSignature) error {
 	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	err := signatureRepo.Create(sigID, participant, signature)
+	err := signatureRepo.Save(signSignature)
 	if err != nil {
 		return err
 	}
@@ -20,10 +20,10 @@ func (k keeper) RegisterSignature(ctx sdk.Context, chainID string, sigID uint64,
 }
 
 // RemoveSignature is remove the signature of the sign
-func (k keeper) RemoveSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error {
+func (k keeper) RemoveSignature(ctx sdk.Context, chainID string, sigID uint64) error {
 	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	err := signatureRepo.Delete(sigID, participant)
+	err := signatureRepo.Delete(sigID)
 	if err != nil {
 		return err
 	}
@@ -31,11 +31,36 @@ func (k keeper) RemoveSignature(ctx sdk.Context, chainID string, sigID uint64, p
 	return nil
 }
 
-// QuerySignature is query specific signature
-func (k keeper) QuerySignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) (exported.Signature, error) {
+func (k keeper) HasSignature(ctx sdk.Context, chainID string, sigID uint64) bool {
+	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+	return signatureRepo.HasSignSignature(sigID)
+}
+
+func (k keeper) AddParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error {
 	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	signature, err := signatureRepo.Load(sigID, participant)
+	err := signatureRepo.AddParticipantSignature(sigID, participant, signature)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (k keeper) RemoveParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error {
+	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+
+	err := signatureRepo.RemoveParticipantSignature(sigID, participant)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// QuerySignature is query specific signature
+func (k keeper) QuerySignature(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignSignature, error) {
+	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+
+	signature, err := signatureRepo.Load(sigID)
 	if err != nil {
 		return nil, err
 	}
@@ -44,10 +69,10 @@ func (k keeper) QuerySignature(ctx sdk.Context, chainID string, sigID uint64, pa
 }
 
 // QuerySignatureList is query whole signature of specific sigID
-func (k keeper) QuerySignatureList(ctx sdk.Context, chainID string, sigID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error) {
+func (k keeper) QuerySignatureList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error) {
 	signatureRepo := state.NewKVChainSignatureRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	results, pageResp, err := signatureRepo.Paginate(sigID, page)
+	results, pageResp, err := signatureRepo.Paginate(page)
 	if err != nil {
 		return nil, nil, err
 	}

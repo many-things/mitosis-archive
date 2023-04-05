@@ -65,7 +65,7 @@ func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKey
 		return nil, fmt.Errorf("keyId has invalid format")
 	}
 
-	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id, msg.Validator)
+	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +78,7 @@ func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKey
 func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*QueryPubKeyListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	keyID := exported.KeyID(msg.KeyId)
-	chainID, id, err := keyID.ToInternalVariables()
-	if err != nil {
-		return nil, fmt.Errorf("keyId has invalid format: chainId-sequence")
-	}
-
-	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, chainID, id, msg.Pagination)
+	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +120,7 @@ func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*Query
 		return nil, fmt.Errorf("sigId has invalid format: must be chainId-sequence")
 	}
 
-	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id, msg.Validator)
+	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
@@ -136,14 +130,7 @@ func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*Query
 
 func (k queryServer) SignatureList(ctx context.Context, msg *QuerySignatureList) (*QuerySignatureListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
-
-	sigID := exported.SigID(msg.SigId)
-	chainID, id, err := sigID.ToInternalVariables()
-	if err != nil {
-		return nil, fmt.Errorf("sigId has invalid foramt: must be chainId-sequence")
-	}
-
-	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, chainID, id, msg.Pagination)
+	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}

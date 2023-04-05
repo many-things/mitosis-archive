@@ -41,6 +41,11 @@ message Keygen {
 
 // Pubkey Message
 message PubKey {
+  // Item returns
+  message Item {
+    bytes participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes pub_key = 2 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"];
+  }
   // key target chain id
   string chain = 1;
 
@@ -48,8 +53,5 @@ message PubKey {
   uint64 key_id = 2 [(gogoproto.customname) = "KeyID"];
 
   // participant id
-  bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
-
-  // pub key
-  bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"];
+  repeated Item items = 3;
 }

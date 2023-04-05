@@ -38,10 +38,13 @@ type KeygenKeeper interface {
 
 type PubKeyKeeper interface {
 	RegisterPubKey(ctx sdk.Context, chainID string, pubKey *PubKey) error
-	RemovePubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	DeletePubKey(ctx sdk.Context, chainID string, keyID uint64) error
+	AddParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress, publicKey exported.PublicKey) error
+	RemoveParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	HasPubKey(ctx sdk.Context, chainID string, keyID uint64) bool
 
-	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) (*PubKey, error)
-	QueryPubKeyList(ctx sdk.Context, chainID string, keyID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
+	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64) (*PubKey, error)
+	QueryPubKeyList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
 }
 
 type SignKeeper interface {
@@ -54,9 +57,12 @@ type SignKeeper interface {
 }
 
 type SignatureKeeper interface {
-	RegisterSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
-	RemoveSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
+	RegisterSignature(ctx sdk.Context, chainID string, signSignature *exported.SignSignature) error
+	RemoveSignature(ctx sdk.Context, chainID string, sigID uint64) error
+	HasSignature(ctx sdk.Context, chainID string, sigID uint64) bool
+	AddParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
+	RemoveParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
 
-	QuerySignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) (exported.Signature, error)
-	QuerySignatureList(ctx sdk.Context, chainID string, sigID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error)
+	QuerySignature(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignSignature, error)
+	QuerySignatureList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error)
 }
