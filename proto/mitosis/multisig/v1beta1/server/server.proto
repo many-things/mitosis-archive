@@ -5,6 +5,7 @@ package manythings.mitosis.v1beta1.multisig.server;
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+import "mitosis/multisig/v1beta1/exported/types.proto";
 import "mitosis/multisig/v1beta1/params.proto";
 import "mitosis/multisig/v1beta1/server/types_msg.proto";
 import "mitosis/multisig/v1beta1/server/types_query.proto";
