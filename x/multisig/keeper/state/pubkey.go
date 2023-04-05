@@ -40,10 +40,6 @@ var (
 	kvPubKeyItemPrefix = []byte{0x01}
 )
 
-func (r kvPubkeyRepo) getPrefix(prefix []byte, id uint64) []byte {
-	return append(prefix, sdk.Uint64ToBigEndian(id)...)
-}
-
 func (r kvPubkeyRepo) Load(id uint64) (*types.PubKey, error) {
 	bz := prefix.NewStore(r.root, kvPubKeyItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 
@@ -69,7 +65,7 @@ func (r kvPubkeyRepo) Create(pubKey *types.PubKey) error {
 		return err
 	}
 
-	prefix.NewStore(r.root, r.getPrefix(kvPubKeyItemPrefix, pubKey.KeyID)).Set(sdk.Uint64ToBigEndian(pubKey.KeyID), pubKeyBz)
+	prefix.NewStore(r.root, kvPubKeyItemPrefix).Set(sdk.Uint64ToBigEndian(pubKey.KeyID), pubKeyBz)
 	return nil
 }
 
