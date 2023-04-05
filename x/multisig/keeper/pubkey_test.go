@@ -38,6 +38,89 @@ func Test_RegisterPubKey(t *testing.T) {
 	require.Equal(t, pubKey, *savedPubKey)
 }
 
+func Test_AddParticipantPubKey(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := testutils.GenValAddress(t)
+	publicKey := testutils.GenPublicKey(t)
+
+	// try to create not exist pubKey
+	err := k.AddParticipantPubKey(ctx, chainID, 0, valAddr, publicKey)
+	assert.Error(t, err, "pubkey: not found")
+
+	_ = repo.Create(&types.PubKey{
+		Chain: chainID,
+		KeyID: 0,
+		Items: []*types.PubKey_Item{},
+	})
+
+	// try to create exist pubKey
+	err = k.AddParticipantPubKey(ctx, chainID, 0, valAddr, publicKey)
+	assert.NilError(t, err)
+
+	pubKey, err := repo.Load(0)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, pubKey.Items[0], &types.PubKey_Item{
+		Participant: valAddr,
+		PubKey:      publicKey,
+	})
+	assert.DeepEqual(t, len(pubKey.Items), 1)
+
+	// try to change exist pubKey
+	newPublicKey := testutils.GenPublicKey(t)
+	err = k.AddParticipantPubKey(ctx, chainID, 0, valAddr, newPublicKey)
+	assert.NilError(t, err)
+
+	pubKey, err = repo.Load(0)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, pubKey.Items[0], &types.PubKey_Item{
+		Participant: valAddr,
+		PubKey:      newPublicKey,
+	})
+	assert.DeepEqual(t, len(pubKey.Items), 1)
+
+	// try to append new publicKEy
+	newValAddr := testutils.GenValAddress(t)
+	newValPublicKey := testutils.GenPublicKey(t)
+	err = k.AddParticipantPubKey(ctx, chainID, 0, newValAddr, newValPublicKey)
+	assert.NilError(t, err)
+
+	pubKey, err = repo.Load(0)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, pubKey.Items[1], &types.PubKey_Item{
+		Participant: newValAddr,
+		PubKey:      newValPublicKey,
+	})
+	assert.DeepEqual(t, len(pubKey.Items), 2)
+}
+
+func TestKeeper_RemoveParticipantPubKey(t *testing.T) {
+	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
+	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
+	valAddr := testutils.GenValAddress(t)
+
+	// try to remove participant pubkey not exists
+	err := k.RemoveParticipantPubKey(ctx, chainID, 0, valAddr)
+	assert.Error(t, err, "pubkey: not found")
+
+	_ = repo.Create(&types.PubKey{
+		Chain: chainID,
+		KeyID: 0,
+		Items: []*types.PubKey_Item{{
+			Participant: valAddr,
+			PubKey:      testutils.GenPublicKey(t),
+		}},
+	})
+
+	// try to remove participant pubkey not exists
+	err = k.RemoveParticipantPubKey(ctx, chainID, 0, testutils.GenValAddress(t))
+	assert.Error(t, err, "pubkey item: not found")
+
+	// try to remove participant pubkey exists
+	err = k.RemoveParticipantPubKey(ctx, chainID, 0, valAddr)
+	assert.NilError(t, err)
+}
+
 func Test_DeletePubKey(t *testing.T) {
 	k, ctx, cdc, storeKey := testkeeper.MultisigKeeper(t)
 	repo := state.NewKVChainPubKeyRepo(cdc, ctx.KVStore(storeKey), chainID)
