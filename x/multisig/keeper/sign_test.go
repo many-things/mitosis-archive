@@ -7,10 +7,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/pkg/testutils"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
-	"github.com/many-things/mitosis/x/multisig/types"
 	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
 )
@@ -20,13 +20,13 @@ func Test_RegisterSignEvent(t *testing.T) {
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
 	valAddr := testutils.GenValAddress(t)
 
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         "1",
 		Participants:  []sdk.ValAddress{valAddr},
 		MessageToSign: []byte("test"),
-		Status:        types.Sign_StatusAssign,
+		Status:        exported.Sign_StatusAssign,
 	}
 	signID, err := k.RegisterSignEvent(ctx, chainID, &sign)
 	assert.NilError(t, err)
@@ -46,13 +46,13 @@ func Test_RemoveSignEvent(t *testing.T) {
 	assert.Error(t, err, "sign: not found")
 
 	// try to remove exist sign event
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         "1",
 		Participants:  []sdk.ValAddress{valAddr},
 		MessageToSign: []byte("test"),
-		Status:        types.Sign_StatusAssign,
+		Status:        exported.Sign_StatusAssign,
 	}
 	err = repo.Save(&sign)
 	assert.NilError(t, err)
@@ -71,23 +71,23 @@ func Test_UpdateSignStatus(t *testing.T) {
 	valAddr := testutils.GenValAddress(t)
 
 	// try to update not exist sign event
-	_, err := k.UpdateSignStatus(ctx, chainID, 0, types.Sign_StatusComplete)
+	_, err := k.UpdateSignStatus(ctx, chainID, 0, exported.Sign_StatusComplete)
 	assert.Error(t, err, "sign: not found")
 
 	// try to update exist sign event
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         "1",
 		Participants:  []sdk.ValAddress{valAddr},
 		MessageToSign: []byte("test"),
-		Status:        types.Sign_StatusAssign,
+		Status:        exported.Sign_StatusAssign,
 	}
 	_ = repo.Save(&sign)
 
-	updated, err := k.UpdateSignStatus(ctx, chainID, 0, types.Sign_StatusComplete)
+	updated, err := k.UpdateSignStatus(ctx, chainID, 0, exported.Sign_StatusComplete)
 	assert.NilError(t, err)
-	assert.Equal(t, updated.Status, types.Sign_StatusComplete)
+	assert.Equal(t, updated.Status, exported.Sign_StatusComplete)
 }
 
 func Test_QuerySign(t *testing.T) {
@@ -100,13 +100,13 @@ func Test_QuerySign(t *testing.T) {
 	assert.Error(t, err, "sign: not found")
 
 	// try to query exist sign event
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         "1",
 		Participants:  []sdk.ValAddress{valAddr},
 		MessageToSign: []byte("test"),
-		Status:        types.Sign_StatusAssign,
+		Status:        exported.Sign_StatusAssign,
 	}
 	_ = repo.Save(&sign)
 
@@ -120,16 +120,16 @@ func Test_QuerySignList(t *testing.T) {
 	repo := state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID)
 	valAddr := testutils.GenValAddress(t)
 
-	var signs []mitosistype.KV[uint64, *types.Sign]
+	var signs []mitosistype.KV[uint64, *exported.Sign]
 	var i uint64
 	for i = 0; i < 10; i++ {
-		sign := types.Sign{
+		sign := exported.Sign{
 			Chain:         chainID,
 			SigID:         i,
 			KeyID:         "1",
 			Participants:  []sdk.ValAddress{valAddr},
 			MessageToSign: []byte("test"),
-			Status:        types.Sign_StatusAssign,
+			Status:        exported.Sign_StatusAssign,
 		}
 		_ = repo.Save(&sign)
 

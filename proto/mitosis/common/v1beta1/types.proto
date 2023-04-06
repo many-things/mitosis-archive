@@ -6,10 +6,23 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/many-things/mitosis/pkg/types";
 
+// Coin defines a coin
 message Coin {
   option (gogoproto.equal) = true;
 
   string denom = 1;
   string amount = 2 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"];
   uint64 decimal = 3;
+}
+
+// ChainType defines the type of chain
+enum ChainType {
+  // Unspecified signer type
+  CHAIN_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "TypeUnspecified"];
+
+  // Cosmos signer
+  CHAIN_TYPE_COSMOS = 1 [(gogoproto.enumvalue_customname) = "TypeCosmos"];
+
+  // EVM signer
+  CHAIN_TYPE_EVM = 2 [(gogoproto.enumvalue_customname) = "TypeEvm"];
 }

@@ -7,6 +7,7 @@ import (
 	fmt "fmt"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	exported "github.com/many-things/mitosis/x/multisig/exported"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -23,6 +24,415 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// GenesisKeygen defines the multisig keygen genesis state.
+type GenesisKeygen struct {
+	ChainSet []*GenesisKeygen_ChainSet `protobuf:"bytes,1,rep,name=chain_set,json=chainSet,proto3" json:"chain_set,omitempty"`
+}
+
+func (m *GenesisKeygen) Reset()         { *m = GenesisKeygen{} }
+func (m *GenesisKeygen) String() string { return proto.CompactTextString(m) }
+func (*GenesisKeygen) ProtoMessage()    {}
+func (*GenesisKeygen) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{0}
+}
+func (m *GenesisKeygen) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisKeygen) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisKeygen.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisKeygen) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisKeygen.Merge(m, src)
+}
+func (m *GenesisKeygen) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisKeygen) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisKeygen.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisKeygen proto.InternalMessageInfo
+
+func (m *GenesisKeygen) GetChainSet() []*GenesisKeygen_ChainSet {
+	if m != nil {
+		return m.ChainSet
+	}
+	return nil
+}
+
+// Key-Value set of chain
+type GenesisKeygen_ChainSet struct {
+	Chain   []byte    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	LastId  uint64    `protobuf:"varint,2,opt,name=last_id,json=lastId,proto3" json:"last_id,omitempty"`
+	ItemSet []*Keygen `protobuf:"bytes,3,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
+}
+
+func (m *GenesisKeygen_ChainSet) Reset()         { *m = GenesisKeygen_ChainSet{} }
+func (m *GenesisKeygen_ChainSet) String() string { return proto.CompactTextString(m) }
+func (*GenesisKeygen_ChainSet) ProtoMessage()    {}
+func (*GenesisKeygen_ChainSet) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{0, 0}
+}
+func (m *GenesisKeygen_ChainSet) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisKeygen_ChainSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisKeygen_ChainSet.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisKeygen_ChainSet) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisKeygen_ChainSet.Merge(m, src)
+}
+func (m *GenesisKeygen_ChainSet) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisKeygen_ChainSet) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisKeygen_ChainSet.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisKeygen_ChainSet proto.InternalMessageInfo
+
+func (m *GenesisKeygen_ChainSet) GetChain() []byte {
+	if m != nil {
+		return m.Chain
+	}
+	return nil
+}
+
+func (m *GenesisKeygen_ChainSet) GetLastId() uint64 {
+	if m != nil {
+		return m.LastId
+	}
+	return 0
+}
+
+func (m *GenesisKeygen_ChainSet) GetItemSet() []*Keygen {
+	if m != nil {
+		return m.ItemSet
+	}
+	return nil
+}
+
+// GenesisPubKey defines the multisig pubkey genesis state.
+type GenesisPubKey struct {
+	// publicKey
+	ChainSet []*GenesisPubKey_ChainSet `protobuf:"bytes,1,rep,name=chain_set,json=chainSet,proto3" json:"chain_set,omitempty"`
+}
+
+func (m *GenesisPubKey) Reset()         { *m = GenesisPubKey{} }
+func (m *GenesisPubKey) String() string { return proto.CompactTextString(m) }
+func (*GenesisPubKey) ProtoMessage()    {}
+func (*GenesisPubKey) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{1}
+}
+func (m *GenesisPubKey) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisPubKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisPubKey.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisPubKey) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisPubKey.Merge(m, src)
+}
+func (m *GenesisPubKey) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisPubKey) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisPubKey.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisPubKey proto.InternalMessageInfo
+
+func (m *GenesisPubKey) GetChainSet() []*GenesisPubKey_ChainSet {
+	if m != nil {
+		return m.ChainSet
+	}
+	return nil
+}
+
+// Key-Value set of chain
+type GenesisPubKey_ChainSet struct {
+	Chain   []byte    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	ItemSet []*PubKey `protobuf:"bytes,2,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
+}
+
+func (m *GenesisPubKey_ChainSet) Reset()         { *m = GenesisPubKey_ChainSet{} }
+func (m *GenesisPubKey_ChainSet) String() string { return proto.CompactTextString(m) }
+func (*GenesisPubKey_ChainSet) ProtoMessage()    {}
+func (*GenesisPubKey_ChainSet) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{1, 0}
+}
+func (m *GenesisPubKey_ChainSet) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisPubKey_ChainSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisPubKey_ChainSet.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisPubKey_ChainSet) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisPubKey_ChainSet.Merge(m, src)
+}
+func (m *GenesisPubKey_ChainSet) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisPubKey_ChainSet) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisPubKey_ChainSet.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisPubKey_ChainSet proto.InternalMessageInfo
+
+func (m *GenesisPubKey_ChainSet) GetChain() []byte {
+	if m != nil {
+		return m.Chain
+	}
+	return nil
+}
+
+func (m *GenesisPubKey_ChainSet) GetItemSet() []*PubKey {
+	if m != nil {
+		return m.ItemSet
+	}
+	return nil
+}
+
+// GenesisSign define the multisig sign genesis state.
+type GenesisSign struct {
+	ChainSet []*GenesisSign_ChainSet `protobuf:"bytes,1,rep,name=chain_set,json=chainSet,proto3" json:"chain_set,omitempty"`
+}
+
+func (m *GenesisSign) Reset()         { *m = GenesisSign{} }
+func (m *GenesisSign) String() string { return proto.CompactTextString(m) }
+func (*GenesisSign) ProtoMessage()    {}
+func (*GenesisSign) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{2}
+}
+func (m *GenesisSign) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisSign) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisSign.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisSign) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisSign.Merge(m, src)
+}
+func (m *GenesisSign) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisSign) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisSign.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisSign proto.InternalMessageInfo
+
+func (m *GenesisSign) GetChainSet() []*GenesisSign_ChainSet {
+	if m != nil {
+		return m.ChainSet
+	}
+	return nil
+}
+
+// Key-Value set of item
+type GenesisSign_ChainSet struct {
+	Chain   []byte           `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	LastId  uint64           `protobuf:"varint,2,opt,name=last_id,json=lastId,proto3" json:"last_id,omitempty"`
+	ItemSet []*exported.Sign `protobuf:"bytes,3,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
+}
+
+func (m *GenesisSign_ChainSet) Reset()         { *m = GenesisSign_ChainSet{} }
+func (m *GenesisSign_ChainSet) String() string { return proto.CompactTextString(m) }
+func (*GenesisSign_ChainSet) ProtoMessage()    {}
+func (*GenesisSign_ChainSet) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{2, 0}
+}
+func (m *GenesisSign_ChainSet) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisSign_ChainSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisSign_ChainSet.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisSign_ChainSet) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisSign_ChainSet.Merge(m, src)
+}
+func (m *GenesisSign_ChainSet) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisSign_ChainSet) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisSign_ChainSet.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisSign_ChainSet proto.InternalMessageInfo
+
+func (m *GenesisSign_ChainSet) GetChain() []byte {
+	if m != nil {
+		return m.Chain
+	}
+	return nil
+}
+
+func (m *GenesisSign_ChainSet) GetLastId() uint64 {
+	if m != nil {
+		return m.LastId
+	}
+	return 0
+}
+
+func (m *GenesisSign_ChainSet) GetItemSet() []*exported.Sign {
+	if m != nil {
+		return m.ItemSet
+	}
+	return nil
+}
+
+// GenesisSignature define the multisig signature genesis state.
+type GenesisSignature struct {
+	ChainSet []*GenesisSignature_ChainSet `protobuf:"bytes,1,rep,name=chain_set,json=chainSet,proto3" json:"chain_set,omitempty"`
+}
+
+func (m *GenesisSignature) Reset()         { *m = GenesisSignature{} }
+func (m *GenesisSignature) String() string { return proto.CompactTextString(m) }
+func (*GenesisSignature) ProtoMessage()    {}
+func (*GenesisSignature) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{3}
+}
+func (m *GenesisSignature) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisSignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisSignature.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisSignature) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisSignature.Merge(m, src)
+}
+func (m *GenesisSignature) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisSignature) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisSignature.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisSignature proto.InternalMessageInfo
+
+func (m *GenesisSignature) GetChainSet() []*GenesisSignature_ChainSet {
+	if m != nil {
+		return m.ChainSet
+	}
+	return nil
+}
+
+// Set of chain
+type GenesisSignature_ChainSet struct {
+	Chain   []byte                    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	ItemSet []*exported.SignSignature `protobuf:"bytes,2,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
+}
+
+func (m *GenesisSignature_ChainSet) Reset()         { *m = GenesisSignature_ChainSet{} }
+func (m *GenesisSignature_ChainSet) String() string { return proto.CompactTextString(m) }
+func (*GenesisSignature_ChainSet) ProtoMessage()    {}
+func (*GenesisSignature_ChainSet) Descriptor() ([]byte, []int) {
+	return fileDescriptor_455e9f637adacbd8, []int{3, 0}
+}
+func (m *GenesisSignature_ChainSet) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GenesisSignature_ChainSet) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GenesisSignature_ChainSet.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GenesisSignature_ChainSet) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GenesisSignature_ChainSet.Merge(m, src)
+}
+func (m *GenesisSignature_ChainSet) XXX_Size() int {
+	return m.Size()
+}
+func (m *GenesisSignature_ChainSet) XXX_DiscardUnknown() {
+	xxx_messageInfo_GenesisSignature_ChainSet.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GenesisSignature_ChainSet proto.InternalMessageInfo
+
+func (m *GenesisSignature_ChainSet) GetChain() []byte {
+	if m != nil {
+		return m.Chain
+	}
+	return nil
+}
+
+func (m *GenesisSignature_ChainSet) GetItemSet() []*exported.SignSignature {
+	if m != nil {
+		return m.ItemSet
+	}
+	return nil
+}
+
 // GenesisState defines the multisig module's genesis state.
 type GenesisState struct {
 	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
@@ -32,7 +442,7 @@ func (m *GenesisState) Reset()         { *m = GenesisState{} }
 func (m *GenesisState) String() string { return proto.CompactTextString(m) }
 func (*GenesisState) ProtoMessage()    {}
 func (*GenesisState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_455e9f637adacbd8, []int{0}
+	return fileDescriptor_455e9f637adacbd8, []int{4}
 }
 func (m *GenesisState) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -69,6 +479,14 @@ func (m *GenesisState) GetParams() Params {
 }
 
 func init() {
+	proto.RegisterType((*GenesisKeygen)(nil), "manythings.mitosis.v1beta1.multisig.GenesisKeygen")
+	proto.RegisterType((*GenesisKeygen_ChainSet)(nil), "manythings.mitosis.v1beta1.multisig.GenesisKeygen.ChainSet")
+	proto.RegisterType((*GenesisPubKey)(nil), "manythings.mitosis.v1beta1.multisig.GenesisPubKey")
+	proto.RegisterType((*GenesisPubKey_ChainSet)(nil), "manythings.mitosis.v1beta1.multisig.GenesisPubKey.ChainSet")
+	proto.RegisterType((*GenesisSign)(nil), "manythings.mitosis.v1beta1.multisig.GenesisSign")
+	proto.RegisterType((*GenesisSign_ChainSet)(nil), "manythings.mitosis.v1beta1.multisig.GenesisSign.ChainSet")
+	proto.RegisterType((*GenesisSignature)(nil), "manythings.mitosis.v1beta1.multisig.GenesisSignature")
+	proto.RegisterType((*GenesisSignature_ChainSet)(nil), "manythings.mitosis.v1beta1.multisig.GenesisSignature.ChainSet")
 	proto.RegisterType((*GenesisState)(nil), "manythings.mitosis.v1beta1.multisig.GenesisState")
 }
 
@@ -77,21 +495,370 @@ func init() {
 }
 
 var fileDescriptor_455e9f637adacbd8 = []byte{
-	// 215 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0xcb, 0xcd, 0x2c, 0xc9,
-	0x2f, 0xce, 0x2c, 0xd6, 0xcf, 0x2d, 0xcd, 0x29, 0xc9, 0x2c, 0xce, 0x4c, 0xd7, 0x2f, 0x33, 0x4c,
-	0x4a, 0x2d, 0x49, 0x34, 0xd4, 0x4f, 0x4f, 0xcd, 0x4b, 0x2d, 0xce, 0x2c, 0xd6, 0x2b, 0x28, 0xca,
-	0x2f, 0xc9, 0x17, 0x52, 0xce, 0x4d, 0xcc, 0xab, 0x2c, 0xc9, 0xc8, 0xcc, 0x4b, 0x2f, 0xd6, 0x83,
-	0x6a, 0xd1, 0x83, 0xaa, 0xd4, 0x83, 0x69, 0x95, 0x12, 0x49, 0xcf, 0x4f, 0xcf, 0x07, 0xab, 0xd7,
-	0x07, 0xb1, 0x20, 0x5a, 0xa5, 0x54, 0x71, 0x5a, 0x51, 0x90, 0x58, 0x94, 0x98, 0x0b, 0xb5, 0x41,
-	0x29, 0x92, 0x8b, 0xc7, 0x1d, 0x62, 0x65, 0x70, 0x49, 0x62, 0x49, 0xaa, 0x90, 0x27, 0x17, 0x1b,
-	0x44, 0x5e, 0x82, 0x51, 0x81, 0x51, 0x83, 0xdb, 0x48, 0x5b, 0x8f, 0x08, 0x27, 0xe8, 0x05, 0x80,
-	0xb5, 0x38, 0xb1, 0x9c, 0xb8, 0x27, 0xcf, 0x10, 0x04, 0x35, 0xc0, 0xc9, 0xf3, 0xc4, 0x23, 0x39,
-	0xc6, 0x0b, 0x8f, 0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf0, 0x58, 0x8e, 0xe1, 0xc2, 0x63,
-	0x39, 0x86, 0x1b, 0x8f, 0xe5, 0x18, 0xa2, 0xf4, 0xd3, 0x33, 0x4b, 0x32, 0x4a, 0x93, 0xf4, 0x92,
-	0xf3, 0x73, 0xf5, 0x41, 0xc6, 0xeb, 0x42, 0xcc, 0xd7, 0x87, 0x39, 0xb9, 0x02, 0xe1, 0xe8, 0x92,
-	0xca, 0x82, 0xd4, 0xe2, 0x24, 0x36, 0xb0, 0x63, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x18,
-	0x3f, 0xbb, 0xd0, 0x38, 0x01, 0x00, 0x00,
+	// 460 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0x4f, 0x6b, 0x13, 0x41,
+	0x18, 0xc6, 0x33, 0x6d, 0x4d, 0xe3, 0xb4, 0x82, 0x0c, 0x05, 0x43, 0x0e, 0x6b, 0xa8, 0x7f, 0x88,
+	0x48, 0x67, 0x68, 0x3d, 0x89, 0xe0, 0xa1, 0x8a, 0x12, 0x8a, 0x20, 0x1b, 0x10, 0xff, 0x1c, 0xca,
+	0x24, 0x19, 0x26, 0x03, 0xdd, 0x9d, 0x65, 0xe7, 0x5d, 0xe9, 0x9e, 0xc4, 0x6f, 0xe0, 0xc7, 0xea,
+	0xb1, 0xe0, 0xc5, 0x93, 0x94, 0x04, 0xbc, 0xf9, 0x1d, 0x64, 0x67, 0x76, 0xdd, 0xc8, 0x26, 0x64,
+	0x63, 0x6f, 0x33, 0xbb, 0xef, 0xfb, 0x3c, 0xcf, 0x8f, 0x77, 0xf7, 0xc5, 0x0f, 0x03, 0x05, 0xda,
+	0x28, 0xc3, 0x82, 0xe4, 0x0c, 0x94, 0x51, 0x92, 0x7d, 0x3e, 0x1c, 0x0a, 0xe0, 0x87, 0x4c, 0x8a,
+	0x50, 0x18, 0x65, 0x68, 0x14, 0x6b, 0xd0, 0xe4, 0x5e, 0xc0, 0xc3, 0x14, 0x26, 0x2a, 0x94, 0x86,
+	0xe6, 0x2d, 0x34, 0xaf, 0xa4, 0x45, 0x6b, 0x67, 0x4f, 0x6a, 0xa9, 0x6d, 0x3d, 0xcb, 0x4e, 0xae,
+	0xb5, 0x73, 0xb0, 0xd4, 0x42, 0x9c, 0x47, 0x3a, 0x06, 0x31, 0x66, 0x90, 0x46, 0x22, 0x77, 0xea,
+	0x3c, 0x58, 0x5a, 0x1e, 0xf1, 0x98, 0x07, 0x45, 0xd9, 0xfd, 0xa5, 0x65, 0x73, 0x62, 0xfb, 0xbf,
+	0x11, 0xbe, 0xf5, 0xda, 0x81, 0x9c, 0x88, 0x54, 0x8a, 0x90, 0xbc, 0xc7, 0x37, 0x47, 0x13, 0xae,
+	0xc2, 0x53, 0x23, 0xa0, 0x8d, 0xba, 0x9b, 0xbd, 0x9d, 0xa3, 0x67, 0xb4, 0x06, 0x1c, 0xfd, 0x47,
+	0x86, 0xbe, 0xc8, 0x34, 0x06, 0x02, 0xfc, 0xd6, 0x28, 0x3f, 0x75, 0xbe, 0x22, 0xdc, 0x2a, 0x1e,
+	0x93, 0x3d, 0x7c, 0xc3, 0xbe, 0x68, 0xa3, 0x2e, 0xea, 0xed, 0xfa, 0xee, 0x42, 0xee, 0xe0, 0xed,
+	0x33, 0x6e, 0xe0, 0x54, 0x8d, 0xdb, 0x1b, 0x5d, 0xd4, 0xdb, 0xf2, 0x9b, 0xd9, 0xb5, 0x3f, 0x26,
+	0xaf, 0x70, 0x4b, 0x81, 0x08, 0x6c, 0xa8, 0x4d, 0x1b, 0xea, 0x71, 0xad, 0x50, 0x2e, 0x8d, 0xbf,
+	0x9d, 0x35, 0x0f, 0x04, 0xec, 0x7f, 0x2f, 0x79, 0xdf, 0x26, 0xc3, 0x13, 0x91, 0x5e, 0x9b, 0xd7,
+	0xc9, 0x2c, 0xe2, 0x9d, 0xac, 0xc4, 0x9d, 0xa7, 0xda, 0x58, 0x83, 0xca, 0x79, 0x96, 0x54, 0xbf,
+	0x10, 0xde, 0xc9, 0xe3, 0x0c, 0x94, 0x0c, 0xc9, 0xbb, 0x2a, 0xd3, 0xd3, 0x75, 0x98, 0x32, 0x91,
+	0x45, 0x44, 0x5f, 0xfe, 0x7f, 0x80, 0x2f, 0x2b, 0x03, 0x7c, 0x54, 0x2b, 0x51, 0x16, 0xa5, 0x04,
+	0xbd, 0x42, 0xf8, 0xf6, 0x5c, 0x46, 0x0e, 0x49, 0x2c, 0xc8, 0xa7, 0x2a, 0xed, 0xf3, 0x75, 0x69,
+	0xad, 0xd2, 0x22, 0x64, 0xbd, 0x12, 0xf9, 0x4d, 0x65, 0x88, 0x47, 0xb5, 0xc9, 0xfe, 0x5a, 0x97,
+	0x88, 0x1f, 0xf0, 0x6e, 0x91, 0x0b, 0x38, 0x08, 0xd2, 0xc7, 0x4d, 0xf7, 0x5f, 0x5b, 0xd7, 0xda,
+	0x5f, 0x88, 0x6d, 0x39, 0xde, 0xba, 0xf8, 0x79, 0xb7, 0xe1, 0xe7, 0x02, 0xc7, 0xfd, 0x8b, 0xa9,
+	0x87, 0x2e, 0xa7, 0x1e, 0xba, 0x9a, 0x7a, 0xe8, 0xdb, 0xcc, 0x6b, 0x5c, 0xce, 0xbc, 0xc6, 0x8f,
+	0x99, 0xd7, 0xf8, 0xc8, 0xa4, 0x82, 0x49, 0x32, 0xa4, 0x23, 0x1d, 0xb0, 0x4c, 0xfe, 0xc0, 0xe9,
+	0xb3, 0x62, 0x87, 0x9c, 0x97, 0x5b, 0xc4, 0x6e, 0x8f, 0x61, 0xd3, 0xae, 0x8f, 0x27, 0x7f, 0x02,
+	0x00, 0x00, 0xff, 0xff, 0x10, 0xa6, 0x5d, 0x71, 0x1f, 0x05, 0x00, 0x00,
+}
+
+func (m *GenesisKeygen) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisKeygen) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisKeygen) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for iNdEx := len(m.ChainSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChainSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisKeygen_ChainSet) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisKeygen_ChainSet) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisKeygen_ChainSet) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ItemSet) > 0 {
+		for iNdEx := len(m.ItemSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ItemSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.LastId != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.LastId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Chain) > 0 {
+		i -= len(m.Chain)
+		copy(dAtA[i:], m.Chain)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.Chain)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisPubKey) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisPubKey) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisPubKey) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for iNdEx := len(m.ChainSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChainSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisPubKey_ChainSet) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisPubKey_ChainSet) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisPubKey_ChainSet) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ItemSet) > 0 {
+		for iNdEx := len(m.ItemSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ItemSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Chain) > 0 {
+		i -= len(m.Chain)
+		copy(dAtA[i:], m.Chain)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.Chain)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisSign) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisSign) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisSign) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for iNdEx := len(m.ChainSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChainSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisSign_ChainSet) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisSign_ChainSet) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisSign_ChainSet) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ItemSet) > 0 {
+		for iNdEx := len(m.ItemSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ItemSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.LastId != 0 {
+		i = encodeVarintGenesis(dAtA, i, uint64(m.LastId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Chain) > 0 {
+		i -= len(m.Chain)
+		copy(dAtA[i:], m.Chain)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.Chain)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisSignature) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisSignature) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisSignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for iNdEx := len(m.ChainSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChainSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GenesisSignature_ChainSet) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GenesisSignature_ChainSet) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GenesisSignature_ChainSet) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ItemSet) > 0 {
+		for iNdEx := len(m.ItemSet) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ItemSet[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Chain) > 0 {
+		i -= len(m.Chain)
+		copy(dAtA[i:], m.Chain)
+		i = encodeVarintGenesis(dAtA, i, uint64(len(m.Chain)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -138,6 +905,148 @@ func encodeVarintGenesis(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *GenesisKeygen) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for _, e := range m.ChainSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisKeygen_ChainSet) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Chain)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.LastId != 0 {
+		n += 1 + sovGenesis(uint64(m.LastId))
+	}
+	if len(m.ItemSet) > 0 {
+		for _, e := range m.ItemSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisPubKey) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for _, e := range m.ChainSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisPubKey_ChainSet) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Chain)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if len(m.ItemSet) > 0 {
+		for _, e := range m.ItemSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisSign) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for _, e := range m.ChainSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisSign_ChainSet) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Chain)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.LastId != 0 {
+		n += 1 + sovGenesis(uint64(m.LastId))
+	}
+	if len(m.ItemSet) > 0 {
+		for _, e := range m.ItemSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisSignature) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ChainSet) > 0 {
+		for _, e := range m.ChainSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GenesisSignature_ChainSet) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Chain)
+	if l > 0 {
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if len(m.ItemSet) > 0 {
+		for _, e := range m.ItemSet {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	return n
+}
+
 func (m *GenesisState) Size() (n int) {
 	if m == nil {
 		return 0
@@ -154,6 +1063,852 @@ func sovGenesis(x uint64) (n int) {
 }
 func sozGenesis(x uint64) (n int) {
 	return sovGenesis(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *GenesisKeygen) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GenesisKeygen: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GenesisKeygen: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChainSet = append(m.ChainSet, &GenesisKeygen_ChainSet{})
+			if err := m.ChainSet[len(m.ChainSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisKeygen_ChainSet) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChainSet: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChainSet: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
+			if m.Chain == nil {
+				m.Chain = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastId", wireType)
+			}
+			m.LastId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LastId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ItemSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ItemSet = append(m.ItemSet, &Keygen{})
+			if err := m.ItemSet[len(m.ItemSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisPubKey) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GenesisPubKey: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GenesisPubKey: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChainSet = append(m.ChainSet, &GenesisPubKey_ChainSet{})
+			if err := m.ChainSet[len(m.ChainSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisPubKey_ChainSet) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChainSet: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChainSet: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
+			if m.Chain == nil {
+				m.Chain = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ItemSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ItemSet = append(m.ItemSet, &PubKey{})
+			if err := m.ItemSet[len(m.ItemSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisSign) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GenesisSign: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GenesisSign: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChainSet = append(m.ChainSet, &GenesisSign_ChainSet{})
+			if err := m.ChainSet[len(m.ChainSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisSign_ChainSet) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChainSet: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChainSet: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
+			if m.Chain == nil {
+				m.Chain = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastId", wireType)
+			}
+			m.LastId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LastId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ItemSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ItemSet = append(m.ItemSet, &exported.Sign{})
+			if err := m.ItemSet[len(m.ItemSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisSignature) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GenesisSignature: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GenesisSignature: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChainSet = append(m.ChainSet, &GenesisSignature_ChainSet{})
+			if err := m.ChainSet[len(m.ChainSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GenesisSignature_ChainSet) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowGenesis
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChainSet: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChainSet: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
+			if m.Chain == nil {
+				m.Chain = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ItemSet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ItemSet = append(m.ItemSet, &exported.SignSignature{})
+			if err := m.ItemSet[len(m.ItemSet)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipGenesis(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *GenesisState) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)

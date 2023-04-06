@@ -5,7 +5,7 @@ package manythings.mitosis.v1beta1.context.server;
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "mitosis/context/v1beta1/params.proto";
-import "mitosis/context/v1beta1/types.proto";
+import "mitosis/context/v1beta1/types_operation.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/server";
 

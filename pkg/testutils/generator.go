@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/many-things/mitosis/x/multisig/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,9 +25,9 @@ func GenAccAddress(t *testing.T) sdk.AccAddress {
 	return bz
 }
 
-func GenPublicKey(t *testing.T) types.PublicKey {
-	curve := btcec.S256()
-	key, err := ecdsa.GenerateKey(curve, crand.Reader)
+func GenPublicKey(t *testing.T) exported.PublicKey {
+	bz := make([]byte, 32)
+	_, err := crand.Read(bz)
 	require.NoError(t, err)
 
 	pubKey := btcec.PublicKey{

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/exported";
+
+// Sign Message
+message Sign {
+  // Sign Status
+  enum Status {
+    // Unspecified Status
+    STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "StatusUnspeicified"];
+
+    // Sign event Assigned ( Not executed )
+    STATUS_ASSIGN = 1 [(gogoproto.enumvalue_customname) = "StatusAssign"];
+
+    // Sign event executed
+    STATUS_EXECUTE = 2 [(gogoproto.enumvalue_customname) = "StatusExecute"];
+
+    // Sign event Completed
+    STATUS_COMPLETE = 3 [(gogoproto.enumvalue_customname) = "StatusComplete"];
+
+    // Sign event Success
+    STATUS_SUCCESS = 4 [(gogoproto.enumvalue_customname) = "StatusSuccess"];
+
+    // Sign event Failed
+    STATUS_FAILED = 5 [(gogoproto.enumvalue_customname) = "StatusFailed"];
+  }
+
+  // sign target chain id
+  string chain = 1;
+
+  // signature id
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+
+  // try-to-sign key id
+  string key_id = 3 [(gogoproto.customname) = "KeyID"];
+
+  // participant_ids
+  repeated string participants = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+
+  // Message to sign
+  bytes message_to_sign = 5 [(gogoproto.casttype) = "Hash"];
+
+  Status status = 6;
+}
+
+// SignSignature Message
+message SignSignature {
+  // SignSignature result message
+  message Item {
+    bytes participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    bytes signature = 2 [(gogoproto.casttype) = "Signature"];
+  }
+
+  string chain = 1;
+  uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
+
+  repeated Item items = 3;
+}

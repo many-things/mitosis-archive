@@ -276,7 +276,7 @@ func local_request_Query_PubKey_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 var (
-	filter_Query_PubKeyList_0 = &utilities.DoubleArray{Encoding: map[string]int{"key_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_Query_PubKeyList_0 = &utilities.DoubleArray{Encoding: map[string]int{"chain_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_Query_PubKeyList_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -290,15 +290,15 @@ func request_Query_PubKeyList_0(ctx context.Context, marshaler runtime.Marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["key_id"]
+	val, ok = pathParams["chain_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chain_id")
 	}
 
-	protoReq.KeyId, err = runtime.String(val)
+	protoReq.ChainId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -324,15 +324,15 @@ func local_request_Query_PubKeyList_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["key_id"]
+	val, ok = pathParams["chain_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chain_id")
 	}
 
-	protoReq.KeyId, err = runtime.String(val)
+	protoReq.ChainId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -517,17 +517,6 @@ func request_Query_Signature_0(ctx context.Context, marshaler runtime.Marshaler,
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "sig_id", err)
 	}
 
-	val, ok = pathParams["validator"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "validator")
-	}
-
-	protoReq.Validator, err = runtime.Bytes(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "validator", err)
-	}
-
 	msg, err := client.Signature(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -555,24 +544,13 @@ func local_request_Query_Signature_0(ctx context.Context, marshaler runtime.Mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "sig_id", err)
 	}
 
-	val, ok = pathParams["validator"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "validator")
-	}
-
-	protoReq.Validator, err = runtime.Bytes(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "validator", err)
-	}
-
 	msg, err := server.Signature(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
 var (
-	filter_Query_SignatureList_0 = &utilities.DoubleArray{Encoding: map[string]int{"sig_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_Query_SignatureList_0 = &utilities.DoubleArray{Encoding: map[string]int{"chain_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_Query_SignatureList_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -586,15 +564,15 @@ func request_Query_SignatureList_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["sig_id"]
+	val, ok = pathParams["chain_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "sig_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chain_id")
 	}
 
-	protoReq.SigId, err = runtime.String(val)
+	protoReq.ChainId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "sig_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -620,15 +598,15 @@ func local_request_Query_SignatureList_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["sig_id"]
+	val, ok = pathParams["chain_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "sig_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chain_id")
 	}
 
-	protoReq.SigId, err = runtime.String(val)
+	protoReq.ChainId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "sig_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_id", err)
 	}
 
 	if err := req.ParseForm(); err != nil {
@@ -1089,15 +1067,15 @@ var (
 
 	pattern_Query_PubKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "pubkey", "key_id", "validator"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_PubKeyList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "pubkeys", "key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_PubKeyList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "pubkeys", "chain_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_Sign_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "sign", "chain", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_SignList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signs", "chain"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Signature_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"mitosis", "multisig", "v1beta1", "signature", "sig_id", "validator"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Signature_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signature", "sig_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_SignatureList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signatures", "sig_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_SignatureList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"mitosis", "multisig", "v1beta1", "signatures", "chain_id"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

@@ -6,8 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper"
-	"github.com/many-things/mitosis/x/multisig/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -59,13 +59,13 @@ func (k queryServer) KeygenList(ctx context.Context, msg *QueryKeygenList) (*Que
 func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKeyResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	keyID := types.KeyID(msg.KeyId)
+	keyID := exported.KeyID(msg.KeyId)
 	chainID, id, err := keyID.ToInternalVariables()
 	if err != nil {
 		return nil, fmt.Errorf("keyId has invalid format")
 	}
 
-	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id, msg.Validator)
+	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
@@ -78,13 +78,7 @@ func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKey
 func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*QueryPubKeyListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	keyID := types.KeyID(msg.KeyId)
-	chainID, id, err := keyID.ToInternalVariables()
-	if err != nil {
-		return nil, fmt.Errorf("keyId has invalid format: chainId-sequence")
-	}
-
-	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, chainID, id, msg.Pagination)
+	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -120,13 +114,13 @@ func (k queryServer) SignList(ctx context.Context, msg *QuerySignList) (*QuerySi
 func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*QuerySignatureResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	sigID := types.SigID(msg.SigId)
+	sigID := exported.SigID(msg.SigId)
 	chainID, id, err := sigID.ToInternalVariables()
 	if err != nil {
 		return nil, fmt.Errorf("sigId has invalid format: must be chainId-sequence")
 	}
 
-	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id, msg.Validator)
+	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
@@ -136,14 +130,7 @@ func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*Query
 
 func (k queryServer) SignatureList(ctx context.Context, msg *QuerySignatureList) (*QuerySignatureListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
-
-	sigID := types.SigID(msg.SigId)
-	chainID, id, err := sigID.ToInternalVariables()
-	if err != nil {
-		return nil, fmt.Errorf("sigId has invalid foramt: must be chainId-sequence")
-	}
-
-	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, chainID, id, msg.Pagination)
+	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}

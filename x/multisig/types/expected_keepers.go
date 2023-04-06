@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/tendermint/tendermint/libs/log"
 )
 
@@ -37,25 +38,31 @@ type KeygenKeeper interface {
 
 type PubKeyKeeper interface {
 	RegisterPubKey(ctx sdk.Context, chainID string, pubKey *PubKey) error
-	RemovePubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	DeletePubKey(ctx sdk.Context, chainID string, keyID uint64) error
+	AddParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress, publicKey exported.PublicKey) error
+	RemoveParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	HasPubKey(ctx sdk.Context, chainID string, keyID uint64) bool
 
-	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) (*PubKey, error)
-	QueryPubKeyList(ctx sdk.Context, chainID string, keyID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
+	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64) (*PubKey, error)
+	QueryPubKeyList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
 }
 
 type SignKeeper interface {
-	RegisterSignEvent(ctx sdk.Context, chainID string, sign *Sign) (uint64, error)
+	RegisterSignEvent(ctx sdk.Context, chainID string, sign *exported.Sign) (uint64, error)
 	RemoveSignEvent(ctx sdk.Context, chainID string, id uint64) error
-	UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus Sign_Status) (*Sign, error)
+	UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, newStatus exported.Sign_Status) (*exported.Sign, error)
 
-	QuerySign(ctx sdk.Context, chainID string, id uint64) (*Sign, error)
-	QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *Sign], *query.PageResponse, error)
+	QuerySign(ctx sdk.Context, chainID string, id uint64) (*exported.Sign, error)
+	QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error)
 }
 
 type SignatureKeeper interface {
-	RegisterSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature Signature) error
-	RemoveSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
+	RegisterSignature(ctx sdk.Context, chainID string, signSignature *exported.SignSignature) error
+	RemoveSignature(ctx sdk.Context, chainID string, sigID uint64) error
+	HasSignature(ctx sdk.Context, chainID string, sigID uint64) bool
+	AddParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
+	RemoveParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
 
-	QuerySignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) (Signature, error)
-	QuerySignatureList(ctx sdk.Context, chainID string, sigID uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, Signature], *query.PageResponse, error)
+	QuerySignature(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignSignature, error)
+	QuerySignatureList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error)
 }

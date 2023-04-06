@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/testutils"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"gotest.tools/assert"
 
@@ -108,10 +110,12 @@ func Test_PubKey(t *testing.T) {
 
 	// try to query exist pubkey
 	pubKey := types.PubKey{
-		Chain:       chainID,
-		KeyID:       0,
-		Participant: valAddr,
-		PubKey:      types.PublicKey("publickey"),
+		Chain: chainID,
+		KeyID: 0,
+		Items: []*types.PubKey_Item{{
+			Participant: valAddr,
+			PubKey:      exported.PublicKey("publickey"),
+		}},
 	}
 	_ = k.RegisterPubKey(wctx, chainID, &pubKey)
 	res, err := s.PubKey(wctx, &QueryPubKey{
@@ -127,12 +131,15 @@ func Test_PubKeyList(t *testing.T) {
 	wctx := ctx.(sdk.Context)
 
 	var pubKeyList []*types.PubKey
-	for i := 0; i < 5; i++ {
+	var i uint64
+	for i = 0; i < 5; i++ {
 		pubKey := types.PubKey{
-			Chain:       chainID,
-			KeyID:       0,
-			Participant: sdk.ValAddress(fmt.Sprintf("addr%d", i)),
-			PubKey:      types.PublicKey("publickey"),
+			Chain: chainID,
+			KeyID: i,
+			Items: []*types.PubKey_Item{{
+				Participant: sdk.ValAddress(fmt.Sprintf("addr%d", i)),
+				PubKey:      exported.PublicKey("publickey"),
+			}},
 		}
 		_ = k.RegisterPubKey(wctx, chainID, &pubKey)
 
@@ -140,7 +147,7 @@ func Test_PubKeyList(t *testing.T) {
 	}
 
 	res, err := s.PubKeyList(ctx, &QueryPubKeyList{
-		KeyId: fmt.Sprintf("%s-%d", chainID, 0),
+		ChainId: chainID,
 		Pagination: &query.PageRequest{
 			Limit: query.MaxLimit,
 		},
@@ -161,12 +168,12 @@ func Test_Sign(t *testing.T) {
 	assert.Error(t, err, "sign: not found")
 
 	// try query exist sign
-	sign := types.Sign{
+	sign := exported.Sign{
 		Chain:         chainID,
 		SigID:         0,
 		KeyID:         fmt.Sprintf("%s-%d", chainID, 1),
 		Participants:  []sdk.ValAddress{sdk.ValAddress("addr")},
-		MessageToSign: types.Hash("msgToSign"),
+		MessageToSign: exported.Hash("msgToSign"),
 		Status:        0,
 	}
 	_, _ = k.RegisterSignEvent(wctx, chainID, &sign)
@@ -184,15 +191,15 @@ func Test_SignList(t *testing.T) {
 	wctx := ctx.(sdk.Context)
 	valAddr := sdk.ValAddress("addr")
 
-	var signs []*types.Sign
+	var signs []*exported.Sign
 	var i uint64
 	for i = 0; i < 5; i++ {
-		sign := types.Sign{
+		sign := exported.Sign{
 			Chain:         chainID,
 			SigID:         i,
 			KeyID:         fmt.Sprintf("%s-%d", chainID, i%3),
 			Participants:  []sdk.ValAddress{valAddr},
-			MessageToSign: types.Hash("msg"),
+			MessageToSign: exported.Hash("msg"),
 			Status:        1,
 		}
 
@@ -215,43 +222,54 @@ func Test_Signature(t *testing.T) {
 
 	// try to query not exist signature
 	_, err := s.Signature(wctx, &QuerySignature{
-		SigId:     fmt.Sprintf("%s-%d", chainID, 0),
-		Validator: val,
+		SigId: fmt.Sprintf("%s-%d", chainID, 0),
 	})
-	assert.Error(t, err, "signature: not found")
+	assert.Error(t, err, "sign_signature: not found")
 
 	// try to query exist signature
-	sig := types.Signature("signature")
-	_ = k.RegisterSignature(wctx, chainID, 0, val, sig)
+	signature := exported.SignSignature{
+		Chain: chainID,
+		SigID: 0,
+		Items: []*exported.SignSignature_Item{{
+			Participant: val,
+			Signature:   exported.Signature("Signature"),
+		}},
+	}
+	_ = k.RegisterSignature(wctx, chainID, &signature)
 
 	res, err := s.Signature(wctx, &QuerySignature{
-		SigId:     fmt.Sprintf("%s-%d", chainID, 0),
-		Validator: val,
+		SigId: fmt.Sprintf("%s-%d", chainID, 0),
 	})
 	assert.NilError(t, err)
-	assert.DeepEqual(t, res.Signature, []uint8("signature"))
+	assert.DeepEqual(t, res.Signature, &signature)
 }
 
 func Test_SignatureList(t *testing.T) {
 	k, s, ctx := setupQueryServer(t)
 	wctx := ctx.(sdk.Context)
 
-	var signs []types.Signature
-	for i := 0; i < 5; i++ {
-		sign := types.Signature(fmt.Sprintf("signature-%d", i))
+	var signs []*exported.SignSignature
+	var i uint64
+	for i = 0; i < 5; i++ {
+		signature := exported.SignSignature{
+			Chain: chainID,
+			SigID: i,
+			Items: []*exported.SignSignature_Item{{
+				Participant: testutils.GenValAddress(t),
+				Signature:   exported.Signature("Signature"),
+			}},
+		}
 		_ = k.RegisterSignature(
 			wctx,
 			chainID,
-			0,
-			sdk.ValAddress(fmt.Sprintf("val-%d", i)),
-			sign,
+			&signature,
 		)
 
-		signs = append(signs, sign)
+		signs = append(signs, &signature)
 	}
 
 	res, err := s.SignatureList(wctx, &QuerySignatureList{
-		SigId:      fmt.Sprintf("%s-%d", chainID, 0),
+		ChainId:    chainID,
 		Pagination: &query.PageRequest{Limit: query.MaxLimit},
 	})
 	assert.NilError(t, err)

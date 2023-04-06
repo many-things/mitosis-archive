@@ -6,6 +6,9 @@ import (
 	golog "log"
 	"os"
 
+	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
+	tmclient "github.com/tendermint/tendermint/rpc/client"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,6 +19,7 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/types"
+	multisigexport "github.com/many-things/mitosis/x/multisig/exported"
 	multisigserver "github.com/many-things/mitosis/x/multisig/server"
 	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -68,7 +72,7 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wal
 		case *types.KeygenResponse_PubKey:
 			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
 				Module:      "sidecar",
-				KeyID:       multisigtypes.KeyID(keyUID),
+				KeyID:       multisigexport.KeyID(keyUID),
 				Participant: store.GetValidator(),
 				PubKey:      r.PubKey,
 			})
@@ -83,8 +87,8 @@ func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wal
 	}
 }
 
-func createSignHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Sign) error {
-	return func(msg *multisigtypes.Sign) error {
+func createSignHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigexport.Sign) error {
+	return func(msg *multisigexport.Sign) error {
 		if !utils.Any(msg.Participants, store.IsTarget) {
 			return nil
 		}
@@ -113,7 +117,7 @@ func createSignHandler(store storage.Storage, sigCli types.MultisigClient, walle
 		case *types.SignResponse_Signature:
 			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
 				Module:      "sidecar",
-				SigID:       multisigtypes.SigID(sigID),
+				SigID:       multisigexport.SigID(sigID),
 				Participant: store.GetValidator(),
 				Signature:   r.Signature,
 			})
@@ -139,8 +143,19 @@ func run() {
 		panic(err)
 	}
 	// TODO: make these Rpc robust
-	sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
-	sigRPC, err := grpc.Dial(sigDialURL)
+
+	sigRPC := mitotmclient.NewRobustGRPCClient(func() (*grpc.ClientConn, error) {
+		sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
+		sigRPC, err := grpc.Dial(sigDialURL)
+
+		if err != nil {
+			golog.Fatal(err)
+			return nil, err
+		}
+
+		// TODO: use state
+		return sigRPC, nil
+	})
 
 	if err != nil {
 		panic(fmt.Errorf("cannot dial to tofn network: %w", err))
@@ -149,18 +164,30 @@ func run() {
 	store := storage.GetStorage(&cfg)
 
 	// TODO: implement block getter
-	mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
-	fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
-	if err != nil {
-		golog.Fatal(err)
-	}
 
-	listener := tendermint.NewBlockListener(ctx, fetcher, time.Second*5)
+	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
+		mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
+		if err != nil {
+			golog.Fatal(err)
+			return nil, err
+		}
+
+		err = fetcher.Start()
+		if err != nil {
+			golog.Fatal(err)
+			return nil, err
+		}
+
+		return fetcher, err
+	})
+
+	listener := tendermint.NewBlockListener(ctx, robustClient, time.Second*5)
 	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
 	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
-	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Sign]())
+	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigexport.Sign]())
 
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(store, sigCli, wallet, logger), cancel, logger),
