@@ -103,6 +103,8 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
+	"github.com/many-things/mitosis/pkg/txconv"
+	"github.com/many-things/mitosis/pkg/utils"
 	contextmodule "github.com/many-things/mitosis/x/context"
 	contextmodulekeeper "github.com/many-things/mitosis/x/context/keeper"
 	contextmoduletypes "github.com/many-things/mitosis/x/context/types"
@@ -201,6 +203,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	encoder := MakeEncodingConfig().TxConfig
+	converter := txconv.Converter
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-1", "eth-mainnet"))
+	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 }
@@ -510,13 +519,13 @@ func New(
 		govConfig,
 	)
 
-	app.ContextKeeper = *contextmodulekeeper.NewKeeper(
+	app.ContextKeeper = contextmodulekeeper.NewKeeper(
 		appCodec,
 		keys[contextmoduletypes.StoreKey],
 		keys[contextmoduletypes.MemStoreKey],
 		app.GetSubspace(contextmoduletypes.ModuleName),
 	)
-	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper)
+	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
 
 	app.EventKeeper = eventmodulekeeper.NewKeeper(
 		appCodec,
@@ -524,9 +533,10 @@ func New(
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
 
 	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
+
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],

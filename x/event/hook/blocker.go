@@ -1,6 +1,7 @@
 package hook
 
 import (
+	"log"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -44,7 +45,7 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 	// TODO: emit event
 }
 
-func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keeper) []abci.ValidatorUpdate {
+func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keeper, contextKeeper types.ContextKeeper) []abci.ValidatorUpdate {
 	params := baseKeeper.GetParams(ctx)
 
 	chains, _, err := baseKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
@@ -57,6 +58,33 @@ func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keepe
 		flushed[i], err = baseKeeper.FlushPolls(ctx, chain.Key, *params.PollThreshold)
 		if err != nil {
 			panic(err.Error())
+		}
+
+		for _, kv := range flushed[i] {
+			pollID, poll := kv.Key, kv.Value
+
+			switch v := any(poll.GetPayload()).(type) {
+			case types.Event_Req:
+				opID, err := contextKeeper.InitOperation(ctx, chain.Key, poll)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				// TODO: log correctly
+				log.Println("init operation", opID, "for poll", pollID)
+				poll.OpId = opID
+			case types.Event_Res:
+				originPoll, err := baseKeeper.QueryPoll(ctx, chain.Key, v.Res.ReqEvtId)
+				if err != nil {
+					panic(err.Error())
+				}
+
+				if err := contextKeeper.FinishOperation(ctx, originPoll.OpId, poll); err != nil {
+					panic(err.Error())
+				}
+			default:
+				panic("unexpected payload type")
+			}
 		}
 	}
 

@@ -40,6 +40,21 @@ func (k keeper) ExportGenesis(ctx sdk.Context) (genesis *types.GenesisState, err
 		genesis.Poll.ChainSet = append(genesis.Poll.ChainSet, poll)
 	}
 
+	// export TxPayload
+	for _, v := range genesis.GetChain().GetItemSet() {
+		txRepo := state.NewKVTxPayloadRepo(k.cdc, ctx.KVStore(k.storeKey), v.GetChain())
+
+		gen, err := txRepo.ExportGenesis()
+		if err != nil {
+			return nil, err
+		}
+
+		genesis.TxPayload.ChainSet = append(
+			genesis.TxPayload.ChainSet,
+			gen,
+		)
+	}
+
 	// export snapshot
 	if genesis.Snapshot, err = snapshotRepo.ExportGenesis(); err != nil {
 		return nil, err

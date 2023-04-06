@@ -17,7 +17,7 @@ import (
 	tmdb "github.com/tendermint/tm-db"
 )
 
-func ContextKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+func ContextKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *storetypes.KVStoreKey, *storetypes.MemoryStoreKey) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -48,5 +48,5 @@ func ContextKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())
 
-	return k, ctx
+	return k, ctx, storeKey, memStoreKey
 }
