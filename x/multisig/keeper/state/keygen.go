@@ -20,19 +20,21 @@ type KeygenRepo interface {
 	Delete(id uint64) error
 
 	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *types.Keygen], *query.PageResponse, error)
-
-	// TODO: Implement Genesis Tool
+	ExportGenesis() (*types.GenesisKeygen_ChainSet, error)
+	ImportGenesis(genState *types.GenesisKeygen_ChainSet) error
 }
 
 type kvKeygenRepo struct {
-	cdc  codec.BinaryCodec
-	root store.KVStore
+	cdc     codec.BinaryCodec
+	root    store.KVStore
+	chainID string
 }
 
 func NewKVChainKeygenRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) KeygenRepo {
 	return &kvKeygenRepo{
-		cdc:  cdc,
-		root: prefix.NewStore(root, append([]byte(chainID), kvKeygenRepoKey...)),
+		cdc:     cdc,
+		root:    prefix.NewStore(root, append([]byte(chainID), kvKeygenRepoKey...)),
+		chainID: chainID,
 	}
 }
 
@@ -125,4 +127,48 @@ func (r kvKeygenRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64
 	}
 
 	return results, pageResp, nil
+}
+
+func (r kvKeygenRepo) ExportGenesis() (*types.GenesisKeygen_ChainSet, error) {
+	ks := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
+
+	genState := &types.GenesisKeygen_ChainSet{
+		Chain:  []byte(r.chainID),
+		LastId: sdk.BigEndianToUint64(r.root.Get(kvKeygenRepolatestID)),
+	}
+
+	var keygenSet []*types.Keygen
+	_, err := query.Paginate(
+		ks,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(_ []byte, value []byte) error {
+			keygen := new(types.Keygen)
+			if err := keygen.Unmarshal(value); err != nil {
+				return err
+			}
+
+			keygenSet = append(keygenSet, keygen)
+			return nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return genState, nil
+}
+
+func (r kvKeygenRepo) ImportGenesis(genState *types.GenesisKeygen_ChainSet) error {
+	ks := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
+
+	r.root.Set(kvKeygenRepolatestID, sdk.Uint64ToBigEndian(genState.LastId))
+	for _, item := range genState.GetItemSet() {
+		bz, err := item.Marshal()
+		if err != nil {
+			return err
+		}
+		ks.Set(sdk.Uint64ToBigEndian(item.KeyID), bz)
+	}
+
+	return nil
 }
