@@ -182,7 +182,7 @@ func (r kvPubkeyRepo) ExportGenesis() (*types.GenesisPubKey_ChainSet, error) {
 	ks := prefix.NewStore(r.root, kvPubKeyItemPrefix)
 
 	genState := &types.GenesisPubKey_ChainSet{
-		Chain:   []byte(r.chainID),
+		Chain:   r.chainID,
 		ItemSet: nil,
 	}
 	var itemSet []*types.PubKey

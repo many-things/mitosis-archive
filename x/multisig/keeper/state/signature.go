@@ -184,7 +184,7 @@ func (r kvSignatureRepo) ExportGenesis() (*types.GenesisSignature_ChainSet, erro
 	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
 
 	genState := &types.GenesisSignature_ChainSet{
-		Chain:   []byte(r.chainID),
+		Chain:   r.chainID,
 		ItemSet: nil,
 	}
 

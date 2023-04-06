@@ -3,7 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtype "github.com/cosmos/cosmos-sdk/x/auth/types"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/tendermint/tendermint/libs/log"
@@ -17,7 +17,7 @@ type BaseKeeper interface {
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
 type AccountKeeper interface {
-	GetAccount(ctx sdk.Context, addr sdk.AccAddress) types.AccountI
+	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtype.AccountI
 	// Methods imported from account should be defined here
 }
 
@@ -65,4 +65,13 @@ type SignatureKeeper interface {
 
 	QuerySignature(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignSignature, error)
 	QuerySignatureList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error)
+}
+
+type GenesisKeeper interface {
+	ExportGenesis(ctx sdk.Context, chains []byte) (*GenesisState, error)
+	ImportGenesis(ctx sdk.Context, genState *GenesisState) error
+}
+
+type ChainKeeper interface {
+	QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitosistype.KV[string, byte], *query.PageResponse, error)
 }

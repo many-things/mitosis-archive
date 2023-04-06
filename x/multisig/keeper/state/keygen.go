@@ -133,7 +133,7 @@ func (r kvKeygenRepo) ExportGenesis() (*types.GenesisKeygen_ChainSet, error) {
 	ks := prefix.NewStore(r.root, kvKeygenRepoItemsPrefix)
 
 	genState := &types.GenesisKeygen_ChainSet{
-		Chain:  []byte(r.chainID),
+		Chain:  r.chainID,
 		LastId: sdk.BigEndianToUint64(r.root.Get(kvKeygenRepolatestID)),
 	}
 

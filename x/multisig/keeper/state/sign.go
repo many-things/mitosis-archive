@@ -121,7 +121,7 @@ func (r kvSignRepo) ExportGenesis() (*types.GenesisSign_ChainSet, error) {
 	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
 
 	genState := &types.GenesisSign_ChainSet{
-		Chain:   []byte(r.chainID),
+		Chain:   r.chainID,
 		LastId:  sdk.BigEndianToUint64(r.root.Get(kvSignRepoLatestID)),
 		ItemSet: nil,
 	}
