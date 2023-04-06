@@ -1,7 +1,9 @@
 package testutils
 
 import (
+	"crypto/ecdsa"
 	crand "crypto/rand"
+	"github.com/btcsuite/btcd/btcec"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,5 +29,12 @@ func GenPublicKey(t *testing.T) exported.PublicKey {
 	bz := make([]byte, 32)
 	_, err := crand.Read(bz)
 	require.NoError(t, err)
-	return bz
+
+	pubKey := btcec.PublicKey{
+		Curve: curve,
+		X:     key.PublicKey.X,
+		Y:     key.PublicKey.Y,
+	}
+
+	return pubKey.SerializeCompressed()
 }
