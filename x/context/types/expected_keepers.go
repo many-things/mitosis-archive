@@ -3,7 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 )
 
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
@@ -20,5 +20,5 @@ type BankKeeper interface {
 
 // MultisigKeeper defined the expected interface needed to initiate signing sequence
 type MultisigKeeper interface {
-	RegisterSignEvent(ctx sdk.Context, chainID string, sign *multisigtypes.Sign) (uint64, error)
+	RegisterSignEvent(ctx sdk.Context, chainID string, sign *exported.Sign) (uint64, error)
 }

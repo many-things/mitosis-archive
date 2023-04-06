@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.context;
+
+import "gogoproto/gogo.proto";
+import "mitosis/common/v1beta1/types.proto";
+
+option go_package = "github.com/many-things/mitosis/x/context/types";
+
+// Event for SignerKeeper.RegisterCosmosSigner and SignerKeeper.RegisterEVMSigner
+message EventSignerRegistered {
+  common.ChainType chain_type = 1;
+  bytes pubkey = 2;
+}
+
+// Event for OperationKeeper.InitOperation
+message EventOperationInitialized {
+  uint64 poll_id = 1 [(gogoproto.customname) = "PollID"];
+  uint64 operation_id = 2 [(gogoproto.customname) = "OperationID"];
+}
+
+// Event for OperationKeeper.StartSignOperation
+message EventOperationSigningStarted {
+  uint64 operation_id = 1 [(gogoproto.customname) = "OperationID"];
+  uint64 sign_id = 2 [(gogoproto.customname) = "SignID"];
+  bytes signer = 3;
+}
+
+// Event for OperationKeeper.FinishSignOperation
+message EventOperationSigningFinished {
+  uint64 operation_id = 1 [(gogoproto.customname) = "OperationID"];
+  uint64 sign_id = 2 [(gogoproto.customname) = "SignID"];
+  bytes signer = 3;
+}
+
+// Event for OperationKeeper.FinishOperation
+message EventOperationFinalized {
+  uint64 operation_id = 1 [(gogoproto.customname) = "OperationID"];
+  uint64 req_poll_id = 2 [(gogoproto.customname) = "ReqPollID"];
+  uint64 resp_poll_id = 3 [(gogoproto.customname) = "RespPollID"];
+}
