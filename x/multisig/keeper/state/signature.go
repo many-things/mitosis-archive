@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
+	"github.com/many-things/mitosis/x/multisig/types"
 	"golang.org/x/exp/slices"
 )
 
@@ -23,12 +24,14 @@ type SignatureRepo interface {
 
 	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error)
 
-	// TODO: Implement Genesis Tool
+	ExportGenesis() (*types.GenesisSignature_ChainSet, error)
+	ImportGenesis(genState *types.GenesisSignature_ChainSet) error
 }
 
 type kvSignatureRepo struct {
-	cdc  codec.BinaryCodec
-	root store.KVStore
+	cdc     codec.BinaryCodec
+	root    store.KVStore
+	chainID string
 }
 
 var (
@@ -37,8 +40,9 @@ var (
 
 func NewKVChainSignatureRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) SignatureRepo {
 	return &kvSignatureRepo{
-		cdc:  cdc,
-		root: prefix.NewStore(root, append([]byte(chainID), kvSignatureRepoKey...)),
+		cdc:     cdc,
+		root:    prefix.NewStore(root, append([]byte(chainID), kvSignatureRepoKey...)),
+		chainID: chainID,
 	}
 }
 
@@ -174,4 +178,50 @@ func (r kvSignatureRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uin
 	}
 
 	return results, pageResp, nil
+}
+
+func (r kvSignatureRepo) ExportGenesis() (*types.GenesisSignature_ChainSet, error) {
+	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
+
+	genState := &types.GenesisSignature_ChainSet{
+		Chain:   []byte(r.chainID),
+		ItemSet: nil,
+	}
+
+	var itemSet []*exported.SignSignature
+	_, err := query.Paginate(
+		ks,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(_ []byte, value []byte) error {
+			item := new(exported.SignSignature)
+
+			if err := item.Unmarshal(value); err != nil {
+				return err
+			}
+
+			itemSet = append(itemSet, item)
+			return nil
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return genState, nil
+}
+
+func (r kvSignatureRepo) ImportGenesis(genState *types.GenesisSignature_ChainSet) error {
+	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
+
+	for _, item := range genState.GetItemSet() {
+		bz, err := item.Marshal()
+		if err != nil {
+			return err
+		}
+
+		ks.Set(sdk.Uint64ToBigEndian(item.SigID), bz)
+	}
+
+	return nil
 }
