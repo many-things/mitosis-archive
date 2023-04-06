@@ -7,6 +7,7 @@ import (
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/types"
 )
@@ -65,15 +66,24 @@ func (m msgServer) SubmitPubkey(ctx context.Context, msg *MsgSubmitPubkey) (*Msg
 	}
 
 	wctx := sdk.UnwrapSDKContext(ctx)
-	pubKey := types.PubKey{
-		Chain:       chainID,
-		KeyID:       keyID,
-		Participant: msg.Participant,
-		PubKey:      msg.PubKey,
-	}
 
-	if err := m.baseKeeper.RegisterPubKey(wctx, chainID, &pubKey); err != nil {
-		return nil, err
+	if !m.baseKeeper.HasPubKey(wctx, chainID, keyID) {
+		pubKey := types.PubKey{
+			Chain: chainID,
+			KeyID: keyID,
+			Items: []*types.PubKey_Item{{
+				Participant: msg.Participant,
+				PubKey:      msg.PubKey,
+			}},
+		}
+
+		if err := m.baseKeeper.RegisterPubKey(wctx, chainID, &pubKey); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := m.baseKeeper.AddParticipantPubKey(wctx, chainID, keyID, msg.Participant, msg.PubKey); err != nil {
+			return nil, err
+		}
 	}
 
 	return &MsgSubmitPubkeyResponse{}, nil
@@ -91,8 +101,24 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 	}
 
 	wctx := sdk.UnwrapSDKContext(ctx)
-	if err := m.baseKeeper.RegisterSignature(wctx, chainID, sigID, msg.Participant, msg.Signature); err != nil {
-		return nil, err
+	if m.baseKeeper.HasSignature(wctx, chainID, sigID) {
+		if err := m.baseKeeper.AddParticipantSignature(wctx, chainID, sigID, msg.Participant, msg.Signature); err != nil {
+			return nil, err
+		}
+	} else {
+		signature := exported.SignSignature{
+			Chain: chainID,
+			SigID: sigID,
+			Items: []*exported.SignSignature_Item{{
+				Participant: msg.Participant,
+				Signature:   msg.Signature,
+			}},
+		}
+
+		if err := m.baseKeeper.RegisterSignature(wctx, chainID, &signature); err != nil {
+			return nil, err
+		}
 	}
+
 	return &MsgSubmitSignatureResponse{}, nil
 }

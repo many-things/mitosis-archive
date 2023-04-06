@@ -46601,14 +46601,19 @@ paths:
                     type: string
                     format: uint64
                     title: key id
-                  participant:
-                    type: string
-                    format: byte
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        participant:
+                          type: string
+                          format: byte
+                        pub_key:
+                          type: string
+                          format: byte
+                      title: Item returns
                     title: participant id
-                  pub_key:
-                    type: string
-                    format: byte
-                    title: pub key
                 title: Pubkey Message
             title: QueryPubKeyResponse is response type for Query PubKey RPC method
         default:
@@ -46641,7 +46646,7 @@ paths:
           format: byte
       tags:
         - Query
-  /mitosis/multisig/v1beta1/pubkeys/{key_id}:
+  /mitosis/multisig/v1beta1/pubkeys/{chain_id}:
     get:
       summary: list pubkey query
       operationId: ManythingsMitosisV1Beta1MultisigServerPubKeyList
@@ -46663,14 +46668,19 @@ paths:
                       type: string
                       format: uint64
                       title: key id
-                    participant:
-                      type: string
-                      format: byte
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          participant:
+                            type: string
+                            format: byte
+                          pub_key:
+                            type: string
+                            format: byte
+                        title: Item returns
                       title: participant id
-                    pub_key:
-                      type: string
-                      format: byte
-                      title: pub key
                   title: Pubkey Message
               page:
                 type: object
@@ -46722,7 +46732,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: key_id
+        - name: chain_id
           in: path
           required: true
           type: string
@@ -46868,7 +46878,7 @@ paths:
           format: uint64
       tags:
         - Query
-  /mitosis/multisig/v1beta1/signature/{sig_id}/{validator}:
+  /mitosis/multisig/v1beta1/signature/{sig_id}:
     get:
       summary: specific signature query
       operationId: ManythingsMitosisV1Beta1MultisigServerSignature
@@ -46879,8 +46889,26 @@ paths:
             type: object
             properties:
               signature:
-                type: string
-                format: byte
+                type: object
+                properties:
+                  chain:
+                    type: string
+                  sig_id:
+                    type: string
+                    format: uint64
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        participant:
+                          type: string
+                          format: byte
+                        signature:
+                          type: string
+                          format: byte
+                      title: SignSignature result message
+                title: SignSignature Message
             title: >-
               QuerySignatureResponse is response type for Query Signature RPC
               method
@@ -46907,14 +46935,9 @@ paths:
           in: path
           required: true
           type: string
-        - name: validator
-          in: path
-          required: true
-          type: string
-          format: byte
       tags:
         - Query
-  /mitosis/multisig/v1beta1/signatures/{sig_id}:
+  /mitosis/multisig/v1beta1/signatures/{chain_id}:
     get:
       summary: list signature query
       operationId: ManythingsMitosisV1Beta1MultisigServerSignatureList
@@ -46927,8 +46950,26 @@ paths:
               list:
                 type: array
                 items:
-                  type: string
-                  format: byte
+                  type: object
+                  properties:
+                    chain:
+                      type: string
+                    sig_id:
+                      type: string
+                      format: uint64
+                    items:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          participant:
+                            type: string
+                            format: byte
+                          signature:
+                            type: string
+                            format: byte
+                        title: SignSignature result message
+                  title: SignSignature Message
               page:
                 type: object
                 properties:
@@ -46979,7 +47020,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: sig_id
+        - name: chain_id
           in: path
           required: true
           type: string
@@ -77704,15 +77745,30 @@ definitions:
         type: string
         format: uint64
         title: key id
+      items:
+        type: array
+        items:
+          type: object
+          properties:
+            participant:
+              type: string
+              format: byte
+            pub_key:
+              type: string
+              format: byte
+          title: Item returns
+        title: participant id
+    title: Pubkey Message
+  manythings.mitosis.v1beta1.multisig.PubKey.Item:
+    type: object
+    properties:
       participant:
         type: string
         format: byte
-        title: participant id
       pub_key:
         type: string
         format: byte
-        title: pub key
-    title: Pubkey Message
+    title: Item returns
   manythings.mitosis.v1beta1.multisig.Sign:
     type: object
     properties:
@@ -77772,6 +77828,37 @@ definitions:
        - STATUS_SUCCESS: Sign event Success
        - STATUS_FAILED: Sign event Failed
     title: Sign Status
+  manythings.mitosis.v1beta1.multisig.SignSignature:
+    type: object
+    properties:
+      chain:
+        type: string
+      sig_id:
+        type: string
+        format: uint64
+      items:
+        type: array
+        items:
+          type: object
+          properties:
+            participant:
+              type: string
+              format: byte
+            signature:
+              type: string
+              format: byte
+          title: SignSignature result message
+    title: SignSignature Message
+  manythings.mitosis.v1beta1.multisig.SignSignature.Item:
+    type: object
+    properties:
+      participant:
+        type: string
+        format: byte
+      signature:
+        type: string
+        format: byte
+    title: SignSignature result message
   manythings.mitosis.v1beta1.multisig.server.MsgStartKeygenResponse:
     type: object
     title: MsgStartKeygenResponse is message for StartKeygen Response
@@ -77905,14 +77992,19 @@ definitions:
               type: string
               format: uint64
               title: key id
-            participant:
-              type: string
-              format: byte
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  participant:
+                    type: string
+                    format: byte
+                  pub_key:
+                    type: string
+                    format: byte
+                title: Item returns
               title: participant id
-            pub_key:
-              type: string
-              format: byte
-              title: pub key
           title: Pubkey Message
       page:
         type: object
@@ -77956,14 +78048,19 @@ definitions:
             type: string
             format: uint64
             title: key id
-          participant:
-            type: string
-            format: byte
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                participant:
+                  type: string
+                  format: byte
+                pub_key:
+                  type: string
+                  format: byte
+              title: Item returns
             title: participant id
-          pub_key:
-            type: string
-            format: byte
-            title: pub key
         title: Pubkey Message
     title: QueryPubKeyResponse is response type for Query PubKey RPC method
   manythings.mitosis.v1beta1.multisig.server.QuerySignListResponse:
@@ -78092,8 +78189,26 @@ definitions:
       list:
         type: array
         items:
-          type: string
-          format: byte
+          type: object
+          properties:
+            chain:
+              type: string
+            sig_id:
+              type: string
+              format: uint64
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  participant:
+                    type: string
+                    format: byte
+                  signature:
+                    type: string
+                    format: byte
+                title: SignSignature result message
+          title: SignSignature Message
       page:
         type: object
         properties:
@@ -78127,6 +78242,24 @@ definitions:
     type: object
     properties:
       signature:
-        type: string
-        format: byte
+        type: object
+        properties:
+          chain:
+            type: string
+          sig_id:
+            type: string
+            format: uint64
+          items:
+            type: array
+            items:
+              type: object
+              properties:
+                participant:
+                  type: string
+                  format: byte
+                signature:
+                  type: string
+                  format: byte
+              title: SignSignature result message
+        title: SignSignature Message
     title: QuerySignatureResponse is response type for Query Signature RPC method

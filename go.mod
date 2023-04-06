@@ -28,6 +28,7 @@ require (
 	github.com/tendermint/tendermint v0.34.24
 	github.com/tendermint/tm-db v0.6.7
 	golang.org/x/crypto v0.2.0
+	golang.org/x/exp v0.0.0-20230131160201-f062dba9d201
 	golang.org/x/sync v0.1.0
 	golang.org/x/text v0.7.0
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
@@ -149,7 +150,6 @@ require (
 	github.com/zondax/ledger-go v0.14.0 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/exp v0.0.0-20230131160201-f062dba9d201 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.5.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect

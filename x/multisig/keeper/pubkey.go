@@ -4,6 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/many-things/mitosis/x/multisig/types"
 )
@@ -20,11 +21,11 @@ func (k keeper) RegisterPubKey(ctx sdk.Context, chainID string, pubKey *types.Pu
 	return nil
 }
 
-// RemovePubKey is unregistered(delete) pubKey for specific chain, keyID and Participant.
-func (k keeper) RemovePubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error {
+// DeletePubKey is unregistered(delete) pubKey for specific chain, keyID and Participant.
+func (k keeper) DeletePubKey(ctx sdk.Context, chainID string, keyID uint64) error {
 	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	err := pubKeyRepo.Delete(keyID, participant)
+	err := pubKeyRepo.Delete(keyID)
 	if err != nil {
 		return err
 	}
@@ -32,11 +33,23 @@ func (k keeper) RemovePubKey(ctx sdk.Context, chainID string, keyID uint64, part
 	return nil
 }
 
+// AddParticipantPubKey add participant PublicKey if pubkey Initialized.
+func (k keeper) AddParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress, publicKey exported.PublicKey) error {
+	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+	return pubKeyRepo.AddKey(keyID, participant, publicKey)
+}
+
+// RemoveParticipantPubKey remove participant PublicKey if pubkey existed.
+func (k keeper) RemoveParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error {
+	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+	return pubKeyRepo.RemoveKey(keyID, participant)
+}
+
 // QueryPubKey is query specific pubKey via specific chain, keyID and Participant.
-func (k keeper) QueryPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) (*types.PubKey, error) {
+func (k keeper) QueryPubKey(ctx sdk.Context, chainID string, keyID uint64) (*types.PubKey, error) {
 	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	pubKey, err := pubKeyRepo.Load(keyID, participant)
+	pubKey, err := pubKeyRepo.Load(keyID)
 	if err != nil {
 		return nil, err
 	}
@@ -44,11 +57,18 @@ func (k keeper) QueryPubKey(ctx sdk.Context, chainID string, keyID uint64, parti
 	return pubKey, nil
 }
 
-// QueryPubKeyList is query whole pubKey via specific chain and keyID
-func (k keeper) QueryPubKeyList(ctx sdk.Context, chainID string, keyID uint64, pageReq *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error) {
+// HasPubKey is check specific chains pubKey is exists
+func (k keeper) HasPubKey(ctx sdk.Context, chainID string, keyID uint64) bool {
 	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
 
-	results, pageResp, err := pubKeyRepo.Paginate(keyID, pageReq)
+	return pubKeyRepo.HasPubKey(keyID)
+}
+
+// QueryPubKeyList is query whole pubKey via specific chain and keyID
+func (k keeper) QueryPubKeyList(ctx sdk.Context, chainID string, pageReq *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error) {
+	pubKeyRepo := state.NewKVChainPubKeyRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+
+	results, pageResp, err := pubKeyRepo.Paginate(pageReq)
 	if err != nil {
 		return nil, nil, err
 	}

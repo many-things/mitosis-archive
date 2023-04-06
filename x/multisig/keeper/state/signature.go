@@ -10,14 +10,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
+	"golang.org/x/exp/slices"
 )
 
 type SignatureRepo interface {
-	Load(id uint64, participant sdk.ValAddress) (exported.Signature, error)
-	Create(id uint64, participant sdk.ValAddress, signature exported.Signature) error
-	Delete(id uint64, participant sdk.ValAddress) error
+	Load(id uint64) (*exported.SignSignature, error)
+	Save(signature *exported.SignSignature) error
+	Delete(id uint64) error
+	AddParticipantSignature(id uint64, participant sdk.ValAddress, signature exported.Signature) error
+	RemoveParticipantSignature(id uint64, participant sdk.ValAddress) error
+	HasSignSignature(id uint64) bool
 
-	Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error)
+	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error)
 
 	// TODO: Implement Genesis Tool
 }
@@ -38,42 +42,130 @@ func NewKVChainSignatureRepo(cdc codec.BinaryCodec, root store.KVStore, chainID 
 	}
 }
 
-func (r kvSignatureRepo) getPrefix(prefix []byte, id uint64) []byte {
-	return append(prefix, sdk.Uint64ToBigEndian(id)...)
-}
-
-func (r kvSignatureRepo) Load(id uint64, participant sdk.ValAddress) (exported.Signature, error) {
-	bz := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Get(participant)
+func (r kvSignatureRepo) Load(id uint64) (*exported.SignSignature, error) {
+	bz := prefix.NewStore(r.root, kvSignatureRepoItemPrefix).Get(sdk.Uint64ToBigEndian(id))
 
 	if bz == nil {
-		return nil, sdkerrors.Wrap(errors.ErrNotFound, "signature")
+		return nil, sdkerrors.Wrap(errors.ErrNotFound, "sign_signature")
 	}
 
-	return bz, nil
+	signSignature := new(exported.SignSignature)
+	if err := signSignature.Unmarshal(bz); err != nil {
+		return nil, err
+	}
+
+	return signSignature, nil
 }
 
-func (r kvSignatureRepo) Create(id uint64, participant sdk.ValAddress, signature exported.Signature) error {
-	prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id)).Set(participant, signature)
+func (r kvSignatureRepo) Save(signature *exported.SignSignature) error {
+	bz, err := signature.Marshal()
+	if err != nil {
+		return err
+	}
+
+	prefix.NewStore(r.root, kvSignatureRepoItemPrefix).Set(sdk.Uint64ToBigEndian(signature.SigID), bz)
 	return nil
 }
 
-func (r kvSignatureRepo) Delete(id uint64, participant sdk.ValAddress) error {
-	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
+func (r kvSignatureRepo) HasSignSignature(id uint64) bool {
+	return prefix.NewStore(r.root, kvSignatureRepoItemPrefix).Has(sdk.Uint64ToBigEndian(id))
+}
 
-	if !ks.Has(participant) {
+func (r kvSignatureRepo) Delete(id uint64) error {
+	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
+	idBz := sdk.Uint64ToBigEndian(id)
+
+	if !ks.Has(idBz) {
+		return sdkerrors.Wrap(errors.ErrNotFound, "sign_signature")
+	}
+
+	ks.Delete(idBz)
+	return nil
+}
+
+func (r kvSignatureRepo) AddParticipantSignature(id uint64, participant sdk.ValAddress, signature exported.Signature) error {
+	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
+	idBz := sdk.Uint64ToBigEndian(id)
+	bz := ks.Get(idBz)
+
+	if bz == nil {
+		return sdkerrors.Wrap(errors.ErrNotFound, "sign_signature")
+	}
+
+	signSignature := new(exported.SignSignature)
+	if err := signSignature.Unmarshal(bz); err != nil {
+		return err
+	}
+
+	exists := false
+	for _, item := range signSignature.Items {
+		if item.Participant.Equals(participant) {
+			exists = true
+			item.Signature = signature
+			break
+		}
+	}
+	if !exists {
+		signSignature.Items = append(signSignature.Items, &exported.SignSignature_Item{
+			Participant: participant,
+			Signature:   signature,
+		})
+	}
+
+	sigBz, err := signSignature.Marshal()
+	if err != nil {
+		return err
+	}
+	ks.Set(idBz, sigBz)
+	return nil
+}
+
+func (r kvSignatureRepo) RemoveParticipantSignature(id uint64, participant sdk.ValAddress) error {
+	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
+	idBz := sdk.Uint64ToBigEndian(id)
+	bz := ks.Get(idBz)
+
+	if bz == nil {
+		return sdkerrors.Wrap(errors.ErrNotFound, "sign_signature")
+	}
+
+	signSignature := new(exported.SignSignature)
+	if err := signSignature.Unmarshal(bz); err != nil {
+		return err
+	}
+
+	targetID := -1
+	for i, item := range signSignature.Items {
+		if item.Participant.Equals(participant) {
+			targetID = i
+			break
+		}
+	}
+
+	if targetID < 0 {
 		return sdkerrors.Wrap(errors.ErrNotFound, "signature")
 	}
+	signSignature.Items = slices.Delete(signSignature.Items, targetID, targetID+1)
 
-	ks.Delete(participant)
+	sigBz, err := signSignature.Marshal()
+	if err != nil {
+		return err
+	}
+	ks.Set(idBz, sigBz)
 	return nil
 }
 
-func (r kvSignatureRepo) Paginate(id uint64, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, exported.Signature], *query.PageResponse, error) {
-	ks := prefix.NewStore(r.root, r.getPrefix(kvSignatureRepoItemPrefix, id))
+func (r kvSignatureRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error) {
+	ks := prefix.NewStore(r.root, kvSignatureRepoItemPrefix)
 
-	var results []mitosistype.KV[sdk.ValAddress, exported.Signature]
+	var results []mitosistype.KV[uint64, *exported.SignSignature]
 	pageResp, err := query.Paginate(ks, page, func(key []byte, value []byte) error {
-		results = append(results, mitosistype.NewKV(sdk.ValAddress(key), exported.Signature(value)))
+		signSignature := new(exported.SignSignature)
+		if err := signSignature.Unmarshal(value); err != nil {
+			return err
+		}
+
+		results = append(results, mitosistype.NewKV(sdk.BigEndianToUint64(key), signSignature))
 		return nil
 	})
 
