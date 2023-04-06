@@ -2,6 +2,11 @@
 # `make` -> proto -> build
 PHONY: build
 
+clean:
+	@rm -rf build
+	@rm -rf release
+	@rm -rf coverage.out
+
 test:
 	@go test -race -coverprofile=coverage.out.tmp -covermode=atomic ./...
 	@cat coverage.out.tmp | grep -v '.pb.go' | grep -v '.pb.gw.go' > coverage.out
@@ -10,8 +15,11 @@ test:
 lint:
 	@golangci-lint run
 
-build: proto lint
-	@ignite chain build --skip-proto
+build: clean proto lint test
+	@ignite chain build --output build --skip-proto
+
+release: build
+	@ignite chain build --output release --release --skip-proto
 
 run-local: proto lint
 	@ignite chain serve --skip-proto --quit-on-fail --verbose

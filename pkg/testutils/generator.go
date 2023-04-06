@@ -26,8 +26,8 @@ func GenAccAddress(t *testing.T) sdk.AccAddress {
 }
 
 func GenPublicKey(t *testing.T) exported.PublicKey {
-	bz := make([]byte, 32)
-	_, err := crand.Read(bz)
+	curve := btcec.S256()
+	key, err := ecdsa.GenerateKey(curve, crand.Reader)
 	require.NoError(t, err)
 
 	pubKey := btcec.PublicKey{

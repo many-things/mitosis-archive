@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/many-things/mitosis/pkg/testutils"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/types"
 	"gotest.tools/assert"
 	"testing"
@@ -23,7 +24,7 @@ func Test_StartKeygen_Failure(t *testing.T) {
 	wctx := ctx.(sdk.Context)
 	valAddr := testutils.GenValAddress(t)
 	otherAddr := testutils.GenValAddress(t)
-	keyID := types.KeyID(fmt.Sprintf("%s-%d", chainID, 0))
+	keyID := exported.KeyID(fmt.Sprintf("%s-%d", chainID, 0))
 
 	// Request not exist Keygen event
 	_, err := s.StartKeygen(wctx, &MsgStartKeygen{
@@ -77,7 +78,7 @@ func Test_StartKeygen_Success(t *testing.T) {
 	// Send StartKeygen
 	_, err := s.StartKeygen(wctx, &MsgStartKeygen{
 		Module:       "module",
-		KeyID:        types.KeyID(fmt.Sprintf("%s-%d", chainID, keygen.KeyID)),
+		KeyID:        exported.KeyID(fmt.Sprintf("%s-%d", chainID, keygen.KeyID)),
 		Participants: []sdk.ValAddress{valAddr},
 	})
 	assert.NilError(t, err)
@@ -89,7 +90,7 @@ func Test_StartKeygen_Success(t *testing.T) {
 	// Re-send. Not changed.
 	_, err = s.StartKeygen(wctx, &MsgStartKeygen{
 		Module:       "module",
-		KeyID:        types.KeyID(fmt.Sprintf("%s-%d", chainID, keygen.KeyID)),
+		KeyID:        exported.KeyID(fmt.Sprintf("%s-%d", chainID, keygen.KeyID)),
 		Participants: []sdk.ValAddress{valAddr},
 	})
 	assert.NilError(t, err)
@@ -106,44 +107,44 @@ func Test_SubmitPubKey(t *testing.T) {
 	pubKey := testutils.GenPublicKey(t)
 
 	// ensure pubkey not exist yet
-	_, err := k.QueryPubKey(wctx, chainID, 0, valAddr)
+	_, err := k.QueryPubKey(wctx, chainID, 0)
 	assert.Error(t, err, "pubkey: not found")
 
 	_, err = s.SubmitPubkey(wctx, &MsgSubmitPubkey{
 		Module:      "module",
-		KeyID:       types.KeyID(fmt.Sprintf("%s-%d", chainID, 0)),
+		KeyID:       exported.KeyID(fmt.Sprintf("%s-%d", chainID, 0)),
 		Participant: valAddr,
 		PubKey:      pubKey,
 	})
 	assert.NilError(t, err)
 
 	// check pubKey
-	res, err := k.QueryPubKey(wctx, chainID, 0, valAddr)
+	res, err := k.QueryPubKey(wctx, chainID, 0)
 	assert.NilError(t, err)
-	assert.DeepEqual(t, res.PubKey, pubKey)
+	assert.DeepEqual(t, res.Items[0].PubKey, pubKey)
 }
 
 func Test_SubmitSignature(t *testing.T) {
 	k, s, ctx := setupMsgServer(t)
 	wctx := ctx.(sdk.Context)
 	valAddr := testutils.GenValAddress(t)
-	signature := types.Signature("signature")
+	signature := exported.Signature("signature")
 
 	// ensure signature not exist yet
-	_, err := k.QuerySignature(wctx, chainID, 0, valAddr)
-	assert.Error(t, err, "signature: not found")
+	_, err := k.QuerySignature(wctx, chainID, 0)
+	assert.Error(t, err, "sign_signature: not found")
 
 	// request signature
 	_, err = s.SubmitSignature(wctx, &MsgSubmitSignature{
 		Module:      "module",
-		SigID:       types.SigID(fmt.Sprintf("%s-%d", chainID, 0)),
+		SigID:       exported.SigID(fmt.Sprintf("%s-%d", chainID, 0)),
 		Participant: valAddr,
 		Signature:   signature,
 	})
 	assert.NilError(t, err)
 
 	// ensure signature exists
-	res, err := k.QuerySignature(wctx, chainID, 0, valAddr)
+	res, err := k.QuerySignature(wctx, chainID, 0)
 	assert.NilError(t, err)
-	assert.DeepEqual(t, res, signature)
+	assert.DeepEqual(t, res.Items[0].Signature, signature)
 }
