@@ -15,10 +15,10 @@ test:
 lint:
 	@golangci-lint run
 
-build: clean proto lint test
+build: clean proto lint
 	@ignite chain build --output build --skip-proto
 
-release: build
+release: test build
 	@ignite chain build --output release --release --skip-proto
 
 run-local: proto lint
