@@ -71,7 +71,7 @@ func (m *GenesisKeygen) GetChainSet() []*GenesisKeygen_ChainSet {
 
 // Key-Value set of chain
 type GenesisKeygen_ChainSet struct {
-	Chain   []byte    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	Chain   string    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
 	LastId  uint64    `protobuf:"varint,2,opt,name=last_id,json=lastId,proto3" json:"last_id,omitempty"`
 	ItemSet []*Keygen `protobuf:"bytes,3,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
 }
@@ -109,11 +109,11 @@ func (m *GenesisKeygen_ChainSet) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisKeygen_ChainSet proto.InternalMessageInfo
 
-func (m *GenesisKeygen_ChainSet) GetChain() []byte {
+func (m *GenesisKeygen_ChainSet) GetChain() string {
 	if m != nil {
 		return m.Chain
 	}
-	return nil
+	return ""
 }
 
 func (m *GenesisKeygen_ChainSet) GetLastId() uint64 {
@@ -178,7 +178,7 @@ func (m *GenesisPubKey) GetChainSet() []*GenesisPubKey_ChainSet {
 
 // Key-Value set of chain
 type GenesisPubKey_ChainSet struct {
-	Chain   []byte    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	Chain   string    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
 	ItemSet []*PubKey `protobuf:"bytes,2,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
 }
 
@@ -215,11 +215,11 @@ func (m *GenesisPubKey_ChainSet) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisPubKey_ChainSet proto.InternalMessageInfo
 
-func (m *GenesisPubKey_ChainSet) GetChain() []byte {
+func (m *GenesisPubKey_ChainSet) GetChain() string {
 	if m != nil {
 		return m.Chain
 	}
-	return nil
+	return ""
 }
 
 func (m *GenesisPubKey_ChainSet) GetItemSet() []*PubKey {
@@ -276,7 +276,7 @@ func (m *GenesisSign) GetChainSet() []*GenesisSign_ChainSet {
 
 // Key-Value set of item
 type GenesisSign_ChainSet struct {
-	Chain   []byte           `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	Chain   string           `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
 	LastId  uint64           `protobuf:"varint,2,opt,name=last_id,json=lastId,proto3" json:"last_id,omitempty"`
 	ItemSet []*exported.Sign `protobuf:"bytes,3,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
 }
@@ -314,11 +314,11 @@ func (m *GenesisSign_ChainSet) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisSign_ChainSet proto.InternalMessageInfo
 
-func (m *GenesisSign_ChainSet) GetChain() []byte {
+func (m *GenesisSign_ChainSet) GetChain() string {
 	if m != nil {
 		return m.Chain
 	}
-	return nil
+	return ""
 }
 
 func (m *GenesisSign_ChainSet) GetLastId() uint64 {
@@ -382,7 +382,7 @@ func (m *GenesisSignature) GetChainSet() []*GenesisSignature_ChainSet {
 
 // Set of chain
 type GenesisSignature_ChainSet struct {
-	Chain   []byte                    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
+	Chain   string                    `protobuf:"bytes,1,opt,name=chain,proto3" json:"chain,omitempty"`
 	ItemSet []*exported.SignSignature `protobuf:"bytes,2,rep,name=item_set,json=itemSet,proto3" json:"item_set,omitempty"`
 }
 
@@ -419,11 +419,11 @@ func (m *GenesisSignature_ChainSet) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisSignature_ChainSet proto.InternalMessageInfo
 
-func (m *GenesisSignature_ChainSet) GetChain() []byte {
+func (m *GenesisSignature_ChainSet) GetChain() string {
 	if m != nil {
 		return m.Chain
 	}
-	return nil
+	return ""
 }
 
 func (m *GenesisSignature_ChainSet) GetItemSet() []*exported.SignSignature {
@@ -435,7 +435,11 @@ func (m *GenesisSignature_ChainSet) GetItemSet() []*exported.SignSignature {
 
 // GenesisState defines the multisig module's genesis state.
 type GenesisState struct {
-	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
+	Params    Params            `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
+	Keygen    *GenesisKeygen    `protobuf:"bytes,2,opt,name=keygen,proto3" json:"keygen,omitempty"`
+	PubKey    *GenesisPubKey    `protobuf:"bytes,3,opt,name=pubKey,proto3" json:"pubKey,omitempty"`
+	Sign      *GenesisSign      `protobuf:"bytes,4,opt,name=sign,proto3" json:"sign,omitempty"`
+	Signature *GenesisSignature `protobuf:"bytes,5,opt,name=signature,proto3" json:"signature,omitempty"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -478,6 +482,34 @@ func (m *GenesisState) GetParams() Params {
 	return Params{}
 }
 
+func (m *GenesisState) GetKeygen() *GenesisKeygen {
+	if m != nil {
+		return m.Keygen
+	}
+	return nil
+}
+
+func (m *GenesisState) GetPubKey() *GenesisPubKey {
+	if m != nil {
+		return m.PubKey
+	}
+	return nil
+}
+
+func (m *GenesisState) GetSign() *GenesisSign {
+	if m != nil {
+		return m.Sign
+	}
+	return nil
+}
+
+func (m *GenesisState) GetSignature() *GenesisSignature {
+	if m != nil {
+		return m.Signature
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*GenesisKeygen)(nil), "manythings.mitosis.v1beta1.multisig.GenesisKeygen")
 	proto.RegisterType((*GenesisKeygen_ChainSet)(nil), "manythings.mitosis.v1beta1.multisig.GenesisKeygen.ChainSet")
@@ -495,36 +527,40 @@ func init() {
 }
 
 var fileDescriptor_455e9f637adacbd8 = []byte{
-	// 460 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0x4f, 0x6b, 0x13, 0x41,
-	0x18, 0xc6, 0x33, 0x6d, 0x4d, 0xe3, 0xb4, 0x82, 0x0c, 0x05, 0x43, 0x0e, 0x6b, 0xa8, 0x7f, 0x88,
-	0x48, 0x67, 0x68, 0x3d, 0x89, 0xe0, 0xa1, 0x8a, 0x12, 0x8a, 0x20, 0x1b, 0x10, 0xff, 0x1c, 0xca,
-	0x24, 0x19, 0x26, 0x03, 0xdd, 0x9d, 0x65, 0xe7, 0x5d, 0xe9, 0x9e, 0xc4, 0x6f, 0xe0, 0xc7, 0xea,
-	0xb1, 0xe0, 0xc5, 0x93, 0x94, 0x04, 0xbc, 0xf9, 0x1d, 0x64, 0x67, 0x76, 0xdd, 0xc8, 0x26, 0x64,
-	0x63, 0x6f, 0x33, 0xbb, 0xef, 0xfb, 0x3c, 0xcf, 0x8f, 0x77, 0xf7, 0xc5, 0x0f, 0x03, 0x05, 0xda,
-	0x28, 0xc3, 0x82, 0xe4, 0x0c, 0x94, 0x51, 0x92, 0x7d, 0x3e, 0x1c, 0x0a, 0xe0, 0x87, 0x4c, 0x8a,
-	0x50, 0x18, 0x65, 0x68, 0x14, 0x6b, 0xd0, 0xe4, 0x5e, 0xc0, 0xc3, 0x14, 0x26, 0x2a, 0x94, 0x86,
-	0xe6, 0x2d, 0x34, 0xaf, 0xa4, 0x45, 0x6b, 0x67, 0x4f, 0x6a, 0xa9, 0x6d, 0x3d, 0xcb, 0x4e, 0xae,
-	0xb5, 0x73, 0xb0, 0xd4, 0x42, 0x9c, 0x47, 0x3a, 0x06, 0x31, 0x66, 0x90, 0x46, 0x22, 0x77, 0xea,
-	0x3c, 0x58, 0x5a, 0x1e, 0xf1, 0x98, 0x07, 0x45, 0xd9, 0xfd, 0xa5, 0x65, 0x73, 0x62, 0xfb, 0xbf,
-	0x11, 0xbe, 0xf5, 0xda, 0x81, 0x9c, 0x88, 0x54, 0x8a, 0x90, 0xbc, 0xc7, 0x37, 0x47, 0x13, 0xae,
-	0xc2, 0x53, 0x23, 0xa0, 0x8d, 0xba, 0x9b, 0xbd, 0x9d, 0xa3, 0x67, 0xb4, 0x06, 0x1c, 0xfd, 0x47,
-	0x86, 0xbe, 0xc8, 0x34, 0x06, 0x02, 0xfc, 0xd6, 0x28, 0x3f, 0x75, 0xbe, 0x22, 0xdc, 0x2a, 0x1e,
-	0x93, 0x3d, 0x7c, 0xc3, 0xbe, 0x68, 0xa3, 0x2e, 0xea, 0xed, 0xfa, 0xee, 0x42, 0xee, 0xe0, 0xed,
-	0x33, 0x6e, 0xe0, 0x54, 0x8d, 0xdb, 0x1b, 0x5d, 0xd4, 0xdb, 0xf2, 0x9b, 0xd9, 0xb5, 0x3f, 0x26,
-	0xaf, 0x70, 0x4b, 0x81, 0x08, 0x6c, 0xa8, 0x4d, 0x1b, 0xea, 0x71, 0xad, 0x50, 0x2e, 0x8d, 0xbf,
-	0x9d, 0x35, 0x0f, 0x04, 0xec, 0x7f, 0x2f, 0x79, 0xdf, 0x26, 0xc3, 0x13, 0x91, 0x5e, 0x9b, 0xd7,
-	0xc9, 0x2c, 0xe2, 0x9d, 0xac, 0xc4, 0x9d, 0xa7, 0xda, 0x58, 0x83, 0xca, 0x79, 0x96, 0x54, 0xbf,
-	0x10, 0xde, 0xc9, 0xe3, 0x0c, 0x94, 0x0c, 0xc9, 0xbb, 0x2a, 0xd3, 0xd3, 0x75, 0x98, 0x32, 0x91,
-	0x45, 0x44, 0x5f, 0xfe, 0x7f, 0x80, 0x2f, 0x2b, 0x03, 0x7c, 0x54, 0x2b, 0x51, 0x16, 0xa5, 0x04,
-	0xbd, 0x42, 0xf8, 0xf6, 0x5c, 0x46, 0x0e, 0x49, 0x2c, 0xc8, 0xa7, 0x2a, 0xed, 0xf3, 0x75, 0x69,
-	0xad, 0xd2, 0x22, 0x64, 0xbd, 0x12, 0xf9, 0x4d, 0x65, 0x88, 0x47, 0xb5, 0xc9, 0xfe, 0x5a, 0x97,
-	0x88, 0x1f, 0xf0, 0x6e, 0x91, 0x0b, 0x38, 0x08, 0xd2, 0xc7, 0x4d, 0xf7, 0x5f, 0x5b, 0xd7, 0xda,
-	0x5f, 0x88, 0x6d, 0x39, 0xde, 0xba, 0xf8, 0x79, 0xb7, 0xe1, 0xe7, 0x02, 0xc7, 0xfd, 0x8b, 0xa9,
-	0x87, 0x2e, 0xa7, 0x1e, 0xba, 0x9a, 0x7a, 0xe8, 0xdb, 0xcc, 0x6b, 0x5c, 0xce, 0xbc, 0xc6, 0x8f,
-	0x99, 0xd7, 0xf8, 0xc8, 0xa4, 0x82, 0x49, 0x32, 0xa4, 0x23, 0x1d, 0xb0, 0x4c, 0xfe, 0xc0, 0xe9,
-	0xb3, 0x62, 0x87, 0x9c, 0x97, 0x5b, 0xc4, 0x6e, 0x8f, 0x61, 0xd3, 0xae, 0x8f, 0x27, 0x7f, 0x02,
-	0x00, 0x00, 0xff, 0xff, 0x10, 0xa6, 0x5d, 0x71, 0x1f, 0x05, 0x00, 0x00,
+	// 522 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x94, 0xcf, 0x6b, 0x13, 0x41,
+	0x14, 0xc7, 0x33, 0x4d, 0x9a, 0x26, 0x53, 0x05, 0x19, 0x0a, 0x2e, 0x39, 0xac, 0xa1, 0xfe, 0x20,
+	0x22, 0xdd, 0xb5, 0x15, 0x0f, 0x22, 0x78, 0xa8, 0x45, 0x89, 0x45, 0x90, 0x0d, 0x88, 0xe8, 0xa1,
+	0x6c, 0x92, 0x61, 0x32, 0xd8, 0xdd, 0x59, 0x32, 0x2f, 0xd2, 0x9c, 0xc4, 0xbb, 0x07, 0xff, 0xac,
+	0x1e, 0x0b, 0x5e, 0x3c, 0x49, 0x49, 0xc0, 0x9b, 0xff, 0x83, 0xcc, 0x8f, 0x75, 0x53, 0x36, 0xa1,
+	0xbb, 0xed, 0x6d, 0x26, 0x79, 0xef, 0xfb, 0xbe, 0x9f, 0x7d, 0x6f, 0x1e, 0x7e, 0x10, 0x71, 0x10,
+	0x92, 0x4b, 0x3f, 0x9a, 0x1c, 0x03, 0x97, 0x9c, 0xf9, 0x5f, 0x76, 0xfb, 0x14, 0xc2, 0x5d, 0x9f,
+	0xd1, 0x98, 0x4a, 0x2e, 0xbd, 0x64, 0x2c, 0x40, 0x90, 0xbb, 0x51, 0x18, 0x4f, 0x61, 0xc4, 0x63,
+	0x26, 0x3d, 0x9b, 0xe2, 0xd9, 0x48, 0x2f, 0x4d, 0x6d, 0x6d, 0x31, 0xc1, 0x84, 0x8e, 0xf7, 0xd5,
+	0xc9, 0xa4, 0xb6, 0x76, 0x56, 0x96, 0xa0, 0x27, 0x89, 0x18, 0x03, 0x1d, 0xfa, 0x30, 0x4d, 0xa8,
+	0xad, 0xd4, 0xba, 0xbf, 0x32, 0x3c, 0x09, 0xc7, 0x61, 0x94, 0x86, 0xdd, 0x5b, 0x19, 0xb6, 0x20,
+	0xb6, 0xfd, 0x17, 0xe1, 0x9b, 0xaf, 0x0d, 0xc8, 0x21, 0x9d, 0x32, 0x1a, 0x93, 0x0f, 0xb8, 0x39,
+	0x18, 0x85, 0x3c, 0x3e, 0x92, 0x14, 0x1c, 0xd4, 0xae, 0x76, 0x36, 0xf7, 0x9e, 0x7b, 0x05, 0xe0,
+	0xbc, 0x0b, 0x32, 0xde, 0x4b, 0xa5, 0xd1, 0xa3, 0x10, 0x34, 0x06, 0xf6, 0xd4, 0xfa, 0x86, 0x70,
+	0x23, 0xfd, 0x99, 0x6c, 0xe1, 0x75, 0xfd, 0x87, 0x83, 0xda, 0xa8, 0xd3, 0x0c, 0xcc, 0x85, 0xdc,
+	0xc6, 0x1b, 0xc7, 0xa1, 0x84, 0x23, 0x3e, 0x74, 0xd6, 0xda, 0xa8, 0x53, 0x0b, 0xea, 0xea, 0xda,
+	0x1d, 0x92, 0x57, 0xb8, 0xc1, 0x81, 0x46, 0xda, 0x54, 0x55, 0x9b, 0x7a, 0x54, 0xc8, 0x94, 0x71,
+	0x13, 0x6c, 0xa8, 0xe4, 0x1e, 0x85, 0xed, 0x9f, 0x19, 0xef, 0xbb, 0x49, 0xff, 0x90, 0x4e, 0xaf,
+	0xcd, 0x6b, 0x64, 0x96, 0xf1, 0x8e, 0x2e, 0xc5, 0x5d, 0xa4, 0x5a, 0x2b, 0x41, 0x65, 0x6a, 0x66,
+	0x54, 0x7f, 0x10, 0xde, 0xb4, 0x76, 0x7a, 0x9c, 0xc5, 0xe4, 0x7d, 0x9e, 0xe9, 0x59, 0x19, 0x26,
+	0x25, 0xb2, 0x8c, 0xe8, 0xeb, 0xd5, 0x1b, 0x78, 0x90, 0x6b, 0xe0, 0xc3, 0x42, 0x8e, 0x94, 0x95,
+	0x0c, 0xf4, 0x1c, 0xe1, 0x5b, 0x0b, 0x1e, 0x43, 0x98, 0x8c, 0x29, 0xf9, 0x94, 0xa7, 0x7d, 0x51,
+	0x96, 0x56, 0x2b, 0x2d, 0x43, 0x16, 0x97, 0x22, 0xbf, 0xcd, 0x35, 0x71, 0xaf, 0x30, 0xd9, 0xff,
+	0xd2, 0x19, 0xe2, 0xf7, 0x2a, 0xbe, 0x91, 0x1a, 0x83, 0x10, 0x28, 0xe9, 0xe2, 0xba, 0x79, 0xd8,
+	0xba, 0x6c, 0xe1, 0x11, 0xd1, 0x29, 0xfb, 0xb5, 0xd3, 0xdf, 0x77, 0x2a, 0x81, 0x15, 0x20, 0x6f,
+	0x70, 0xfd, 0xb3, 0x7e, 0x10, 0xba, 0x39, 0x45, 0x8d, 0x5e, 0x78, 0xd8, 0x81, 0x55, 0x50, 0x5a,
+	0x89, 0x1e, 0x43, 0xa7, 0x5a, 0x5e, 0xcb, 0x0e, 0xb0, 0x55, 0x20, 0x07, 0xb8, 0x26, 0x39, 0x8b,
+	0x9d, 0x9a, 0x56, 0x7a, 0x5c, 0xb6, 0x79, 0x81, 0xce, 0x26, 0x3d, 0xdc, 0x94, 0xe9, 0xf7, 0x74,
+	0xd6, 0xb5, 0xd4, 0xd3, 0x2b, 0xcd, 0x41, 0x90, 0xe9, 0xec, 0x77, 0x4f, 0x67, 0x2e, 0x3a, 0x9b,
+	0xb9, 0xe8, 0x7c, 0xe6, 0xa2, 0x1f, 0x73, 0xb7, 0x72, 0x36, 0x77, 0x2b, 0xbf, 0xe6, 0x6e, 0xe5,
+	0xa3, 0xcf, 0x38, 0x8c, 0x26, 0x7d, 0x6f, 0x20, 0x22, 0x5f, 0x55, 0xd9, 0x31, 0x65, 0xfc, 0x74,
+	0xef, 0x9e, 0x64, 0x9b, 0x57, 0x6f, 0xdc, 0x7e, 0x5d, 0xaf, 0xdc, 0x27, 0xff, 0x02, 0x00, 0x00,
+	0xff, 0xff, 0x6d, 0xbe, 0xd8, 0x34, 0x53, 0x06, 0x00, 0x00,
 }
 
 func (m *GenesisKeygen) Marshal() (dAtA []byte, err error) {
@@ -881,6 +917,54 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Signature != nil {
+		{
+			size, err := m.Signature.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Sign != nil {
+		{
+			size, err := m.Sign.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.PubKey != nil {
+		{
+			size, err := m.PubKey.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Keygen != nil {
+		{
+			size, err := m.Keygen.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
 	{
 		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -1055,6 +1139,22 @@ func (m *GenesisState) Size() (n int) {
 	_ = l
 	l = m.Params.Size()
 	n += 1 + l + sovGenesis(uint64(l))
+	if m.Keygen != nil {
+		l = m.Keygen.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.PubKey != nil {
+		l = m.PubKey.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.Sign != nil {
+		l = m.Sign.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if m.Signature != nil {
+		l = m.Signature.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
 	return n
 }
 
@@ -1181,7 +1281,7 @@ func (m *GenesisKeygen_ChainSet) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -1191,25 +1291,23 @@ func (m *GenesisKeygen_ChainSet) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
-			if m.Chain == nil {
-				m.Chain = []byte{}
-			}
+			m.Chain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -1402,7 +1500,7 @@ func (m *GenesisPubKey_ChainSet) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -1412,25 +1510,23 @@ func (m *GenesisPubKey_ChainSet) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
-			if m.Chain == nil {
-				m.Chain = []byte{}
-			}
+			m.Chain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1604,7 +1700,7 @@ func (m *GenesisSign_ChainSet) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -1614,25 +1710,23 @@ func (m *GenesisSign_ChainSet) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
-			if m.Chain == nil {
-				m.Chain = []byte{}
-			}
+			m.Chain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -1825,7 +1919,7 @@ func (m *GenesisSignature_ChainSet) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowGenesis
@@ -1835,25 +1929,23 @@ func (m *GenesisSignature_ChainSet) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthGenesis
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthGenesis
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Chain = append(m.Chain[:0], dAtA[iNdEx:postIndex]...)
-			if m.Chain == nil {
-				m.Chain = []byte{}
-			}
+			m.Chain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -1969,6 +2061,150 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Keygen", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Keygen == nil {
+				m.Keygen = &GenesisKeygen{}
+			}
+			if err := m.Keygen.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PubKey", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PubKey == nil {
+				m.PubKey = &GenesisPubKey{}
+			}
+			if err := m.PubKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sign", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Sign == nil {
+				m.Sign = &GenesisSign{}
+			}
+			if err := m.Sign.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Signature == nil {
+				m.Signature = &GenesisSignature{}
+			}
+			if err := m.Signature.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

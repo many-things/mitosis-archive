@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/server"
 
@@ -101,6 +102,7 @@ type AppModule struct {
 	keeper        keeper.Keeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	chainKeeper   types.ChainKeeper
 }
 
 func NewAppModule(
@@ -108,12 +110,14 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	chainKeeper types.ChainKeeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
 		accountKeeper:  accountKeeper,
 		bankKeeper:     bankKeeper,
+		chainKeeper:    chainKeeper,
 	}
 }
 
@@ -150,7 +154,15 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 
 // ExportGenesis returns the module's exported genesis state as raw JSON bytes.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	genState := ExportGenesis(ctx, am.keeper)
+
+	// TODO: how to handle error?
+	chainQuery, _, _ := am.chainKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
+	var chains []byte
+	for _, val := range chainQuery {
+		chains = append(chains, val.Value)
+	}
+
+	genState := ExportGenesis(ctx, am.keeper, chains)
 	return cdc.MustMarshalJSON(genState)
 }
 

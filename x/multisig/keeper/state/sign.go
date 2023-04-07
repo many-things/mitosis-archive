@@ -12,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 type SignRepo interface {
@@ -21,19 +22,21 @@ type SignRepo interface {
 	Delete(id uint64) error
 
 	Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error)
-
-	// TODO: Implement Genesis Tool
+	ExportGenesis() (*types.GenesisSign_ChainSet, error)
+	ImportGenesis(genState *types.GenesisSign_ChainSet) error
 }
 
 type kvSignRepo struct {
-	cdc  codec.BinaryCodec
-	root store.KVStore
+	cdc     codec.BinaryCodec
+	root    store.KVStore
+	chainID string
 }
 
 func NewKVChainSignRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) SignRepo {
 	return &kvSignRepo{
-		cdc:  cdc,
-		root: prefix.NewStore(root, append([]byte(chainID), kvSignRepoKey...)),
+		cdc:     cdc,
+		root:    prefix.NewStore(root, append([]byte(chainID), kvSignRepoKey...)),
+		chainID: chainID,
 	}
 }
 
@@ -112,4 +115,52 @@ func (r kvSignRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[uint64, 
 	}
 
 	return results, pageResp, nil
+}
+
+func (r kvSignRepo) ExportGenesis() (*types.GenesisSign_ChainSet, error) {
+	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
+
+	genState := &types.GenesisSign_ChainSet{
+		Chain:   r.chainID,
+		LastId:  sdk.BigEndianToUint64(r.root.Get(kvSignRepoLatestID)),
+		ItemSet: nil,
+	}
+
+	var itemSet []*exported.Sign
+	_, err := query.Paginate(
+		ks,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(_ []byte, value []byte) error {
+			sign := new(exported.Sign)
+			if err := sign.Unmarshal(value); err != nil {
+				return err
+			}
+
+			itemSet = append(itemSet, sign)
+
+			return nil
+		},
+	)
+
+	if err != nil {
+		return nil, err // TODO: wrap error
+	}
+
+	return genState, nil
+}
+
+func (r kvSignRepo) ImportGenesis(genState *types.GenesisSign_ChainSet) error {
+	ks := prefix.NewStore(r.root, kvSignRepoItemPrefix)
+	r.root.Set(kvSignRepoLatestID, sdk.Uint64ToBigEndian(genState.LastId))
+
+	for _, item := range genState.GetItemSet() {
+		bz, err := item.Marshal()
+		if err != nil {
+			return err
+		}
+
+		ks.Set(sdk.Uint64ToBigEndian(item.SigID), bz)
+	}
+
+	return nil
 }

@@ -19,6 +19,7 @@ type Keeper interface {
 	types.PubKeyKeeper
 	types.SignKeeper
 	types.SignatureKeeper
+	types.GenesisKeeper
 }
 
 type keeper struct {

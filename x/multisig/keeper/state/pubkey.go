@@ -23,16 +23,20 @@ type PubKeyRepo interface {
 	HasPubKey(id uint64) bool
 
 	Paginate(page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *types.PubKey], *query.PageResponse, error)
+
+	ExportGenesis() (*types.GenesisPubKey_ChainSet, error)
+	ImportGenesis(genState *types.GenesisPubKey_ChainSet) error
 }
 
 type kvPubkeyRepo struct {
-	cdc  codec.BinaryCodec
-	root store.KVStore
+	cdc     codec.BinaryCodec
+	root    store.KVStore
+	chainID string
 }
 
 func NewKVChainPubKeyRepo(cdc codec.BinaryCodec, root store.KVStore, chainID string) PubKeyRepo {
 	return &kvPubkeyRepo{
-		cdc, prefix.NewStore(root, append([]byte(chainID), kvPubKeyRepoKey...)),
+		cdc, prefix.NewStore(root, append([]byte(chainID), kvPubKeyRepoKey...)), chainID,
 	}
 }
 
@@ -172,4 +176,49 @@ func (r kvPubkeyRepo) Paginate(page *query.PageRequest) ([]mitosistype.KV[sdk.Va
 	}
 
 	return results, pageResp, nil
+}
+
+func (r kvPubkeyRepo) ExportGenesis() (*types.GenesisPubKey_ChainSet, error) {
+	ks := prefix.NewStore(r.root, kvPubKeyItemPrefix)
+
+	genState := &types.GenesisPubKey_ChainSet{
+		Chain:   r.chainID,
+		ItemSet: nil,
+	}
+	var itemSet []*types.PubKey
+
+	_, err := query.Paginate(
+		ks,
+		&query.PageRequest{Limit: query.MaxLimit},
+		func(_ []byte, value []byte) error {
+			item := new(types.PubKey)
+			if err := item.Unmarshal(value); err != nil {
+				return err
+			}
+
+			itemSet = append(itemSet, item)
+			return nil
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return genState, nil
+}
+
+func (r kvPubkeyRepo) ImportGenesis(genState *types.GenesisPubKey_ChainSet) error {
+	ks := prefix.NewStore(r.root, kvPubKeyItemPrefix)
+
+	for _, item := range genState.GetItemSet() {
+		bz, err := item.Marshal()
+		if err != nil {
+			return err
+		}
+
+		ks.Set(sdk.Uint64ToBigEndian(item.KeyID), bz)
+	}
+
+	return nil
 }
