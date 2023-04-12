@@ -23,7 +23,7 @@ type keygenSession struct {
 var mgrInstance *keygenSessionMgr
 var lock = &sync.Mutex{}
 
-func GetInstance() *keygenSessionMgr {
+func GetInstance() *keygenSessionMgr { //nolint: revive
 	if mgrInstance == nil {
 		lock.Lock()
 		defer lock.Unlock()
@@ -57,7 +57,5 @@ func (m *keygenSessionMgr) GetSession(key string) (KeygenSession, bool) {
 }
 
 func (m *keygenSessionMgr) ReleaseSession(key string) {
-	if _, ok := m.sessions[key]; ok {
-		delete(m.sessions, key)
-	}
+	delete(m.sessions, key)
 }
