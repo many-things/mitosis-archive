@@ -154,7 +154,6 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 
 // ExportGenesis returns the module's exported genesis state as raw JSON bytes.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-
 	// TODO: how to handle error?
 	chainQuery, _, _ := am.chainKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
 	var chains []byte
