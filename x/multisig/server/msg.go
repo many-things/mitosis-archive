@@ -2,12 +2,12 @@ package server
 
 import (
 	"context"
-	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"reflect"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper"
 	"github.com/many-things/mitosis/x/multisig/types"
@@ -165,11 +165,51 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 		}
 	}
 
-	if _, err := m.baseKeeper.UpdateSignStatus(wctx, chainID, sigID, exported.Sign_StatusSuccess); err != nil {
-		return nil, sdkerrors.Wrap(err, "update sign status")
-	}
-	if err := m.contextKeeper.FinishSignOperation(wctx, sigID); err != nil {
-		return nil, sdkerrors.Wrap(err, "finish sign operation")
+	// Check validator
+	if sign.Status == exported.Sign_StatusExecute {
+		sigThresh := map[string]uint64{}
+		sigValue := map[string][]byte{}
+		partySize := map[string]uint64{}
+
+		for _, v := range keygen.Participants {
+			partySize[v.Address.String()] = uint64(v.Share)
+		}
+
+		for _, v := range signResult.Items {
+			sigValue[v.Participant.String()] = v.Signature
+			signatureKey := string(v.Signature)
+
+			if _, ok := sigThresh[signatureKey]; !ok {
+				sigThresh[signatureKey] = partySize[v.Participant.String()]
+			} else {
+				sigThresh[signatureKey] += partySize[v.Participant.String()]
+			}
+		}
+
+		var (
+			maxValue     uint64
+			maxSignature string
+		)
+
+		for k, v := range sigThresh {
+			if v > maxValue {
+				maxValue = v
+				maxSignature = k
+			}
+		}
+
+		if maxValue >= keygen.Threshold {
+			if err := m.baseKeeper.SetResultSignature(wctx, chainID, sigID, sigValue[maxSignature]); err != nil {
+				return nil, sdkerrors.Wrap(err, "update result signature")
+			}
+			if _, err := m.baseKeeper.UpdateSignStatus(wctx, chainID, sigID, exported.Sign_StatusSuccess); err != nil {
+				return nil, sdkerrors.Wrap(err, "update sign status")
+			}
+
+			if err := m.contextKeeper.FinishSignOperation(wctx, sigID); err != nil {
+				return nil, sdkerrors.Wrap(err, "finish sign operation")
+			}
+		}
 	}
 
 	return &MsgSubmitSignatureResponse{}, nil

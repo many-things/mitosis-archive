@@ -62,6 +62,7 @@ type SignResultKeeper interface {
 	HasSignResult(ctx sdk.Context, chainID string, sigID uint64) bool
 	AddParticipantSignResult(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
 	RemoveParticipantSignResult(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
+	SetResultSignature(ctx sdk.Context, chainID string, sigID uint64, signature exported.Signature) error
 
 	QuerySignResult(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignResult, error)
 	QuerySignResultList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignResult], *query.PageResponse, error)

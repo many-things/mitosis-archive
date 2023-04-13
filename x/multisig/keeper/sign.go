@@ -50,6 +50,21 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 	return sign, nil
 }
 
+func (k keeper) SetResultSignature(ctx sdk.Context, chainID string, sigID uint64, signature exported.Signature) error {
+	signRepo := state.NewKVChainSignResultRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+
+	signResult, err := signRepo.Load(sigID)
+	if err != nil {
+		return err
+	}
+	signResult.ResultSignature = signature
+	if err := signRepo.Save(signResult); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // QuerySign is get specific Sign instance
 func (k keeper) QuerySign(ctx sdk.Context, chainID string, id uint64) (*exported.Sign, error) {
 	signRepo := state.NewKVChainSignRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)

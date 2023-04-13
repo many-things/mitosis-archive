@@ -1,13 +1,14 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/pkg/errors"
-	"strconv"
 )
 
 // RegisterSignature is register new signature of the sign
@@ -48,11 +49,13 @@ func (k keeper) AddParticipantSignResult(ctx sdk.Context, chainID string, sigID 
 		return errors.Wrap(err, "load sign")
 	}
 
-	keyID, err := strconv.Atoi(sign.KeyID)
+	keyChainID, keyID, err := exported.KeyID(sign.KeyID).ToInternalVariables()
 	if err != nil {
-		return errors.Wrap(err, "conv key id")
+		return fmt.Errorf("conv key id")
+	} else if keyChainID != chainID {
+		return fmt.Errorf("not match chain id")
 	}
-	key, err := keyRepo.Load(uint64(keyID))
+	key, err := keyRepo.Load(keyID)
 	if err != nil {
 		return errors.Wrap(err, "load key")
 	}
@@ -79,6 +82,7 @@ func (k keeper) AddParticipantSignResult(ctx sdk.Context, chainID string, sigID 
 	if err := signatureRepo.AddParticipantSignResult(sigID, participant, signature); err != nil {
 		return err
 	}
+
 	return nil
 }
 

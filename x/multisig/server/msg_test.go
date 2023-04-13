@@ -3,13 +3,14 @@ package server
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/pkg/testutils"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/types"
 	"gotest.tools/assert"
-	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	keepertest "github.com/many-things/mitosis/testutil/keeper"

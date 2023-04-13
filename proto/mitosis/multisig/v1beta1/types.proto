@@ -43,6 +43,9 @@ message Keygen {
 
   // keygen event status
   Status status = 4;
+
+  // shares
+  uint64 threshold = 5;
 }
 
 // Pubkey Message
@@ -60,4 +63,13 @@ message KeygenResult {
 
   // participant id
   repeated Item items = 3;
+}
+
+message MsgSignComplete {
+  string sig_id = 1 [
+    (gogoproto.customname) = "SigID",
+    (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.SigID"
+  ];
+
+  bytes signature = 2 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.Signature"];
 }

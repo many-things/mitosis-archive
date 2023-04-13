@@ -59,4 +59,5 @@ message SignResult {
   uint64 sig_id = 2 [(gogoproto.customname) = "SigID"];
 
   repeated Item items = 3;
+  bytes result_signature = 4 [(gogoproto.casttype) = "Signature"]; // Evaluate After Complete
 }

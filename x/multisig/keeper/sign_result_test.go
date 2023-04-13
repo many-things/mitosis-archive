@@ -2,8 +2,11 @@ package keeper_test
 
 import (
 	"fmt"
-	"github.com/many-things/mitosis/x/multisig/types"
 	"testing"
+
+	"github.com/many-things/mitosis/x/multisig/types"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -13,7 +16,6 @@ import (
 
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
-	"gotest.tools/assert"
 )
 
 func Test_RegisterSignature(t *testing.T) {
@@ -37,9 +39,9 @@ func Test_RegisterSignature(t *testing.T) {
 			Status: types.Keygen_StatusComplete,
 		},
 	)
-	assert.NilError(t, err)
+	require.Nil(t, err)
 
-	assert.NilError(
+	require.Nil(
 		t, state.NewKVChainKeygenResultRepo(cdc, ctx.KVStore(storeKey), chainID).Create(&types.KeygenResult{
 			Chain: chainID,
 			KeyID: keyID,
@@ -52,12 +54,12 @@ func Test_RegisterSignature(t *testing.T) {
 		}),
 	)
 
-	assert.NilError(
+	require.Nil(
 		t, state.NewKVChainSignRepo(cdc, ctx.KVStore(storeKey), chainID).Save(
 			&exported.Sign{
 				Chain:         chainID,
 				SigID:         0,
-				KeyID:         fmt.Sprintf("%d", keyID),
+				KeyID:         fmt.Sprintf("%s-%d", chainID, keyID),
 				Participants:  []sdk.ValAddress{valAddr},
 				MessageToSign: digest,
 				Status:        exported.Sign_StatusAssign,
@@ -65,14 +67,14 @@ func Test_RegisterSignature(t *testing.T) {
 		),
 	)
 
-	signSignature := exported.SignResult{Chain: chainID, SigID: 0}
-	assert.NilError(t, k.RegisterSignResult(ctx, chainID, &signSignature))
-	assert.NilError(t, k.AddParticipantSignResult(ctx, chainID, 0, valAddr, signature))
+	signSignature := exported.SignResult{Chain: chainID, SigID: 0, Items: []*exported.SignResult_Item{}}
+	require.Nil(t, k.RegisterSignResult(ctx, chainID, &signSignature))
+	require.Nil(t, k.AddParticipantSignResult(ctx, chainID, 0, valAddr, signature))
 
 	// validate registered successfully
 	res, err := repo.Load(0)
-	assert.NilError(t, err)
-	assert.DeepEqual(t, []*exported.SignResult_Item{{
+	require.Nil(t, err)
+	require.Equal(t, []*exported.SignResult_Item{{
 		Participant: valAddr,
 		Signature:   signature,
 	}}, res.Items)
@@ -99,7 +101,7 @@ func Test_RemoveSignature(t *testing.T) {
 	_ = repo.Save(&signSignature)
 
 	err = k.RemoveSignResult(ctx, chainID, 0)
-	assert.NilError(t, err)
+	require.Nil(t, err)
 
 	// validate signature not exists
 	_, err = repo.Load(0)
@@ -127,8 +129,8 @@ func Test_QuerySignature(t *testing.T) {
 	_ = repo.Save(&signSignature)
 
 	res, err := k.QuerySignResult(ctx, chainID, 0)
-	assert.NilError(t, err)
-	assert.DeepEqual(t, res, &signSignature)
+	require.Nil(t, err)
+	require.Equal(t, res, &signSignature)
 }
 
 func Test_QuerySignatureList(t *testing.T) {
@@ -152,6 +154,6 @@ func Test_QuerySignatureList(t *testing.T) {
 	}
 
 	res, _, err := k.QuerySignResultList(ctx, chainID, &query.PageRequest{Limit: query.MaxLimit})
-	assert.NilError(t, err)
-	assert.DeepEqual(t, res, signatures)
+	require.Nil(t, err)
+	require.Equal(t, res, signatures)
 }
