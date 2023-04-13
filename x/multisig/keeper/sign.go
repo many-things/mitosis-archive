@@ -44,7 +44,7 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 	}
 
 	if sign.Status < exported.Sign_StatusComplete && newStatus >= exported.Sign_StatusComplete {
-		sign, err := k.QuerySignature(ctx, chainID, id)
+		signResult, err := k.QuerySignResult(ctx, chainID, id)
 
 		if err != nil {
 			return nil, err
@@ -53,7 +53,7 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 		sigID := fmt.Sprintf("%s-%d", chainID, id)
 		if err := ctx.EventManager().EmitTypedEvent(&types.MsgSignComplete{
 			SigID:     exported.SigID(sigID),
-			Signature: sign.GetResultSignature(),
+			Signature: signResult.GetResultSignature(),
 		}); err != nil {
 			return nil, err
 		}
