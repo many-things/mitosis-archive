@@ -18,6 +18,7 @@ import (
 	"github.com/many-things/mitosis/sidecar/storage"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
+	"github.com/many-things/mitosis/sidecar/tofnd/session"
 	"github.com/many-things/mitosis/sidecar/types"
 	multisigexport "github.com/many-things/mitosis/x/multisig/exported"
 	multisigserver "github.com/many-things/mitosis/x/multisig/server"
@@ -49,40 +50,35 @@ func createTofNManager(cliCtx sdkclient.Context, config config.SidecarConfig, lo
 	return tofnd.NewManager(types.NewMultisigClient(conn), cliCtx, valAddr, logger, config.TofNConfig.DialTimeout)
 }
 
-func createKeygenHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigtypes.Keygen) error {
+func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisigtypes.Keygen) error {
 	return func(msg *multisigtypes.Keygen) error {
-		if !utils.Any(msg.Participants, store.IsTarget) {
-			return nil // Just not targeted.
-		}
+		mgr := session.GetKeygenMgrInstance()
 
 		keyUID := fmt.Sprintf("%s-%d", msg.Chain, msg.KeyID)
+		var partyUIDs []string
+		var partySharesCounts []uint32
+		for _, v := range msg.Participants {
+			partyUIDs = append(partyUIDs, v.String())
+			partySharesCounts = append(partySharesCounts, 2)
+		}
+		myPartyIndex := utils.IndexOf(cfg.TofNConfig.Validator, partyUIDs)
+		if myPartyIndex < 0 {
+			return fmt.Errorf("no available validator in participant")
+		}
 
-		// TODO: propagate match ctx
-		resp, err := sigCli.Keygen(context.Background(), &types.KeygenRequest{
-			KeyUid:   keyUID,
-			PartyUid: store.GetValidator().String(),
-		})
+		keygenInit := types.KeygenInit{
+			NewKeyUid:        keyUID,
+			PartyUids:        partyUIDs,
+			PartyShareCounts: partySharesCounts, // TODO: add shares on configurations
+			MyPartyIndex:     uint32(myPartyIndex),
+			Threshold:        uint32(len(partyUIDs)*2/3 + 1), // more than 2/3
+		}
 
-		if err != nil {
-			logger.Error(err.Error())
+		session := mgr.CreateSession(cfg, keygenInit)
+		if err := session.StartSession(); err != nil {
 			return err
 		}
 
-		switch r := resp.GetKeygenResponse().(type) {
-		case *types.KeygenResponse_PubKey:
-			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
-				Module:      "sidecar",
-				KeyID:       multisigexport.KeyID(keyUID),
-				Participant: store.GetValidator(),
-				PubKey:      r.PubKey,
-			})
-
-			if err != nil {
-				return err
-			}
-		case *types.KeygenResponse_Error:
-			return fmt.Errorf("keygen: %v", r) // TODO: add MsgKeygenErr
-		}
 		return nil
 	}
 }
@@ -190,7 +186,7 @@ func run() {
 	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigexport.Sign]())
 
 	jobs := []mitosis.Job{
-		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(store, sigCli, wallet, logger), cancel, logger),
+		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
 		mitosis.CreateTypedJob(signEventRecv, createSignHandler(store, sigCli, wallet, logger), cancel, logger),
 	}
 
