@@ -51,10 +51,12 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 		}
 
 		sigID := fmt.Sprintf("%s-%d", chainID, id)
-		ctx.EventManager().EmitTypedEvent(&types.MsgSignComplete{
+		if err := ctx.EventManager().EmitTypedEvent(&types.MsgSignComplete{
 			SigID:     exported.SigID(sigID),
 			Signature: sign.GetResultSignature(),
-		})
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	sign.Status = newStatus
