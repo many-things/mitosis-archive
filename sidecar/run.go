@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	golog "log"
+	"net"
 	"os"
 
 	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
@@ -195,6 +196,18 @@ func run() {
 	})
 
 	if err := eGroup.Wait(); err != nil {
+		logger.Error(err.Error())
+	}
+
+	lis, err := net.Listen("tcp", ":9999")
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+
+	grpcServer := grpc.NewServer()
+	types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
+	if err := grpcServer.Serve(lis); err != nil {
 		logger.Error(err.Error())
 	}
 }

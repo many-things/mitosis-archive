@@ -1,6 +1,7 @@
 package tofnd
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/many-things/mitosis/sidecar/tofnd/session"
@@ -11,7 +12,7 @@ type TrafficServer struct {
 	types.SidecarServer
 }
 
-func (s *TrafficServer) ShareKeygenRequest(msg types.ShareKeygenRequest) (*types.ShareKeygenResponse, error) {
+func (s *TrafficServer) ShareKeygenRequest(_ context.Context, msg *types.ShareKeygenRequest) (*types.ShareKeygenResponse, error) {
 	mgr := session.GetKeygenMgrInstance()
 
 	session, ok := mgr.GetSession(msg.NewKeyUid)
@@ -29,7 +30,7 @@ func (s *TrafficServer) ShareKeygenRequest(msg types.ShareKeygenRequest) (*types
 	return &types.ShareKeygenResponse{}, nil
 }
 
-func (s *TrafficServer) ShareSignTraffic(msg types.ShareSignRequest) (*types.ShareSignResponse, error) {
+func (s *TrafficServer) ShareSignTraffic(_ context.Context, msg *types.ShareSignRequest) (*types.ShareSignResponse, error) {
 	mgr := session.GetSignMgrInstance()
 
 	session, ok := mgr.GetSession(msg.NewSigUid)
