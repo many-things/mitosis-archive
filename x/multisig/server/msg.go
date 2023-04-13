@@ -110,6 +110,15 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 	}
 
 	wctx := sdk.UnwrapSDKContext(ctx)
+
+	origin, found := m.eventKeeper.QueryProxyReverse(wctx, msg.Sender)
+	if !found {
+		return nil, sdkerrors.Wrap(errors.ErrKeyNotFound, "proxy origin not found")
+	}
+	if !msg.Participant.Equals(origin) {
+		return nil, sdkerrors.Wrap(errors.ErrInvalidRequest, "participant address does not match with proxy origin")
+	}
+
 	if m.baseKeeper.HasSignResult(wctx, chainID, sigID) {
 		if err := m.baseKeeper.AddParticipantSignResult(wctx, chainID, sigID, msg.Participant, msg.Signature); err != nil {
 			return nil, err
@@ -129,8 +138,30 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 		}
 	}
 
+	signResult, err := m.baseKeeper.QuerySignResult(wctx, chainID, sigID)
+	if err != nil {
+		return nil, sdkerrors.Wrap(err, "query sign result")
+	}
+
+	keygen, err := m.baseKeeper.QueryKeygen(wctx, chainID, sigID)
+	if err != nil {
+		return nil, sdkerrors.Wrap(err, "query keygen")
+	}
+
+	// check all participants are signed (TODO: threshold)
+	for _, item := range signResult.Items {
+		for _, p := range keygen.Participants {
+			if !item.Participant.Equals(p.Address) {
+				return &MsgSubmitSignatureResponse{}, nil
+			}
+		}
+	}
+
+	if _, err := m.baseKeeper.UpdateSignStatus(wctx, chainID, sigID, exported.Sign_StatusSuccess); err != nil {
+		return nil, sdkerrors.Wrap(err, "update sign status")
+	}
 	if err := m.contextKeeper.FinishSignOperation(wctx, sigID); err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrap(err, "finish sign operation")
 	}
 
 	return &MsgSubmitSignatureResponse{}, nil

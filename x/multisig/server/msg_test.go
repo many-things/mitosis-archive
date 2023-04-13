@@ -3,7 +3,9 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/pkg/testutils"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/types"
 	"gotest.tools/assert"
@@ -21,16 +23,45 @@ func (m MockContextKeeper) FinishSignOperation(_ sdk.Context, _ uint64) error {
 	return nil
 }
 
-func setupMsgServer(t testing.TB) (keeper.Keeper, MsgServer, context.Context) {
+type MockEventKeeper struct {
+	valAddr sdk.ValAddress
+}
+
+func (m MockEventKeeper) QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, bool) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockEventKeeper) QueryProxyReverse(ctx sdk.Context, prx sdk.AccAddress) (sdk.ValAddress, bool) {
+	return m.valAddr, true
+}
+
+func (m MockEventKeeper) TotalPowerOf(ctx sdk.Context, epoch *uint64) (int64, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockEventKeeper) VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MockEventKeeper) QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func setupMsgServer(t testing.TB, valAddr sdk.ValAddress) (keeper.Keeper, MsgServer, context.Context) {
 	k, ctx, _, _ := keepertest.MultisigKeeper(t)
-	return k, NewMsgServer(k, &MockContextKeeper{}, nil), sdk.WrapSDKContext(ctx)
+	return k, NewMsgServer(k, &MockContextKeeper{}, &MockEventKeeper{valAddr}), sdk.WrapSDKContext(ctx)
 }
 
 func Test_StartKeygen_Failure(t *testing.T) {
-	k, s, ctx := setupMsgServer(t)
-	wctx := ctx.(sdk.Context)
 	valAddr := testutils.GenValAddress(t)
 	otherAddr := testutils.GenValAddress(t)
+
+	k, s, ctx := setupMsgServer(t, valAddr)
+	wctx := ctx.(sdk.Context)
 	keyID := exported.KeyID(fmt.Sprintf("%s-%d", chainID, 0))
 
 	// Request not exist Keygen event
@@ -68,9 +99,10 @@ func Test_StartKeygen_Failure(t *testing.T) {
 }
 
 func Test_StartKeygen_Success(t *testing.T) {
-	k, s, ctx := setupMsgServer(t)
-	wctx := ctx.(sdk.Context)
 	valAddr := testutils.GenValAddress(t)
+
+	k, s, ctx := setupMsgServer(t, valAddr)
+	wctx := ctx.(sdk.Context)
 
 	// StartKeygen requires registered keygen
 	keygen := types.Keygen{
@@ -108,10 +140,11 @@ func Test_StartKeygen_Success(t *testing.T) {
 }
 
 func Test_SubmitPubKey(t *testing.T) {
-	k, s, ctx := setupMsgServer(t)
-	wctx := ctx.(sdk.Context)
 	valAddr := testutils.GenValAddress(t)
 	pubKey := testutils.GenPublicKey(t)
+
+	k, s, ctx := setupMsgServer(t, valAddr)
+	wctx := ctx.(sdk.Context)
 
 	// ensure pubkey not exist yet
 	_, err := k.QueryKeygenResult(wctx, chainID, 0)
@@ -132,13 +165,20 @@ func Test_SubmitPubKey(t *testing.T) {
 }
 
 func Test_SubmitSignature(t *testing.T) {
-	k, s, ctx := setupMsgServer(t)
-	wctx := ctx.(sdk.Context)
 	valAddr := testutils.GenValAddress(t)
 	signature := exported.Signature("signature")
 
+	k, s, ctx := setupMsgServer(t, valAddr)
+	wctx := ctx.(sdk.Context)
+
+	_, err := k.RegisterKeygenEvent(wctx, chainID, &types.Keygen{})
+	assert.NilError(t, err)
+
+	_, err = k.RegisterSignEvent(wctx, chainID, &exported.Sign{})
+	assert.NilError(t, err)
+
 	// ensure signature not exist yet
-	_, err := k.QuerySignResult(wctx, chainID, 0)
+	_, err = k.QuerySignResult(wctx, chainID, 0)
 	assert.Error(t, err, "sign_signature: not found")
 
 	// request signature
