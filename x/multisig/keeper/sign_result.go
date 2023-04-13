@@ -1,13 +1,14 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
 	"github.com/pkg/errors"
-	"strconv"
 )
 
 // RegisterSignature is register new signature of the sign
@@ -48,11 +49,13 @@ func (k keeper) AddParticipantSignResult(ctx sdk.Context, chainID string, sigID 
 		return errors.Wrap(err, "load sign")
 	}
 
-	keyID, err := strconv.Atoi(sign.KeyID)
+	keyChainID, keyID, err := exported.KeyID(sign.KeyID).ToInternalVariables()
 	if err != nil {
-		return errors.Wrap(err, "conv key id")
+		return fmt.Errorf("conv key id")
+	} else if keyChainID != chainID {
+		return fmt.Errorf("not match chain id")
 	}
-	key, err := keyRepo.Load(uint64(keyID))
+	key, err := keyRepo.Load(keyID)
 	if err != nil {
 		return errors.Wrap(err, "load key")
 	}
@@ -78,6 +81,61 @@ func (k keeper) AddParticipantSignResult(ctx sdk.Context, chainID string, sigID 
 
 	if err := signatureRepo.AddParticipantSignResult(sigID, participant, signature); err != nil {
 		return err
+	}
+
+	// Check validator
+	if sign.Status == exported.Sign_StatusExecute {
+		keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+
+		signResult, err := signatureRepo.Load(sigID)
+		if err != nil {
+			return errors.Wrap(err, "err during get signature result")
+		}
+		keygen, err := keygenRepo.Load(keyID)
+		if err != nil {
+			return errors.Wrap(err, "err during check signature threshold")
+		}
+
+		sigThresh := map[string]uint64{}
+		sigValue := map[string][]byte{}
+		partySize := map[string]uint64{}
+
+		for _, v := range keygen.Participants {
+			partySize[v.Address.String()] = uint64(v.Share)
+		}
+
+		for _, v := range signResult.Items {
+			sigValue[v.Participant.String()] = v.Signature
+			signatureKey := string(v.Signature)
+
+			if _, ok := sigThresh[signatureKey]; !ok {
+				sigThresh[signatureKey] = partySize[v.Participant.String()]
+			} else {
+				sigThresh[signatureKey] += partySize[v.Participant.String()]
+			}
+		}
+
+		var (
+			maxValue     uint64
+			maxSignature string
+		)
+
+		for k, v := range sigThresh {
+			if v > maxValue {
+				maxValue = v
+				maxSignature = k
+			}
+		}
+
+		if maxValue >= keygen.Threshold {
+			signResult.ResultSignature = sigValue[maxSignature]
+			if err := signatureRepo.Save(signResult); err != nil {
+				return err
+			}
+			if _, err := k.UpdateSignStatus(ctx, chainID, sigID, exported.Sign_StatusComplete); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

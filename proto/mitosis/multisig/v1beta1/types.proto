@@ -43,6 +43,9 @@ message Keygen {
 
   // keygen event status
   Status status = 4;
+
+  // shares
+  uint64 threshold = 5;
 }
 
 // Pubkey Message
