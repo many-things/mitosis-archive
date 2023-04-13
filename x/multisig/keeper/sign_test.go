@@ -85,9 +85,9 @@ func Test_UpdateSignStatus(t *testing.T) {
 	}
 	_ = repo.Save(&sign)
 
-	updated, err := k.UpdateSignStatus(ctx, chainID, 0, exported.Sign_StatusComplete)
+	updated, err := k.UpdateSignStatus(ctx, chainID, 0, exported.Sign_StatusExecute)
 	assert.NilError(t, err)
-	assert.Equal(t, updated.Status, exported.Sign_StatusComplete)
+	assert.Equal(t, updated.Status, exported.Sign_StatusExecute)
 }
 
 func Test_QuerySign(t *testing.T) {

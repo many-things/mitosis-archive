@@ -1,11 +1,14 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 // RegisterSignEvent is register new SignEvent
@@ -38,6 +41,20 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 	sign, err := signRepo.Load(id)
 	if err != nil {
 		return nil, err
+	}
+
+	if sign.Status < exported.Sign_StatusComplete && newStatus >= exported.Sign_StatusComplete {
+		sign, err := k.QuerySignature(ctx, chainID, id)
+
+		if err != nil {
+			return nil, err
+		}
+
+		sigID := fmt.Sprintf("%s-%d", chainID, id)
+		ctx.EventManager().EmitTypedEvent(&types.MsgSignComplete{
+			SigID:     exported.SigID(sigID),
+			Signature: sign.GetResultSignature(),
+		})
 	}
 
 	sign.Status = newStatus

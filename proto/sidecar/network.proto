@@ -7,7 +7,6 @@ import "sidecar/grpc.proto";
 
 option go_package = "github.com/many-things/mitosis/sidecar/types";
 
-
 // Sidecar service works for sharing traffic in
 service Sidecar {
   // Share KeygenTraffic
@@ -27,8 +26,7 @@ message ShareKeygenRequest {
 }
 
 // ShareKeygenResponse
-message ShareKeygenResponse {
-}
+message ShareKeygenResponse {}
 
 // ShareSignRequest
 message ShareSignRequest {
@@ -39,7 +37,5 @@ message ShareSignRequest {
   TrafficIn traffic = 2;
 }
 
-
 // Share
-message ShareSignResponse {
-}
+message ShareSignResponse {}
