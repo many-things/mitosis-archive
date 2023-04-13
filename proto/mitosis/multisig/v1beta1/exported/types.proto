@@ -38,13 +38,16 @@ message Sign {
   // try-to-sign key id
   string key_id = 3 [(gogoproto.customname) = "KeyID"];
 
+  // operation id
+  uint64 op_id = 4;
+
   // participant_ids
-  repeated string participants = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  repeated string participants = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 
   // Message to sign
-  bytes message_to_sign = 5 [(gogoproto.casttype) = "Hash"];
+  bytes message_to_sign = 6 [(gogoproto.casttype) = "Hash"];
 
-  Status status = 6;
+  Status status = 7;
 }
 
 // SignSignature Message
