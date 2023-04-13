@@ -542,7 +542,7 @@ func New(
 		keys[multisigmoduletypes.MemStoreKey],
 		app.GetSubspace(multisigmoduletypes.ModuleName),
 	)
-	multisigModule := multisigmodule.NewAppModule(appCodec, app.MultisigKeeper, app.AccountKeeper, app.BankKeeper, app.EventKeeper)
+	multisigModule := multisigmodule.NewAppModule(appCodec, app.MultisigKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.EventKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 

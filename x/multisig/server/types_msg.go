@@ -2,7 +2,6 @@ package server
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	mitotypes "github.com/many-things/mitosis/pkg/types"
 )
 
 var (
@@ -18,15 +17,15 @@ func (*MsgStartKeygen) Type() string     { return "MsgStartKeygen" }
 func (*MsgSubmitPubkey) Type() string    { return "MsgSubmitPubkey" }
 
 func (m *MsgSubmitSignature) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Participant.Bytes()}
+	return []sdk.AccAddress{m.GetSender()}
 }
 
 func (m *MsgSubmitPubkey) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Participant.Bytes()}
+	return []sdk.AccAddress{m.GetSender()}
 }
 
 func (m *MsgStartKeygen) GetSigners() []sdk.AccAddress {
-	return mitotypes.Map(m.Participants, func(t sdk.ValAddress, _ int) sdk.AccAddress { return t.Bytes() })
+	return []sdk.AccAddress{m.GetSender()}
 }
 
 func (m *MsgStartKeygen) ValidateBasic() error {

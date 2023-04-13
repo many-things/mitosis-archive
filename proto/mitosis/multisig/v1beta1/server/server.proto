@@ -37,12 +37,12 @@ service Query {
   }
 
   // specific pubkey query
-  rpc PubKey(QueryPubKey) returns (QueryPubKeyResponse) {
+  rpc KeygenResult(QueryKeygenResult) returns (QueryKeygenResultResponse) {
     option (google.api.http) = {get: "/mitosis/multisig/v1beta1/pubkey/{key_id}/{validator}"};
   }
 
   // list pubkey query
-  rpc PubKeyList(QueryPubKeyList) returns (QueryPubKeyListResponse) {
+  rpc KeygenResultList(QueryKeygenResultList) returns (QueryKeygenResultListResponse) {
     option (google.api.http) = {get: "/mitosis/multisig/v1beta1/pubkeys/{chain_id}"};
   }
 
@@ -57,12 +57,12 @@ service Query {
   }
 
   // specific signature query
-  rpc Signature(QuerySignature) returns (QuerySignatureResponse) {
+  rpc SignResult(QuerySignResult) returns (QuerySignResultResponse) {
     option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signature/{sig_id}"};
   }
 
   // list signature query
-  rpc SignatureList(QuerySignatureList) returns (QuerySignatureListResponse) {
+  rpc SignResultList(QuerySignResultList) returns (QuerySignResultListResponse) {
     option (google.api.http) = {get: "/mitosis/multisig/v1beta1/signatures/{chain_id}"};
   }
 }

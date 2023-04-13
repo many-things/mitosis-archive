@@ -36,15 +36,15 @@ type KeygenKeeper interface {
 	QueryKeygenList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *Keygen], *query.PageResponse, error)
 }
 
-type PubKeyKeeper interface {
-	RegisterPubKey(ctx sdk.Context, chainID string, pubKey *PubKey) error
-	DeletePubKey(ctx sdk.Context, chainID string, keyID uint64) error
-	AddParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress, publicKey exported.PublicKey) error
-	RemoveParticipantPubKey(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
-	HasPubKey(ctx sdk.Context, chainID string, keyID uint64) bool
+type KeygenResultKeeper interface {
+	RegisterKeygenResult(ctx sdk.Context, chainID string, pubKey *KeygenResult) error
+	DeleteKeygenResult(ctx sdk.Context, chainID string, keyID uint64) error
+	AddParticipantKeygenResult(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress, publicKey exported.PublicKey) error
+	RemoveParticipantKeygenResult(ctx sdk.Context, chainID string, keyID uint64, participant sdk.ValAddress) error
+	HasKeygenResult(ctx sdk.Context, chainID string, keyID uint64) bool
 
-	QueryPubKey(ctx sdk.Context, chainID string, keyID uint64) (*PubKey, error)
-	QueryPubKeyList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *PubKey], *query.PageResponse, error)
+	QueryKeygenResult(ctx sdk.Context, chainID string, keyID uint64) (*KeygenResult, error)
+	QueryKeygenResultList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[sdk.ValAddress, *KeygenResult], *query.PageResponse, error)
 }
 
 type SignKeeper interface {
@@ -56,15 +56,15 @@ type SignKeeper interface {
 	QuerySignList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.Sign], *query.PageResponse, error)
 }
 
-type SignatureKeeper interface {
-	RegisterSignature(ctx sdk.Context, chainID string, signSignature *exported.SignSignature) error
-	RemoveSignature(ctx sdk.Context, chainID string, sigID uint64) error
-	HasSignature(ctx sdk.Context, chainID string, sigID uint64) bool
-	AddParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
-	RemoveParticipantSignature(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
+type SignResultKeeper interface {
+	RegisterSignResult(ctx sdk.Context, chainID string, sign *exported.SignResult) error
+	RemoveSignResult(ctx sdk.Context, chainID string, sigID uint64) error
+	HasSignResult(ctx sdk.Context, chainID string, sigID uint64) bool
+	AddParticipantSignResult(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress, signature exported.Signature) error
+	RemoveParticipantSignResult(ctx sdk.Context, chainID string, sigID uint64, participant sdk.ValAddress) error
 
-	QuerySignature(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignSignature, error)
-	QuerySignatureList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignSignature], *query.PageResponse, error)
+	QuerySignResult(ctx sdk.Context, chainID string, sigID uint64) (*exported.SignResult, error)
+	QuerySignResultList(ctx sdk.Context, chainID string, page *query.PageRequest) ([]mitosistype.KV[uint64, *exported.SignResult], *query.PageResponse, error)
 }
 
 type GenesisKeeper interface {
@@ -72,6 +72,16 @@ type GenesisKeeper interface {
 	ImportGenesis(ctx sdk.Context, genState *GenesisState) error
 }
 
-type ChainKeeper interface {
+type ContextKeeper interface {
+	FinishSignOperation(ctx sdk.Context, id uint64) error
+}
+
+type EventKeeper interface {
+	QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, bool)
+	QueryProxyReverse(ctx sdk.Context, prx sdk.AccAddress) (sdk.ValAddress, bool)
+
+	TotalPowerOf(ctx sdk.Context, epoch *uint64) (int64, error)
+	VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error)
+
 	QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitosistype.KV[string, byte], *query.PageResponse, error)
 }

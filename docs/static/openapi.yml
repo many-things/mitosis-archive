@@ -35182,9 +35182,6 @@ paths:
             type: object
             properties:
               denom_trace:
-                description: >-
-                  denom_trace returns the requested denomination trace
-                  information.
                 type: object
                 properties:
                   path:
@@ -35197,6 +35194,11 @@ paths:
                   base_denom:
                     type: string
                     description: base denomination of the relayed fungible token.
+                description: >-
+                  DenomTrace contains the base denomination for ICS20 fungible
+                  tokens and the
+
+                  source tracing information path.
             description: >-
               QueryDenomTraceResponse is the response type for the
               Query/DenomTrace RPC
@@ -36355,7 +36357,6 @@ paths:
                     type: string
                     title: client identifier
                   client_state:
-                    title: client state
                     type: object
                     properties:
                       '@type':
@@ -36528,6 +36529,7 @@ paths:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
+                    title: client state
                 description: >-
                   IdentifiedClientState defines a client state with an
                   additional client
@@ -36780,7 +36782,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: consensus state associated with the channel
                 type: object
                 properties:
                   '@type':
@@ -36949,6 +36950,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: consensus state associated with the channel
               client_id:
                 type: string
                 title: client ID associated with the consensus state
@@ -40361,7 +40363,6 @@ paths:
             type: object
             properties:
               client_state:
-                title: client state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -40530,6 +40531,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: client state associated with the request identifier
               proof:
                 type: string
                 format: byte
@@ -41021,7 +41023,6 @@ paths:
 
                         gets reset
                     consensus_state:
-                      title: consensus state
                       type: object
                       properties:
                         '@type':
@@ -41196,6 +41197,7 @@ paths:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
+                      title: consensus state
                   description: >-
                     ConsensusStateWithHeight defines a consensus state with an
                     additional height
@@ -41829,9 +41831,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: >-
-                  consensus state associated with the client identifier at the
-                  given height
                 type: object
                 properties:
                   '@type':
@@ -42000,12 +41999,14 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: >-
+                  consensus state associated with the client identifier at the
+                  given height
               proof:
                 type: string
                 format: byte
                 title: merkle proof of existence
               proof_height:
-                title: height at which the proof was retrieved
                 type: object
                 properties:
                   revision_number:
@@ -42033,6 +42034,13 @@ paths:
                   RevisionHeight
 
                   gets reset
+                title: >-
+                  Height is a monotonically increasing data type
+
+                  that can be compared against another Height for the purposes
+                  of updating and
+
+                  freezing clients
             title: >-
               QueryConsensusStateResponse is the response type for the
               Query/ConsensusState
@@ -42476,7 +42484,6 @@ paths:
             type: object
             properties:
               upgraded_client_state:
-                title: client state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -42645,6 +42652,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: client state associated with the request identifier
             description: |-
               QueryUpgradedClientStateResponse is the response type for the
               Query/UpgradedClientState RPC method.
@@ -42846,7 +42854,6 @@ paths:
             type: object
             properties:
               upgraded_consensus_state:
-                title: Consensus state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -43015,6 +43022,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: Consensus state associated with the request identifier
             description: |-
               QueryUpgradedConsensusStateResponse is the response type for the
               Query/UpgradedConsensusState RPC method.
@@ -44212,7 +44220,6 @@ paths:
                     type: string
                     title: client identifier
                   client_state:
-                    title: client state
                     type: object
                     properties:
                       '@type':
@@ -44385,6 +44392,7 @@ paths:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
+                    title: client state
                 description: >-
                   IdentifiedClientState defines a client state with an
                   additional client
@@ -44632,7 +44640,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: consensus state associated with the channel
                 type: object
                 properties:
                   '@type':
@@ -44801,6 +44808,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: consensus state associated with the channel
               client_id:
                 type: string
                 title: client ID associated with the consensus state
@@ -45280,7 +45288,7 @@ paths:
                       type: string
                       format: uint64
                       title: Operation id
-                    poll_id:
+                    evt_id:
                       type: string
                       format: uint64
                       title: Event id
@@ -45300,27 +45308,12 @@ paths:
                          - STATUS_INIT_SIGN: Signing operation status
                          - STATUS_FINISH_SIGN: Executing operation status
                          - STATUS_FINALIZE: Finalized operation status
-                    signer_pubkey:
-                      type: string
-                      format: byte
                     tx_payload:
                       type: string
                       format: byte
                     tx_bytes_to_sign:
                       type: string
                       format: byte
-                    sig_id:
-                      type: string
-                      format: uint64
-                    result:
-                      type: object
-                      properties:
-                        ok:
-                          type: boolean
-                        result:
-                          type: string
-                          format: byte
-                      title: Operation Result
                   title: Operation message
               page:
                 type: object
@@ -45451,7 +45444,7 @@ paths:
                     type: string
                     format: uint64
                     title: Operation id
-                  poll_id:
+                  evt_id:
                     type: string
                     format: uint64
                     title: Event id
@@ -45471,27 +45464,12 @@ paths:
                        - STATUS_INIT_SIGN: Signing operation status
                        - STATUS_FINISH_SIGN: Executing operation status
                        - STATUS_FINALIZE: Finalized operation status
-                  signer_pubkey:
-                    type: string
-                    format: byte
                   tx_payload:
                     type: string
                     format: byte
                   tx_bytes_to_sign:
                     type: string
                     format: byte
-                  sig_id:
-                    type: string
-                    format: uint64
-                  result:
-                    type: object
-                    properties:
-                      ok:
-                        type: boolean
-                      result:
-                        type: string
-                        format: byte
-                    title: Operation Result
                 title: Operation message
             title: Response of [QueryOperation]
         default:
@@ -45740,12 +45718,6 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
-                properties:
-                  poll_threshold:
-                    type: string
-                  epoch_interval:
-                    type: string
-                    format: uint64
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -45793,9 +45765,6 @@ paths:
                     type: string
                     format: uint64
                     title: Operation id - will be filled
-                  epoch:
-                    type: string
-                    format: uint64
                   proposer:
                     type: string
                     format: byte
@@ -45938,9 +45907,6 @@ paths:
                       type: string
                       format: uint64
                       title: Operation id - will be filled
-                    epoch:
-                      type: string
-                      format: uint64
                     proposer:
                       type: string
                       format: byte
@@ -46407,8 +46373,15 @@ paths:
                   participants:
                     type: array
                     items:
-                      type: string
-                      format: byte
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                          format: byte
+                        share:
+                          type: integer
+                          format: int64
+                      title: Participant Message
                     title: keygen participants
                   status:
                     title: keygen event status
@@ -46483,8 +46456,15 @@ paths:
                     participants:
                       type: array
                       items:
-                        type: string
-                        format: byte
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                            format: byte
+                          share:
+                            type: integer
+                            format: int64
+                        title: Participant Message
                       title: keygen participants
                     status:
                       title: keygen event status
@@ -46618,14 +46598,14 @@ paths:
   /mitosis/multisig/v1beta1/pubkey/{key_id}/{validator}:
     get:
       summary: specific pubkey query
-      operationId: ManythingsMitosisV1Beta1MultisigServerPubKey
+      operationId: ManythingsMitosisV1Beta1MultisigServerKeygenResult
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              pubKey:
+              result:
                 type: object
                 properties:
                   chain:
@@ -46683,7 +46663,7 @@ paths:
   /mitosis/multisig/v1beta1/pubkeys/{chain_id}:
     get:
       summary: list pubkey query
-      operationId: ManythingsMitosisV1Beta1MultisigServerPubKeyList
+      operationId: ManythingsMitosisV1Beta1MultisigServerKeygenResultList
       responses:
         '200':
           description: A successful response.
@@ -46915,7 +46895,7 @@ paths:
   /mitosis/multisig/v1beta1/signature/{sig_id}:
     get:
       summary: specific signature query
-      operationId: ManythingsMitosisV1Beta1MultisigServerSignature
+      operationId: ManythingsMitosisV1Beta1MultisigServerSignResult
       responses:
         '200':
           description: A successful response.
@@ -46974,7 +46954,7 @@ paths:
   /mitosis/multisig/v1beta1/signatures/{chain_id}:
     get:
       summary: list signature query
-      operationId: ManythingsMitosisV1Beta1MultisigServerSignatureList
+      operationId: ManythingsMitosisV1Beta1MultisigServerSignResultList
       responses:
         '200':
           description: A successful response.
@@ -72493,7 +72473,6 @@ definitions:
     type: object
     properties:
       denom_trace:
-        description: denom_trace returns the requested denomination trace information.
         type: object
         properties:
           path:
@@ -72506,6 +72485,11 @@ definitions:
           base_denom:
             type: string
             description: base denomination of the relayed fungible token.
+        description: >-
+          DenomTrace contains the base denomination for ICS20 fungible tokens
+          and the
+
+          source tracing information path.
     description: |-
       QueryDenomTraceResponse is the response type for the Query/DenomTrace RPC
       method.
@@ -72972,7 +72956,6 @@ definitions:
             type: string
             title: client identifier
           client_state:
-            title: client state
             type: object
             properties:
               '@type':
@@ -73135,6 +73118,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
+            title: client state
         description: |-
           IdentifiedClientState defines a client state with an additional client
           identifier field.
@@ -73177,7 +73161,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: consensus state associated with the channel
         type: object
         properties:
           '@type':
@@ -73334,6 +73317,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state associated with the channel
       client_id:
         type: string
         title: client ID associated with the consensus state
@@ -74230,7 +74214,6 @@ definitions:
         type: string
         title: client identifier
       client_state:
-        title: client state
         type: object
         properties:
           '@type':
@@ -74387,6 +74370,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state
     description: |-
       IdentifiedClientState defines a client state with an additional client
       identifier field.
@@ -74422,7 +74406,6 @@ definitions:
 
           gets reset
       consensus_state:
-        title: consensus state
         type: object
         properties:
           '@type':
@@ -74579,6 +74562,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state
     description: >-
       ConsensusStateWithHeight defines a consensus state with an additional
       height
@@ -74628,7 +74612,6 @@ definitions:
     type: object
     properties:
       client_state:
-        title: client state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -74785,6 +74768,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state associated with the request identifier
       proof:
         type: string
         format: byte
@@ -75126,9 +75110,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: >-
-          consensus state associated with the client identifier at the given
-          height
         type: object
         properties:
           '@type':
@@ -75285,12 +75266,14 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: >-
+          consensus state associated with the client identifier at the given
+          height
       proof:
         type: string
         format: byte
         title: merkle proof of existence
       proof_height:
-        title: height at which the proof was retrieved
         type: object
         properties:
           revision_number:
@@ -75317,6 +75300,13 @@ definitions:
           RevisionHeight
 
           gets reset
+        title: >-
+          Height is a monotonically increasing data type
+
+          that can be compared against another Height for the purposes of
+          updating and
+
+          freezing clients
     title: >-
       QueryConsensusStateResponse is the response type for the
       Query/ConsensusState
@@ -75360,7 +75350,6 @@ definitions:
 
                 gets reset
             consensus_state:
-              title: consensus state
               type: object
               properties:
                 '@type':
@@ -75527,6 +75516,7 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
+              title: consensus state
           description: >-
             ConsensusStateWithHeight defines a consensus state with an
             additional height
@@ -75567,7 +75557,6 @@ definitions:
     type: object
     properties:
       upgraded_client_state:
-        title: client state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -75724,6 +75713,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state associated with the request identifier
     description: |-
       QueryUpgradedClientStateResponse is the response type for the
       Query/UpgradedClientState RPC method.
@@ -75731,7 +75721,6 @@ definitions:
     type: object
     properties:
       upgraded_consensus_state:
-        title: Consensus state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -75888,6 +75877,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: Consensus state associated with the request identifier
     description: |-
       QueryUpgradedConsensusStateResponse is the response type for the
       Query/UpgradedConsensusState RPC method.
@@ -76189,7 +76179,6 @@ definitions:
             type: string
             title: client identifier
           client_state:
-            title: client state
             type: object
             properties:
               '@type':
@@ -76352,6 +76341,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
+            title: client state
         description: |-
           IdentifiedClientState defines a client state with an additional client
           identifier field.
@@ -76394,7 +76384,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: consensus state associated with the channel
         type: object
         properties:
           '@type':
@@ -76551,6 +76540,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state associated with the channel
       client_id:
         type: string
         title: client ID associated with the consensus state
@@ -76930,7 +76920,7 @@ definitions:
         type: string
         format: uint64
         title: Operation id
-      poll_id:
+      evt_id:
         type: string
         format: uint64
         title: Event id
@@ -76950,27 +76940,12 @@ definitions:
            - STATUS_INIT_SIGN: Signing operation status
            - STATUS_FINISH_SIGN: Executing operation status
            - STATUS_FINALIZE: Finalized operation status
-      signer_pubkey:
-        type: string
-        format: byte
       tx_payload:
         type: string
         format: byte
       tx_bytes_to_sign:
         type: string
         format: byte
-      sig_id:
-        type: string
-        format: uint64
-      result:
-        type: object
-        properties:
-          ok:
-            type: boolean
-          result:
-            type: string
-            format: byte
-        title: Operation Result
     title: Operation message
   manythings.mitosis.v1beta1.context.Operation.Status:
     type: string
@@ -76988,15 +76963,6 @@ definitions:
        - STATUS_FINISH_SIGN: Executing operation status
        - STATUS_FINALIZE: Finalized operation status
     title: OperationStatus
-  manythings.mitosis.v1beta1.context.OperationResult:
-    type: object
-    properties:
-      ok:
-        type: boolean
-      result:
-        type: string
-        format: byte
-    title: Operation Result
   manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
@@ -77013,7 +76979,7 @@ definitions:
             type: string
             format: uint64
             title: Operation id
-          poll_id:
+          evt_id:
             type: string
             format: uint64
             title: Event id
@@ -77033,27 +76999,12 @@ definitions:
                - STATUS_INIT_SIGN: Signing operation status
                - STATUS_FINISH_SIGN: Executing operation status
                - STATUS_FINALIZE: Finalized operation status
-          signer_pubkey:
-            type: string
-            format: byte
           tx_payload:
             type: string
             format: byte
           tx_bytes_to_sign:
             type: string
             format: byte
-          sig_id:
-            type: string
-            format: uint64
-          result:
-            type: object
-            properties:
-              ok:
-                type: boolean
-              result:
-                type: string
-                format: byte
-            title: Operation Result
         title: Operation message
     title: Response of [QueryOperation]
   manythings.mitosis.v1beta1.context.server.QueryOperationsResponse:
@@ -77071,7 +77022,7 @@ definitions:
               type: string
               format: uint64
               title: Operation id
-            poll_id:
+            evt_id:
               type: string
               format: uint64
               title: Event id
@@ -77091,27 +77042,12 @@ definitions:
                  - STATUS_INIT_SIGN: Signing operation status
                  - STATUS_FINISH_SIGN: Executing operation status
                  - STATUS_FINALIZE: Finalized operation status
-            signer_pubkey:
-              type: string
-              format: byte
             tx_payload:
               type: string
               format: byte
             tx_bytes_to_sign:
               type: string
               format: byte
-            sig_id:
-              type: string
-              format: uint64
-            result:
-              type: object
-              properties:
-                ok:
-                  type: boolean
-                result:
-                  type: string
-                  format: byte
-              title: Operation Result
           title: Operation message
       page:
         type: object
@@ -77217,12 +77153,6 @@ definitions:
     title: Event Message
   manythings.mitosis.v1beta1.event.Params:
     type: object
-    properties:
-      poll_threshold:
-        type: string
-      epoch_interval:
-        type: string
-        format: uint64
     description: Params defines the parameters for the module.
   manythings.mitosis.v1beta1.event.Poll:
     type: object
@@ -77238,9 +77168,6 @@ definitions:
         type: string
         format: uint64
         title: Operation id - will be filled
-      epoch:
-        type: string
-        format: uint64
       proposer:
         type: string
         format: byte
@@ -77476,12 +77403,6 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
-        properties:
-          poll_threshold:
-            type: string
-          epoch_interval:
-            type: string
-            format: uint64
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   manythings.mitosis.v1beta1.event.server.QueryPollResponse:
     type: object
@@ -77500,9 +77421,6 @@ definitions:
             type: string
             format: uint64
             title: Operation id - will be filled
-          epoch:
-            type: string
-            format: uint64
           proposer:
             type: string
             format: byte
@@ -77608,9 +77526,6 @@ definitions:
               type: string
               format: uint64
               title: Operation id - will be filled
-            epoch:
-              type: string
-              format: uint64
             proposer:
               type: string
               format: byte
@@ -77795,8 +77710,15 @@ definitions:
       participants:
         type: array
         items:
-          type: string
-          format: byte
+          type: object
+          properties:
+            address:
+              type: string
+              format: byte
+            share:
+              type: integer
+              format: int64
+          title: Participant Message
         title: keygen participants
       status:
         title: keygen event status
@@ -77815,6 +77737,16 @@ definitions:
            - STATUS_COMPLETED: Keygen Completed
            - STATUS_FAILED: Keygen Failed
     title: Keygen Message
+  manythings.mitosis.v1beta1.multisig.Keygen.Participant:
+    type: object
+    properties:
+      address:
+        type: string
+        format: byte
+      share:
+        type: integer
+        format: int64
+    title: Participant Message
   manythings.mitosis.v1beta1.multisig.Keygen.Status:
     type: string
     enum:
@@ -77831,10 +77763,7 @@ definitions:
        - STATUS_COMPLETED: Keygen Completed
        - STATUS_FAILED: Keygen Failed
     title: Keygen Status
-  manythings.mitosis.v1beta1.multisig.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  manythings.mitosis.v1beta1.multisig.PubKey:
+  manythings.mitosis.v1beta1.multisig.KeygenResult:
     type: object
     properties:
       chain:
@@ -77858,7 +77787,7 @@ definitions:
           title: Item returns
         title: participant id
     title: Pubkey Message
-  manythings.mitosis.v1beta1.multisig.PubKey.Item:
+  manythings.mitosis.v1beta1.multisig.KeygenResult.Item:
     type: object
     properties:
       participant:
@@ -77868,7 +77797,10 @@ definitions:
         type: string
         format: byte
     title: Item returns
-  manythings.mitosis.v1beta1.multisig.Sign:
+  manythings.mitosis.v1beta1.multisig.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  manythings.mitosis.v1beta1.multisig.exported.Sign:
     type: object
     properties:
       chain:
@@ -77909,7 +77841,7 @@ definitions:
            - STATUS_FAILED: Sign event Failed
         title: Sign Status
     title: Sign Message
-  manythings.mitosis.v1beta1.multisig.Sign.Status:
+  manythings.mitosis.v1beta1.multisig.exported.Sign.Status:
     type: string
     enum:
       - STATUS_UNSPECIFIED
@@ -77927,7 +77859,7 @@ definitions:
        - STATUS_SUCCESS: Sign event Success
        - STATUS_FAILED: Sign event Failed
     title: Sign Status
-  manythings.mitosis.v1beta1.multisig.SignSignature:
+  manythings.mitosis.v1beta1.multisig.exported.SignResult:
     type: object
     properties:
       chain:
@@ -77948,7 +77880,7 @@ definitions:
               format: byte
           title: SignSignature result message
     title: SignSignature Message
-  manythings.mitosis.v1beta1.multisig.SignSignature.Item:
+  manythings.mitosis.v1beta1.multisig.exported.SignResult.Item:
     type: object
     properties:
       participant:
@@ -77985,8 +77917,15 @@ definitions:
             participants:
               type: array
               items:
-                type: string
-                format: byte
+                type: object
+                properties:
+                  address:
+                    type: string
+                    format: byte
+                  share:
+                    type: integer
+                    format: int64
+                title: Participant Message
               title: keygen participants
             status:
               title: keygen event status
@@ -78048,8 +77987,15 @@ definitions:
           participants:
             type: array
             items:
-              type: string
-              format: byte
+              type: object
+              properties:
+                address:
+                  type: string
+                  format: byte
+                share:
+                  type: integer
+                  format: int64
+              title: Participant Message
             title: keygen participants
           status:
             title: keygen event status
@@ -78069,14 +78015,7 @@ definitions:
                - STATUS_FAILED: Keygen Failed
         title: Keygen Message
     title: QueryKeygenResponse is response type for Query Keygen RPC method
-  manythings.mitosis.v1beta1.multisig.server.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params holds all the parameters of this module.
-        type: object
-    description: QueryParamsResponse is response type for the Query/Params RPC method.
-  manythings.mitosis.v1beta1.multisig.server.QueryPubKeyListResponse:
+  manythings.mitosis.v1beta1.multisig.server.QueryKeygenResultListResponse:
     type: object
     properties:
       list:
@@ -78134,10 +78073,10 @@ definitions:
     title: >-
       QueryPubKeyListResponse is response type for Query Specific Key's PubKey
       List RPC method
-  manythings.mitosis.v1beta1.multisig.server.QueryPubKeyResponse:
+  manythings.mitosis.v1beta1.multisig.server.QueryKeygenResultResponse:
     type: object
     properties:
-      pubKey:
+      result:
         type: object
         properties:
           chain:
@@ -78162,6 +78101,13 @@ definitions:
             title: participant id
         title: Pubkey Message
     title: QueryPubKeyResponse is response type for Query PubKey RPC method
+  manythings.mitosis.v1beta1.multisig.server.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   manythings.mitosis.v1beta1.multisig.server.QuerySignListResponse:
     type: object
     properties:
@@ -78282,7 +78228,7 @@ definitions:
             title: Sign Status
         title: Sign Message
     title: QuerySignResponse is response type for Query Specific Sign RPC method
-  manythings.mitosis.v1beta1.multisig.server.QuerySignatureListResponse:
+  manythings.mitosis.v1beta1.multisig.server.QuerySignResultListResponse:
     type: object
     properties:
       list:
@@ -78337,7 +78283,7 @@ definitions:
     title: >-
       QuerySignatureListResponse is response type for Query Signature List RPC
       method
-  manythings.mitosis.v1beta1.multisig.server.QuerySignatureResponse:
+  manythings.mitosis.v1beta1.multisig.server.QuerySignResultResponse:
     type: object
     properties:
       signature:

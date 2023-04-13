@@ -56,7 +56,7 @@ func (k queryServer) KeygenList(ctx context.Context, msg *QueryKeygenList) (*Que
 	}, nil
 }
 
-func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKeyResponse, error) {
+func (k queryServer) KeygenResult(ctx context.Context, msg *QueryKeygenResult) (*QueryKeygenResultResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
 	keyID := exported.KeyID(msg.KeyId)
@@ -65,25 +65,25 @@ func (k queryServer) PubKey(ctx context.Context, msg *QueryPubKey) (*QueryPubKey
 		return nil, fmt.Errorf("keyId has invalid format")
 	}
 
-	pubKey, err := k.baseKeeper.QueryPubKey(wctx, chainID, id)
+	pubKey, err := k.baseKeeper.QueryKeygenResult(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &QueryPubKeyResponse{
-		PubKey: pubKey,
+	return &QueryKeygenResultResponse{
+		Result: pubKey,
 	}, nil
 }
 
-func (k queryServer) PubKeyList(ctx context.Context, msg *QueryPubKeyList) (*QueryPubKeyListResponse, error) {
+func (k queryServer) KeygenResultList(ctx context.Context, msg *QueryKeygenResultList) (*QueryKeygenResultListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	kvPubkeys, page, err := k.baseKeeper.QueryPubKeyList(wctx, msg.ChainId, msg.Pagination)
+	kvPubkeys, page, err := k.baseKeeper.QueryKeygenResultList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	return &QueryPubKeyListResponse{
+	return &QueryKeygenResultListResponse{
 		List: mitotypes.Values(kvPubkeys),
 		Page: page,
 	}, err
@@ -111,7 +111,7 @@ func (k queryServer) SignList(ctx context.Context, msg *QuerySignList) (*QuerySi
 	return &QuerySignListResponse{List: mitotypes.Values(kvSigns), Page: page}, nil
 }
 
-func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*QuerySignatureResponse, error) {
+func (k queryServer) SignResult(ctx context.Context, msg *QuerySignResult) (*QuerySignResultResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
 	sigID := exported.SigID(msg.SigId)
@@ -120,20 +120,20 @@ func (k queryServer) Signature(ctx context.Context, msg *QuerySignature) (*Query
 		return nil, fmt.Errorf("sigId has invalid format: must be chainId-sequence")
 	}
 
-	signature, err := k.baseKeeper.QuerySignature(wctx, chainID, id)
+	signature, err := k.baseKeeper.QuerySignResult(wctx, chainID, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &QuerySignatureResponse{Signature: signature}, nil
+	return &QuerySignResultResponse{Signature: signature}, nil
 }
 
-func (k queryServer) SignatureList(ctx context.Context, msg *QuerySignatureList) (*QuerySignatureListResponse, error) {
+func (k queryServer) SignResultList(ctx context.Context, msg *QuerySignResultList) (*QuerySignResultListResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
-	kvSignature, page, err := k.baseKeeper.QuerySignatureList(wctx, msg.ChainId, msg.Pagination)
+	kvSignature, page, err := k.baseKeeper.QuerySignResultList(wctx, msg.ChainId, msg.Pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	return &QuerySignatureListResponse{List: mitotypes.Values(kvSignature), Page: page}, nil
+	return &QuerySignResultListResponse{List: mitotypes.Values(kvSignature), Page: page}, nil
 }

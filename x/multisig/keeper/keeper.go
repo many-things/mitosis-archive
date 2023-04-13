@@ -16,9 +16,9 @@ type Keeper interface {
 	types.BaseKeeper
 
 	types.KeygenKeeper
-	types.PubKeyKeeper
+	types.KeygenResultKeeper
 	types.SignKeeper
-	types.SignatureKeeper
+	types.SignResultKeeper
 	types.GenesisKeeper
 }
 

@@ -54,7 +54,7 @@ func Test_Keygen(t *testing.T) {
 	keygen := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       1,
 	}
 	_, _ = k.RegisterKeygenEvent(wctx, chainID, &keygen)
@@ -78,7 +78,7 @@ func Test_KeygenList(t *testing.T) {
 		keygen := types.Keygen{
 			Chain:        chainID,
 			KeyID:        i,
-			Participants: []sdk.ValAddress{valAddr},
+			Participants: []*types.Keygen_Participant{{Address: valAddr}},
 			Status:       1,
 		}
 
@@ -96,57 +96,57 @@ func Test_KeygenList(t *testing.T) {
 	assert.DeepEqual(t, res.List, keygens)
 }
 
-func Test_PubKey(t *testing.T) {
+func Test_KeygenResult(t *testing.T) {
 	k, s, ctx := setupQueryServer(t)
 	wctx := ctx.(sdk.Context)
 	valAddr := sdk.ValAddress("address")
 
 	// try to query not exist pubkey
-	_, err := s.PubKey(wctx, &QueryPubKey{
+	_, err := s.KeygenResult(wctx, &QueryKeygenResult{
 		KeyId:     fmt.Sprintf("%s-%d", chainID, 0),
 		Validator: valAddr,
 	})
-	assert.Error(t, err, "pubkey: not found")
+	assert.Error(t, err, "keygen: not found")
 
 	// try to query exist pubkey
-	pubKey := types.PubKey{
+	pubKey := types.KeygenResult{
 		Chain: chainID,
 		KeyID: 0,
-		Items: []*types.PubKey_Item{{
+		Items: []*types.KeygenResult_Item{{
 			Participant: valAddr,
 			PubKey:      exported.PublicKey("publickey"),
 		}},
 	}
-	_ = k.RegisterPubKey(wctx, chainID, &pubKey)
-	res, err := s.PubKey(wctx, &QueryPubKey{
+	_ = k.RegisterKeygenResult(wctx, chainID, &pubKey)
+	res, err := s.KeygenResult(wctx, &QueryKeygenResult{
 		KeyId:     fmt.Sprintf("%s-%d", chainID, 0),
 		Validator: valAddr,
 	})
 	assert.NilError(t, err)
-	assert.DeepEqual(t, res.PubKey, &pubKey)
+	assert.DeepEqual(t, res.Result, &pubKey)
 }
 
-func Test_PubKeyList(t *testing.T) {
+func Test_KeygenResultList(t *testing.T) {
 	k, s, ctx := setupQueryServer(t)
 	wctx := ctx.(sdk.Context)
 
-	var pubKeyList []*types.PubKey
+	var pubKeyList []*types.KeygenResult
 	var i uint64
 	for i = 0; i < 5; i++ {
-		pubKey := types.PubKey{
+		pubKey := types.KeygenResult{
 			Chain: chainID,
 			KeyID: i,
-			Items: []*types.PubKey_Item{{
+			Items: []*types.KeygenResult_Item{{
 				Participant: sdk.ValAddress(fmt.Sprintf("addr%d", i)),
 				PubKey:      exported.PublicKey("publickey"),
 			}},
 		}
-		_ = k.RegisterPubKey(wctx, chainID, &pubKey)
+		_ = k.RegisterKeygenResult(wctx, chainID, &pubKey)
 
 		pubKeyList = append(pubKeyList, &pubKey)
 	}
 
-	res, err := s.PubKeyList(ctx, &QueryPubKeyList{
+	res, err := s.KeygenResultList(ctx, &QueryKeygenResultList{
 		ChainId: chainID,
 		Pagination: &query.PageRequest{
 			Limit: query.MaxLimit,
@@ -221,23 +221,23 @@ func Test_Signature(t *testing.T) {
 	val := sdk.ValAddress("val")
 
 	// try to query not exist signature
-	_, err := s.Signature(wctx, &QuerySignature{
+	_, err := s.SignResult(wctx, &QuerySignResult{
 		SigId: fmt.Sprintf("%s-%d", chainID, 0),
 	})
 	assert.Error(t, err, "sign_signature: not found")
 
 	// try to query exist signature
-	signature := exported.SignSignature{
+	signature := exported.SignResult{
 		Chain: chainID,
 		SigID: 0,
-		Items: []*exported.SignSignature_Item{{
+		Items: []*exported.SignResult_Item{{
 			Participant: val,
 			Signature:   exported.Signature("Signature"),
 		}},
 	}
-	_ = k.RegisterSignature(wctx, chainID, &signature)
+	_ = k.RegisterSignResult(wctx, chainID, &signature)
 
-	res, err := s.Signature(wctx, &QuerySignature{
+	res, err := s.SignResult(wctx, &QuerySignResult{
 		SigId: fmt.Sprintf("%s-%d", chainID, 0),
 	})
 	assert.NilError(t, err)
@@ -248,18 +248,18 @@ func Test_SignatureList(t *testing.T) {
 	k, s, ctx := setupQueryServer(t)
 	wctx := ctx.(sdk.Context)
 
-	var signs []*exported.SignSignature
+	var signs []*exported.SignResult
 	var i uint64
 	for i = 0; i < 5; i++ {
-		signature := exported.SignSignature{
+		signature := exported.SignResult{
 			Chain: chainID,
 			SigID: i,
-			Items: []*exported.SignSignature_Item{{
+			Items: []*exported.SignResult_Item{{
 				Participant: testutils.GenValAddress(t),
 				Signature:   exported.Signature("Signature"),
 			}},
 		}
-		_ = k.RegisterSignature(
+		_ = k.RegisterSignResult(
 			wctx,
 			chainID,
 			&signature,
@@ -268,7 +268,7 @@ func Test_SignatureList(t *testing.T) {
 		signs = append(signs, &signature)
 	}
 
-	res, err := s.SignatureList(wctx, &QuerySignatureList{
+	res, err := s.SignResultList(wctx, &QuerySignResultList{
 		ChainId:    chainID,
 		Pagination: &query.PageRequest{Limit: query.MaxLimit},
 	})

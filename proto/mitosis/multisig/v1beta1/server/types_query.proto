@@ -44,25 +44,25 @@ message QueryKeygenListResponse {
 }
 
 // QueryPubKey is request type for Query PubKey RPC method
-message QueryPubKey {
+message QueryKeygenResult {
   string key_id = 1;
   bytes validator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
 }
 
 // QueryPubKeyResponse is response type for Query PubKey RPC method
-message QueryPubKeyResponse {
-  PubKey pubKey = 1;
+message QueryKeygenResultResponse {
+  KeygenResult result = 1;
 }
 
 // QueryPubKeyList is request type for Query Specific Key's PubKey List RPC method
-message QueryPubKeyList {
+message QueryKeygenResultList {
   string chain_id = 1;
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QueryPubKeyListResponse is response type for Query Specific Key's PubKey List RPC method
-message QueryPubKeyListResponse {
-  repeated PubKey list = 1;
+message QueryKeygenResultListResponse {
+  repeated KeygenResult list = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }
 
@@ -74,7 +74,7 @@ message QuerySign {
 
 // QuerySignResponse is response type for Query Specific Sign RPC method
 message QuerySignResponse {
-  Sign sign = 1;
+  exported.Sign sign = 1;
 }
 
 // QuerySignList is request type for Query Whole Sign List for Specific SigID
@@ -85,28 +85,28 @@ message QuerySignList {
 
 // QuerySignList is response type for Query Whole Sign List for Specific SigID
 message QuerySignListResponse {
-  repeated Sign list = 1;
+  repeated exported.Sign list = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }
 
 // QuerySignature is request type for Query Signature RPC method
-message QuerySignature {
+message QuerySignResult {
   string sig_id = 1;
 }
 
 // QuerySignatureResponse is response type for Query Signature RPC method
-message QuerySignatureResponse {
-  SignSignature signature = 1;
+message QuerySignResultResponse {
+  exported.SignResult signature = 1;
 }
 
 // QuerySignatureList is request type for Query Signature List RPC method
-message QuerySignatureList {
+message QuerySignResultList {
   string chain_id = 1;
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 // QuerySignatureListResponse is response type for Query Signature List RPC method
-message QuerySignatureListResponse {
-  repeated SignSignature list = 1;
+message QuerySignResultListResponse {
+  repeated exported.SignResult list = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }

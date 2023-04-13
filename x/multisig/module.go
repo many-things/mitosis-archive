@@ -102,7 +102,8 @@ type AppModule struct {
 	keeper        keeper.Keeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
-	chainKeeper   types.ChainKeeper
+	contextKeeper types.ContextKeeper
+	eventKeeper   types.EventKeeper
 }
 
 func NewAppModule(
@@ -110,14 +111,16 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
-	chainKeeper types.ChainKeeper,
+	contextKeeper types.ContextKeeper,
+	eventKeeper types.EventKeeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
 		accountKeeper:  accountKeeper,
 		bankKeeper:     bankKeeper,
-		chainKeeper:    chainKeeper,
+		contextKeeper:  contextKeeper,
+		eventKeeper:    eventKeeper,
 	}
 }
 
@@ -134,7 +137,7 @@ func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	server.RegisterMsgServer(cfg.MsgServer(), server.NewMsgServer(am.keeper))
+	server.RegisterMsgServer(cfg.MsgServer(), server.NewMsgServer(am.keeper, am.contextKeeper, am.eventKeeper))
 	server.RegisterQueryServer(cfg.QueryServer(), server.NewQueryServer(am.keeper))
 }
 
@@ -155,7 +158,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 // ExportGenesis returns the module's exported genesis state as raw JSON bytes.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	// TODO: how to handle error?
-	chainQuery, _, _ := am.chainKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
+	chainQuery, _, _ := am.eventKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
 	var chains []byte
 	for _, val := range chainQuery {
 		chains = append(chains, val.Value)
