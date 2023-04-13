@@ -27,27 +27,27 @@ type MockEventKeeper struct {
 	valAddr sdk.ValAddress
 }
 
-func (m MockEventKeeper) QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, bool) {
-	//TODO implement me
+func (m MockEventKeeper) QueryProxy(_ sdk.Context, _ sdk.ValAddress) (sdk.AccAddress, bool) {
+	// TODO implement me
 	panic("implement me")
 }
 
-func (m MockEventKeeper) QueryProxyReverse(ctx sdk.Context, prx sdk.AccAddress) (sdk.ValAddress, bool) {
+func (m MockEventKeeper) QueryProxyReverse(_ sdk.Context, _ sdk.AccAddress) (sdk.ValAddress, bool) {
 	return m.valAddr, true
 }
 
-func (m MockEventKeeper) TotalPowerOf(ctx sdk.Context, epoch *uint64) (int64, error) {
-	//TODO implement me
+func (m MockEventKeeper) TotalPowerOf(_ sdk.Context, _ *uint64) (int64, error) {
+	// TODO implement me
 	panic("implement me")
 }
 
-func (m MockEventKeeper) VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error) {
-	//TODO implement me
+func (m MockEventKeeper) VotingPowerOf(_ sdk.Context, _ *uint64, _ sdk.ValAddress) (int64, error) {
+	// TODO implement me
 	panic("implement me")
 }
 
-func (m MockEventKeeper) QueryChains(ctx sdk.Context, pageReq *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error) {
-	//TODO implement me
+func (m MockEventKeeper) QueryChains(_ sdk.Context, _ *query.PageRequest) ([]mitotypes.KV[string, byte], *query.PageResponse, error) {
+	// TODO implement me
 	panic("implement me")
 }
 

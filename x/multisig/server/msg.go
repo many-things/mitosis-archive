@@ -111,6 +111,14 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 
 	wctx := sdk.UnwrapSDKContext(ctx)
 
+	sign, err := m.baseKeeper.QuerySign(wctx, chainID, sigID)
+	if err != nil {
+		return nil, sdkerrors.Wrap(err, "query sign")
+	}
+	if sign.Status == exported.Sign_StatusSuccess || sign.Status == exported.Sign_StatusFailed {
+		return nil, sdkerrors.Wrap(errors.ErrConflict, "sign already finished / failed")
+	}
+
 	origin, found := m.eventKeeper.QueryProxyReverse(wctx, msg.Sender)
 	if !found {
 		return nil, sdkerrors.Wrap(errors.ErrKeyNotFound, "proxy origin not found")
