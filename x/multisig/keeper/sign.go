@@ -1,14 +1,11 @@
 package keeper
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
-	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 // RegisterSignEvent is register new SignEvent
@@ -43,22 +40,6 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 		return nil, err
 	}
 
-	if sign.Status < exported.Sign_StatusComplete && newStatus >= exported.Sign_StatusComplete {
-		signResult, err := k.QuerySignResult(ctx, chainID, id)
-
-		if err != nil {
-			return nil, err
-		}
-
-		sigID := fmt.Sprintf("%s-%d", chainID, id)
-		if err := ctx.EventManager().EmitTypedEvent(&types.MsgSignComplete{
-			SigID:     exported.SigID(sigID),
-			Signature: signResult.GetResultSignature(),
-		}); err != nil {
-			return nil, err
-		}
-	}
-
 	sign.Status = newStatus
 	err = signRepo.Save(sign)
 
@@ -67,6 +48,21 @@ func (k keeper) UpdateSignStatus(ctx sdk.Context, chainID string, id uint64, new
 	}
 
 	return sign, nil
+}
+
+func (k keeper) SetResultSignature(ctx sdk.Context, chainID string, sigID uint64, signature exported.Signature) error {
+	signRepo := state.NewKVChainSignResultRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
+
+	signResult, err := signRepo.Load(sigID)
+	if err != nil {
+		return err
+	}
+	signResult.ResultSignature = signature
+	if err := signRepo.Save(signResult); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // QuerySign is get specific Sign instance

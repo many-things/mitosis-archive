@@ -83,60 +83,6 @@ func (k keeper) AddParticipantSignResult(ctx sdk.Context, chainID string, sigID 
 		return err
 	}
 
-	// Check validator
-	if sign.Status == exported.Sign_StatusExecute {
-		keygenRepo := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), chainID)
-
-		signResult, err := signatureRepo.Load(sigID)
-		if err != nil {
-			return errors.Wrap(err, "err during get signature result")
-		}
-		keygen, err := keygenRepo.Load(keyID)
-		if err != nil {
-			return errors.Wrap(err, "err during check signature threshold")
-		}
-
-		sigThresh := map[string]uint64{}
-		sigValue := map[string][]byte{}
-		partySize := map[string]uint64{}
-
-		for _, v := range keygen.Participants {
-			partySize[v.Address.String()] = uint64(v.Share)
-		}
-
-		for _, v := range signResult.Items {
-			sigValue[v.Participant.String()] = v.Signature
-			signatureKey := string(v.Signature)
-
-			if _, ok := sigThresh[signatureKey]; !ok {
-				sigThresh[signatureKey] = partySize[v.Participant.String()]
-			} else {
-				sigThresh[signatureKey] += partySize[v.Participant.String()]
-			}
-		}
-
-		var (
-			maxValue     uint64
-			maxSignature string
-		)
-
-		for k, v := range sigThresh {
-			if v > maxValue {
-				maxValue = v
-				maxSignature = k
-			}
-		}
-
-		if maxValue >= keygen.Threshold {
-			signResult.ResultSignature = sigValue[maxSignature]
-			if err := signatureRepo.Save(signResult); err != nil {
-				return err
-			}
-			if _, err := k.UpdateSignStatus(ctx, chainID, sigID, exported.Sign_StatusComplete); err != nil {
-				return err
-			}
-		}
-	}
 	return nil
 }
 
