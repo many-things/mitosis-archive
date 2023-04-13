@@ -53,10 +53,10 @@ message MessageIn {
 
 message MessageOut {
   oneof data {
-    KeygenInit keygen_init = 1; // First message Only => Keygen
-    SignInit sign_init = 2; // First message Only => Sign
+    KeygenResult keygen_result = 1; // First message Only => Keygen
+    SignResult sign_result = 2; // First message Only => Sign
     TrafficIn traffic = 3; // all subsequential message
-    bool abort = 4; // Abort the protocol
+    bool need_recover = 4; // Abort the protocol
   }
 
   message KeygenResult {

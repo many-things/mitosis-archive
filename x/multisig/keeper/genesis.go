@@ -8,7 +8,7 @@ import (
 
 func (k keeper) ExportGenesis(ctx sdk.Context, chains []byte) (*types.GenesisState, error) {
 	genState := new(types.GenesisState)
-	
+
 	for _, chain := range chains {
 		chainStr := string(chain)
 
@@ -39,7 +39,6 @@ func (k keeper) ExportGenesis(ctx sdk.Context, chains []byte) (*types.GenesisSta
 			return nil, err
 		}
 		genState.Signature.ChainSet = append(genState.Signature.ChainSet, signatureExport)
-
 	}
 	return genState, nil
 }

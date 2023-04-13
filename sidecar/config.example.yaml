@@ -1,0 +1,17 @@
+mitosis:
+  host: 127.0.0.1
+  port: 9090
+  denom: mito
+  prefix: mito
+  chain-id: ""
+  priv-key: ""
+tofn:
+  host: 127.0.0.1
+  port: 50051
+  dial-timeout: 15000000000
+  validator: "validator-addr"
+  nodes:
+    - validator: ""
+      host: ""
+    - validator: ""
+      host: ""

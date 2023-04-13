@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package manythings.sidecar;
+
+import "sidecar/common.proto";
+import "sidecar/grpc.proto";
+
+option go_package = "github.com/many-things/mitosis/sidecar/types";
+
+
+// Sidecar service works for sharing traffic in
+service Sidecar {
+  // Share KeygenTraffic
+  rpc ShareKeygenTraffic(ShareKeygenRequest) returns (ShareKeygenResponse);
+
+  // Share SignTraffic
+  rpc ShareSignTraffic(ShareSignRequest) returns (ShareSignResponse);
+}
+
+// ShareKeygenRequest
+message ShareKeygenRequest {
+  // Traffic whats stand for
+  string new_key_uid = 1;
+
+  // Traffic variable
+  TrafficIn traffic = 2;
+}
+
+// ShareKeygenResponse
+message ShareKeygenResponse {
+}
+
+// ShareSignRequest
+message ShareSignRequest {
+  // Traffic whats stand for
+  string new_sig_uid = 1;
+
+  // Traffic variable
+  TrafficIn traffic = 2;
+}
+
+
+// Share
+message ShareSignResponse {
+}
