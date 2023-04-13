@@ -206,7 +206,7 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 				return nil, sdkerrors.Wrap(err, "update sign status")
 			}
 
-			if err := m.contextKeeper.FinishSignOperation(wctx, sigID); err != nil {
+			if err := m.contextKeeper.FinishSignOperation(wctx, sign.OpId); err != nil {
 				return nil, sdkerrors.Wrap(err, "finish sign operation")
 			}
 		}
