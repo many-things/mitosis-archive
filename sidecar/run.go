@@ -1,4 +1,4 @@
-package sidecar
+package main
 
 import (
 	"context"
@@ -114,7 +114,7 @@ func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisi
 	}
 }
 
-func run() {
+func main() {
 	cfg := config.DefaultSidecarConfig()
 	ctx, cancel := context.WithCancel(context.Background())
 	eGroup, ctx := errgroup.WithContext(ctx)
