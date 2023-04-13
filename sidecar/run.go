@@ -2,6 +2,7 @@ package sidecar
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 	golog "log"
 	"net"
@@ -16,13 +17,11 @@ import (
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
 	"github.com/many-things/mitosis/sidecar/mitosis"
-	"github.com/many-things/mitosis/sidecar/storage"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/tofnd/session"
 	"github.com/many-things/mitosis/sidecar/types"
 	multisigexport "github.com/many-things/mitosis/x/multisig/exported"
-	multisigserver "github.com/many-things/mitosis/x/multisig/server"
 	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
 	"golang.org/x/sync/errgroup"
@@ -59,8 +58,8 @@ func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multi
 		var partyUIDs []string
 		var partySharesCounts []uint32
 		for _, v := range msg.Participants {
-			partyUIDs = append(partyUIDs, v.String())
-			partySharesCounts = append(partySharesCounts, 2)
+			partyUIDs = append(partyUIDs, v.Address.String())
+			partySharesCounts = append(partySharesCounts, v.Share)
 		}
 		myPartyIndex := utils.IndexOf(cfg.TofNConfig.Validator, partyUIDs)
 		if myPartyIndex < 0 {
@@ -70,9 +69,9 @@ func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multi
 		keygenInit := types.KeygenInit{
 			NewKeyUid:        keyUID,
 			PartyUids:        partyUIDs,
-			PartyShareCounts: partySharesCounts, // TODO: add shares on configurations
+			PartyShareCounts: partySharesCounts,
 			MyPartyIndex:     uint32(myPartyIndex),
-			Threshold:        uint32(len(partyUIDs)*2/3 + 1), // more than 2/3
+			Threshold:        uint32(msg.Threshold),
 		}
 
 		session := mgr.CreateSession(cfg, keygenInit)
@@ -80,49 +79,35 @@ func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multi
 			return err
 		}
 
+		// if err := storage.SaveKey(keyUID, ""); err != nil {
+		//	return err
+		// }
+
 		return nil
 	}
 }
 
-func createSignHandler(store storage.Storage, sigCli types.MultisigClient, wallet tendermint.Wallet, logger log.Logger) func(msg *multisigexport.Sign) error {
+func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisigexport.Sign) error {
 	return func(msg *multisigexport.Sign) error {
-		if !utils.Any(msg.Participants, store.IsTarget) {
-			return nil
+		mgr := session.GetSignMgrInstance()
+
+		signUID := fmt.Sprintf("%s-%d", msg.Chain, msg.SigID)
+		var partyUIDs []string
+		for _, v := range msg.Participants {
+			partyUIDs = append(partyUIDs, v.String())
 		}
 
-		pubKey, err := store.GetKey(msg.KeyID)
+		msgToSign := sha256.Sum256(msg.MessageToSign)
+		signInit := types.SignInit{
+			NewSigUid:     signUID,
+			KeyUid:        msg.KeyID,
+			PartyUids:     partyUIDs,
+			MessageToSign: msgToSign[:],
+		}
 
-		if err != nil {
-			logger.Error(err.Error())
+		session := mgr.CreateSession(cfg, signInit)
+		if err := session.StartSession(); err != nil {
 			return err
-		}
-
-		resp, err := sigCli.Sign(context.Background(), &types.SignRequest{
-			KeyUid:    msg.KeyID,
-			MsgToSign: msg.MessageToSign,
-			PartyUid:  store.GetValidator().String(),
-			PubKey:    []byte(pubKey),
-		})
-		if err != nil {
-			logger.Error(err.Error())
-			return err
-		}
-
-		sigID := fmt.Sprintf("%s-%d", msg.Chain, msg.SigID)
-
-		switch r := resp.GetSignResponse().(type) {
-		case *types.SignResponse_Signature:
-			err := wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
-				Module:      "sidecar",
-				SigID:       multisigexport.SigID(sigID),
-				Participant: store.GetValidator(),
-				Signature:   r.Signature,
-			})
-			if err != nil {
-				return err
-			}
-		case *types.SignResponse_Error:
-			return fmt.Errorf("sign: %v", r) // TODO: add MsgKeygenErr
 		}
 
 		return nil
@@ -135,30 +120,8 @@ func run() {
 	eGroup, ctx := errgroup.WithContext(ctx)
 	logger := log.NewTMLogger(os.Stdout)
 
-	wallet, err := mitosis.NewWalletFromConfig(cfg.MitoConfig)
-	if err != nil {
-		panic(err)
-	}
-	// TODO: make these Rpc robust
-
-	sigRPC := mitotmclient.NewRobustGRPCClient(func() (*grpc.ClientConn, error) {
-		sigDialURL := fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port)
-		sigRPC, err := grpc.Dial(sigDialURL)
-
-		if err != nil {
-			golog.Fatal(err)
-			return nil, err
-		}
-
-		// TODO: use state
-		return sigRPC, nil
-	})
-
-	if err != nil {
-		panic(fmt.Errorf("cannot dial to tofn network: %w", err))
-	}
-	sigCli := types.NewMultisigClient(sigRPC)
-	store := storage.GetStorage(&cfg)
+	// TODO: apply Storage on use
+	// store := storage.GetStorage(&cfg)
 
 	// TODO: implement block getter
 
@@ -188,7 +151,7 @@ func run() {
 
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
-		mitosis.CreateTypedJob(signEventRecv, createSignHandler(store, sigCli, wallet, logger), cancel, logger),
+		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, logger), cancel, logger),
 	}
 
 	utils.ForEach(jobs, func(j mitosis.Job) {

@@ -174,10 +174,22 @@ func (s *signSession) spawnReceiver() error {
 			case *types.MessageOut_SignResult_:
 				switch k := v.SignResult.GetSignResultData().(type) {
 				case *types.MessageOut_SignResult_Signature:
-					err := s.wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
+					addr, err := s.wallet.GetAddress()
+					if err != nil {
+						log.Fatal(err)
+						return
+					}
+					accAddress, err := sdk.AccAddressFromBech32(addr)
+					if err != nil {
+						log.Fatal(err)
+						return
+					}
+
+					err = s.wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
 						Module:      "sidecar",
 						Participant: sdk.ValAddress(s.config.Validator),
 						Signature:   k.Signature,
+						Sender:      accAddress,
 					})
 					if err != nil {
 						// TODO: handle more well

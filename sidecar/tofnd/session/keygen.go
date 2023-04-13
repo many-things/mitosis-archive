@@ -175,11 +175,22 @@ func (s *keygenSession) spawnReceiver() error {
 			case *types.MessageOut_KeygenResult_:
 				switch k := v.KeygenResult.GetKeygenResultData().(type) {
 				case *types.MessageOut_KeygenResult_Data:
-					err := s.wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
+					addr, err := s.wallet.GetAddress()
+					if err != nil {
+						log.Fatal(err)
+						return
+					}
+					accAddress, err := sdk.AccAddressFromBech32(addr)
+					if err != nil {
+						log.Fatal(err)
+						return
+					}
+					err = s.wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
 						Module:      "sidecar",
 						KeyID:       exported.KeyID(s.msg.NewKeyUid),
 						Participant: sdk.ValAddress(s.config.Validator),
 						PubKey:      k.Data.PubKey,
+						Sender:      accAddress,
 					})
 					if err != nil {
 						// TODO: handle more well
