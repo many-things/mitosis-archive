@@ -2,8 +2,9 @@ package server
 
 import (
 	"context"
-	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"reflect"
+
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
