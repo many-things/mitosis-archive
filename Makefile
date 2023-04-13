@@ -16,7 +16,10 @@ lint:
 	@golangci-lint run
 
 build: clean proto lint
-	@ignite chain build --output build --skip-proto
+	@echo "Build Mitosisd"
+	@go build -o build/mitosisd ./cmd/mitosisd
+	@echo "Build Sidecar"
+	@go build -o build/sidecar ./sidecar
 
 release: test build
 	@ignite chain build --output release --release --skip-proto

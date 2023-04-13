@@ -1,4 +1,4 @@
-package sidecar
+package main
 
 import (
 	"context"
@@ -114,8 +114,12 @@ func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisi
 	}
 }
 
-func run() {
-	cfg := config.DefaultSidecarConfig()
+func main() {
+	cfg, err := config.GetConfigFromFile("config.yaml")
+	if err != nil {
+		golog.Fatal(err)
+		return
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	eGroup, ctx := errgroup.WithContext(ctx)
 	logger := log.NewTMLogger(os.Stdout)
