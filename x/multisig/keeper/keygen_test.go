@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/many-things/mitosis/pkg/testutils"
 	mitosistype "github.com/many-things/mitosis/pkg/types"
@@ -21,7 +20,7 @@ func Test_RegisterKeygenEvent(t *testing.T) {
 	keygen := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       1,
 	}
 	kgID, err := k.RegisterKeygenEvent(ctx, chainID, &keygen)
@@ -44,7 +43,7 @@ func Test_QueryKeygenEvent(t *testing.T) {
 	keygen := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       1,
 	}
 
@@ -74,7 +73,7 @@ func Test_SaveKeygenEvent(t *testing.T) {
 	keygen := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       1,
 	}
 	_, err = repo.Create(&keygen)
@@ -92,7 +91,7 @@ func Test_RemoveKeygenEvent(t *testing.T) {
 	keygen := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       1,
 	}
 
@@ -126,7 +125,7 @@ func Test_QueryKeygenList(t *testing.T) {
 		keygen := types.Keygen{
 			Chain:        chainID,
 			KeyID:        i,
-			Participants: []sdk.ValAddress{valAddr},
+			Participants: []*types.Keygen_Participant{{Address: valAddr}},
 			Status:       types.Keygen_StatusComplete,
 		}
 		_, _ = repo.Create(&keygen)

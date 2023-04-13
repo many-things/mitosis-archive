@@ -6,6 +6,7 @@ import (
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/event/keeper/state"
 	"github.com/many-things/mitosis/x/event/types"
+	"github.com/pkg/errors"
 )
 
 var _ types.SnapshotKeeper = keeper{}
@@ -20,6 +21,21 @@ func (k keeper) CreateSnapshot(ctx sdk.Context, total sdkmath.Int, powers []mito
 	}
 
 	return epoch, nil
+}
+
+func (k keeper) TotalPowerOf(ctx sdk.Context, _ *uint64) (int64, error) {
+	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
+
+	powers, err := snapshotRepo.LatestPowers()
+	if err != nil {
+		return 0, errors.Wrap(err, "fetch latest powers")
+	}
+
+	total := int64(0)
+	for _, power := range mitotypes.Values(powers) {
+		total += power
+	}
+	return total, nil
 }
 
 func (k keeper) VotingPowerOf(ctx sdk.Context, _ *uint64, val sdk.ValAddress) (int64, error) {

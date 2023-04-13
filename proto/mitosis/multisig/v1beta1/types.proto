@@ -26,6 +26,12 @@ message Keygen {
     STATUS_FAILED = 4 [(gogoproto.enumvalue_customname) = "StatusFailed"];
   }
 
+  // Participant Message
+  message Participant {
+    bytes address = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+    uint32 share = 2;
+  }
+
   // key target chain id
   string chain = 1;
 
@@ -33,14 +39,14 @@ message Keygen {
   uint64 key_id = 2 [(gogoproto.customname) = "KeyID"];
 
   // keygen participants
-  repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  repeated Participant participants = 3;
 
   // keygen event status
   Status status = 4;
 }
 
 // Pubkey Message
-message PubKey {
+message KeygenResult {
   // Item returns
   message Item {
     bytes participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];

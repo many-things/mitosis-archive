@@ -2,11 +2,7 @@ syntax = "proto3";
 
 package manythings.mitosis.v1beta1.multisig.server;
 
-import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
-import "google/api/annotations.proto";
-import "mitosis/multisig/v1beta1/exported/types.proto";
-import "mitosis/multisig/v1beta1/params.proto";
 
 option go_package = "github.com/many-things/mitosis/x/multisig/server";
 
@@ -18,6 +14,7 @@ message MsgStartKeygen {
     (gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.KeyID"
   ];
   repeated bytes participants = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes sender = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 
 // MsgSubmitPubkey is message for submitMessage event
@@ -29,6 +26,7 @@ message MsgSubmitPubkey {
   ];
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
   bytes pub_key = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.PublicKey"];
+  bytes sender = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 
 // MsgStartKeygenResponse is message for StartKeygen Response
@@ -46,6 +44,7 @@ message MsgSubmitSignature {
   ];
   bytes participant = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
   bytes signature = 4 [(gogoproto.casttype) = "github.com/many-things/mitosis/x/multisig/exported.Signature"];
+  bytes sender = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 
 // MsgSubmitSignatureResponse is message for SubmitSignature Response

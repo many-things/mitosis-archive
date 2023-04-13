@@ -316,23 +316,23 @@ func (m *QueryKeygenListResponse) GetPage() *query.PageResponse {
 }
 
 // QueryPubKey is request type for Query PubKey RPC method
-type QueryPubKey struct {
+type QueryKeygenResult struct {
 	KeyId     string                                        `protobuf:"bytes,1,opt,name=key_id,json=keyId,proto3" json:"key_id,omitempty"`
 	Validator github_com_cosmos_cosmos_sdk_types.ValAddress `protobuf:"bytes,2,opt,name=validator,proto3,casttype=github.com/cosmos/cosmos-sdk/types.ValAddress" json:"validator,omitempty"`
 }
 
-func (m *QueryPubKey) Reset()         { *m = QueryPubKey{} }
-func (m *QueryPubKey) String() string { return proto.CompactTextString(m) }
-func (*QueryPubKey) ProtoMessage()    {}
-func (*QueryPubKey) Descriptor() ([]byte, []int) {
+func (m *QueryKeygenResult) Reset()         { *m = QueryKeygenResult{} }
+func (m *QueryKeygenResult) String() string { return proto.CompactTextString(m) }
+func (*QueryKeygenResult) ProtoMessage()    {}
+func (*QueryKeygenResult) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{6}
 }
-func (m *QueryPubKey) XXX_Unmarshal(b []byte) error {
+func (m *QueryKeygenResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPubKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryKeygenResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPubKey.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryKeygenResult.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -342,26 +342,26 @@ func (m *QueryPubKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return b[:n], nil
 	}
 }
-func (m *QueryPubKey) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPubKey.Merge(m, src)
+func (m *QueryKeygenResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryKeygenResult.Merge(m, src)
 }
-func (m *QueryPubKey) XXX_Size() int {
+func (m *QueryKeygenResult) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPubKey) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPubKey.DiscardUnknown(m)
+func (m *QueryKeygenResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryKeygenResult.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPubKey proto.InternalMessageInfo
+var xxx_messageInfo_QueryKeygenResult proto.InternalMessageInfo
 
-func (m *QueryPubKey) GetKeyId() string {
+func (m *QueryKeygenResult) GetKeyId() string {
 	if m != nil {
 		return m.KeyId
 	}
 	return ""
 }
 
-func (m *QueryPubKey) GetValidator() github_com_cosmos_cosmos_sdk_types.ValAddress {
+func (m *QueryKeygenResult) GetValidator() github_com_cosmos_cosmos_sdk_types.ValAddress {
 	if m != nil {
 		return m.Validator
 	}
@@ -369,22 +369,22 @@ func (m *QueryPubKey) GetValidator() github_com_cosmos_cosmos_sdk_types.ValAddre
 }
 
 // QueryPubKeyResponse is response type for Query PubKey RPC method
-type QueryPubKeyResponse struct {
-	PubKey *types.PubKey `protobuf:"bytes,1,opt,name=pubKey,proto3" json:"pubKey,omitempty"`
+type QueryKeygenResultResponse struct {
+	Result *types.KeygenResult `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 }
 
-func (m *QueryPubKeyResponse) Reset()         { *m = QueryPubKeyResponse{} }
-func (m *QueryPubKeyResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPubKeyResponse) ProtoMessage()    {}
-func (*QueryPubKeyResponse) Descriptor() ([]byte, []int) {
+func (m *QueryKeygenResultResponse) Reset()         { *m = QueryKeygenResultResponse{} }
+func (m *QueryKeygenResultResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryKeygenResultResponse) ProtoMessage()    {}
+func (*QueryKeygenResultResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{7}
 }
-func (m *QueryPubKeyResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryKeygenResultResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPubKeyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryKeygenResultResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPubKeyResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryKeygenResultResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -394,43 +394,43 @@ func (m *QueryPubKeyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *QueryPubKeyResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPubKeyResponse.Merge(m, src)
+func (m *QueryKeygenResultResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryKeygenResultResponse.Merge(m, src)
 }
-func (m *QueryPubKeyResponse) XXX_Size() int {
+func (m *QueryKeygenResultResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPubKeyResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPubKeyResponse.DiscardUnknown(m)
+func (m *QueryKeygenResultResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryKeygenResultResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPubKeyResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryKeygenResultResponse proto.InternalMessageInfo
 
-func (m *QueryPubKeyResponse) GetPubKey() *types.PubKey {
+func (m *QueryKeygenResultResponse) GetResult() *types.KeygenResult {
 	if m != nil {
-		return m.PubKey
+		return m.Result
 	}
 	return nil
 }
 
 // QueryPubKeyList is request type for Query Specific Key's PubKey List RPC method
-type QueryPubKeyList struct {
+type QueryKeygenResultList struct {
 	ChainId    string             `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QueryPubKeyList) Reset()         { *m = QueryPubKeyList{} }
-func (m *QueryPubKeyList) String() string { return proto.CompactTextString(m) }
-func (*QueryPubKeyList) ProtoMessage()    {}
-func (*QueryPubKeyList) Descriptor() ([]byte, []int) {
+func (m *QueryKeygenResultList) Reset()         { *m = QueryKeygenResultList{} }
+func (m *QueryKeygenResultList) String() string { return proto.CompactTextString(m) }
+func (*QueryKeygenResultList) ProtoMessage()    {}
+func (*QueryKeygenResultList) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{8}
 }
-func (m *QueryPubKeyList) XXX_Unmarshal(b []byte) error {
+func (m *QueryKeygenResultList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPubKeyList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryKeygenResultList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPubKeyList.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryKeygenResultList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -440,26 +440,26 @@ func (m *QueryPubKeyList) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return b[:n], nil
 	}
 }
-func (m *QueryPubKeyList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPubKeyList.Merge(m, src)
+func (m *QueryKeygenResultList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryKeygenResultList.Merge(m, src)
 }
-func (m *QueryPubKeyList) XXX_Size() int {
+func (m *QueryKeygenResultList) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPubKeyList) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPubKeyList.DiscardUnknown(m)
+func (m *QueryKeygenResultList) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryKeygenResultList.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPubKeyList proto.InternalMessageInfo
+var xxx_messageInfo_QueryKeygenResultList proto.InternalMessageInfo
 
-func (m *QueryPubKeyList) GetChainId() string {
+func (m *QueryKeygenResultList) GetChainId() string {
 	if m != nil {
 		return m.ChainId
 	}
 	return ""
 }
 
-func (m *QueryPubKeyList) GetPagination() *query.PageRequest {
+func (m *QueryKeygenResultList) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
@@ -467,23 +467,23 @@ func (m *QueryPubKeyList) GetPagination() *query.PageRequest {
 }
 
 // QueryPubKeyListResponse is response type for Query Specific Key's PubKey List RPC method
-type QueryPubKeyListResponse struct {
-	List []*types.PubKey     `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
-	Page *query.PageResponse `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+type QueryKeygenResultListResponse struct {
+	List []*types.KeygenResult `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Page *query.PageResponse   `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 }
 
-func (m *QueryPubKeyListResponse) Reset()         { *m = QueryPubKeyListResponse{} }
-func (m *QueryPubKeyListResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryPubKeyListResponse) ProtoMessage()    {}
-func (*QueryPubKeyListResponse) Descriptor() ([]byte, []int) {
+func (m *QueryKeygenResultListResponse) Reset()         { *m = QueryKeygenResultListResponse{} }
+func (m *QueryKeygenResultListResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryKeygenResultListResponse) ProtoMessage()    {}
+func (*QueryKeygenResultListResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{9}
 }
-func (m *QueryPubKeyListResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryKeygenResultListResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryPubKeyListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryKeygenResultListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryPubKeyListResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryKeygenResultListResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -493,26 +493,26 @@ func (m *QueryPubKeyListResponse) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return b[:n], nil
 	}
 }
-func (m *QueryPubKeyListResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryPubKeyListResponse.Merge(m, src)
+func (m *QueryKeygenResultListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryKeygenResultListResponse.Merge(m, src)
 }
-func (m *QueryPubKeyListResponse) XXX_Size() int {
+func (m *QueryKeygenResultListResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryPubKeyListResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryPubKeyListResponse.DiscardUnknown(m)
+func (m *QueryKeygenResultListResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryKeygenResultListResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryPubKeyListResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryKeygenResultListResponse proto.InternalMessageInfo
 
-func (m *QueryPubKeyListResponse) GetList() []*types.PubKey {
+func (m *QueryKeygenResultListResponse) GetList() []*types.KeygenResult {
 	if m != nil {
 		return m.List
 	}
 	return nil
 }
 
-func (m *QueryPubKeyListResponse) GetPage() *query.PageResponse {
+func (m *QueryKeygenResultListResponse) GetPage() *query.PageResponse {
 	if m != nil {
 		return m.Page
 	}
@@ -724,22 +724,22 @@ func (m *QuerySignListResponse) GetPage() *query.PageResponse {
 }
 
 // QuerySignature is request type for Query Signature RPC method
-type QuerySignature struct {
+type QuerySignResult struct {
 	SigId string `protobuf:"bytes,1,opt,name=sig_id,json=sigId,proto3" json:"sig_id,omitempty"`
 }
 
-func (m *QuerySignature) Reset()         { *m = QuerySignature{} }
-func (m *QuerySignature) String() string { return proto.CompactTextString(m) }
-func (*QuerySignature) ProtoMessage()    {}
-func (*QuerySignature) Descriptor() ([]byte, []int) {
+func (m *QuerySignResult) Reset()         { *m = QuerySignResult{} }
+func (m *QuerySignResult) String() string { return proto.CompactTextString(m) }
+func (*QuerySignResult) ProtoMessage()    {}
+func (*QuerySignResult) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{14}
 }
-func (m *QuerySignature) XXX_Unmarshal(b []byte) error {
+func (m *QuerySignResult) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QuerySignResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySignature.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QuerySignResult.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -749,19 +749,19 @@ func (m *QuerySignature) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *QuerySignature) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySignature.Merge(m, src)
+func (m *QuerySignResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySignResult.Merge(m, src)
 }
-func (m *QuerySignature) XXX_Size() int {
+func (m *QuerySignResult) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySignature) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySignature.DiscardUnknown(m)
+func (m *QuerySignResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySignResult.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySignature proto.InternalMessageInfo
+var xxx_messageInfo_QuerySignResult proto.InternalMessageInfo
 
-func (m *QuerySignature) GetSigId() string {
+func (m *QuerySignResult) GetSigId() string {
 	if m != nil {
 		return m.SigId
 	}
@@ -769,22 +769,22 @@ func (m *QuerySignature) GetSigId() string {
 }
 
 // QuerySignatureResponse is response type for Query Signature RPC method
-type QuerySignatureResponse struct {
-	Signature *exported.SignSignature `protobuf:"bytes,1,opt,name=signature,proto3" json:"signature,omitempty"`
+type QuerySignResultResponse struct {
+	Signature *exported.SignResult `protobuf:"bytes,1,opt,name=signature,proto3" json:"signature,omitempty"`
 }
 
-func (m *QuerySignatureResponse) Reset()         { *m = QuerySignatureResponse{} }
-func (m *QuerySignatureResponse) String() string { return proto.CompactTextString(m) }
-func (*QuerySignatureResponse) ProtoMessage()    {}
-func (*QuerySignatureResponse) Descriptor() ([]byte, []int) {
+func (m *QuerySignResultResponse) Reset()         { *m = QuerySignResultResponse{} }
+func (m *QuerySignResultResponse) String() string { return proto.CompactTextString(m) }
+func (*QuerySignResultResponse) ProtoMessage()    {}
+func (*QuerySignResultResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{15}
 }
-func (m *QuerySignatureResponse) XXX_Unmarshal(b []byte) error {
+func (m *QuerySignResultResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySignatureResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QuerySignResultResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySignatureResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QuerySignResultResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -794,19 +794,19 @@ func (m *QuerySignatureResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *QuerySignatureResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySignatureResponse.Merge(m, src)
+func (m *QuerySignResultResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySignResultResponse.Merge(m, src)
 }
-func (m *QuerySignatureResponse) XXX_Size() int {
+func (m *QuerySignResultResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySignatureResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySignatureResponse.DiscardUnknown(m)
+func (m *QuerySignResultResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySignResultResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySignatureResponse proto.InternalMessageInfo
+var xxx_messageInfo_QuerySignResultResponse proto.InternalMessageInfo
 
-func (m *QuerySignatureResponse) GetSignature() *exported.SignSignature {
+func (m *QuerySignResultResponse) GetSignature() *exported.SignResult {
 	if m != nil {
 		return m.Signature
 	}
@@ -814,23 +814,23 @@ func (m *QuerySignatureResponse) GetSignature() *exported.SignSignature {
 }
 
 // QuerySignatureList is request type for Query Signature List RPC method
-type QuerySignatureList struct {
+type QuerySignResultList struct {
 	ChainId    string             `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
 	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
 }
 
-func (m *QuerySignatureList) Reset()         { *m = QuerySignatureList{} }
-func (m *QuerySignatureList) String() string { return proto.CompactTextString(m) }
-func (*QuerySignatureList) ProtoMessage()    {}
-func (*QuerySignatureList) Descriptor() ([]byte, []int) {
+func (m *QuerySignResultList) Reset()         { *m = QuerySignResultList{} }
+func (m *QuerySignResultList) String() string { return proto.CompactTextString(m) }
+func (*QuerySignResultList) ProtoMessage()    {}
+func (*QuerySignResultList) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{16}
 }
-func (m *QuerySignatureList) XXX_Unmarshal(b []byte) error {
+func (m *QuerySignResultList) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySignatureList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QuerySignResultList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySignatureList.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QuerySignResultList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -840,26 +840,26 @@ func (m *QuerySignatureList) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *QuerySignatureList) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySignatureList.Merge(m, src)
+func (m *QuerySignResultList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySignResultList.Merge(m, src)
 }
-func (m *QuerySignatureList) XXX_Size() int {
+func (m *QuerySignResultList) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySignatureList) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySignatureList.DiscardUnknown(m)
+func (m *QuerySignResultList) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySignResultList.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySignatureList proto.InternalMessageInfo
+var xxx_messageInfo_QuerySignResultList proto.InternalMessageInfo
 
-func (m *QuerySignatureList) GetChainId() string {
+func (m *QuerySignResultList) GetChainId() string {
 	if m != nil {
 		return m.ChainId
 	}
 	return ""
 }
 
-func (m *QuerySignatureList) GetPagination() *query.PageRequest {
+func (m *QuerySignResultList) GetPagination() *query.PageRequest {
 	if m != nil {
 		return m.Pagination
 	}
@@ -867,23 +867,23 @@ func (m *QuerySignatureList) GetPagination() *query.PageRequest {
 }
 
 // QuerySignatureListResponse is response type for Query Signature List RPC method
-type QuerySignatureListResponse struct {
-	List []*exported.SignSignature `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
-	Page *query.PageResponse       `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+type QuerySignResultListResponse struct {
+	List []*exported.SignResult `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Page *query.PageResponse    `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 }
 
-func (m *QuerySignatureListResponse) Reset()         { *m = QuerySignatureListResponse{} }
-func (m *QuerySignatureListResponse) String() string { return proto.CompactTextString(m) }
-func (*QuerySignatureListResponse) ProtoMessage()    {}
-func (*QuerySignatureListResponse) Descriptor() ([]byte, []int) {
+func (m *QuerySignResultListResponse) Reset()         { *m = QuerySignResultListResponse{} }
+func (m *QuerySignResultListResponse) String() string { return proto.CompactTextString(m) }
+func (*QuerySignResultListResponse) ProtoMessage()    {}
+func (*QuerySignResultListResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8370b57160b27913, []int{17}
 }
-func (m *QuerySignatureListResponse) XXX_Unmarshal(b []byte) error {
+func (m *QuerySignResultListResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QuerySignatureListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QuerySignResultListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QuerySignatureListResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QuerySignResultListResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -893,26 +893,26 @@ func (m *QuerySignatureListResponse) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (m *QuerySignatureListResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QuerySignatureListResponse.Merge(m, src)
+func (m *QuerySignResultListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySignResultListResponse.Merge(m, src)
 }
-func (m *QuerySignatureListResponse) XXX_Size() int {
+func (m *QuerySignResultListResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QuerySignatureListResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QuerySignatureListResponse.DiscardUnknown(m)
+func (m *QuerySignResultListResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySignResultListResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QuerySignatureListResponse proto.InternalMessageInfo
+var xxx_messageInfo_QuerySignResultListResponse proto.InternalMessageInfo
 
-func (m *QuerySignatureListResponse) GetList() []*exported.SignSignature {
+func (m *QuerySignResultListResponse) GetList() []*exported.SignResult {
 	if m != nil {
 		return m.List
 	}
 	return nil
 }
 
-func (m *QuerySignatureListResponse) GetPage() *query.PageResponse {
+func (m *QuerySignResultListResponse) GetPage() *query.PageResponse {
 	if m != nil {
 		return m.Page
 	}
@@ -926,18 +926,18 @@ func init() {
 	proto.RegisterType((*QueryKeygenResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenResponse")
 	proto.RegisterType((*QueryKeygenList)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenList")
 	proto.RegisterType((*QueryKeygenListResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenListResponse")
-	proto.RegisterType((*QueryPubKey)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryPubKey")
-	proto.RegisterType((*QueryPubKeyResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryPubKeyResponse")
-	proto.RegisterType((*QueryPubKeyList)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryPubKeyList")
-	proto.RegisterType((*QueryPubKeyListResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryPubKeyListResponse")
+	proto.RegisterType((*QueryKeygenResult)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenResult")
+	proto.RegisterType((*QueryKeygenResultResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenResultResponse")
+	proto.RegisterType((*QueryKeygenResultList)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenResultList")
+	proto.RegisterType((*QueryKeygenResultListResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QueryKeygenResultListResponse")
 	proto.RegisterType((*QuerySign)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySign")
 	proto.RegisterType((*QuerySignResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignResponse")
 	proto.RegisterType((*QuerySignList)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignList")
 	proto.RegisterType((*QuerySignListResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignListResponse")
-	proto.RegisterType((*QuerySignature)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignature")
-	proto.RegisterType((*QuerySignatureResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignatureResponse")
-	proto.RegisterType((*QuerySignatureList)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignatureList")
-	proto.RegisterType((*QuerySignatureListResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignatureListResponse")
+	proto.RegisterType((*QuerySignResult)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignResult")
+	proto.RegisterType((*QuerySignResultResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignResultResponse")
+	proto.RegisterType((*QuerySignResultList)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignResultList")
+	proto.RegisterType((*QuerySignResultListResponse)(nil), "manythings.mitosis.v1beta1.multisig.server.QuerySignResultListResponse")
 }
 
 func init() {
@@ -945,50 +945,52 @@ func init() {
 }
 
 var fileDescriptor_8370b57160b27913 = []byte{
-	// 683 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0xcd, 0x6e, 0xd3, 0x4c,
-	0x14, 0x8d, 0xfb, 0xe5, 0x2b, 0xe4, 0x16, 0x8a, 0x30, 0x2d, 0x94, 0x0a, 0xb9, 0x95, 0x05, 0xb4,
-	0x14, 0xc5, 0x26, 0xed, 0x12, 0x21, 0x44, 0x91, 0x2a, 0x85, 0x22, 0x11, 0x8c, 0xc4, 0xa2, 0x9b,
-	0x32, 0xa9, 0x47, 0xd3, 0xa1, 0xb1, 0xc7, 0xf5, 0x8c, 0x43, 0xfd, 0x16, 0x48, 0x2c, 0x58, 0xf3,
-	0x36, 0x5d, 0x76, 0xc9, 0xaa, 0x42, 0xc9, 0x5b, 0xb0, 0x42, 0x99, 0x19, 0xff, 0x04, 0x14, 0x91,
-	0x90, 0xaa, 0xab, 0xda, 0xd7, 0x73, 0xce, 0x3d, 0x67, 0xce, 0xdc, 0x4e, 0xa0, 0x11, 0x50, 0xc1,
-	0x38, 0xe5, 0x6e, 0x90, 0x74, 0x04, 0xe5, 0x94, 0xb8, 0xdd, 0x46, 0x1b, 0x0b, 0xd4, 0x70, 0x39,
-	0x8e, 0xbb, 0x38, 0x76, 0x45, 0x1a, 0x61, 0xbe, 0x7f, 0x9c, 0xe0, 0x38, 0x75, 0xa2, 0x98, 0x09,
-	0x66, 0x6e, 0x04, 0x28, 0x4c, 0xc5, 0x21, 0x0d, 0x09, 0x77, 0x34, 0xda, 0xd1, 0x20, 0x27, 0x63,
-	0x71, 0x14, 0x7a, 0x79, 0xe3, 0x80, 0xf1, 0x80, 0x71, 0xb7, 0x8d, 0x38, 0x76, 0x25, 0x49, 0xce,
-	0x1f, 0x21, 0x42, 0x43, 0x24, 0x28, 0x0b, 0x15, 0xef, 0xf2, 0x02, 0x61, 0x84, 0xc9, 0x47, 0x77,
-	0xf0, 0xa4, 0xab, 0xf7, 0x08, 0x63, 0xa4, 0x83, 0x5d, 0x14, 0x51, 0x17, 0x85, 0x21, 0x13, 0x12,
-	0xc2, 0xf5, 0xd7, 0xfa, 0x48, 0xf9, 0xf8, 0x24, 0x62, 0xb1, 0xc0, 0xbe, 0x32, 0xa0, 0x97, 0x3f,
-	0x18, 0xb9, 0x3c, 0x42, 0x31, 0x0a, 0xb2, 0x65, 0xf7, 0x47, 0x2e, 0x2b, 0x91, 0xd9, 0x0b, 0x60,
-	0xbe, 0x1d, 0x38, 0x6a, 0x49, 0xa8, 0x87, 0x8f, 0x13, 0xcc, 0x85, 0xfd, 0x01, 0x6e, 0x0d, 0x55,
-	0x79, 0xc4, 0x42, 0x8e, 0xcd, 0x26, 0xcc, 0xaa, 0x16, 0x4b, 0xc6, 0xaa, 0xb1, 0x3e, 0xb7, 0xf9,
-	0xd8, 0x19, 0x67, 0x17, 0x15, 0xc9, 0x76, 0xf5, 0xf4, 0x7c, 0xa5, 0xe2, 0x69, 0x02, 0x7b, 0x0b,
-	0xe6, 0x64, 0x87, 0x5d, 0x9c, 0x12, 0x1c, 0x9a, 0x0b, 0xf0, 0xff, 0xc1, 0x21, 0xa2, 0xa1, 0x24,
-	0xae, 0x79, 0xea, 0xc5, 0x9c, 0x87, 0x19, 0xea, 0x2f, 0xcd, 0xac, 0x1a, 0xeb, 0x55, 0x6f, 0x86,
-	0xfa, 0xf6, 0x9e, 0x96, 0xa5, 0x40, 0xb9, 0xac, 0x97, 0x30, 0x7b, 0x24, 0x2b, 0x13, 0xc9, 0xd2,
-	0x24, 0x1a, 0x6a, 0x33, 0xb8, 0x51, 0xe2, 0x7e, 0x4d, 0xb9, 0x18, 0x21, 0x6a, 0x07, 0xa0, 0x48,
-	0x5d, 0x8a, 0x9b, 0xdb, 0x7c, 0xe8, 0xa8, 0x23, 0xe2, 0x0c, 0x8e, 0x88, 0xa3, 0xce, 0x59, 0xd6,
-	0xb0, 0x85, 0x08, 0xd6, 0xfb, 0xea, 0x95, 0x90, 0xf6, 0x57, 0x03, 0xee, 0xfc, 0xd6, 0x31, 0x77,
-	0xf4, 0x1c, 0xaa, 0x1d, 0xca, 0xc5, 0x92, 0xb1, 0xfa, 0xdf, 0xa4, 0x7e, 0x24, 0xd0, 0x7c, 0x0a,
-	0xd5, 0x08, 0x11, 0xac, 0xe5, 0xad, 0xfd, 0x55, 0x9e, 0xea, 0xeb, 0x49, 0x90, 0x9d, 0xe8, 0x6c,
-	0x5a, 0x49, 0x7b, 0x17, 0xa7, 0xe6, 0xa2, 0xdc, 0xde, 0x7d, 0xea, 0x67, 0xfb, 0x70, 0x84, 0xd3,
-	0xa6, 0x6f, 0xbe, 0x81, 0x5a, 0x17, 0x75, 0xa8, 0x8f, 0x04, 0x8b, 0x65, 0x9f, 0x6b, 0xdb, 0x8d,
-	0x9f, 0xe7, 0x2b, 0x75, 0x42, 0xc5, 0x61, 0xd2, 0x76, 0x0e, 0x58, 0xe0, 0xea, 0xb9, 0x51, 0x7f,
-	0xea, 0xdc, 0x3f, 0xd2, 0x47, 0xef, 0x3d, 0xea, 0xbc, 0xf0, 0xfd, 0x18, 0x73, 0xee, 0x15, 0x1c,
-	0x79, 0xba, 0xaa, 0x6d, 0x39, 0xdd, 0x48, 0x56, 0x26, 0x3b, 0x74, 0x8a, 0x44, 0x43, 0x6d, 0xa1,
-	0xd3, 0x55, 0x65, 0x99, 0xee, 0x5d, 0xb8, 0x2a, 0x03, 0x2d, 0x8c, 0x5d, 0x91, 0xef, 0x4d, 0xff,
-	0xe2, 0x23, 0x2e, 0xda, 0x4e, 0x15, 0xb1, 0x36, 0x75, 0x01, 0x11, 0x37, 0xa0, 0x26, 0x85, 0xbd,
-	0xa3, 0x64, 0xdc, 0xe1, 0xf3, 0xe0, 0x66, 0x0e, 0xc9, 0x5d, 0x3c, 0x83, 0x2a, 0xa7, 0x24, 0x1b,
-	0xbc, 0x47, 0x63, 0xb9, 0x90, 0x04, 0x12, 0x66, 0x07, 0x70, 0x3d, 0xe7, 0xbc, 0x84, 0x91, 0xfb,
-	0x62, 0xc0, 0xe2, 0x50, 0xbf, 0xb2, 0x8f, 0x52, 0x1a, 0x93, 0xf8, 0x98, 0x3e, 0x8b, 0x35, 0x98,
-	0xcf, 0x45, 0x21, 0x91, 0xc4, 0x78, 0x30, 0x71, 0x9c, 0x92, 0xd2, 0xc4, 0x71, 0x4a, 0x9a, 0xbe,
-	0xfd, 0x11, 0x6e, 0x0f, 0x2f, 0xcc, 0xe5, 0xb7, 0xa0, 0xc6, 0xb3, 0xa2, 0xce, 0x62, 0x73, 0x6c,
-	0x0f, 0x05, 0x5d, 0x41, 0x62, 0x7f, 0xd2, 0xf7, 0x42, 0xfe, 0xf1, 0xb2, 0x66, 0xe6, 0x9b, 0x01,
-	0xcb, 0x7f, 0x76, 0xce, 0x9d, 0xee, 0x0c, 0x05, 0xf5, 0x2f, 0x26, 0xa7, 0x4f, 0x6c, 0xfb, 0xd5,
-	0x69, 0xcf, 0x32, 0xce, 0x7a, 0x96, 0xf1, 0xa3, 0x67, 0x19, 0x9f, 0xfb, 0x56, 0xe5, 0xac, 0x6f,
-	0x55, 0xbe, 0xf7, 0xad, 0xca, 0xde, 0x93, 0xd2, 0x7f, 0xbf, 0x81, 0xb4, 0xba, 0xd2, 0xe6, 0x66,
-	0x77, 0xf1, 0x49, 0x71, 0x1b, 0xab, 0x1f, 0x17, 0xed, 0x59, 0x79, 0x0f, 0x6f, 0xfd, 0x0a, 0x00,
-	0x00, 0xff, 0xff, 0xa1, 0x0a, 0x09, 0xfc, 0xc4, 0x08, 0x00, 0x00,
+	// 706 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x4d, 0x4f, 0xd4, 0x4e,
+	0x1c, 0xde, 0xf2, 0xdf, 0x3f, 0xba, 0x3f, 0x7c, 0x89, 0x15, 0x22, 0xa0, 0x2e, 0x64, 0xe2, 0x0b,
+	0xc1, 0x6c, 0xeb, 0xc2, 0xc5, 0xc4, 0x83, 0x11, 0x23, 0xc9, 0x2a, 0x89, 0x58, 0x13, 0x0e, 0x78,
+	0xc0, 0x59, 0x3a, 0x0e, 0x13, 0xb6, 0x9d, 0xd2, 0x99, 0x12, 0x56, 0xbf, 0x84, 0x37, 0x2f, 0xde,
+	0xbc, 0xf8, 0x51, 0x38, 0x72, 0xf4, 0x44, 0x0c, 0x7c, 0x0b, 0x4f, 0xa6, 0x33, 0xd3, 0x97, 0x15,
+	0x36, 0xc2, 0x42, 0x38, 0x6d, 0x3b, 0x9d, 0xe7, 0xf9, 0x3d, 0xcf, 0xef, 0x65, 0x66, 0xa1, 0x19,
+	0x30, 0xc9, 0x05, 0x13, 0x6e, 0x90, 0x74, 0x24, 0x13, 0x8c, 0xba, 0xdb, 0xcd, 0x36, 0x91, 0xb8,
+	0xe9, 0x0a, 0x12, 0x6f, 0x93, 0xd8, 0x95, 0xdd, 0x88, 0x88, 0xb5, 0xad, 0x84, 0xc4, 0x5d, 0x27,
+	0x8a, 0xb9, 0xe4, 0xf6, 0x6c, 0x80, 0xc3, 0xae, 0xdc, 0x60, 0x21, 0x15, 0x8e, 0x41, 0x3b, 0x06,
+	0xe4, 0x64, 0x2c, 0x8e, 0x46, 0x4f, 0xce, 0xae, 0x73, 0x11, 0x70, 0xe1, 0xb6, 0xb1, 0x20, 0xae,
+	0x22, 0xc9, 0xf9, 0x23, 0x4c, 0x59, 0x88, 0x25, 0xe3, 0xa1, 0xe6, 0x9d, 0x1c, 0xa5, 0x9c, 0x72,
+	0xf5, 0xe8, 0xa6, 0x4f, 0x66, 0xf5, 0x0e, 0xe5, 0x9c, 0x76, 0x88, 0x8b, 0x23, 0xe6, 0xe2, 0x30,
+	0xe4, 0x52, 0x41, 0x84, 0xf9, 0xda, 0xe8, 0x2b, 0x9f, 0xec, 0x44, 0x3c, 0x96, 0xc4, 0xd7, 0x06,
+	0xcc, 0xf6, 0xfb, 0x7d, 0xb7, 0x47, 0x38, 0xc6, 0x41, 0xb6, 0xed, 0x5e, 0xdf, 0x6d, 0x25, 0x32,
+	0x34, 0x0a, 0xf6, 0xdb, 0xd4, 0xd1, 0xb2, 0x82, 0x7a, 0x64, 0x2b, 0x21, 0x42, 0xa2, 0x0f, 0x70,
+	0xb3, 0x67, 0x55, 0x44, 0x3c, 0x14, 0xc4, 0x6e, 0xc1, 0xb0, 0x0e, 0x31, 0x6e, 0x4d, 0x5b, 0x33,
+	0x23, 0x73, 0x8f, 0x9c, 0x93, 0x64, 0x51, 0x93, 0x2c, 0x54, 0x77, 0xf7, 0xa7, 0x2a, 0x9e, 0x21,
+	0x40, 0xf3, 0x30, 0xa2, 0x22, 0xbc, 0x26, 0x5d, 0x4a, 0x42, 0x7b, 0x14, 0xfe, 0x5f, 0xdf, 0xc0,
+	0x2c, 0x54, 0xc4, 0x35, 0x4f, 0xbf, 0xd8, 0xd7, 0x60, 0x88, 0xf9, 0xe3, 0x43, 0xd3, 0xd6, 0x4c,
+	0xd5, 0x1b, 0x62, 0x3e, 0x5a, 0x35, 0xb2, 0x34, 0x28, 0x97, 0xf5, 0x02, 0x86, 0x37, 0xd5, 0xca,
+	0xa9, 0x64, 0x19, 0x12, 0x03, 0x45, 0x1c, 0xae, 0x97, 0xb8, 0x97, 0x98, 0x90, 0x7d, 0x44, 0x2d,
+	0x02, 0x14, 0x55, 0x57, 0xe2, 0x46, 0xe6, 0x1e, 0x38, 0xba, 0x45, 0x9c, 0xb4, 0x45, 0x1c, 0xdd,
+	0x67, 0x59, 0xc0, 0x65, 0x4c, 0x89, 0xc9, 0xab, 0x57, 0x42, 0xa2, 0xaf, 0x16, 0xdc, 0xfa, 0x2b,
+	0x62, 0xee, 0xe8, 0x19, 0x54, 0x3b, 0x4c, 0xc8, 0x71, 0x6b, 0xfa, 0xbf, 0xd3, 0xfa, 0x51, 0x40,
+	0xfb, 0x29, 0x54, 0x23, 0x4c, 0x89, 0x91, 0xf7, 0xf0, 0x9f, 0xf2, 0x74, 0x5c, 0x4f, 0x81, 0xd0,
+	0x67, 0xb8, 0xd1, 0x9b, 0xe6, 0xa4, 0x23, 0xed, 0x31, 0x95, 0xe4, 0x35, 0xe6, 0x67, 0xd9, 0xd8,
+	0x24, 0xdd, 0x96, 0x6f, 0xbf, 0x81, 0xda, 0x36, 0xee, 0x30, 0x1f, 0x4b, 0x1e, 0xab, 0x68, 0x57,
+	0x16, 0x9a, 0xbf, 0xf7, 0xa7, 0x1a, 0x94, 0xc9, 0x8d, 0xa4, 0xed, 0xac, 0xf3, 0xc0, 0x35, 0xd3,
+	0xa3, 0x7f, 0x1a, 0xc2, 0xdf, 0x34, 0x0d, 0xb8, 0x82, 0x3b, 0xcf, 0x7d, 0x3f, 0x26, 0x42, 0x78,
+	0x05, 0x07, 0xfa, 0x08, 0x13, 0x47, 0x82, 0x97, 0x1b, 0x30, 0x56, 0x2b, 0xa6, 0xd2, 0xcd, 0xd3,
+	0x64, 0x46, 0x53, 0x19, 0x02, 0xf4, 0x09, 0xc6, 0x8e, 0xc4, 0x51, 0x55, 0x9f, 0x80, 0xcb, 0xaa,
+	0xd0, 0x85, 0xd5, 0x4b, 0xea, 0xbd, 0xe5, 0x9f, 0x5b, 0xe9, 0xbf, 0x5b, 0x70, 0xf7, 0xd8, 0xe0,
+	0xb9, 0xd1, 0x97, 0x3d, 0x0d, 0x30, 0x80, 0xcd, 0x73, 0x68, 0x83, 0x26, 0xd4, 0x94, 0xc8, 0x77,
+	0x8c, 0x9e, 0x74, 0x40, 0xdf, 0x9b, 0xce, 0x49, 0x21, 0xb9, 0x97, 0x45, 0xa8, 0x0a, 0x46, 0xb3,
+	0xe1, 0x9c, 0x3b, 0x91, 0x97, 0xec, 0xe0, 0x73, 0x14, 0x93, 0xc2, 0xa3, 0x00, 0xae, 0xe6, 0xe4,
+	0x17, 0x30, 0x9f, 0xdf, 0x2c, 0xd3, 0x21, 0x59, 0xbc, 0xb2, 0xa1, 0x52, 0x71, 0x06, 0x32, 0x74,
+	0xf6, 0xea, 0xcc, 0x98, 0xf3, 0xca, 0xa4, 0xda, 0x8c, 0xa8, 0x60, 0xb4, 0x34, 0xa2, 0x82, 0xd1,
+	0x96, 0x8f, 0xb6, 0xcc, 0x39, 0x53, 0xec, 0xcc, 0x9d, 0xac, 0x40, 0x2d, 0x4d, 0x2d, 0x96, 0x49,
+	0x4c, 0x4c, 0x7d, 0x9e, 0x0c, 0x60, 0x47, 0x93, 0x16, 0x54, 0x68, 0xc7, 0x1c, 0xd4, 0xc5, 0xd7,
+	0x8b, 0x1a, 0xad, 0x1f, 0x16, 0xdc, 0x3e, 0x26, 0x74, 0xee, 0x78, 0xa9, 0xa7, 0x76, 0x83, 0x9b,
+	0x3d, 0x7b, 0x05, 0x17, 0x5e, 0xed, 0x1e, 0xd4, 0xad, 0xbd, 0x83, 0xba, 0xf5, 0xeb, 0xa0, 0x6e,
+	0x7d, 0x39, 0xac, 0x57, 0xf6, 0x0e, 0xeb, 0x95, 0x9f, 0x87, 0xf5, 0xca, 0xea, 0xe3, 0xd2, 0xe9,
+	0x99, 0x0a, 0x6c, 0x68, 0x85, 0x6e, 0x76, 0xa3, 0xef, 0x14, 0x77, 0xba, 0xfe, 0x8b, 0xd2, 0x1e,
+	0x56, 0xb7, 0xf9, 0xfc, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x64, 0x81, 0xa7, 0x8f, 0x0a, 0x09,
+	0x00, 0x00,
 }
 
 func (m *QueryParamsRequest) Marshal() (dAtA []byte, err error) {
@@ -1208,7 +1210,7 @@ func (m *QueryKeygenListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPubKey) Marshal() (dAtA []byte, err error) {
+func (m *QueryKeygenResult) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1218,12 +1220,12 @@ func (m *QueryPubKey) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPubKey) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryKeygenResult) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPubKey) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryKeygenResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1245,7 +1247,7 @@ func (m *QueryPubKey) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPubKeyResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryKeygenResultResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1255,19 +1257,19 @@ func (m *QueryPubKeyResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPubKeyResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryKeygenResultResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPubKeyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryKeygenResultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.PubKey != nil {
+	if m.Result != nil {
 		{
-			size, err := m.PubKey.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.Result.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -1280,7 +1282,7 @@ func (m *QueryPubKeyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPubKeyList) Marshal() (dAtA []byte, err error) {
+func (m *QueryKeygenResultList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1290,12 +1292,12 @@ func (m *QueryPubKeyList) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPubKeyList) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryKeygenResultList) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPubKeyList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryKeygenResultList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1322,7 +1324,7 @@ func (m *QueryPubKeyList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryPubKeyListResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryKeygenResultListResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1332,12 +1334,12 @@ func (m *QueryPubKeyListResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryPubKeyListResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryKeygenResultListResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryPubKeyListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryKeygenResultListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1532,7 +1534,7 @@ func (m *QuerySignListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySignature) Marshal() (dAtA []byte, err error) {
+func (m *QuerySignResult) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1542,12 +1544,12 @@ func (m *QuerySignature) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySignature) MarshalTo(dAtA []byte) (int, error) {
+func (m *QuerySignResult) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QuerySignResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1562,7 +1564,7 @@ func (m *QuerySignature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySignatureResponse) Marshal() (dAtA []byte, err error) {
+func (m *QuerySignResultResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1572,12 +1574,12 @@ func (m *QuerySignatureResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySignatureResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QuerySignResultResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySignatureResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QuerySignResultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1597,7 +1599,7 @@ func (m *QuerySignatureResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySignatureList) Marshal() (dAtA []byte, err error) {
+func (m *QuerySignResultList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1607,12 +1609,12 @@ func (m *QuerySignatureList) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySignatureList) MarshalTo(dAtA []byte) (int, error) {
+func (m *QuerySignResultList) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySignatureList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QuerySignResultList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1639,7 +1641,7 @@ func (m *QuerySignatureList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QuerySignatureListResponse) Marshal() (dAtA []byte, err error) {
+func (m *QuerySignResultListResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1649,12 +1651,12 @@ func (m *QuerySignatureListResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QuerySignatureListResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QuerySignResultListResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QuerySignatureListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QuerySignResultListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -1784,7 +1786,7 @@ func (m *QueryKeygenListResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryPubKey) Size() (n int) {
+func (m *QueryKeygenResult) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1801,20 +1803,20 @@ func (m *QueryPubKey) Size() (n int) {
 	return n
 }
 
-func (m *QueryPubKeyResponse) Size() (n int) {
+func (m *QueryKeygenResultResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.PubKey != nil {
-		l = m.PubKey.Size()
+	if m.Result != nil {
+		l = m.Result.Size()
 		n += 1 + l + sovTypesQuery(uint64(l))
 	}
 	return n
 }
 
-func (m *QueryPubKeyList) Size() (n int) {
+func (m *QueryKeygenResultList) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1831,7 +1833,7 @@ func (m *QueryPubKeyList) Size() (n int) {
 	return n
 }
 
-func (m *QueryPubKeyListResponse) Size() (n int) {
+func (m *QueryKeygenResultListResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1915,7 +1917,7 @@ func (m *QuerySignListResponse) Size() (n int) {
 	return n
 }
 
-func (m *QuerySignature) Size() (n int) {
+func (m *QuerySignResult) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1928,7 +1930,7 @@ func (m *QuerySignature) Size() (n int) {
 	return n
 }
 
-func (m *QuerySignatureResponse) Size() (n int) {
+func (m *QuerySignResultResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1941,7 +1943,7 @@ func (m *QuerySignatureResponse) Size() (n int) {
 	return n
 }
 
-func (m *QuerySignatureList) Size() (n int) {
+func (m *QuerySignResultList) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1958,7 +1960,7 @@ func (m *QuerySignatureList) Size() (n int) {
 	return n
 }
 
-func (m *QuerySignatureListResponse) Size() (n int) {
+func (m *QuerySignResultListResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2541,7 +2543,7 @@ func (m *QueryKeygenListResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPubKey) Unmarshal(dAtA []byte) error {
+func (m *QueryKeygenResult) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2564,10 +2566,10 @@ func (m *QueryPubKey) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPubKey: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryKeygenResult: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPubKey: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryKeygenResult: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2657,7 +2659,7 @@ func (m *QueryPubKey) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPubKeyResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryKeygenResultResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2680,15 +2682,15 @@ func (m *QueryPubKeyResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPubKeyResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryKeygenResultResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPubKeyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryKeygenResultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PubKey", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -2715,10 +2717,10 @@ func (m *QueryPubKeyResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.PubKey == nil {
-				m.PubKey = &types.PubKey{}
+			if m.Result == nil {
+				m.Result = &types.KeygenResult{}
 			}
-			if err := m.PubKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Result.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2743,7 +2745,7 @@ func (m *QueryPubKeyResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPubKeyList) Unmarshal(dAtA []byte) error {
+func (m *QueryKeygenResultList) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2766,10 +2768,10 @@ func (m *QueryPubKeyList) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPubKeyList: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryKeygenResultList: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPubKeyList: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryKeygenResultList: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2861,7 +2863,7 @@ func (m *QueryPubKeyList) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryPubKeyListResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryKeygenResultListResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2884,10 +2886,10 @@ func (m *QueryPubKeyListResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryPubKeyListResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryKeygenResultListResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryPubKeyListResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryKeygenResultListResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2919,7 +2921,7 @@ func (m *QueryPubKeyListResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.List = append(m.List, &types.PubKey{})
+			m.List = append(m.List, &types.KeygenResult{})
 			if err := m.List[len(m.List)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -3406,7 +3408,7 @@ func (m *QuerySignListResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySignature) Unmarshal(dAtA []byte) error {
+func (m *QuerySignResult) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3429,10 +3431,10 @@ func (m *QuerySignature) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySignature: wiretype end group for non-group")
+			return fmt.Errorf("proto: QuerySignResult: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySignature: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QuerySignResult: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3488,7 +3490,7 @@ func (m *QuerySignature) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySignatureResponse) Unmarshal(dAtA []byte) error {
+func (m *QuerySignResultResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3511,10 +3513,10 @@ func (m *QuerySignatureResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySignatureResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QuerySignResultResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySignatureResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QuerySignResultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3547,7 +3549,7 @@ func (m *QuerySignatureResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Signature == nil {
-				m.Signature = &exported.SignSignature{}
+				m.Signature = &exported.SignResult{}
 			}
 			if err := m.Signature.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3574,7 +3576,7 @@ func (m *QuerySignatureResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySignatureList) Unmarshal(dAtA []byte) error {
+func (m *QuerySignResultList) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3597,10 +3599,10 @@ func (m *QuerySignatureList) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySignatureList: wiretype end group for non-group")
+			return fmt.Errorf("proto: QuerySignResultList: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySignatureList: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QuerySignResultList: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3692,7 +3694,7 @@ func (m *QuerySignatureList) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QuerySignatureListResponse) Unmarshal(dAtA []byte) error {
+func (m *QuerySignResultListResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3715,10 +3717,10 @@ func (m *QuerySignatureListResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QuerySignatureListResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QuerySignResultListResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QuerySignatureListResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QuerySignResultListResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -3750,7 +3752,7 @@ func (m *QuerySignatureListResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.List = append(m.List, &exported.SignSignature{})
+			m.List = append(m.List, &exported.SignResult{})
 			if err := m.List[len(m.List)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}

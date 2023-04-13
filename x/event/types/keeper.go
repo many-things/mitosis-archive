@@ -63,6 +63,8 @@ type ProxyKeeper interface {
 type SnapshotKeeper interface {
 	CreateSnapshot(ctx sdk.Context, total sdkmath.Int, powers []mitotypes.KV[sdk.ValAddress, int64]) (*EpochInfo, error)
 
+	TotalPowerOf(ctx sdk.Context, epoch *uint64) (int64, error)
+
 	VotingPowerOf(ctx sdk.Context, epoch *uint64, val sdk.ValAddress) (int64, error)
 
 	LatestSnapshotEpoch(ctx sdk.Context) (*EpochInfo, error)

@@ -16,20 +16,9 @@ message GenesisKeygen {
     string chain = 1;
     uint64 last_id = 2;
     repeated Keygen item_set = 3;
+    repeated KeygenResult result_set = 4;
   }
 
-  repeated ChainSet chain_set = 1;
-}
-
-// GenesisPubKey defines the multisig pubkey genesis state.
-message GenesisPubKey {
-  // Key-Value set of chain
-  message ChainSet {
-    string chain = 1;
-    repeated PubKey item_set = 2;
-  }
-
-  // publicKey
   repeated ChainSet chain_set = 1;
 }
 
@@ -39,18 +28,8 @@ message GenesisSign {
   message ChainSet {
     string chain = 1;
     uint64 last_id = 2;
-    repeated Sign item_set = 3;
-  }
-
-  repeated ChainSet chain_set = 1;
-}
-
-// GenesisSignature define the multisig signature genesis state.
-message GenesisSignature {
-  // Set of chain
-  message ChainSet {
-    string chain = 1;
-    repeated SignSignature item_set = 2;
+    repeated exported.Sign item_set = 3;
+    repeated exported.SignResult result_set = 4;
   }
 
   repeated ChainSet chain_set = 1;
@@ -62,9 +41,5 @@ message GenesisState {
 
   GenesisKeygen keygen = 2;
 
-  GenesisPubKey pubKey = 3;
-
-  GenesisSign sign = 4;
-
-  GenesisSignature signature = 5;
+  GenesisSign sign = 3;
 }

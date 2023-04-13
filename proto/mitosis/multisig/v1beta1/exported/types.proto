@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package manythings.mitosis.v1beta1.multisig;
+package manythings.mitosis.v1beta1.multisig.exported;
 
 import "gogoproto/gogo.proto";
 
@@ -48,7 +48,7 @@ message Sign {
 }
 
 // SignSignature Message
-message SignSignature {
+message SignResult {
   // SignSignature result message
   message Item {
     bytes participant = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];

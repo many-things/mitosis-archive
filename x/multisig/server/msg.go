@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"reflect"
 
 	sdkerrors "cosmossdk.io/errors"
@@ -13,11 +14,12 @@ import (
 )
 
 type msgServer struct {
-	baseKeeper keeper.Keeper
+	baseKeeper  keeper.Keeper
+	eventKeeper types.EventKeeper
 }
 
-func NewMsgServer(keeper keeper.Keeper) MsgServer {
-	return msgServer{keeper}
+func NewMsgServer(keeper keeper.Keeper, eventKeeper types.EventKeeper) MsgServer {
+	return msgServer{keeper, eventKeeper}
 }
 
 // StartKeygen is handle MsgStartKeygen message
@@ -40,7 +42,13 @@ func (m msgServer) StartKeygen(ctx context.Context, msg *MsgStartKeygen) (*MsgSt
 
 	if kgObj.Status > types.Keygen_StatusExecute {
 		return nil, sdkerrors.Wrap(errors.ErrInvalidRequest, "keygen: cannot start finished keygen")
-	} else if !reflect.DeepEqual(msg.Participants, kgObj.Participants) {
+	} else if !reflect.DeepEqual(
+		msg.Participants,
+		mitosistype.Map(
+			kgObj.Participants,
+			func(p *types.Keygen_Participant, _ int) sdk.ValAddress { return p.Address },
+		),
+	) {
 		return nil, sdkerrors.Wrap(errors.ErrInvalidRequest, "keygen: invalid participants")
 	}
 
@@ -67,21 +75,21 @@ func (m msgServer) SubmitPubkey(ctx context.Context, msg *MsgSubmitPubkey) (*Msg
 
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	if !m.baseKeeper.HasPubKey(wctx, chainID, keyID) {
-		pubKey := types.PubKey{
+	if !m.baseKeeper.HasKeygenResult(wctx, chainID, keyID) {
+		pubKey := types.KeygenResult{
 			Chain: chainID,
 			KeyID: keyID,
-			Items: []*types.PubKey_Item{{
+			Items: []*types.KeygenResult_Item{{
 				Participant: msg.Participant,
 				PubKey:      msg.PubKey,
 			}},
 		}
 
-		if err := m.baseKeeper.RegisterPubKey(wctx, chainID, &pubKey); err != nil {
+		if err := m.baseKeeper.RegisterKeygenResult(wctx, chainID, &pubKey); err != nil {
 			return nil, err
 		}
 	} else {
-		if err := m.baseKeeper.AddParticipantPubKey(wctx, chainID, keyID, msg.Participant, msg.PubKey); err != nil {
+		if err := m.baseKeeper.AddParticipantKeygenResult(wctx, chainID, keyID, msg.Participant, msg.PubKey); err != nil {
 			return nil, err
 		}
 	}
@@ -101,21 +109,21 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 	}
 
 	wctx := sdk.UnwrapSDKContext(ctx)
-	if m.baseKeeper.HasSignature(wctx, chainID, sigID) {
-		if err := m.baseKeeper.AddParticipantSignature(wctx, chainID, sigID, msg.Participant, msg.Signature); err != nil {
+	if m.baseKeeper.HasSignResult(wctx, chainID, sigID) {
+		if err := m.baseKeeper.AddParticipantSignResult(wctx, chainID, sigID, msg.Participant, msg.Signature); err != nil {
 			return nil, err
 		}
 	} else {
-		signature := exported.SignSignature{
+		signature := exported.SignResult{
 			Chain: chainID,
 			SigID: sigID,
-			Items: []*exported.SignSignature_Item{{
+			Items: []*exported.SignResult_Item{{
 				Participant: msg.Participant,
 				Signature:   msg.Signature,
 			}},
 		}
 
-		if err := m.baseKeeper.RegisterSignature(wctx, chainID, &signature); err != nil {
+		if err := m.baseKeeper.RegisterSignResult(wctx, chainID, &signature); err != nil {
 			return nil, err
 		}
 	}

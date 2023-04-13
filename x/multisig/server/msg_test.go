@@ -16,7 +16,7 @@ import (
 
 func setupMsgServer(t testing.TB) (keeper.Keeper, MsgServer, context.Context) {
 	k, ctx, _, _ := keepertest.MultisigKeeper(t)
-	return k, NewMsgServer(k), sdk.WrapSDKContext(ctx)
+	return k, NewMsgServer(k, nil), sdk.WrapSDKContext(ctx)
 }
 
 func Test_StartKeygen_Failure(t *testing.T) {
@@ -38,7 +38,7 @@ func Test_StartKeygen_Failure(t *testing.T) {
 	kg := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       types.Keygen_StatusComplete,
 	}
 	_, _ = k.RegisterKeygenEvent(wctx, chainID, &kg)
@@ -69,7 +69,7 @@ func Test_StartKeygen_Success(t *testing.T) {
 	keygen := types.Keygen{
 		Chain:        chainID,
 		KeyID:        0,
-		Participants: []sdk.ValAddress{valAddr},
+		Participants: []*types.Keygen_Participant{{Address: valAddr}},
 		Status:       types.Keygen_StatusAssign,
 	}
 
@@ -107,8 +107,8 @@ func Test_SubmitPubKey(t *testing.T) {
 	pubKey := testutils.GenPublicKey(t)
 
 	// ensure pubkey not exist yet
-	_, err := k.QueryPubKey(wctx, chainID, 0)
-	assert.Error(t, err, "pubkey: not found")
+	_, err := k.QueryKeygenResult(wctx, chainID, 0)
+	assert.Error(t, err, "keygen: not found")
 
 	_, err = s.SubmitPubkey(wctx, &MsgSubmitPubkey{
 		Module:      "module",
@@ -119,7 +119,7 @@ func Test_SubmitPubKey(t *testing.T) {
 	assert.NilError(t, err)
 
 	// check pubKey
-	res, err := k.QueryPubKey(wctx, chainID, 0)
+	res, err := k.QueryKeygenResult(wctx, chainID, 0)
 	assert.NilError(t, err)
 	assert.DeepEqual(t, res.Items[0].PubKey, pubKey)
 }
@@ -131,7 +131,7 @@ func Test_SubmitSignature(t *testing.T) {
 	signature := exported.Signature("signature")
 
 	// ensure signature not exist yet
-	_, err := k.QuerySignature(wctx, chainID, 0)
+	_, err := k.QuerySignResult(wctx, chainID, 0)
 	assert.Error(t, err, "sign_signature: not found")
 
 	// request signature
@@ -144,7 +144,7 @@ func Test_SubmitSignature(t *testing.T) {
 	assert.NilError(t, err)
 
 	// ensure signature exists
-	res, err := k.QuerySignature(wctx, chainID, 0)
+	res, err := k.QuerySignResult(wctx, chainID, 0)
 	assert.NilError(t, err)
 	assert.DeepEqual(t, res.Items[0].Signature, signature)
 }
