@@ -102,6 +102,7 @@ type AppModule struct {
 	keeper        keeper.Keeper
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
+	contextKeeper types.ContextKeeper
 	eventKeeper   types.EventKeeper
 }
 
@@ -110,6 +111,7 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	contextKeeper types.ContextKeeper,
 	eventKeeper types.EventKeeper,
 ) AppModule {
 	return AppModule{
@@ -117,6 +119,7 @@ func NewAppModule(
 		keeper:         keeper,
 		accountKeeper:  accountKeeper,
 		bankKeeper:     bankKeeper,
+		contextKeeper:  contextKeeper,
 		eventKeeper:    eventKeeper,
 	}
 }
@@ -134,7 +137,7 @@ func (am AppModule) LegacyQuerierHandler(_ *codec.LegacyAmino) sdk.Querier {
 
 // RegisterServices registers a gRPC query service to respond to the module-specific gRPC queries
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	server.RegisterMsgServer(cfg.MsgServer(), server.NewMsgServer(am.keeper, am.eventKeeper))
+	server.RegisterMsgServer(cfg.MsgServer(), server.NewMsgServer(am.keeper, am.contextKeeper, am.eventKeeper))
 	server.RegisterQueryServer(cfg.QueryServer(), server.NewQueryServer(am.keeper))
 }
 

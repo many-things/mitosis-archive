@@ -14,12 +14,13 @@ import (
 )
 
 type msgServer struct {
-	baseKeeper  keeper.Keeper
-	eventKeeper types.EventKeeper
+	baseKeeper    keeper.Keeper
+	contextKeeper types.ContextKeeper
+	eventKeeper   types.EventKeeper
 }
 
-func NewMsgServer(keeper keeper.Keeper, eventKeeper types.EventKeeper) MsgServer {
-	return msgServer{keeper, eventKeeper}
+func NewMsgServer(keeper keeper.Keeper, contextKeeper types.ContextKeeper, eventKeeper types.EventKeeper) MsgServer {
+	return msgServer{keeper, contextKeeper, eventKeeper}
 }
 
 // StartKeygen is handle MsgStartKeygen message
@@ -126,6 +127,10 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 		if err := m.baseKeeper.RegisterSignResult(wctx, chainID, &signature); err != nil {
 			return nil, err
 		}
+	}
+
+	if err := m.contextKeeper.FinishSignOperation(wctx, sigID); err != nil {
+		return nil, err
 	}
 
 	return &MsgSubmitSignatureResponse{}, nil

@@ -72,6 +72,10 @@ type GenesisKeeper interface {
 	ImportGenesis(ctx sdk.Context, genState *GenesisState) error
 }
 
+type ContextKeeper interface {
+	FinishSignOperation(ctx sdk.Context, id uint64) error
+}
+
 type EventKeeper interface {
 	QueryProxy(ctx sdk.Context, val sdk.ValAddress) (sdk.AccAddress, bool)
 	QueryProxyReverse(ctx sdk.Context, prx sdk.AccAddress) (sdk.ValAddress, bool)
