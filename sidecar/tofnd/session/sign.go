@@ -12,13 +12,12 @@ import (
 	"github.com/many-things/mitosis/sidecar/mitosis"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/types"
-	"github.com/many-things/mitosis/x/multisig/exported"
 	multisigserver "github.com/many-things/mitosis/x/multisig/server"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
-type KeygenSession interface {
+type SignSession interface {
 	StartSession() error
 	CloseSession() error
 	BroadcastMsg(msg types.TrafficIn) error
@@ -26,43 +25,43 @@ type KeygenSession interface {
 	IsRunning() bool
 }
 
-type keygenSessionMgr struct {
-	sessions map[string]KeygenSession
+type signSessionMgr struct {
+	sessions map[string]SignSession
 }
 
-type keygenSession struct {
+type signSession struct {
 	config    config.TofNConfig
-	msg       types.KeygenInit
+	msg       types.SignInit
 	sessions  map[string]*grpc.ClientConn
 	stream    *GG20StreamSession
 	wallet    tendermint.Wallet
 	isRunning bool
 }
 
-var mgrInstance *keygenSessionMgr
-var lock = &sync.Mutex{}
+var signMgrInstance *signSessionMgr
+var signLock = &sync.Mutex{}
 
-func GetKeygenMgrInstance() *keygenSessionMgr { //nolint: revive
-	if mgrInstance == nil {
-		lock.Lock()
-		defer lock.Unlock()
+func GetSignMgrInstance() *signSessionMgr { //nolint: revive
+	if signMgrInstance == nil {
+		signLock.Lock()
+		defer signLock.Unlock()
 
 		// Is still nil after get Lock
-		if mgrInstance == nil {
-			mgrInstance = &keygenSessionMgr{}
+		if signMgrInstance == nil {
+			signMgrInstance = &signSessionMgr{}
 		}
 	}
 
-	return mgrInstance
+	return signMgrInstance
 }
 
-func (m *keygenSessionMgr) CreateSession(cfg config.SidecarConfig, msg types.KeygenInit) KeygenSession {
+func (m *signSessionMgr) CreateSession(cfg config.SidecarConfig, msg types.SignInit) SignSession {
 	wallet, err := mitosis.NewWalletFromConfig(cfg.MitoConfig)
 	if err != nil {
 		return nil
 	}
 
-	m.sessions[msg.NewKeyUid] = &keygenSession{
+	m.sessions[msg.NewSigUid] = &signSession{
 		config:   cfg.TofNConfig,
 		msg:      msg,
 		sessions: map[string]*grpc.ClientConn{},
@@ -70,10 +69,10 @@ func (m *keygenSessionMgr) CreateSession(cfg config.SidecarConfig, msg types.Key
 		wallet:   wallet,
 	}
 
-	return m.sessions[msg.NewKeyUid]
+	return m.sessions[msg.NewSigUid]
 }
 
-func (m *keygenSessionMgr) GetSession(key string) (KeygenSession, bool) {
+func (m *signSessionMgr) GetSession(key string) (SignSession, bool) {
 	sess, ok := m.sessions[key]
 	if !ok {
 		return nil, false
@@ -82,7 +81,7 @@ func (m *keygenSessionMgr) GetSession(key string) (KeygenSession, bool) {
 	return sess, true
 }
 
-func (m *keygenSessionMgr) Consume(msg types.ShareKeygenRequest) error {
+func (m *signSessionMgr) Consume(msg types.ShareKeygenRequest) error {
 	sess, ok := m.GetSession(msg.NewKeyUid)
 	if !ok {
 		return fmt.Errorf("key_uid not found: %s", msg.NewKeyUid)
@@ -95,7 +94,7 @@ func (m *keygenSessionMgr) Consume(msg types.ShareKeygenRequest) error {
 	return sess.ConsumeMsg(*msg.Traffic)
 }
 
-func (m *keygenSessionMgr) ReleaseSession(key string) error {
+func (m *signSessionMgr) ReleaseSession(key string) error {
 	if sess, ok := m.GetSession(key); ok {
 		if sess.IsRunning() {
 			err := sess.CloseSession()
@@ -109,7 +108,7 @@ func (m *keygenSessionMgr) ReleaseSession(key string) error {
 	return nil
 }
 
-func (s *keygenSession) StartSession() error {
+func (s *signSession) StartSession() error {
 	// convert node list to HashMap
 	nodeMap := map[string]string{}
 	for _, v := range s.config.Nodes {
@@ -137,7 +136,7 @@ func (s *keygenSession) StartSession() error {
 	}
 
 	cli := types.NewGG20Client(conn)
-	stream, err := cli.Keygen(context.Background())
+	stream, err := cli.Sign(context.Background())
 	if err != nil {
 		return err
 	}
@@ -151,7 +150,7 @@ func (s *keygenSession) StartSession() error {
 	return nil
 }
 
-func (s *keygenSession) spawnReceiver() error {
+func (s *signSession) spawnReceiver() error {
 	// TODO: handle go routine errs
 
 	go func() {
@@ -172,14 +171,13 @@ func (s *keygenSession) spawnReceiver() error {
 					log.Fatal(err)
 				}
 				return
-			case *types.MessageOut_KeygenResult_:
-				switch k := v.KeygenResult.GetKeygenResultData().(type) {
-				case *types.MessageOut_KeygenResult_Data:
-					err := s.wallet.BroadcastMsg(&multisigserver.MsgSubmitPubkey{
+			case *types.MessageOut_SignResult_:
+				switch k := v.SignResult.GetSignResultData().(type) {
+				case *types.MessageOut_SignResult_Signature:
+					err := s.wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
 						Module:      "sidecar",
-						KeyID:       exported.KeyID(s.msg.NewKeyUid),
 						Participant: sdk.ValAddress(s.config.Validator),
-						PubKey:      k.Data.PubKey,
+						Signature:   k.Signature,
 					})
 					if err != nil {
 						// TODO: handle more well
@@ -187,7 +185,7 @@ func (s *keygenSession) spawnReceiver() error {
 					}
 
 					return
-				case *types.MessageOut_KeygenResult_Criminals:
+				case *types.MessageOut_SignResult_Criminals:
 					// TODO: handle jail function
 					log.Fatal(fmt.Errorf("criminal"))
 				}
@@ -200,7 +198,7 @@ func (s *keygenSession) spawnReceiver() error {
 	return nil
 }
 
-func (s *keygenSession) CloseSession() error {
+func (s *signSession) CloseSession() error {
 	// TODO: apply mutex
 	for _, p := range s.sessions {
 		err := p.Close()
@@ -214,11 +212,11 @@ func (s *keygenSession) CloseSession() error {
 	return nil
 }
 
-func (s *keygenSession) BroadcastMsg(msg types.TrafficIn) error {
+func (s *signSession) BroadcastMsg(msg types.TrafficIn) error {
 	for _, v := range s.sessions {
 		serv := types.NewSidecarClient(v)
-		_, err := serv.ShareKeygenTraffic(context.Background(), &types.ShareKeygenRequest{
-			NewKeyUid: s.msg.GetNewKeyUid(),
+		_, err := serv.ShareSignTraffic(context.Background(), &types.ShareSignRequest{
+			NewSigUid: s.msg.GetNewSigUid(),
 			Traffic:   &msg,
 		})
 
@@ -230,7 +228,7 @@ func (s *keygenSession) BroadcastMsg(msg types.TrafficIn) error {
 	return nil
 }
 
-func (s *keygenSession) ConsumeMsg(msg types.TrafficIn) error {
+func (s *signSession) ConsumeMsg(msg types.TrafficIn) error {
 	if s.IsRunning() {
 		return s.stream.stream.Send(&types.MessageIn{Data: &types.MessageIn_Traffic{Traffic: &msg}})
 	}
@@ -238,6 +236,6 @@ func (s *keygenSession) ConsumeMsg(msg types.TrafficIn) error {
 	return nil
 }
 
-func (s *keygenSession) IsRunning() bool {
+func (s *signSession) IsRunning() bool {
 	return s.isRunning
 }
