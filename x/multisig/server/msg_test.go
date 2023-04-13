@@ -16,7 +16,7 @@ import (
 
 func setupMsgServer(t testing.TB) (keeper.Keeper, MsgServer, context.Context) {
 	k, ctx, _, _ := keepertest.MultisigKeeper(t)
-	return k, NewMsgServer(k, nil), sdk.WrapSDKContext(ctx)
+	return k, NewMsgServer(k, nil, nil), sdk.WrapSDKContext(ctx)
 }
 
 func Test_StartKeygen_Failure(t *testing.T) {
