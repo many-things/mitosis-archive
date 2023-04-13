@@ -14,9 +14,16 @@ import (
 	"github.com/many-things/mitosis/x/multisig/keeper"
 )
 
+type MockContextKeeper struct {
+}
+
+func (m MockContextKeeper) FinishSignOperation(_ sdk.Context, _ uint64) error {
+	return nil
+}
+
 func setupMsgServer(t testing.TB) (keeper.Keeper, MsgServer, context.Context) {
 	k, ctx, _, _ := keepertest.MultisigKeeper(t)
-	return k, NewMsgServer(k, nil, nil), sdk.WrapSDKContext(ctx)
+	return k, NewMsgServer(k, &MockContextKeeper{}, nil), sdk.WrapSDKContext(ctx)
 }
 
 func Test_StartKeygen_Failure(t *testing.T) {
