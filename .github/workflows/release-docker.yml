@@ -17,6 +17,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  SIDECAR_IMAGE_NAME: sidecar
 
 jobs:
   build-and-push-image:
@@ -42,10 +43,25 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Extract sidecar metadata for Docker
+        id: meta-sidecar
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME}}-${{ env.SIDECAR_IMAGE_NAME }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Docker image - Sidecar
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile.sidecar
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
