@@ -37,3 +37,19 @@ func (k queryServer) Operations(_ context.Context, _ *QueryOperations) (*QueryOp
 	// TODO implement me
 	panic("implement me")
 }
+
+func (k queryServer) OperationByHash(goCtx context.Context, req *QueryOperationHash) (*QueryOperationHashResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	op, err := k.Keeper.QueryOperationByHash(ctx, req.Chain, req.TxHash)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryOperationHashResponse{
+		Operation: op,
+	}, nil
+}

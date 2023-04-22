@@ -26,4 +26,9 @@ service Query {
   rpc Operations(QueryOperations) returns (QueryOperationsResponse) {
     option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}"};
   }
+
+  // Get Operation by TxHash
+  rpc OperationByHash(QueryOperationHash) returns (QueryOperationHashResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}/hash/{tx_hash}"};
+  }
 }

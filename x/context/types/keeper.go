@@ -34,6 +34,8 @@ type OperationKeeper interface {
 	QueryOperations(ctx sdk.Context, pageReq *query.PageRequest) ([]*Operation, *query.PageResponse, error)
 
 	QueryOperationsByStatus(ctx sdk.Context, status Operation_Status, pageReq *query.PageRequest) ([]*Operation, *query.PageResponse, error)
+
+	QueryOperationByHash(ctx sdk.Context, chain string, hash []byte) (*Operation, error)
 }
 
 type GenesisKeeper interface {

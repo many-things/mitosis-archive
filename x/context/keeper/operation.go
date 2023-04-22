@@ -217,3 +217,20 @@ func (k keeper) QueryOperationsByStatus(ctx sdk.Context, status types.Operation_
 
 	return rtn, pageResp, nil
 }
+
+func (k keeper) QueryOperationByHash(ctx sdk.Context, chain string, hash []byte) (*types.Operation, error) {
+	idxRepo := state.NewKVOperationHashIndexRepo(k.cdc, ctx.KVStore(k.storeKey), chain)
+
+	opID, err := idxRepo.Load(hash)
+	if err != nil {
+		return nil, err
+	}
+
+	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+	op, err := opRepo.Load(opID)
+	if err != nil {
+		return nil, err
+	}
+
+	return op, nil
+}
