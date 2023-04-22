@@ -17,6 +17,7 @@ var _ types.OperationKeeper = &keeper{}
 
 func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll) (uint64, error) {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+	opHashIndexRepo := state.NewKVOperationHashIndexRepo(k.cdc, ctx.KVStore(k.storeKey), poll.Chain)
 	signerRepo := state.NewKVSignerRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	req := poll.GetPayload().GetReq()
@@ -51,6 +52,11 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 	opID, err := opRepo.Create(&op)
 	if err != nil {
 		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "create operation")
+	}
+
+	err = opHashIndexRepo.Create(poll.Payload.TxHash, opID)
+	if err != nil {
+		return 0, sdkerrutils.Wrap(err, "create operation index")
 	}
 
 	err = ctx.EventManager().EmitTypedEvent(
@@ -131,6 +137,7 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 
 func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll) error {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
+	opHashIndexRepo := state.NewKVOperationHashIndexRepo(k.cdc, ctx.KVStore(k.storeKey), poll.Chain)
 
 	res := poll.GetPayload().GetRes()
 	if res == nil {
@@ -152,6 +159,11 @@ func (k keeper) FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll)
 	}
 	if err := opRepo.Shift(op.ID, types.Operation_StatusFinalized); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
+
+	err = opHashIndexRepo.Create(poll.Payload.TxHash, op.ID)
+	if err != nil {
+		return sdkerrutils.Wrap(err, "save tx payload")
 	}
 
 	err = ctx.EventManager().EmitTypedEvent(
