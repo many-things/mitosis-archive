@@ -29,6 +29,23 @@ message GenesisOperation {
   repeated IndexSet index_set = 3;
 }
 
+// Genesis state of operation hash index
+message GenesisOperationHashIndex {
+  // Item set
+  message ItemSet {
+    bytes hash = 1;
+    bytes op_id = 2 [(gogoproto.customname) = "OpID"];
+  }
+
+  // ChainSet
+  message ChainSet {
+    bytes chain_id = 1 [(gogoproto.customname) = "ChainID"];
+    repeated ItemSet item_set = 2;
+  }
+
+  repeated ChainSet chain_set = 1;
+}
+
 // GenesisState defines the context module's genesis state.
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
