@@ -10,7 +10,7 @@ FROM deps AS build
 
 COPY . .
 
-RUN go build -o build/sidecar ./cmd/sidecar
+RUN go build -o build/sidecar ./sidecar
 
 FROM alpine:latest AS runner
 
