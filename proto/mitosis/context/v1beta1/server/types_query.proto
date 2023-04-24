@@ -40,3 +40,16 @@ message QueryOperationsResponse {
   repeated Operation operations = 1;
   cosmos.base.query.v1beta1.PageResponse page = 2;
 }
+
+// Query Operation using external chain txHash
+message QueryOperationHash {
+  string chain = 1;
+  bytes tx_hash = 2;
+}
+
+// Response of [QueryOperationHash]
+message QueryOperationHashResponse {
+  Operation operation = 1;
+}
+
+
