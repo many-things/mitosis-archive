@@ -22,14 +22,14 @@ func (s *Signer) ValidateBasic() error {
 
 func (s *Signer) TxConvSigner() txconvtypes.Signer {
 	switch v := any(s.GetPayload()).(type) {
-	case Signer_Cosmos:
+	case *Signer_Cosmos:
 		return txconvtypes.NewCosmosSigner(
 			s.GetPubKey(),
 			v.Cosmos.GetPrefix(),
 			v.Cosmos.GetAccountNumber(),
 			v.Cosmos.GetSequenceNumber(),
 		)
-	case Signer_Evm:
+	case *Signer_Evm:
 		return txconvtypes.NewEvmSigner(
 			s.GetPubKey(),
 			v.Evm.Nonce,

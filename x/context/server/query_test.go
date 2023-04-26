@@ -13,7 +13,7 @@ import (
 )
 
 func setupQueryServer(t testing.TB) (keeper.Keeper, QueryServer, context.Context) {
-	k, ctx, _, _ := testkeeper.ContextKeeper(t)
+	k, ctx, _, _, _ := testkeeper.ContextKeeper(t)
 	return k, NewQueryServer(k), sdk.WrapSDKContext(ctx)
 }
 
