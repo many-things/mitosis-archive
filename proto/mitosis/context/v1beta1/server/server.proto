@@ -19,12 +19,12 @@ service Query {
 
   // Get single operation
   rpc Operation(QueryOperation) returns (QueryOperationResponse) {
-    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}/{id}"};
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{id}"};
   }
 
   // List multiple operations
   rpc Operations(QueryOperations) returns (QueryOperationsResponse) {
-    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}"};
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/operation"};
   }
 
   // Get Operation by TxHash
