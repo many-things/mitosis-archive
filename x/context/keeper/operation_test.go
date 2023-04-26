@@ -56,7 +56,7 @@ func mockEvent(t *testing.T, isReq bool) *types.Event {
 	return evt
 }
 
-func Test_InitOperation_Validation(t *testing.T) {
+func Test_InitOperation(t *testing.T) {
 	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
 	valAddr := testutils.GenValAddress(t)
 	chain := "1"
@@ -90,16 +90,27 @@ func Test_InitOperation_Validation(t *testing.T) {
 
 	signerRepo := state.NewKVSignerRepo(cdc, ctx.KVStore(storeKey))
 	_ = signerRepo.Save(&ctxType.Signer{
-		Chain:  poll.Chain,
+		Chain:  poll.GetPayload().GetReq().DestChain,
 		PubKey: testutils.GenPublicKey(t),
 		Status: ctxType.Signer_StatusReady,
-		Type:   mitotypes.ChainType_TypeEvm,
-		Payload: &ctxType.Signer_Evm{
-			Evm: &ctxType.EvmSigner{Nonce: 1},
+		Type:   mitotypes.ChainType_TypeCosmos,
+		Payload: &ctxType.Signer_Cosmos{
+			Cosmos: &ctxType.CosmosSigner{
+				Prefix:         "osmo",
+				AccountNumber:  0,
+				SequenceNumber: 0,
+			},
 		},
 	})
 
 	// support chain not found
 	_, err = k.InitOperation(ctx, chain, &poll)
 	assert.Error(t, err, "convert event to sign target: panic")
+
+	// encoder := app.MakeEncodingConfig().TxConfig
+	// txconv.Converter.RegisterEvmChain(chain, "ethereum")
+	// txconv.Converter.RegisterCosmosChain("osmosis-1", "osmosis", encoder)
+	//
+	// _, err = k.InitOperation(ctx, chain, &poll)
+	// assert.Error(t, err, "convert event to sign target: panic")
 }
