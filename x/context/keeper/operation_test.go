@@ -6,7 +6,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/many-things/mitosis/app"
 	"github.com/many-things/mitosis/pkg/testutils"
+	"github.com/many-things/mitosis/pkg/txconv"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	testkeeper "github.com/many-things/mitosis/testutil/keeper"
 	"github.com/many-things/mitosis/x/context/keeper/state"
@@ -32,7 +34,7 @@ func mockEvent(t *testing.T, isReq bool) *types.Event {
 			Req: &types.TxReqEvent{
 				DestChain: "osmosis-1",
 				DestAddr:  bz,
-				OpId:      rand.Uint64(),
+				OpId:      0,
 				OpArgs:    [][]byte{bz},
 				Funds: []*mitotypes.Coin{
 					{
@@ -46,8 +48,8 @@ func mockEvent(t *testing.T, isReq bool) *types.Event {
 	} else {
 		evt.Event = &types.Event_Res{
 			Res: &types.TxResEvent{
-				ReqEvtId: rand.Uint64(),
-				Ok:       rand.Int()%2 == 0,
+				ReqEvtId: 0,
+				Ok:       true,
 				Result:   bz,
 			},
 		}
@@ -107,10 +109,10 @@ func Test_InitOperation(t *testing.T) {
 	_, err = k.InitOperation(ctx, chain, &poll)
 	assert.Error(t, err, "convert event to sign target: panic")
 
-	// encoder := app.MakeEncodingConfig().TxConfig
-	// txconv.Converter.RegisterEvmChain(chain, "ethereum")
-	// txconv.Converter.RegisterCosmosChain("osmosis-1", "osmosis", encoder)
-	//
-	// _, err = k.InitOperation(ctx, chain, &poll)
-	// assert.Error(t, err, "convert event to sign target: panic")
+	encoder := app.MakeEncodingConfig().TxConfig
+	_ = txconv.Converter.RegisterEvmChain(chain, "ethereum")
+	_ = txconv.Converter.RegisterCosmosChain("osmosis-1", "osmosis", encoder)
+
+	_, err = k.InitOperation(ctx, chain, &poll)
+	assert.Error(t, err, "convert event to sign target: panic")
 }
