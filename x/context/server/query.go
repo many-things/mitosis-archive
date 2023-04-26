@@ -27,15 +27,35 @@ func (k queryServer) Params(goCtx context.Context, req *QueryParams) (*QueryPara
 }
 
 // Operation (ctx context.Context, operation *QueryOperation)
-func (k queryServer) Operation(_ context.Context, _ *QueryOperation) (*QueryOperationResponse, error) {
-	// TODO implement me
-	panic("implement me")
+func (k queryServer) Operation(goCtx context.Context, req *QueryOperation) (*QueryOperationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	op, err := k.Keeper.QueryOperation(ctx, req.GetId())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryOperationResponse{Operation: op}, nil
 }
 
 // Operations // Operation (ctx context.Context, operations *QueryOperations)
-func (k queryServer) Operations(_ context.Context, _ *QueryOperations) (*QueryOperationsResponse, error) {
-	// TODO implement me
-	panic("implement me")
+func (k queryServer) Operations(goCtx context.Context, req *QueryOperations) (*QueryOperationsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	ops, resp, err := k.Keeper.QueryOperations(ctx, req.GetPagination())
+	if err != nil {
+		return nil, err
+	}
+
+	return &QueryOperationsResponse{
+		Operations: ops,
+		Page:       resp,
+	}, nil
 }
 
 func (k queryServer) OperationByHash(goCtx context.Context, req *QueryOperationHash) (*QueryOperationHashResponse, error) {
