@@ -343,6 +343,33 @@ func Test_QueryOperationByStatus(t *testing.T) {
 	assert.DeepEqual(t, res[0], op)
 }
 
-func Test_QueryOperationByHash(_ *testing.T) {
-	panic("implement me")
+func Test_QueryOperationByHash(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	chainID := "osmosis-1"
+	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
+	opHashRepo := state.NewKVOperationHashIndexRepo(cdc, ctx.KVStore(storeKey), chainID)
+
+	bz := make([]byte, 32)
+	_, _ = crand.Read(bz)
+
+	_, err := k.QueryOperationByHash(ctx, chainID, bz)
+	assert.Error(t, err, "hash index not found")
+
+	op := &ctxType.Operation{
+		Chain:         chainID,
+		ID:            0,
+		PollID:        0,
+		Status:        ctxType.Operation_StatusPending,
+		SignerPubkey:  testutils.GenPublicKey(t),
+		TxPayload:     bz,
+		TxBytesToSign: bz,
+		Result:        nil,
+		SigID:         1,
+	}
+
+	opID, _ := opRepo.Create(op)
+	_ = opHashRepo.Create(bz, opID)
+	res, err := k.QueryOperationByHash(ctx, chainID, bz)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res, op)
 }
