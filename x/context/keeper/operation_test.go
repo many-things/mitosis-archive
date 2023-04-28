@@ -218,3 +218,81 @@ func TestKeeper_FinishSignOperation(t *testing.T) {
 	assert.NilError(t, err)
 	assert.DeepEqual(t, emitEvt, expectEvt)
 }
+
+func Test_FinishOperation(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
+
+	valAddr := testutils.GenValAddress(t)
+	chain := "1"
+
+	totalPower := sdk.NewInt(1)
+	confirmed := sdk.NewInt(1)
+
+	poll := &types.Poll{
+		Chain:    chain,
+		Id:       1,
+		OpId:     0,
+		Epoch:    0,
+		Proposer: valAddr,
+		Status:   types.Poll_StatusPending,
+		Tally: &types.Tally{
+			TotalPower: &totalPower,
+			Confirmed:  &confirmed,
+		},
+		Payload: mockEvent(t, true),
+	}
+
+	// must payload type is Response
+	err := k.FinishOperation(ctx, 1, poll)
+	assert.Error(t, err, "invalid event payload type: panic")
+
+	// No Operation Exists
+	poll.Payload = mockEvent(t, false)
+	err = k.FinishOperation(ctx, 1, poll)
+	assert.Error(t, err, "operation not found")
+
+	bz := make([]byte, 32)
+	_, _ = crand.Read(bz)
+
+	op := &ctxType.Operation{
+		Chain:         "1",
+		ID:            0,
+		PollID:        0,
+		Status:        ctxType.Operation_StatusFinishSign,
+		SignerPubkey:  testutils.GenPublicKey(t),
+		TxPayload:     bz,
+		TxBytesToSign: bz,
+		Result:        nil,
+		SigID:         1,
+	}
+
+	opID, _ := opRepo.Create(op)
+	err = k.FinishOperation(ctx, opID, poll)
+	assert.NilError(t, err)
+
+	changedOp, _ := opRepo.Load(opID)
+	assert.DeepEqual(t, changedOp.Status, ctxType.Operation_StatusFinalized)
+
+	// Check Emitted events
+	emitEvt := ctx.EventManager().Events()[0]
+	expectEvt, err := sdk.TypedEventToEvent(&ctxType.EventOperationFinalized{
+		OperationID: opID,
+		ReqPollID:   op.PollID,
+		RespPollID:  poll.Id,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, emitEvt, expectEvt)
+}
+
+func Test_QueryOperation(_ *testing.T) {
+	panic("implement me")
+}
+
+func Test_QueryOperationByStatus(_ *testing.T) {
+	panic("implement me")
+}
+
+func Test_QUeryOperationByHash(_ *testing.T) {
+	panic("implement me")
+}
