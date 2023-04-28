@@ -285,14 +285,38 @@ func Test_FinishOperation(t *testing.T) {
 	assert.DeepEqual(t, emitEvt, expectEvt)
 }
 
-func Test_QueryOperation(_ *testing.T) {
-	panic("implement me")
+func Test_QueryOperation(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
+
+	_, err := k.QueryOperation(ctx, 1)
+	assert.Error(t, err, "operation not found")
+
+	bz := make([]byte, 32)
+	_, _ = crand.Read(bz)
+
+	op := &ctxType.Operation{
+		Chain:         "1",
+		ID:            0,
+		PollID:        0,
+		Status:        ctxType.Operation_StatusFinishSign,
+		SignerPubkey:  testutils.GenPublicKey(t),
+		TxPayload:     bz,
+		TxBytesToSign: bz,
+		Result:        nil,
+		SigID:         1,
+	}
+
+	opID, _ := opRepo.Create(op)
+	res, err := k.QueryOperation(ctx, opID)
+	assert.NilError(t, err)
+	assert.DeepEqual(t, op, res)
 }
 
 func Test_QueryOperationByStatus(_ *testing.T) {
 	panic("implement me")
 }
 
-func Test_QUeryOperationByHash(_ *testing.T) {
+func Test_QueryOperationByHash(_ *testing.T) {
 	panic("implement me")
 }
