@@ -34,6 +34,21 @@ func Test_RegisterCosmosSigner(t *testing.T) {
 	assert.DeepEqual(t, emitEvt, expectEvt)
 }
 
-func Test_RegisterEVMSigner(_ *testing.T) {
-	panic("implement me")
+func Test_RegisterEVMSigner(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	signerStore := state.NewKVSignerRepo(cdc, ctx.KVStore(storeKey))
+
+	pubKey := testutils.GenPublicKey(t)
+	err := k.RegisterEVMSigner(ctx, "1", pubKey)
+	assert.NilError(t, err)
+
+	savedStore, _ := signerStore.Load("1")
+	assert.DeepEqual(t, savedStore.PubKey, []byte(pubKey))
+
+	emitEvt := ctx.EventManager().Events()[0]
+	expectEvt, _ := sdk.TypedEventToEvent(&ctxType.EventSignerRegistered{
+		ChainType: mitotypes.ChainType_TypeEvm,
+		Pubkey:    pubKey,
+	})
+	assert.DeepEqual(t, emitEvt, expectEvt)
 }
