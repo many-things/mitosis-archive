@@ -126,4 +126,95 @@ func Test_InitOperation(t *testing.T) {
 
 	assert.NilError(t, err)
 	assert.Equal(t, opID, hashIndex)
+
+	// Check typed event emitted
+	evt := ctx.EventManager().Events()[0]
+	expectEvt, _ := sdk.TypedEventToEvent(&ctxType.EventOperationInitialized{
+		PollID:      poll.Id,
+		OperationID: opID,
+	})
+	assert.DeepEqual(t, evt, expectEvt)
+}
+
+func Test_StartSignOperation(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
+
+	// No Operation Exists
+	err := k.StartSignOperation(ctx, 1, 1)
+	assert.Error(t, err, "operation not found")
+
+	bz := make([]byte, 32)
+	_, _ = crand.Read(bz)
+
+	// Genearte Operations
+	op := &ctxType.Operation{
+		Chain:         "1",
+		ID:            0,
+		PollID:        0,
+		Status:        ctxType.Operation_StatusPending,
+		SignerPubkey:  testutils.GenPublicKey(t),
+		TxPayload:     bz,
+		TxBytesToSign: bz,
+		Result:        nil,
+	}
+
+	opID, _ := opRepo.Create(op)
+	err = k.StartSignOperation(ctx, opID, 1)
+	assert.NilError(t, err)
+
+	changedOp, _ := opRepo.Load(opID)
+	assert.DeepEqual(t, changedOp.Status, ctxType.Operation_StatusInitSign)
+
+	// Check Emitted Sign
+	emitEvt := ctx.EventManager().Events()[0]
+	expectEvt, err := sdk.TypedEventToEvent(&ctxType.EventOperationSigningStarted{
+		OperationID: opID,
+		SignID:      1,
+		Signer:      op.SignerPubkey,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, emitEvt, expectEvt)
+}
+
+func TestKeeper_FinishSignOperation(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
+
+	// No Operation Exists
+	err := k.FinishSignOperation(ctx, 1)
+	assert.Error(t, err, "operation not found")
+
+	bz := make([]byte, 32)
+	_, _ = crand.Read(bz)
+
+	// Genearte Operations
+	op := &ctxType.Operation{
+		Chain:         "1",
+		ID:            0,
+		PollID:        0,
+		Status:        ctxType.Operation_StatusInitSign,
+		SignerPubkey:  testutils.GenPublicKey(t),
+		TxPayload:     bz,
+		TxBytesToSign: bz,
+		Result:        nil,
+		SigID:         1,
+	}
+
+	opID, _ := opRepo.Create(op)
+	err = k.FinishSignOperation(ctx, opID)
+	assert.NilError(t, err)
+
+	changedOp, _ := opRepo.Load(opID)
+	assert.DeepEqual(t, changedOp.Status, ctxType.Operation_StatusFinishSign)
+
+	// Check Emitted events
+	emitEvt := ctx.EventManager().Events()[0]
+	expectEvt, err := sdk.TypedEventToEvent(&ctxType.EventOperationSigningFinished{
+		OperationID: opID,
+		SignID:      1,
+		Signer:      op.SignerPubkey,
+	})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, emitEvt, expectEvt)
 }
