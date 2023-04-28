@@ -30,12 +30,18 @@ func mockEvent(t *testing.T, isReq bool) *types.Event {
 		EvtIdx: rand.Uint32(),
 	}
 	if isReq {
+		args := [][]byte{
+			testutils.GenAccAddress(t),
+			testutils.GenAccAddress(t),
+			[]byte("100000uosmo"),
+		}
+
 		evt.Event = &types.Event_Req{
 			Req: &types.TxReqEvent{
-				DestChain: "osmosis-1",
+				DestChain: "osmosis-2",
 				DestAddr:  bz,
 				OpId:      0,
-				OpArgs:    [][]byte{bz},
+				OpArgs:    args,
 				Funds: []*mitotypes.Coin{
 					{
 						Denom:   "uosmo",
@@ -111,8 +117,13 @@ func Test_InitOperation(t *testing.T) {
 
 	encoder := app.MakeEncodingConfig().TxConfig
 	_ = txconv.Converter.RegisterEvmChain(chain, "ethereum")
-	_ = txconv.Converter.RegisterCosmosChain("osmosis-1", "osmosis", encoder)
+	_ = txconv.Converter.RegisterCosmosChain("osmosis-2", "osmosis", encoder)
 
-	_, err = k.InitOperation(ctx, chain, &poll)
-	assert.Error(t, err, "convert event to sign target: panic")
+	opID, err := k.InitOperation(ctx, chain, &poll)
+	assert.NilError(t, err)
+	hashRepo := state.NewKVOperationHashIndexRepo(cdc, ctx.KVStore(storeKey), poll.Chain)
+	hashIndex, err := hashRepo.Load(poll.Payload.TxHash)
+
+	assert.NilError(t, err)
+	assert.Equal(t, opID, hashIndex)
 }
