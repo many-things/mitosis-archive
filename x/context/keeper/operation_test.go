@@ -3,6 +3,7 @@ package keeper_test
 import (
 	crand "crypto/rand"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -313,8 +314,33 @@ func Test_QueryOperation(t *testing.T) {
 	assert.DeepEqual(t, op, res)
 }
 
-func Test_QueryOperationByStatus(_ *testing.T) {
-	panic("implement me")
+func Test_QueryOperationByStatus(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
+
+	emptyRes, _, err := k.QueryOperationsByStatus(ctx, ctxType.Operation_StatusInitSign, &query.PageRequest{Limit: query.MaxLimit})
+	assert.NilError(t, err)
+	assert.Equal(t, len(emptyRes), 0)
+
+	bz := make([]byte, 32)
+	_, _ = crand.Read(bz)
+
+	op := &ctxType.Operation{
+		Chain:         "1",
+		ID:            0,
+		PollID:        0,
+		Status:        ctxType.Operation_StatusPending,
+		SignerPubkey:  testutils.GenPublicKey(t),
+		TxPayload:     bz,
+		TxBytesToSign: bz,
+		Result:        nil,
+		SigID:         1,
+	}
+
+	_, _ = opRepo.Create(op)
+	res, _, err := k.QueryOperationsByStatus(ctx, ctxType.Operation_StatusPending, &query.PageRequest{Limit: query.MaxLimit})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, res[0], op)
 }
 
 func Test_QueryOperationByHash(_ *testing.T) {
