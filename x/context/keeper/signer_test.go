@@ -11,8 +11,26 @@ import (
 	"testing"
 )
 
-func Test_SetReadyToSigner(_ *testing.T) {
-	panic("implement me")
+func Test_SetReadyToSigner(t *testing.T) {
+	k, ctx, cdc, storeKey, _ := testkeeper.ContextKeeper(t)
+	signerStore := state.NewKVSignerRepo(cdc, ctx.KVStore(storeKey))
+
+	signer := &ctxType.Signer{
+		Chain:  "osmosis-1",
+		PubKey: testutils.GenPublicKey(t),
+		Status: ctxType.Signer_StatusInit,
+		Type:   mitotypes.ChainType_TypeCosmos,
+		Payload: &ctxType.Signer_Cosmos{
+			Cosmos: &ctxType.CosmosSigner{AccountNumber: 0},
+		},
+	}
+	_ = signerStore.Save(signer)
+
+	err := k.SetReadyToSigner(ctx, signer.Chain)
+	assert.NilError(t, err)
+
+	updatedSigner, _ := signerStore.Load("osmosis-1")
+	assert.Equal(t, updatedSigner.Status, ctxType.Signer_StatusReady)
 }
 
 func Test_RegisterCosmosSigner(t *testing.T) {
