@@ -63,5 +63,5 @@ jobs:
           context: .
           file: Dockerfile.sidecar
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}-sidecar
           labels: ${{ steps.meta.outputs.labels }}
