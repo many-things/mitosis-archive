@@ -47,7 +47,7 @@ jobs:
         id: meta-sidecar
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME}}-${{ env.SIDECAR_IMAGE_NAME }}
+          images: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME }}-${{ env.SIDECAR_IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -63,5 +63,5 @@ jobs:
           context: .
           file: Dockerfile.sidecar
           push: true
-          tags: ${{ steps.meta.outputs.tags }}-sidecar
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-sidecar.outputs.tags }}
+          labels: ${{ steps.meta-sidecar.outputs.labels }}
