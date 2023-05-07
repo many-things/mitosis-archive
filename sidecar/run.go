@@ -125,6 +125,7 @@ func main() {
 		golog.Fatal(err)
 		return
 	}
+	golog.Println("configuration")
 	fmt.Println(cfg)
 	ctx, cancel := context.WithCancel(context.Background())
 	eGroup, ctx := errgroup.WithContext(ctx)
@@ -134,7 +135,7 @@ func main() {
 	// store := storage.GetStorage(&cfg)
 
 	// TODO: implement block getter
-
+	golog.Println("Set Robust Tendermint Client")
 	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
 		mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
 		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
@@ -152,6 +153,7 @@ func main() {
 		return fetcher, err
 	})
 
+	golog.Println("Set Tendermint BlockListener")
 	listener := tendermint.NewBlockListener(ctx, robustClient, time.Second*5)
 	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
@@ -159,6 +161,7 @@ func main() {
 	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
 	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigexport.Sign]())
 
+	golog.Println("Register Tendermint Job")
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
 		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, logger), cancel, logger),
@@ -168,17 +171,19 @@ func main() {
 		eGroup.Go(func() error { return j(ctx) })
 	})
 
+	golog.Println("Register Tendermint Job - eGroup")
 	if err := eGroup.Wait(); err != nil {
 		logger.Error(err.Error())
 	}
 
+	golog.Println("register listen")
 	lis, err := net.Listen("tcp", ":9999")
 	if err != nil {
 		logger.Error(err.Error())
 		return
 	}
 
-	fmt.Println("ready to serve")
+	golog.Println("register sidecar server")
 	grpcServer := grpc.NewServer()
 	types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
 	if err := grpcServer.Serve(lis); err != nil {
