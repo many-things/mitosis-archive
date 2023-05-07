@@ -125,6 +125,7 @@ func main() {
 		golog.Fatal(err)
 		return
 	}
+	fmt.Println(cfg)
 	ctx, cancel := context.WithCancel(context.Background())
 	eGroup, ctx := errgroup.WithContext(ctx)
 	logger := log.NewTMLogger(os.Stdout)
@@ -177,6 +178,7 @@ func main() {
 		return
 	}
 
+	fmt.Println("ready to serve")
 	grpcServer := grpc.NewServer()
 	types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
 	if err := grpcServer.Serve(lis); err != nil {
