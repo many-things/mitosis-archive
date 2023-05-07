@@ -118,8 +118,7 @@ func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisi
 func main() {
 	homeEnvDir, _ := os.LookupEnv("HOME")
 	homeDir := flag.String("home", homeEnvDir+"/.sidecar", "setting for home")
-
-	fmt.Println(*homeDir)
+	flag.Parse()
 
 	cfg, err := config.GetConfigFromFile(*homeDir + "/config.yaml")
 	if err != nil {
