@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/sha256"
+	"flag"
 	"fmt"
 	golog "log"
 	"net"
@@ -115,7 +116,12 @@ func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisi
 }
 
 func main() {
-	cfg, err := config.GetConfigFromFile("config.yaml")
+	homeEnvDir, _ := os.LookupEnv("HOME")
+	homeDir := flag.String("home", homeEnvDir+"/.sidecar", "setting for home")
+
+	fmt.Println(*homeDir)
+
+	cfg, err := config.GetConfigFromFile(*homeDir + "/config.yaml")
 	if err != nil {
 		golog.Fatal(err)
 		return
