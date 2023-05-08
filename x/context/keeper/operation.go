@@ -109,7 +109,7 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 
 	op, err := opRepo.Load(id)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	op.Status = types.Operation_StatusFinishSign
