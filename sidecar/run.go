@@ -8,6 +8,8 @@ import (
 	golog "log"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 
 	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
 	tmclient "github.com/tendermint/tendermint/rpc/client"
@@ -161,7 +163,6 @@ func main() {
 	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
 	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigexport.Sign]())
 
-	golog.Println("Register Tendermint Job")
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
 		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, logger), cancel, logger),
@@ -171,22 +172,38 @@ func main() {
 		eGroup.Go(func() error { return j(ctx) })
 	})
 
-	golog.Println("Register Tendermint Job - eGroup")
-	if err := eGroup.Wait(); err != nil {
-		logger.Error(err.Error())
-	}
+	go func() {
+		golog.Println("Register Tendermint Jobs")
+		if err := eGroup.Wait(); err != nil {
+			logger.Error(err.Error())
+		}
+	}()
 
-	golog.Println("register listen")
 	lis, err := net.Listen("tcp", ":9999")
 	if err != nil {
 		logger.Error(err.Error())
 		return
 	}
 
-	golog.Println("register sidecar server")
 	grpcServer := grpc.NewServer()
-	types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
-	if err := grpcServer.Serve(lis); err != nil {
-		logger.Error(err.Error())
-	}
+	go func() {
+		golog.Println("Run sidecar server")
+		types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
+		if err := grpcServer.Serve(lis); err != nil {
+			logger.Error(err.Error())
+		}
+	}()
+
+	exit := make(chan os.Signal, 1)
+	signal.Notify(exit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	golog.Println("Sidecar started successfully")
+	<-exit
+
+	grpcServer.GracefulStop()
+	_, timeout := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+	defer timeout()
+
+	fmt.Println("Gracefully shutdown")
 }
