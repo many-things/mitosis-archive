@@ -49,5 +49,3 @@ message QueryOperationHash {
 message QueryOperationHashResponse {
   Operation operation = 1;
 }
-
-
