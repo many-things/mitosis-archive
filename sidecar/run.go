@@ -53,7 +53,7 @@ func createTofNManager(cliCtx sdkclient.Context, config config.SidecarConfig, lo
 	return tofnd.NewManager(types.NewMultisigClient(conn), cliCtx, valAddr, logger, config.TofNConfig.DialTimeout)
 }
 
-func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisigtypes.Keygen) error {
+func createKeygenHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multisigtypes.Keygen) error {
 	return func(msg *multisigtypes.Keygen) error {
 		mgr := session.GetKeygenMgrInstance()
 
@@ -77,6 +77,8 @@ func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multi
 			Threshold:        uint32(msg.Threshold),
 		}
 
+		log.Info(fmt.Sprintf("Start signInit: %X", keygenInit))
+
 		session := mgr.CreateSession(cfg, keygenInit)
 		if err := session.StartSession(); err != nil {
 			return err
@@ -90,7 +92,7 @@ func createKeygenHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multi
 	}
 }
 
-func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisigexport.Sign) error {
+func createSignHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multisigexport.Sign) error {
 	return func(msg *multisigexport.Sign) error {
 		mgr := session.GetSignMgrInstance()
 
@@ -107,6 +109,8 @@ func createSignHandler(cfg config.SidecarConfig, _ log.Logger) func(msg *multisi
 			PartyUids:     partyUIDs,
 			MessageToSign: msgToSign[:],
 		}
+
+		log.Info(fmt.Sprintf("Start signInit: %X", signInit))
 
 		session := mgr.CreateSession(cfg, signInit)
 		if err := session.StartSession(); err != nil {

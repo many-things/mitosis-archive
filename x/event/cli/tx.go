@@ -2,16 +2,17 @@ package cli
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/many-things/mitosis/x/event/server"
 	"github.com/tendermint/tendermint/libs/os"
-	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
+
 	"github.com/many-things/mitosis/x/event/types"
 )
 

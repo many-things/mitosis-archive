@@ -185,12 +185,15 @@ func (s *signSession) spawnReceiver() error {
 						return
 					}
 
-					err = s.wallet.BroadcastMsg(&multisigserver.MsgSubmitSignature{
+					msg := &multisigserver.MsgSubmitSignature{
 						Module:      "sidecar",
 						Participant: sdk.ValAddress(s.config.Validator),
 						Signature:   k.Signature,
 						Sender:      accAddress,
-					})
+					}
+
+					log.Println("SignResult", msg)
+					err = s.wallet.BroadcastMsg(msg)
 					if err != nil {
 						// TODO: handle more well
 						log.Fatal(err)

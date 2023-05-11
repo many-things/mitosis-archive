@@ -2,6 +2,7 @@ package tendermint
 
 import (
 	"context"
+	golog "log"
 	"sync"
 	"time"
 
@@ -70,6 +71,9 @@ func (b *blockListener) GetBlockHeight() (<-chan int64, <-chan error) {
 			select {
 			case <-keepAlive.Done():
 				blockHeight, err = b.GetLatestBlockHeight()
+
+				// TODO: remove logs
+				golog.Printf("Watch blockHeight: %d\n", blockHeight)
 				if err != nil {
 					errChan <- err
 					return
@@ -122,6 +126,7 @@ func (b *blockListener) NewBlockWatcher() (<-chan int64, <-chan error) {
 				return
 			}
 
+			golog.Printf("Get new blockHeight: %d\n", latestBlockHeight)
 			// Processing current Block is more important than receive new block
 			for processedBlockHeight < latestBlockHeight {
 				select {
