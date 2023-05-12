@@ -143,7 +143,8 @@ func main() {
 	// TODO: implement block getter
 	golog.Println("Set Robust Tendermint Client")
 	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
-		mitoDialURL := fmt.Sprintf("%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+		mitoDialURL := fmt.Sprintf("http://%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+		golog.Println(mitoDialURL)
 		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
 		if err != nil {
 			golog.Fatal(err)
@@ -175,6 +176,10 @@ func main() {
 	utils.ForEach(jobs, func(j mitosis.Job) {
 		eGroup.Go(func() error { return j(ctx) })
 	})
+
+	go func() {
+		<-eventBus.ListenEvents(ctx)
+	}()
 
 	go func() {
 		golog.Println("Register Tendermint Jobs")

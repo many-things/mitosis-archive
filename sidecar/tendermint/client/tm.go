@@ -34,6 +34,22 @@ func (r *RobustTmClient) BlockchainInfo(
 	return result, nil
 }
 
+func (r *RobustTmClient) BlockResults(ctx context.Context, blockHeight *int64) (*coretypes.ResultBlockResults, error) {
+	var result *coretypes.ResultBlockResults
+	var err error
+
+	err = r.execute(func() error {
+		result, err = r.client.BlockResults(ctx, blockHeight)
+		return err
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 // NewRobustTmClient return a new RobustTmClient
 func NewRobustTmClient(factory func() (client.Client, error)) *RobustTmClient {
 	healthy := make(chan bool, 1)

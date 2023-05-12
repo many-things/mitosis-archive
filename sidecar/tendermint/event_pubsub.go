@@ -39,11 +39,10 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 	go func() {
 		newBlockHeightChan, heightErrChan := tb.listener.NewBlockWatcher()
 
-		var blockHeight int64
 		for {
 			select {
-			case blockHeight = <-newBlockHeightChan:
-				block, err := tb.client.BlockResults(ctx, &blockHeight)
+			case blockHeight := <-newBlockHeightChan:
+				block, err := tb.listener.GetBlockResult(&blockHeight)
 				if err != nil {
 					errChan <- err
 					return

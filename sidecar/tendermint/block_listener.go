@@ -9,30 +9,36 @@ import (
 	coretypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-type BlockHeightFetcher interface {
+type BlockFetcher interface {
 	BlockchainInfo(
 		ctx context.Context,
 		minHeight,
 		maxHeight int64,
 	) (*coretypes.ResultBlockchainInfo, error)
+
+	BlockResults(
+		ctx context.Context,
+		height *int64,
+	) (*coretypes.ResultBlockResults, error)
 }
 
 type BlockListener interface {
 	GetLatestBlockHeight() (int64, error)
 	GetBlockHeight() (<-chan int64, <-chan error)
 	NewBlockWatcher() (<-chan int64, <-chan error)
+	GetBlockResult(blockHeight *int64) (*coretypes.ResultBlockResults, error)
 	Close()
 }
 
 type blockListener struct {
 	ctx            context.Context
 	ctxCancel      context.CancelFunc
-	client         BlockHeightFetcher
+	client         BlockFetcher
 	listenInterval time.Duration
 	once           *sync.Once
 }
 
-func NewBlockListener(ctx context.Context, client BlockHeightFetcher, interval time.Duration) BlockListener {
+func NewBlockListener(ctx context.Context, client BlockFetcher, interval time.Duration) BlockListener {
 	ctx, ctxCancel := context.WithCancel(ctx)
 	return &blockListener{
 		client:         client,
@@ -51,6 +57,10 @@ func (b *blockListener) GetLatestBlockHeight() (int64, error) {
 	}
 
 	return blockInfo.LastHeight, nil
+}
+
+func (b *blockListener) GetBlockResult(blockHeight *int64) (*coretypes.ResultBlockResults, error) {
+	return b.client.BlockResults(b.ctx, blockHeight)
 }
 
 // GetBlockHeight Returns Channel that send the Latest Block Height every listenInterval
@@ -126,7 +136,6 @@ func (b *blockListener) NewBlockWatcher() (<-chan int64, <-chan error) {
 				return
 			}
 
-			golog.Printf("Get new blockHeight: %d\n", latestBlockHeight)
 			// Processing current Block is more important than receive new block
 			for processedBlockHeight < latestBlockHeight {
 				select {

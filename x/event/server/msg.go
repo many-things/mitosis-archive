@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,7 +32,7 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 	// convert proxy account to validator account
 	val, found := m.baseKeeper.QueryProxyReverse(wctx, req.GetSender())
 	if !found {
-		return nil, errors.ErrNotFound
+		return nil, fmt.Errorf("cannot found query proxy")
 	}
 
 	// make poll candidates
