@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -16,7 +18,7 @@ func (k keeper) FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Pol
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainPrefix, err := chainRepo.Load(chain)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("chain cannot found: %w", err)
 	}
 
 	var (
@@ -32,7 +34,7 @@ func (k keeper) FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Pol
 
 		loaded, err := repo.LoadByHash(checksum)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("load by hash: %w", err)
 		}
 		if loaded == nil {
 			news = append(news, loaded)
@@ -53,18 +55,18 @@ func (k keeper) SubmitPolls(
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainPrefix, err := chainRepo.Load(chain)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("chain: %w", err)
 	}
 
 	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
 	epoch, err := snapshotRepo.LatestEpoch()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("snapshot: %w", err)
 	}
 
 	power, err := snapshotRepo.PowerOf(epoch.GetEpoch(), val)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("powerof: %w", err)
 	}
 
 	pollRepo := state.NewKVPollRepo(k.cdc, chainPrefix, ctx.KVStore(k.storeKey))
@@ -81,13 +83,13 @@ func (k keeper) SubmitPolls(
 
 		pollID, err := pollRepo.Create(*poll)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("create poll: %w", err)
 		}
 		pollRepo.SetVoted(pollID, val)
 
 		checksum, err := poll.GetPayload().Hash()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("get payload hash: %w", err)
 		}
 
 		set[i] = mitotypes.NewKV(pollID, checksum)
@@ -100,7 +102,7 @@ func (k keeper) VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, vot
 	chainRepo := state.NewKVChainRepo(k.cdc, ctx.KVStore(k.storeKey))
 	chainPrefix, err := chainRepo.Load(chain)
 	if err != nil {
-		return err
+		return fmt.Errorf("chain: %w", err)
 	}
 
 	snapshotRepo := state.NewKVSnapshotRepo(k.cdc, ctx.KVStore(k.storeKey))
@@ -113,21 +115,21 @@ func (k keeper) VotePolls(ctx sdk.Context, chain string, val sdk.ValAddress, vot
 
 		loaded, err := pollRepo.Load(id)
 		if err != nil {
-			return err
+			return fmt.Errorf("load poll: %w", err)
 		}
 		if loaded == nil {
-			return errors.ErrKeyNotFound
+			return fmt.Errorf("load poll: %w", errors.ErrKeyNotFound)
 		}
 
 		power, err := snapshotRepo.PowerOf(loaded.GetEpoch(), val)
 		if err != nil {
-			return err
+			return fmt.Errorf("get power of: %w", err)
 		}
 
 		loaded.Tally.Confirmed = mitotypes.Ref(loaded.Tally.Confirmed.Add(sdk.NewInt(power)))
 
 		if err := pollRepo.Save(*loaded); err != nil {
-			return err
+			return fmt.Errorf("saving poll: %w", err)
 		}
 		pollRepo.SetVoted(id, val)
 	}

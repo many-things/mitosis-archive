@@ -80,7 +80,7 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 		Voted:        mitotypes.MapKV(existPolls, pollConv),
 	}
 	if err = wctx.EventManager().EmitTypedEvent(event); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("emit event: %w", err)
 	}
 
 	return &MsgSubmitResponse{
