@@ -2,6 +2,7 @@ package tendermint
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
@@ -46,6 +47,10 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 				if err != nil {
 					errChan <- err
 					return
+				}
+
+				for _, item := range block.TxsResults {
+					fmt.Println(item)
 				}
 
 				blockResultChan <- *block

@@ -50,18 +50,18 @@ func (m msgServer) SubmitEvent(ctx context.Context, req *MsgSubmitEvent) (*MsgSu
 	// filter requested polls
 	newPolls, existPolls, err := m.baseKeeper.FilterNewPolls(wctx, req.GetChain(), candidates)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FilterNewPolls: %w", err)
 	}
 
 	// submits polls
 	submitted, err := m.baseKeeper.SubmitPolls(wctx, req.GetChain(), val, newPolls)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SubmitPolls: %w", err)
 	}
 
 	// vote polls
 	if err := m.baseKeeper.VotePolls(wctx, req.GetChain(), val, mitotypes.Keys(existPolls)); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("VotePolls: %w", err)
 	}
 
 	// [uint64, []byte] -> *types.EventType_SubmitEvent_Poll
