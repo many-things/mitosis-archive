@@ -1,6 +1,7 @@
 package hook
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -39,7 +40,11 @@ func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, baseKeeper keeper.K
 	}
 
 	// TODO: handle error
-	epoch, _ = baseKeeper.CreateSnapshot(ctx, total, powers)
+	epoch, err = baseKeeper.CreateSnapshot(ctx, total, powers)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(epoch)
 	_ = epoch
 
 	// TODO: emit event

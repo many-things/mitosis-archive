@@ -37,6 +37,7 @@ func GetTxCmd() *cobra.Command {
 
 	cmd.AddCommand(SubmitEventCmd())
 	cmd.AddCommand(RegisterProxyCmd())
+	cmd.AddCommand(RegisterChainCmd())
 
 	return cmd
 }
@@ -80,6 +81,33 @@ func RegisterProxyCmd() *cobra.Command {
 			}
 
 			msg := new(server.MsgRegisterProxy)
+			clientCtx.Codec.MustUnmarshalJSON(os.MustReadFile(args[0]), msg)
+			if err = msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+		SilenceUsage: true,
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+	return cmd
+}
+
+func RegisterChainCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "register-chain [event payload]",
+		Short:   "Register Chain",
+		Aliases: []string{"reg-chain", "rc"},
+		Args:    cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := new(server.MsgRegisterChain)
 			clientCtx.Codec.MustUnmarshalJSON(os.MustReadFile(args[0]), msg)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
