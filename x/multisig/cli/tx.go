@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/many-things/mitosis/x/multisig/server"
 	"github.com/tendermint/tendermint/libs/os"
@@ -42,8 +43,8 @@ func GetTxCmd() *cobra.Command {
 	return cmd
 }
 
-func StartKeygenCmd() *cobra.Command {
-	return &cobra.Command{
+func StartKeygenCmd() (cmd *cobra.Command) {
+	cmd = &cobra.Command{
 		Use:   "start-keygen [payload]",
 		Short: "Start Keygen",
 		Args:  cobra.ExactArgs(1),
@@ -61,10 +62,14 @@ func StartKeygenCmd() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return
 }
 
-func SubmitPubKeyCmd() *cobra.Command {
-	return &cobra.Command{
+func SubmitPubKeyCmd() (cmd *cobra.Command) {
+	cmd = &cobra.Command{
 		Use:   "submit-pubkey [payload]",
 		Short: "Submit PubKey",
 		Args:  cobra.ExactArgs(1),
@@ -82,10 +87,14 @@ func SubmitPubKeyCmd() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return
 }
 
-func SubmitSignatureCmd() *cobra.Command {
-	return &cobra.Command{
+func SubmitSignatureCmd() (cmd *cobra.Command) {
+	cmd = &cobra.Command{
 		Use:   "submit-signature [payload]",
 		Short: "Submit Signature",
 		Args:  cobra.ExactArgs(1),
@@ -103,4 +112,8 @@ func SubmitSignatureCmd() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return
 }
