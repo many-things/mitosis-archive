@@ -23,6 +23,10 @@ message MsgRegisterCosmosSigner {
   string chain = 2;
 
   bytes pub_key = 3;
+
+  uint64 account_number = 4;
+
+  uint64 sequence = 5;
 }
 
 // Response of [MsgRegisterCosmosSigner]
@@ -36,9 +40,7 @@ message MsgRegisterEVMSigner {
 
   bytes pub_key = 3;
 
-  uint64 account_number = 4;
-
-  uint64 sequence = 5;
+  uint64 nonce = 5;
 }
 
 // Response of [MsgRegisterEVMSigner]
