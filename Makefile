@@ -24,11 +24,41 @@ build: clean proto lint
 release: test build
 	@ignite chain build --output release --release --skip-proto
 
-run-local: proto lint
-	@ignite chain serve --skip-proto --quit-on-fail --verbose
+run-local:
+	@rm -rf ./test/localnet/*
 
-run-local-clean: proto lint
-	@ignite chain serve --skip-proto --quit-on-fail --verbose --reset-once
+	@(./build/mitosisd init localnet \
+		--chain-id 'mito-local-1' \
+		--staking-bond-denom 'umito' \
+		--home "./test/localnet")
+
+	@sed -i '' 's/stake/umito/g' ./test/localnet/config/genesis.json
+
+	@((echo "maple often cargo polar eager jaguar eight inflict once nest nice swamp weasel address swift physical valid culture cheese trumpet find dinosaur curve tray"; echo "mitomito"; echo "mitomito") \
+		| ./build/mitosisd keys add validator \
+		--recover \
+		--home "./test/localnet" \
+		--keyring-backend "file")
+
+	@(echo "mitomito" \
+		| ./build/mitosisd add-genesis-account \
+		validator 2000000000000umito \
+		--home "./test/localnet" \
+		--keyring-backend "file")
+
+	@(echo "mitomito" \
+		| ./build/mitosisd gentx validator 1000000000000umito \
+		--chain-id 'mito-local-1' \
+		--keyring-backend "file" \
+		--home "./test/localnet")
+
+	@(./build/mitosisd collect-gentxs --home "./test/localnet")
+
+	@(./build/mitosisd start \
+		--consensus.create_empty_blocks "false" \
+		--p2p.pex "false" \
+		--minimum-gas-prices "0.01umito" \
+		--home "./test/localnet")
 
 proto: proto-fmt proto-go proto-openapi
 

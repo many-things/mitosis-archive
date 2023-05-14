@@ -5,6 +5,7 @@ release/
 .idea/
 .vscode/
 .DS_Store
+test/localnet
 
 coverage.out
 coverage.out.tmp
