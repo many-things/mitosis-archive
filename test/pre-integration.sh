@@ -40,6 +40,22 @@ echo "mitomito" \
     --output json \
     -b 'block' -y \
   | jq \
-  > $(file "register-chain.resp.json")
+  > $(file "register-chain-osmosis.resp.json")
+
+cat $(file "register-chain.json") \
+  | jq '.sender = "'$ACCOUNT_ADDR'"' \
+  | jq '.chain="ethereum"' \
+  > $(file "temp.json")
+
+echo "mitomito" \
+  | $DAEMON tx event register-chain $(file "temp.json") \
+    --chain-id 'mito-local-1' \
+    --from $ACCOUNT_NAME \
+    --fees '2000umito' \
+    --log_level 'trace' \
+    --output json \
+    -b 'block' -y \
+  | jq \
+  > $(file "register-chain-ethereum.resp.json")
 
 rm $(file "temp.json")
