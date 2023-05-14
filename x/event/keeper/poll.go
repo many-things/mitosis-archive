@@ -37,7 +37,7 @@ func (k keeper) FilterNewPolls(ctx sdk.Context, chain string, polls []*types.Pol
 			return nil, nil, fmt.Errorf("load by hash: %w", err)
 		}
 		if loaded == nil {
-			news = append(news, loaded)
+			news = append(news, poll)
 		} else {
 			exists = append(exists, mitotypes.NewKV(loaded.GetId(), checksum))
 		}

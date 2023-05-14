@@ -68,7 +68,7 @@ func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keepe
 		for _, kv := range flushed[i] {
 			pollID, poll := kv.Key, kv.Value
 
-			switch v := any(poll.GetPayload()).(type) {
+			switch v := poll.GetPayload().Event.(type) {
 			case *types.Event_Req:
 				opID, err := contextKeeper.InitOperation(ctx, chain.Key, poll)
 				if err != nil {
