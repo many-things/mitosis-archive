@@ -45269,6 +45269,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/operation:
     get:
+      summary: List multiple operations
       operationId: ManythingsMitosisV1Beta1ContextServerOperations
       responses:
         '200':
@@ -45438,6 +45439,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/operation/{chain}/hash/{tx_hash}:
     get:
+      summary: Get Operation by TxHash
       operationId: ManythingsMitosisV1Beta1ContextServerOperationByHash
       responses:
         '200':
@@ -45530,6 +45532,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/operation/{id}:
     get:
+      summary: Get single operation
       operationId: ManythingsMitosisV1Beta1ContextServerOperation
       responses:
         '200':
@@ -45618,6 +45621,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/params:
     get:
+      summary: Parameters queries the parameters of the module.
       operationId: ManythingsMitosisV1Beta1ContextServerParams
       responses:
         '200':
@@ -77104,6 +77108,15 @@ definitions:
   manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
+  manythings.mitosis.v1beta1.context.server.MsgRegisterCosmosSignerResponse:
+    type: object
+    title: Response of [MsgRegisterCosmosSigner]
+  manythings.mitosis.v1beta1.context.server.MsgRegisterEVMSignerResponse:
+    type: object
+    title: Response of [MsgRegisterEVMSigner]
+  manythings.mitosis.v1beta1.context.server.MsgSignerReadyResponse:
+    type: object
+    title: Response of [MsgSignerReady]
   manythings.mitosis.v1beta1.context.server.QueryOperationHashResponse:
     type: object
     properties:
