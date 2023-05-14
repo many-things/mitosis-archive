@@ -24,7 +24,7 @@ build: clean proto lint
 release: test build
 	@ignite chain build --output release --release --skip-proto
 
-run-local:
+setup-local:
 	@rm -rf ./test/localnet/*
 
 	@(./build/mitosisd init localnet \
@@ -54,6 +54,7 @@ run-local:
 
 	@(./build/mitosisd collect-gentxs --home "./test/localnet")
 
+run-local: setup-local
 	@(./build/mitosisd start \
 		--consensus.create_empty_blocks "false" \
 		--p2p.pex "false" \
