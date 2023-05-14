@@ -21,6 +21,7 @@ cat $(file "register-cosmos-signer.json") \
 
 $DAEMON tx context register-cosmos-signer $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
 $(file broadcast.sh) $ACCOUNT_NAME "register-cosmos-signer"
+echo "cosmos signer registered"
 
 cat $(file "register-evm-signer.json") \
   | jq '.sender="'$ACCOUNT_ADDR'"' \
@@ -31,6 +32,7 @@ cat $(file "register-evm-signer.json") \
 
 $DAEMON tx context register-evm-signer $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
 $(file broadcast.sh) $ACCOUNT_NAME "register-evm-signer"
+echo "evm signer registered"
 
 rm $(file "temp.json")
 rm $(file "temp-tx.json")
