@@ -1,15 +1,15 @@
 {
   "sender": "{tx_signer}",
-  "chain": "ethereum",
+  "chain": "evm-5",
   "events": [
     {
       "height": 100,
       "tx_hash": "ENj90hNy9IRwJMeUbjqksGfiTQLJ/VOiZjC+sV9jVwU=",
       "evt_idx": 10,
       "req": {
-        "dest_chain": "osmosis",
+        "dest_chain": "osmo-test-5",
         "dest_addr": "MTAw",
-        "op_id": 1,
+        "op_id": 0,
         "op_args": [
           "b3NtbzFqangza3ZuZjBqazNmdTJ0d2ZndDh3bGQ5cXR6ZncwOG55dm02NQ==",
           "MTAwMDAwMDAw"

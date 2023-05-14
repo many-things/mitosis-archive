@@ -21,7 +21,7 @@ echo "proxy registered"
 
 cat $(file "register-chain.json") \
   | jq '.sender = "'$ACCOUNT_ADDR'"' \
-  | jq '.chain="osmosis"' \
+  | jq '.chain="osmo-test-5"' \
   > $(file "temp.json")
 
 $DAEMON tx event register-chain $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
@@ -30,7 +30,7 @@ echo "osmosis chain registered"
 
 cat $(file "register-chain.json") \
   | jq '.sender = "'$ACCOUNT_ADDR'"' \
-  | jq '.chain="ethereum"' \
+  | jq '.chain="evm-5"' \
   > $(file "temp.json")
 
 $DAEMON tx event register-chain $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")

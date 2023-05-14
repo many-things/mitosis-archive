@@ -13,7 +13,7 @@ ACCOUNT_INFO=$($DAEMON q account $ACCOUNT_ADDR --output json | jq -c)
 
 cat $(file "register-cosmos-signer.json") \
   | jq '.sender="'$ACCOUNT_ADDR'"' \
-  | jq '.chain="osmosis"' \
+  | jq '.chain="osmo-test-5"' \
   | jq '.pub_key="'$(echo "$ACCOUNT_INFO" | jq -r ".pub_key.key")'"' \
   | jq '.account_number="'$(echo "$ACCOUNT_INFO" | jq -r ".account_number")'"' \
   | jq '.sequence="'$(echo "$ACCOUNT_INFO" | jq -r ".sequence")'"' \
@@ -25,7 +25,7 @@ echo "cosmos signer registered"
 
 cat $(file "register-evm-signer.json") \
   | jq '.sender="'$ACCOUNT_ADDR'"' \
-  | jq '.chain="ethereum"' \
+  | jq '.chain="evm-5"' \
   | jq '.pub_key="'$(echo "$ACCOUNT_INFO" | jq -r ".pub_key.key")'"' \
   | jq '.nonce=0' \
   > $(file "temp.json")

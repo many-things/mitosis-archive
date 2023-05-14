@@ -207,7 +207,7 @@ func init() {
 	encoder := MakeEncodingConfig().TxConfig
 	converter := txconv.Converter
 	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
-	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-5", "osmosis-testnet", encoder))
 	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-1", "eth-mainnet"))
 	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
