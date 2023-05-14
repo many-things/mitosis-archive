@@ -24,7 +24,7 @@ build: clean proto lint
 release: test build
 	@ignite chain build --output release --release --skip-proto
 
-setup-local: build
+setup-local:
 	@rm -rf ./test/localnet/*
 
 	@(./build/mitosisd init localnet \
