@@ -14,20 +14,20 @@ var (
 	DefaultOsmosisFee = sdk.NewCoins(sdk.NewCoin("uosmo", sdk.NewInt(250)))
 	DefaultOsmosisOps = []mitotypes.KV[uint64, Operation]{
 		mitotypes.NewKV(uint64(0), Operation{
-			Msgs: func(args ...[]byte) ([]sdk.Msg, error) {
-				if len(args) < 3 {
+			Msgs: func(sender string, args ...[]byte) ([]sdk.Msg, error) {
+				if len(args) < 2 {
 					return nil, sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid args")
 				}
 
-				amount, err := sdk.ParseCoinsNormalized(string(args[2]))
+				amount, err := sdk.ParseCoinsNormalized(string(args[1]))
 				if err != nil {
 					return nil, err
 				}
 
 				return []sdk.Msg{
 					&banktypes.MsgSend{
-						FromAddress: string(args[0]),
-						ToAddress:   string(args[1]),
+						FromAddress: sender,
+						ToAddress:   string(args[0]),
 						Amount:      amount,
 					},
 				}, nil
@@ -38,7 +38,7 @@ var (
 )
 
 type Operation struct {
-	Msgs func(args ...[]byte) ([]sdk.Msg, error)
+	Msgs func(sender string, args ...[]byte) ([]sdk.Msg, error)
 	Gas  uint64
 }
 
