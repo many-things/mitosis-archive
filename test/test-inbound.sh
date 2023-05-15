@@ -4,6 +4,10 @@ function file() {
   echo "./test/$1"
 }
 
+function payload() {
+  echo $(file "payload/$1")
+}
+
 SIGNER_NAME=${SIGNER_NAME:-"signer"}
 VALIDATOR_NAME=${VALIDATOR_NAME:-"validator"}
 DAEMON=${DAEMON:-"./build/mitosisd --home ./test/localnet"}
@@ -16,7 +20,7 @@ $(file broadcast.sh) $SIGNER_NAME "self-send"
 SIGNER_INFO=$($DAEMON q account $SIGNER_ADDR --output json | jq -c)
 VALIDATOR_ADDR=$(echo "mitomito" | $DAEMON keys show $VALIDATOR_NAME -a --keyring-backend file)
 
-cat $(file "register-cosmos-signer.json") \
+cat $(payload "register-cosmos-signer.json") \
   | jq '.sender="'$VALIDATOR_ADDR'"' \
   | jq '.chain="osmo-test-5"' \
   | jq '.pub_key="'$(echo "$SIGNER_INFO" | jq -r ".pub_key.key")'"' \
@@ -28,7 +32,7 @@ $DAEMON tx context register-cosmos-signer $(file "temp.json") --fees 2000umito -
 $(file broadcast.sh) $VALIDATOR_NAME "register-cosmos-signer"
 echo "cosmos signer registered"
 
-cat $(file "register-evm-signer.json") \
+cat $(payload "register-evm-signer.json") \
   | jq '.sender="'$VALIDATOR_ADDR'"' \
   | jq '.chain="evm-5"' \
   | jq '.pub_key="'$(echo "$SIGNER_INFO" | jq -r ".pub_key.key")'"' \
@@ -39,7 +43,7 @@ $DAEMON tx context register-evm-signer $(file "temp.json") --fees 2000umito --ge
 $(file broadcast.sh) $VALIDATOR_NAME "register-evm-signer"
 echo "evm signer registered"
 
-cat $(file "register-proxy.json") \
+cat $(payload "register-proxy.json") \
   | jq '.validator="mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn"' \
   | jq '.proxy_account="'$VALIDATOR_ADDR'"' \
   > $(file "temp.json")
@@ -48,7 +52,7 @@ $DAEMON tx event register-proxy $(file "temp.json") --fees 2000umito --generate-
 $(file broadcast.sh) $VALIDATOR_NAME "register-proxy"
 echo "proxy registered"
 
-cat $(file "register-chain.json") \
+cat $(payload "register-chain.json") \
   | jq '.sender = "'$VALIDATOR_ADDR'"' \
   | jq '.chain="osmo-test-5"' \
   > $(file "temp.json")
@@ -57,7 +61,7 @@ $DAEMON tx event register-chain $(file "temp.json") --fees 2000umito --generate-
 $(file broadcast.sh) $VALIDATOR_NAME "register-chain-osmosis"
 echo "osmosis chain registered"
 
-cat $(file "register-chain.json") \
+cat $(payload "register-chain.json") \
   | jq '.sender = "'$VALIDATOR_ADDR'"' \
   | jq '.chain="evm-5"' \
   > $(file "temp.json")
@@ -66,7 +70,7 @@ $DAEMON tx event register-chain $(file "temp.json") --fees 2000umito --generate-
 $(file broadcast.sh) $VALIDATOR_NAME "register-chain-ethereum"
 echo "ethereum chain registered"
 
-cat $(file "submit-event.json") \
+cat $(payload "submit-event-req.json") \
   | jq '.sender = "'$VALIDATOR_ADDR'"' \
   > $(file "temp.json")
 

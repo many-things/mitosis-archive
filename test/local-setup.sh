@@ -1,5 +1,13 @@
 #!/bin/sh
 
+function file() {
+  echo "./test/$1"
+}
+
+function genesis() {
+  echo $(file "genesis/$1")
+}
+
 DAEMON=${DAEMON:-"./build/mitosisd --home ./test/localnet"}
 MITO_HOME=${MITO_HOME:-"./test/localnet"}
 
@@ -23,7 +31,7 @@ sed -i '' 's/stake/umito/g' "$MITO_HOME/config/genesis.json"
 sed -i '' 's/timeout_commit = \"5s\"/timeout_commit = \"'$BLOCK_INTERVAL'\"/g' "$MITO_HOME/config/config.toml"
 
 tmp=$(mktemp)
-MULTISIG_GENESIS=$(cat "./test/multisig-genesis.json" | jq -c)
+MULTISIG_GENESIS=$(cat $(genesis "multisig.json") | jq -c)
 jq '.app_state.multisig.keygen = '$MULTISIG_GENESIS'' "$MITO_HOME/config/genesis.json" \
   | jq '.app_state.multisig.sign.chain_set = []' \
   > "$tmp" \
