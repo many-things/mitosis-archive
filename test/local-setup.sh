@@ -7,6 +7,8 @@ VALIDATOR_MNEMONIC=${VALIDATOR_MNEMONIC:-"maple often cargo polar eager jaguar e
 SIGNER_MNEMONIC=${SIGNER_MNEMONIC:-"virus oxygen upgrade fitness diagram impact avocado cake cruise glass force joke galaxy project friend icon school midnight front actress squirrel wish phone sock"}
 PASSPHRASE=${PASSPHRASE:-"mitomito"}
 
+BLOCK_INTERVAL=${BLOCK_INTERVAL:-"5s"}
+
 $DAEMON init localnet --chain-id 'mito-local-1' --staking-bond-denom 'umito'
 
 function add_key() {
@@ -18,7 +20,7 @@ function get_addr() {
 }
 
 sed -i '' 's/stake/umito/g' "$MITO_HOME/config/genesis.json"
-sed -i '' 's/timeout_commit = \"5s\"/timeout_commit = \"1s\"/g' "$MITO_HOME/config/config.toml"
+sed -i '' 's/timeout_commit = \"5s\"/timeout_commit = \"'$BLOCK_INTERVAL'\"/g' "$MITO_HOME/config/config.toml"
 
 tmp=$(mktemp)
 MULTISIG_GENESIS=$(cat "./test/multisig-genesis.json" | jq -c)
