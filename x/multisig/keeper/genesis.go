@@ -55,6 +55,8 @@ func (k keeper) ExportGenesis(ctx sdk.Context, chains []byte) (*types.GenesisSta
 }
 
 func (k keeper) ImportGenesis(ctx sdk.Context, genState *types.GenesisState) error {
+	k.SetParams(ctx, genState.Params)
+
 	for _, keygen := range genState.Keygen.ChainSet {
 		kv := state.NewKVChainKeygenRepo(k.cdc, ctx.KVStore(k.storeKey), keygen.Chain)
 		rkv := state.NewKVChainKeygenResultRepo(k.cdc, ctx.KVStore(k.storeKey), keygen.Chain)
