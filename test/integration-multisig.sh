@@ -23,7 +23,7 @@ cat $(file "start-keygen.json") \
   > $(file "temp.json")
 
 $DAEMON tx multisig start-keygen $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
-$(file broadcast.sh) $VALIDATOR_NAME "start-keygen"
+$(file broadcast.sh) $VALIDATOR_NAME "start-keygen-osmosis"
 echo "keygen started"
 
 cat $(file "submit-pubkey.json") \
@@ -34,7 +34,28 @@ cat $(file "submit-pubkey.json") \
   > $(file "temp.json")
 
 $DAEMON tx multisig submit-pubkey $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
-$(file broadcast.sh) $VALIDATOR_NAME "submit-pubkey"
+$(file broadcast.sh) $VALIDATOR_NAME "submit-pubkey-osmosis"
+echo "pubkey submitted"
+
+cat $(file "start-keygen.json") \
+  | jq '.key_id="evm-5-0"' \
+  | jq '.participants=["mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn"]' \
+  | jq '.sender="'$VALIDATOR_ADDR'"' \
+  > $(file "temp.json")
+
+$DAEMON tx multisig start-keygen $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $VALIDATOR_NAME "start-keygen-evm"
+echo "keygen started"
+
+cat $(file "submit-pubkey.json") \
+  | jq '.key_id="evm-5-0"' \
+  | jq '.participant="mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn"' \
+  | jq '.pub_key="'$(echo "$SIGNER_INFO" | jq -r ".pub_key.key")'"' \
+  | jq '.sender="'$VALIDATOR_ADDR'"' \
+  > $(file "temp.json")
+
+$DAEMON tx multisig submit-pubkey $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $VALIDATOR_NAME "submit-pubkey-evm"
 echo "pubkey submitted"
 
 rm $(file "temp.json")
