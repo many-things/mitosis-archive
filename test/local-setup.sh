@@ -5,6 +5,7 @@ DAEMON=${DAEMON:-"./build/mitosisd --home ./test/localnet"}
 $DAEMON init localnet --chain-id 'mito-local-1' --staking-bond-denom 'umito'
 
 sed -i '' 's/stake/umito/g' ./test/localnet/config/genesis.json
+sed -i '' 's/timeout_commit = \"5s\"/timeout_commit = \"1s\"/g' ./test/localnet/config/config.toml
 
 (
   echo "maple often cargo polar eager jaguar eight inflict once nest nice swamp weasel address swift physical valid culture cheese trumpet find dinosaur curve tray"; \
