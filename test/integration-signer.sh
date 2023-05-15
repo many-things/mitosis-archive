@@ -9,6 +9,10 @@ VALIDATOR_NAME=${VALIDATOR_NAME:-"validator"}
 DAEMON=${DAEMON:-"./build/mitosisd --home ./test/localnet"}
 
 SIGNER_ADDR=$(echo "mitomito" | $DAEMON keys show $SIGNER_NAME -a --keyring-backend file)
+
+$DAEMON tx bank send $SIGNER_ADDR $SIGNER_ADDR 1umito --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $SIGNER_NAME "self-send"
+
 SIGNER_INFO=$($DAEMON q account $SIGNER_ADDR --output json | jq -c)
 VALIDATOR_ADDR=$(echo "mitomito" | $DAEMON keys show $VALIDATOR_NAME -a --keyring-backend file)
 
@@ -35,5 +39,5 @@ $DAEMON tx context register-evm-signer $(file "temp.json") --fees 2000umito --ge
 $(file broadcast.sh) $VALIDATOR_NAME "register-evm-signer"
 echo "evm signer registered"
 
-rm $(file "temp.json")
-rm $(file "temp-tx.json")
+#rm $(file "temp.json")
+#rm $(file "temp-tx.json")
