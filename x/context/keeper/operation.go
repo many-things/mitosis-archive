@@ -80,14 +80,15 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
 		return err // TODO: require wrap whole errors
 	}
 
+	if err = opRepo.Shift(op.ID, types.Operation_StatusInitSign); err != nil {
+		return sdkerrutils.Wrapf(sdkerrors.ErrPanic, "shift operation %v", err)
+	}
+
 	op.Status = types.Operation_StatusInitSign
 	op.SigID = sigID
 
 	if err := opRepo.Save(op); err != nil {
-		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
-	}
-	if err = opRepo.Shift(op.ID, types.Operation_StatusInitSign); err != nil {
-		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+		return sdkerrutils.Wrapf(sdkerrors.ErrPanic, "save operation %v", err)
 	}
 
 	err = ctx.EventManager().EmitTypedEvent(
