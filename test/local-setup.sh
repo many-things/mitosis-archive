@@ -19,6 +19,7 @@ sed -i '' 's/timeout_commit = \"5s\"/timeout_commit = \"1s\"/g' "$MITO_HOME/conf
 tmp=$(mktemp)
 MULTISIG_GENESIS=$(cat "./test/multisig-genesis.json" | jq -c)
 jq '.app_state.multisig.keygen = '$MULTISIG_GENESIS'' "$MITO_HOME/config/genesis.json" \
+  | jq '.app_state.multisig.sign.chain_set = []' \
   > "$tmp" \
   && mv "$tmp" "$MITO_HOME/config/genesis.json"
 

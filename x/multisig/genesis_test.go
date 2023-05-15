@@ -47,7 +47,9 @@ const genesis = `
 	  }
 	]
   },
-  "sign": null
+  "sign": {
+	"chain_set": []
+  }
 }`
 
 func TestGenesis(t *testing.T) {
