@@ -39,5 +39,40 @@ $DAEMON tx context register-evm-signer $(file "temp.json") --fees 2000umito --ge
 $(file broadcast.sh) $VALIDATOR_NAME "register-evm-signer"
 echo "evm signer registered"
 
+cat $(file "register-proxy.json") \
+  | jq '.validator="mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn"' \
+  | jq '.proxy_account="'$VALIDATOR_ADDR'"' \
+  > $(file "temp.json")
+
+$DAEMON tx event register-proxy $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $VALIDATOR_NAME "register-proxy"
+echo "proxy registered"
+
+cat $(file "register-chain.json") \
+  | jq '.sender = "'$VALIDATOR_ADDR'"' \
+  | jq '.chain="osmo-test-5"' \
+  > $(file "temp.json")
+
+$DAEMON tx event register-chain $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $VALIDATOR_NAME "register-chain-osmosis"
+echo "osmosis chain registered"
+
+cat $(file "register-chain.json") \
+  | jq '.sender = "'$VALIDATOR_ADDR'"' \
+  | jq '.chain="evm-5"' \
+  > $(file "temp.json")
+
+$DAEMON tx event register-chain $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $VALIDATOR_NAME "register-chain-ethereum"
+echo "ethereum chain registered"
+
+cat $(file "submit-event.json") \
+  | jq '.sender = "'$VALIDATOR_ADDR'"' \
+  > $(file "temp.json")
+
+$DAEMON tx event submit-event $(file "temp.json") --fees 2000umito --generate-only | jq > $(file "temp-tx.json")
+$(file broadcast.sh) $VALIDATOR_NAME "submit-event"
+echo "event submitted"
+
 rm $(file "temp.json")
 rm $(file "temp-tx.json")
