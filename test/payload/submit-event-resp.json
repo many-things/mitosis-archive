@@ -1,0 +1,16 @@
+{
+  "sender": "{tx_signer}",
+  "chain": "osmo-test-5",
+  "events": [
+    {
+      "height": 100,
+      "tx_hash": "ENj90hNy9IRwJMeUbjqksGfiTQLJ/VOiZjC+sV9jVwU=",
+      "evt_idx": 10,
+      "res": {
+        "req_evt_id": 0,
+        "ok": true,
+        "result": "MTAwMDAwMDAwdW9zbW8="
+      }
+    }
+  ]
+}
