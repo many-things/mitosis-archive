@@ -525,23 +525,21 @@ func New(
 		keys[contextmoduletypes.MemStoreKey],
 		app.GetSubspace(contextmoduletypes.ModuleName),
 	)
-	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
-
 	app.EventKeeper = eventmodulekeeper.NewKeeper(
 		appCodec,
 		keys[eventmoduletypes.StoreKey],
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
-
 	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
-
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],
 		app.GetSubspace(multisigmoduletypes.ModuleName),
 	)
+
+	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
 	multisigModule := multisigmodule.NewAppModule(appCodec, app.MultisigKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.EventKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
