@@ -10,9 +10,8 @@ function response() {
 
 DAEMON=${DAEMON:-"./build/mitosisd --home ./test/localnet --keyring-backend file"}
 
-out=$(file "temp-tx.json")
 resp=$(response "$2.resp.json")
 
-echo "mitomito" | $DAEMON tx sign $out --chain-id 'mito-local-1' --from $1 --output-document $out
+echo "mitomito" | $DAEMON tx sign $3 --chain-id 'mito-local-1' --from $1 --output-document $3
 
-$DAEMON tx broadcast $out --log_level 'trace' --output json -b block -y | jq > $resp
+$DAEMON tx broadcast $3 --log_level 'trace' --output json -b block -y | jq > $resp
