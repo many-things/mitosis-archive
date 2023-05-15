@@ -76,9 +76,9 @@ func (k kvq[T]) Get(i uint64) (T, error) {
 	m := k.constructor()
 
 	// TODO: query historical polls
-	//if i < k.getFirstItem() || k.getLastItem() <= i {
-	//	return m, errors.New("index out of range")
-	//}
+	// if i < k.getFirstItem() || k.getLastItem() <= i {
+	//	 return m, errors.New("index out of range")
+	// }
 
 	bz := k.items.Get(sdk.Uint64ToBigEndian(i))
 	if bz == nil {
