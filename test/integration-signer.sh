@@ -39,5 +39,5 @@ $DAEMON tx context register-evm-signer $(file "temp.json") --fees 2000umito --ge
 $(file broadcast.sh) $VALIDATOR_NAME "register-evm-signer"
 echo "evm signer registered"
 
-#rm $(file "temp.json")
-#rm $(file "temp-tx.json")
+rm $(file "temp.json")
+rm $(file "temp-tx.json")
