@@ -1,0 +1,64 @@
+{
+  "chain_set": [
+    {
+      "chain": "osmo-test-5",
+      "last_id": 0,
+      "item_set": [
+        {
+          "chain": "osmo-test-5",
+          "key_id": 0,
+          "participants": [
+            {
+              "address": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "share": 1
+            }
+          ],
+          "status": 3,
+          "threshold": 1
+        }
+      ],
+      "result_set": [
+        {
+          "chain": "osmo-test-5",
+          "key_id": 0,
+          "items": [
+            {
+              "participant": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "pub_key": "AuEd7BYv0sukuPOzOWrlKM73nWLTlFP+QG4HRriyLF22"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "chain": "evm-5",
+      "last_id": 0,
+      "item_set": [
+        {
+          "chain": "evm-5",
+          "key_id": 0,
+          "participants": [
+            {
+              "address": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "share": 1
+            }
+          ],
+          "status": 3,
+          "threshold": 1
+        }
+      ],
+      "result_set": [
+        {
+          "chain": "evm-5",
+          "key_id": 0,
+          "items": [
+            {
+              "participant": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "pub_key": "AuEd7BYv0sukuPOzOWrlKM73nWLTlFP+QG4HRriyLF22"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

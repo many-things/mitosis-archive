@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.context.server;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/many-things/mitosis/x/context/server";
+
+// MsgSignerReady notifies mitosis chain that the initialized signer is ready to use
+message MsgSignerReady {
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+
+  string chain = 2;
+}
+
+// Response of [MsgSignerReady]
+message MsgSignerReadyResponse {}
+
+// MsgRegisterCosmosSigner initializes signer for a cosmos sdk based chains
+message MsgRegisterCosmosSigner {
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+
+  string chain = 2;
+
+  bytes pub_key = 3;
+
+  uint64 account_number = 4;
+
+  uint64 sequence = 5;
+}
+
+// Response of [MsgRegisterCosmosSigner]
+message MsgRegisterCosmosSignerResponse {}
+
+// MsgRegisterEVMSigner initializes signer for a evm based chains
+message MsgRegisterEVMSigner {
+  bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+
+  string chain = 2;
+
+  bytes pub_key = 3;
+
+  uint64 nonce = 5;
+}
+
+// Response of [MsgRegisterEVMSigner]
+message MsgRegisterEVMSignerResponse {}

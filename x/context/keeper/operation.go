@@ -27,7 +27,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 
 	signer, err := signerRepo.Load(req.DestChain)
 	if err != nil {
-		return 0, sdkerrutils.Wrapf(sdkerrors.ErrNotFound, "signer not found for chain %s", chain)
+		return 0, sdkerrutils.Wrapf(sdkerrors.ErrNotFound, "signer not found for chain %s. err=%v", chain, err)
 	}
 
 	txPayload, txBytesToSign, err := txconv.Converter.Convert(
@@ -35,7 +35,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		req.DestChain, req.OpId, req.OpArgs...,
 	)
 	if err != nil {
-		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "convert event to sign target")
+		return 0, sdkerrutils.Wrapf(sdkerrors.ErrPanic, "convert event to sign target %v", err)
 	}
 
 	op := types.Operation{
@@ -51,12 +51,12 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 
 	opID, err := opRepo.Create(&op)
 	if err != nil {
-		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "create operation")
+		return 0, sdkerrutils.Wrapf(sdkerrors.ErrPanic, "create operation. err=%v", err)
 	}
 
 	err = opHashIndexRepo.Create(poll.Payload.TxHash, opID)
 	if err != nil {
-		return 0, sdkerrutils.Wrap(err, "create operation index")
+		return 0, sdkerrutils.Wrapf(err, "create operation index. err=%v", err)
 	}
 
 	err = ctx.EventManager().EmitTypedEvent(
@@ -80,14 +80,15 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
 		return err // TODO: require wrap whole errors
 	}
 
+	if err = opRepo.Shift(op.ID, types.Operation_StatusInitSign); err != nil {
+		return sdkerrutils.Wrapf(sdkerrors.ErrPanic, "shift operation %v", err)
+	}
+
 	op.Status = types.Operation_StatusInitSign
 	op.SigID = sigID
 
 	if err := opRepo.Save(op); err != nil {
-		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
-	}
-	if err = opRepo.Shift(op.ID, types.Operation_StatusInitSign); err != nil {
-		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+		return sdkerrutils.Wrapf(sdkerrors.ErrPanic, "save operation %v", err)
 	}
 
 	err = ctx.EventManager().EmitTypedEvent(

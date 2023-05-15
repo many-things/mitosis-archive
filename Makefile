@@ -24,11 +24,19 @@ build: clean proto lint
 release: test build
 	@ignite chain build --output release --release --skip-proto
 
-run-local: proto lint
-	@ignite chain serve --skip-proto --quit-on-fail --verbose
+clean-local:
+	@rm -rf ./test/localnet/*
+	@rm -rf ./test/*.resp.json
 
-run-local-clean: proto lint
-	@ignite chain serve --skip-proto --quit-on-fail --verbose --reset-once
+setup-local: clean-local
+	./test/local-setup.sh
+
+run-local: setup-local
+	@(./build/mitosisd start \
+		--consensus.create_empty_blocks "false" \
+		--p2p.pex "false" \
+		--minimum-gas-prices "0.01umito" \
+		--home "./test/localnet")
 
 proto: proto-fmt proto-go proto-openapi
 

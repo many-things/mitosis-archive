@@ -207,7 +207,7 @@ func init() {
 	encoder := MakeEncodingConfig().TxConfig
 	converter := txconv.Converter
 	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
-	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-4", "osmosis-testnet", encoder))
+	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-5", "osmosis-testnet", encoder))
 	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-1", "eth-mainnet"))
 	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
@@ -525,23 +525,21 @@ func New(
 		keys[contextmoduletypes.MemStoreKey],
 		app.GetSubspace(contextmoduletypes.ModuleName),
 	)
-	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
-
 	app.EventKeeper = eventmodulekeeper.NewKeeper(
 		appCodec,
 		keys[eventmoduletypes.StoreKey],
 		keys[eventmoduletypes.MemStoreKey],
 		app.GetSubspace(eventmoduletypes.ModuleName),
 	)
-	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
-
 	app.MultisigKeeper = multisigmodulekeeper.NewKeeper(
-
 		appCodec,
 		keys[multisigmoduletypes.StoreKey],
 		keys[multisigmoduletypes.MemStoreKey],
 		app.GetSubspace(multisigmoduletypes.ModuleName),
 	)
+
+	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
+	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
 	multisigModule := multisigmodule.NewAppModule(appCodec, app.MultisigKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.EventKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition

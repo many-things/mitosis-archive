@@ -3,12 +3,22 @@ syntax = "proto3";
 package manythings.mitosis.v1beta1.context.server;
 
 import "google/api/annotations.proto";
+import "mitosis/context/v1beta1/server/types_msg.proto";
 import "mitosis/context/v1beta1/server/types_query.proto";
 
 option go_package = "github.com/many-things/mitosis/x/context/server";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  // notify the server that a new signer is ready
+  rpc SignerReady(MsgSignerReady) returns (MsgSignerReadyResponse);
+
+  // registers a new Cosmos signer
+  rpc RegisterCosmosSigner(MsgRegisterCosmosSigner) returns (MsgRegisterCosmosSignerResponse);
+
+  // registers a new EVM signer
+  rpc RegisterEVMSigner(MsgRegisterEVMSigner) returns (MsgRegisterEVMSignerResponse);
+}
 
 // Query defines the gRPC querier service.
 service Query {

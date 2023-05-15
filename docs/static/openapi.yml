@@ -35182,9 +35182,6 @@ paths:
             type: object
             properties:
               denom_trace:
-                description: >-
-                  denom_trace returns the requested denomination trace
-                  information.
                 type: object
                 properties:
                   path:
@@ -35197,6 +35194,11 @@ paths:
                   base_denom:
                     type: string
                     description: base denomination of the relayed fungible token.
+                description: >-
+                  DenomTrace contains the base denomination for ICS20 fungible
+                  tokens and the
+
+                  source tracing information path.
             description: >-
               QueryDenomTraceResponse is the response type for the
               Query/DenomTrace RPC
@@ -36355,7 +36357,6 @@ paths:
                     type: string
                     title: client identifier
                   client_state:
-                    title: client state
                     type: object
                     properties:
                       '@type':
@@ -36528,6 +36529,7 @@ paths:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
+                    title: client state
                 description: >-
                   IdentifiedClientState defines a client state with an
                   additional client
@@ -36780,7 +36782,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: consensus state associated with the channel
                 type: object
                 properties:
                   '@type':
@@ -36949,6 +36950,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: consensus state associated with the channel
               client_id:
                 type: string
                 title: client ID associated with the consensus state
@@ -40361,7 +40363,6 @@ paths:
             type: object
             properties:
               client_state:
-                title: client state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -40530,6 +40531,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: client state associated with the request identifier
               proof:
                 type: string
                 format: byte
@@ -41021,7 +41023,6 @@ paths:
 
                         gets reset
                     consensus_state:
-                      title: consensus state
                       type: object
                       properties:
                         '@type':
@@ -41196,6 +41197,7 @@ paths:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
+                      title: consensus state
                   description: >-
                     ConsensusStateWithHeight defines a consensus state with an
                     additional height
@@ -41829,9 +41831,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: >-
-                  consensus state associated with the client identifier at the
-                  given height
                 type: object
                 properties:
                   '@type':
@@ -42000,12 +41999,14 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: >-
+                  consensus state associated with the client identifier at the
+                  given height
               proof:
                 type: string
                 format: byte
                 title: merkle proof of existence
               proof_height:
-                title: height at which the proof was retrieved
                 type: object
                 properties:
                   revision_number:
@@ -42033,6 +42034,13 @@ paths:
                   RevisionHeight
 
                   gets reset
+                title: >-
+                  Height is a monotonically increasing data type
+
+                  that can be compared against another Height for the purposes
+                  of updating and
+
+                  freezing clients
             title: >-
               QueryConsensusStateResponse is the response type for the
               Query/ConsensusState
@@ -42476,7 +42484,6 @@ paths:
             type: object
             properties:
               upgraded_client_state:
-                title: client state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -42645,6 +42652,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: client state associated with the request identifier
             description: |-
               QueryUpgradedClientStateResponse is the response type for the
               Query/UpgradedClientState RPC method.
@@ -42846,7 +42854,6 @@ paths:
             type: object
             properties:
               upgraded_consensus_state:
-                title: Consensus state associated with the request identifier
                 type: object
                 properties:
                   '@type':
@@ -43015,6 +43022,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: Consensus state associated with the request identifier
             description: |-
               QueryUpgradedConsensusStateResponse is the response type for the
               Query/UpgradedConsensusState RPC method.
@@ -44212,7 +44220,6 @@ paths:
                     type: string
                     title: client identifier
                   client_state:
-                    title: client state
                     type: object
                     properties:
                       '@type':
@@ -44385,6 +44392,7 @@ paths:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
+                    title: client state
                 description: >-
                   IdentifiedClientState defines a client state with an
                   additional client
@@ -44632,7 +44640,6 @@ paths:
             type: object
             properties:
               consensus_state:
-                title: consensus state associated with the channel
                 type: object
                 properties:
                   '@type':
@@ -44801,6 +44808,7 @@ paths:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
+                title: consensus state associated with the channel
               client_id:
                 type: string
                 title: client ID associated with the consensus state
@@ -45261,6 +45269,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/operation:
     get:
+      summary: List multiple operations
       operationId: ManythingsMitosisV1Beta1ContextServerOperations
       responses:
         '200':
@@ -45430,6 +45439,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/operation/{chain}/hash/{tx_hash}:
     get:
+      summary: Get Operation by TxHash
       operationId: ManythingsMitosisV1Beta1ContextServerOperationByHash
       responses:
         '200':
@@ -45522,6 +45532,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/operation/{id}:
     get:
+      summary: Get single operation
       operationId: ManythingsMitosisV1Beta1ContextServerOperation
       responses:
         '200':
@@ -45610,6 +45621,7 @@ paths:
         - Query
   /mitosis/context/v1beta1/params:
     get:
+      summary: Parameters queries the parameters of the module.
       operationId: ManythingsMitosisV1Beta1ContextServerParams
       responses:
         '200':
@@ -45824,12 +45836,6 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
-                properties:
-                  poll_threshold:
-                    type: string
-                  epoch_interval:
-                    type: string
-                    format: uint64
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -45877,9 +45883,6 @@ paths:
                     type: string
                     format: uint64
                     title: Operation id - will be filled
-                  epoch:
-                    type: string
-                    format: uint64
                   proposer:
                     type: string
                     format: byte
@@ -46022,9 +46025,6 @@ paths:
                       type: string
                       format: uint64
                       title: Operation id - will be filled
-                    epoch:
-                      type: string
-                      format: uint64
                     proposer:
                       type: string
                       format: byte
@@ -47040,10 +47040,6 @@ paths:
                           type: string
                           format: byte
                       title: SignSignature result message
-                  result_signature:
-                    type: string
-                    format: byte
-                    title: Evaluate After Complete
                 title: SignSignature Message
             title: >-
               QuerySignatureResponse is response type for Query Signature RPC
@@ -47105,10 +47101,6 @@ paths:
                             type: string
                             format: byte
                         title: SignSignature result message
-                    result_signature:
-                      type: string
-                      format: byte
-                      title: Evaluate After Complete
                   title: SignSignature Message
               page:
                 type: object
@@ -72599,7 +72591,6 @@ definitions:
     type: object
     properties:
       denom_trace:
-        description: denom_trace returns the requested denomination trace information.
         type: object
         properties:
           path:
@@ -72612,6 +72603,11 @@ definitions:
           base_denom:
             type: string
             description: base denomination of the relayed fungible token.
+        description: >-
+          DenomTrace contains the base denomination for ICS20 fungible tokens
+          and the
+
+          source tracing information path.
     description: |-
       QueryDenomTraceResponse is the response type for the Query/DenomTrace RPC
       method.
@@ -73078,7 +73074,6 @@ definitions:
             type: string
             title: client identifier
           client_state:
-            title: client state
             type: object
             properties:
               '@type':
@@ -73241,6 +73236,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
+            title: client state
         description: |-
           IdentifiedClientState defines a client state with an additional client
           identifier field.
@@ -73283,7 +73279,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: consensus state associated with the channel
         type: object
         properties:
           '@type':
@@ -73440,6 +73435,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state associated with the channel
       client_id:
         type: string
         title: client ID associated with the consensus state
@@ -74336,7 +74332,6 @@ definitions:
         type: string
         title: client identifier
       client_state:
-        title: client state
         type: object
         properties:
           '@type':
@@ -74493,6 +74488,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state
     description: |-
       IdentifiedClientState defines a client state with an additional client
       identifier field.
@@ -74528,7 +74524,6 @@ definitions:
 
           gets reset
       consensus_state:
-        title: consensus state
         type: object
         properties:
           '@type':
@@ -74685,6 +74680,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state
     description: >-
       ConsensusStateWithHeight defines a consensus state with an additional
       height
@@ -74734,7 +74730,6 @@ definitions:
     type: object
     properties:
       client_state:
-        title: client state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -74891,6 +74886,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state associated with the request identifier
       proof:
         type: string
         format: byte
@@ -75232,9 +75228,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: >-
-          consensus state associated with the client identifier at the given
-          height
         type: object
         properties:
           '@type':
@@ -75391,12 +75384,14 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: >-
+          consensus state associated with the client identifier at the given
+          height
       proof:
         type: string
         format: byte
         title: merkle proof of existence
       proof_height:
-        title: height at which the proof was retrieved
         type: object
         properties:
           revision_number:
@@ -75423,6 +75418,13 @@ definitions:
           RevisionHeight
 
           gets reset
+        title: >-
+          Height is a monotonically increasing data type
+
+          that can be compared against another Height for the purposes of
+          updating and
+
+          freezing clients
     title: >-
       QueryConsensusStateResponse is the response type for the
       Query/ConsensusState
@@ -75466,7 +75468,6 @@ definitions:
 
                 gets reset
             consensus_state:
-              title: consensus state
               type: object
               properties:
                 '@type':
@@ -75633,6 +75634,7 @@ definitions:
                       "@type": "type.googleapis.com/google.protobuf.Duration",
                       "value": "1.212s"
                     }
+              title: consensus state
           description: >-
             ConsensusStateWithHeight defines a consensus state with an
             additional height
@@ -75673,7 +75675,6 @@ definitions:
     type: object
     properties:
       upgraded_client_state:
-        title: client state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -75830,6 +75831,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: client state associated with the request identifier
     description: |-
       QueryUpgradedClientStateResponse is the response type for the
       Query/UpgradedClientState RPC method.
@@ -75837,7 +75839,6 @@ definitions:
     type: object
     properties:
       upgraded_consensus_state:
-        title: Consensus state associated with the request identifier
         type: object
         properties:
           '@type':
@@ -75994,6 +75995,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: Consensus state associated with the request identifier
     description: |-
       QueryUpgradedConsensusStateResponse is the response type for the
       Query/UpgradedConsensusState RPC method.
@@ -76295,7 +76297,6 @@ definitions:
             type: string
             title: client identifier
           client_state:
-            title: client state
             type: object
             properties:
               '@type':
@@ -76458,6 +76459,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
+            title: client state
         description: |-
           IdentifiedClientState defines a client state with an additional client
           identifier field.
@@ -76500,7 +76502,6 @@ definitions:
     type: object
     properties:
       consensus_state:
-        title: consensus state associated with the channel
         type: object
         properties:
           '@type':
@@ -76657,6 +76658,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
+        title: consensus state associated with the channel
       client_id:
         type: string
         title: client ID associated with the consensus state
@@ -77106,6 +77108,15 @@ definitions:
   manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
+  manythings.mitosis.v1beta1.context.server.MsgRegisterCosmosSignerResponse:
+    type: object
+    title: Response of [MsgRegisterCosmosSigner]
+  manythings.mitosis.v1beta1.context.server.MsgRegisterEVMSignerResponse:
+    type: object
+    title: Response of [MsgRegisterEVMSigner]
+  manythings.mitosis.v1beta1.context.server.MsgSignerReadyResponse:
+    type: object
+    title: Response of [MsgSignerReady]
   manythings.mitosis.v1beta1.context.server.QueryOperationHashResponse:
     type: object
     properties:
@@ -77379,12 +77390,6 @@ definitions:
     title: Event Message
   manythings.mitosis.v1beta1.event.Params:
     type: object
-    properties:
-      poll_threshold:
-        type: string
-      epoch_interval:
-        type: string
-        format: uint64
     description: Params defines the parameters for the module.
   manythings.mitosis.v1beta1.event.Poll:
     type: object
@@ -77400,9 +77405,6 @@ definitions:
         type: string
         format: uint64
         title: Operation id - will be filled
-      epoch:
-        type: string
-        format: uint64
       proposer:
         type: string
         format: byte
@@ -77638,12 +77640,6 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
-        properties:
-          poll_threshold:
-            type: string
-          epoch_interval:
-            type: string
-            format: uint64
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   manythings.mitosis.v1beta1.event.server.QueryPollResponse:
     type: object
@@ -77662,9 +77658,6 @@ definitions:
             type: string
             format: uint64
             title: Operation id - will be filled
-          epoch:
-            type: string
-            format: uint64
           proposer:
             type: string
             format: byte
@@ -77770,9 +77763,6 @@ definitions:
               type: string
               format: uint64
               title: Operation id - will be filled
-            epoch:
-              type: string
-              format: uint64
             proposer:
               type: string
               format: byte
@@ -78126,10 +78116,6 @@ definitions:
               type: string
               format: byte
           title: SignSignature result message
-      result_signature:
-        type: string
-        format: byte
-        title: Evaluate After Complete
     title: SignSignature Message
   manythings.mitosis.v1beta1.multisig.exported.SignResult.Item:
     type: object
@@ -78504,10 +78490,6 @@ definitions:
                     type: string
                     format: byte
                 title: SignSignature result message
-            result_signature:
-              type: string
-              format: byte
-              title: Evaluate After Complete
           title: SignSignature Message
       page:
         type: object
@@ -78561,9 +78543,5 @@ definitions:
                   type: string
                   format: byte
               title: SignSignature result message
-          result_signature:
-            type: string
-            format: byte
-            title: Evaluate After Complete
         title: SignSignature Message
     title: QuerySignatureResponse is response type for Query Signature RPC method

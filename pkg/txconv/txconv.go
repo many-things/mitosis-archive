@@ -50,7 +50,15 @@ func (c *converter) RegisterCosmosChain(chainID, chainName string, encoder clien
 }
 
 // Convert returns the full bytes of tx, and it's hash
-func (c *converter) Convert(signer txconvtypes.Signer, chainID string, id uint64, args ...[]byte) ([]byte, []byte, error) {
+func (c *converter) Convert(signer txconvtypes.Signer, chainID string, id uint64, args ...[]byte) (encoded []byte, bytesToSign []byte, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = sdkerrutils.Wrapf(sdkerrors.ErrPanic, "convert %v", r)
+			encoded = nil
+			bytesToSign = nil
+		}
+	}()
+
 	chain := c.FindChain(chainID)
 	if chain == nil {
 		return nil, nil, sdkerrutils.Wrap(sdkerrors.ErrNotFound, "supported chain")
@@ -60,5 +68,7 @@ func (c *converter) Convert(signer txconvtypes.Signer, chainID string, id uint64
 		return nil, nil, sdkerrutils.Wrap(sdkerrors.ErrPanic, "signer type does not match chain type")
 	}
 
-	return chain.Value.TxConv(signer, id, args...)
+	encoded, bytesToSign, err = chain.Value.TxConv(signer, id, args...)
+
+	return
 }

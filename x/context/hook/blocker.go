@@ -33,6 +33,7 @@ func EndBlocker(
 		if err != nil {
 			panic(errors.Wrap(err, "failed to query keygen list"))
 		}
+		ctx.Logger().Info(fmt.Sprintf("keygenResp: %v", keygenResp))
 
 		sigID, err := multisigKeeper.RegisterSignEvent(ctx, op.Chain, &multisigexport.Sign{
 			Chain: op.Chain,

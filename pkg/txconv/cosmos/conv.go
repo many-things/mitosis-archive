@@ -25,7 +25,7 @@ func convert(chainID string, encoder client.TxConfig, config ChainInfoConfig) tx
 
 		builder := encoder.NewTxBuilder()
 
-		msgs, err := op.Value.Msgs(opArgs...)
+		msgs, err := op.Value.Msgs(s.Address(), opArgs...)
 		if err != nil {
 			return nil, nil, err
 		}

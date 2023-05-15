@@ -6,5 +6,8 @@ release/
 .vscode/
 .DS_Store
 
+test/localnet
+test/*.resp.json
+
 coverage.out
 coverage.out.tmp
