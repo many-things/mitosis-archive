@@ -11,23 +11,22 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/many-things/mitosis/sidecar/mitosis"
 	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
 	tmclient "github.com/tendermint/tendermint/rpc/client"
+	"golang.org/x/sync/errgroup"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
-	"github.com/many-things/mitosis/sidecar/mitosis"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/tofnd/session"
 	"github.com/many-things/mitosis/sidecar/types"
-	multisigexport "github.com/many-things/mitosis/x/multisig/exported"
 	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
-	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
 	"time"
@@ -92,11 +91,13 @@ func createKeygenHandler(cfg config.SidecarConfig, log log.Logger) func(msg *mul
 	}
 }
 
-func createSignHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multisigexport.Sign) error {
-	return func(msg *multisigexport.Sign) error {
+func createSignHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multisigtypes.EventSigningStart) error {
+	return func(msg *multisigtypes.EventSigningStart) error {
 		mgr := session.GetSignMgrInstance()
 
-		signUID := fmt.Sprintf("%s-%d", msg.Chain, msg.SigID)
+		fmt.Println("get createSignHandler", msg)
+
+		signUID := fmt.Sprintf("%s-%d", msg.Chain, msg.SigId)
 		var partyUIDs []string
 		for _, v := range msg.Participants {
 			partyUIDs = append(partyUIDs, v.String())
@@ -105,7 +106,7 @@ func createSignHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multi
 		msgToSign := sha256.Sum256(msg.MessageToSign)
 		signInit := types.SignInit{
 			NewSigUid:     signUID,
-			KeyUid:        msg.KeyID,
+			KeyUid:        msg.KeyId,
 			PartyUids:     partyUIDs,
 			MessageToSign: msgToSign[:],
 		}
@@ -132,13 +133,16 @@ func main() {
 		return
 	}
 	golog.Println("configuration")
-	fmt.Println(cfg)
 	ctx, cancel := context.WithCancel(context.Background())
 	eGroup, ctx := errgroup.WithContext(ctx)
 	logger := log.NewTMLogger(os.Stdout)
 
+	fmt.Println(cfg.TofNConfig.Nodes)
+
 	// TODO: apply Storage on use
 	// store := storage.GetStorage(&cfg)
+	sdk.GetConfig().SetBech32PrefixForAccount("mito", "")
+	sdk.GetConfig().SetBech32PrefixForValidator("mitovaloper", "")
 
 	// TODO: implement block getter
 	golog.Println("Set Robust Tendermint Client")
@@ -162,11 +166,11 @@ func main() {
 
 	golog.Println("Set Tendermint BlockListener")
 	listener := tendermint.NewBlockListener(ctx, robustClient, time.Second*5)
-	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
+	pubSub := tendermint.NewPubSub[*tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
 	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
-	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigexport.Sign]())
+	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.EventSigningStart]())
 
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),

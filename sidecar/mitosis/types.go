@@ -44,7 +44,7 @@ func NewEventMgr(ctx context.Context, cfg config.TmConfig, logger log.Logger) (E
 	}
 
 	listener := tendermint.NewBlockListener(ctx, fetcher, time.Second*5)
-	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
+	pubSub := tendermint.NewPubSub[*tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
 	errGroup, eventCtx := errgroup.WithContext(ctx)

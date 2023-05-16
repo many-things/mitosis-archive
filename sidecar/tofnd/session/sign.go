@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"sync"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/sidecar/config"
@@ -48,7 +49,9 @@ func GetSignMgrInstance() *signSessionMgr { //nolint: revive
 
 		// Is still nil after get Lock
 		if signMgrInstance == nil {
-			signMgrInstance = &signSessionMgr{}
+			signMgrInstance = &signSessionMgr{
+				sessions: map[string]SignSession{},
+			}
 		}
 	}
 
@@ -130,7 +133,7 @@ func (s *signSession) StartSession() error {
 	}
 
 	dialURL := fmt.Sprintf("%s:%d", s.config.Host, s.config.Port)
-	conn, err := grpc.Dial(dialURL, grpc.WithInsecure()) // nolint: staticcheck
+	conn, err := grpc.Dial(dialURL, grpc.WithInsecure(), grpc.WithTimeout(time.Second*60)) // nolint: staticcheck
 	if err != nil {
 		return err
 	}
@@ -141,11 +144,23 @@ func (s *signSession) StartSession() error {
 		return err
 	}
 
+	fmt.Println("Try to send")
+	if err := stream.Send(&types.MessageIn{Data: &types.MessageIn_SignInit{SignInit: &s.msg}}); err != nil {
+		return err
+	}
+
 	s.stream = &GG20StreamSession{
 		conn:   conn,
 		stream: stream,
 	}
 	s.isRunning = true
+
+	//// send Message
+	//fmt.Println("Send message ")
+	//if err := s.stream.stream.Send(&types.MessageIn{Data: &types.MessageIn_SignInit{SignInit: &s.msg}}); err != nil {
+	//	return err
+	//}
+	s.spawnReceiver()
 
 	return nil
 }
@@ -199,6 +214,7 @@ func (s *signSession) spawnReceiver() error {
 						log.Fatal(err)
 					}
 
+					s.stream.conn.Close()
 					return
 				case *types.MessageOut_SignResult_Criminals:
 					// TODO: handle jail function

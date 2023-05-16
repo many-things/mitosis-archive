@@ -76,5 +76,14 @@ func GetConfigFromFile(file string) (SidecarConfig, error) {
 		return SidecarConfig{}, err
 	}
 
+	// add node
+	//cfg.TofNConfig.Nodes = append(
+	//	[]NodeConfig{{
+	//		Validator: cfg.TofNConfig.Validator,
+	//		Host:      fmt.Sprintf("%s:%d", cfg.TofNConfig.Host, cfg.TofNConfig.Port),
+	//	}},
+	//	cfg.TofNConfig.Nodes...,
+	//)
+
 	return *cfg, nil
 }

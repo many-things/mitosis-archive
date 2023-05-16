@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package manythings.mitosis.v1beta1.multisig;
+
+import "gogoproto/gogo.proto";
+import "mitosis/common/v1beta1/types.proto";
+
+option go_package = "github.com/many-things/mitosis/x/multisig/types";
+
+// Event for Emit Sign
+message EventSigningStart {
+  string chain = 1;
+  uint64 sig_id = 2;
+  string key_id = 3;
+  uint64 op_id = 4;
+  repeated string participants = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"];
+  bytes message_to_sign = 6;
+}
