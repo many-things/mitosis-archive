@@ -132,18 +132,30 @@ func createSignHandler(cfg config.SidecarConfig, storage storage.Storage, mitoWa
 		signature, err := privKey.Sign(msg.MessageToSign)
 
 		sender, _ := mitoWallet.GetAddress()
-		mitoMsg := &multisigserver.MsgSubmitSignature{
-			Module:      "sidecar",
-			SigID:       exported.SigID(msg.SigId),
-			Participant: sdk.ValAddress(cfg.TofNConfig.Validator),
-			Signature:   signature,
-			Sender:      sdk.AccAddress(sender),
-		}
 
-		if err := mitoWallet.BroadcastMsg(mitoMsg); err != nil {
-			log.Error("signHandler: fail broadcast: %x", err)
+		valAddr, err := sdk.ValAddressFromBech32(cfg.TofNConfig.Validator)
+
+		if err != nil {
+			log.Error("signHandler: wrong Validator: %x", err)
 			return err
 		}
+
+		mitoMsg := &multisigserver.MsgSubmitSignature{
+			Module:      "sidecar",
+			SigID:       exported.SigID(fmt.Sprintf("%s-%d", msg.Chain, msg.SigId)),
+			Participant: valAddr,
+			Signature:   signature,
+			Sender:      sdk.MustAccAddressFromBech32(sender),
+		}
+
+		go func() error {
+			if err := mitoWallet.BroadcastMsg(mitoMsg); err != nil {
+				log.Error("signHandler: fail broadcast: %x", err)
+				return err
+			}
+
+			return nil
+		}()
 
 		return nil
 	}

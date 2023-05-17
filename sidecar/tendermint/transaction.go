@@ -153,11 +153,17 @@ func (w wallet) GetAccountInfo() (*AccountInfo, error) {
 func (w wallet) CreateSignedRawTx(msg sdk.Msg, accountInfo AccountInfo) ([]byte, error) {
 	txConfig := w.createTxConfig()
 	txBuilder := txConfig.NewTxBuilder()
+	payer, _ := w.GetAddress()
 
 	if err := txBuilder.SetMsgs(msg); err != nil {
 		return nil, err
 	}
 	txBuilder.SetGasLimit(100000)
+	txBuilder.SetFeePayer(sdk.MustAccAddressFromBech32(payer))
+	txBuilder.SetFeeAmount(sdk.Coins{{
+		Denom:  "umito",
+		Amount: sdk.NewInt(1000),
+	}})
 
 	signerData := authsigning.SignerData{
 		ChainID:       w.ChainID,
