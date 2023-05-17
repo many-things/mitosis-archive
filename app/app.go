@@ -103,8 +103,6 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/many-things/mitosis/pkg/txconv"
-	"github.com/many-things/mitosis/pkg/utils"
 	contextmodule "github.com/many-things/mitosis/x/context"
 	contextmodulekeeper "github.com/many-things/mitosis/x/context/keeper"
 	contextmoduletypes "github.com/many-things/mitosis/x/context/types"
@@ -203,13 +201,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	encoder := MakeEncodingConfig().TxConfig
-	converter := txconv.Converter
-	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmosis-1", "osmosis-mainnet", encoder))
-	utils.Must(struct{}{}, converter.RegisterCosmosChain("osmo-test-5", "osmosis-testnet", encoder))
-	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-1", "eth-mainnet"))
-	utils.Must(struct{}{}, converter.RegisterEvmChain("evm-5", "eth-testnet-goerli"))
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 }
@@ -538,7 +529,7 @@ func New(
 		app.GetSubspace(multisigmoduletypes.ModuleName),
 	)
 
-	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.MultisigKeeper)
+	contextModule := contextmodule.NewAppModule(appCodec, app.ContextKeeper, app.AccountKeeper, app.BankKeeper, app.EventKeeper, app.MultisigKeeper)
 	eventModule := eventmodule.NewAppModule(appCodec, app.EventKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.StakingKeeper)
 	multisigModule := multisigmodule.NewAppModule(appCodec, app.MultisigKeeper, app.AccountKeeper, app.BankKeeper, app.ContextKeeper, app.EventKeeper)
 

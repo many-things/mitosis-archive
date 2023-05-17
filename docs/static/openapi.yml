@@ -77108,15 +77108,12 @@ definitions:
   manythings.mitosis.v1beta1.context.Params:
     type: object
     description: Params defines the parameters for the module.
-  manythings.mitosis.v1beta1.context.server.MsgRegisterCosmosSignerResponse:
+  manythings.mitosis.v1beta1.context.server.MsgClearVaultResponse:
     type: object
-    title: Response of [MsgRegisterCosmosSigner]
-  manythings.mitosis.v1beta1.context.server.MsgRegisterEVMSignerResponse:
+    title: Response of [MsgClearVault]
+  manythings.mitosis.v1beta1.context.server.MsgRegisterVaultResponse:
     type: object
-    title: Response of [MsgRegisterEVMSigner]
-  manythings.mitosis.v1beta1.context.server.MsgSignerReadyResponse:
-    type: object
-    title: Response of [MsgSignerReady]
+    title: Response of [MsgRegisterVault]
   manythings.mitosis.v1beta1.context.server.QueryOperationHashResponse:
     type: object
     properties:

@@ -18,9 +18,8 @@ func RegisterServerLegacyAminoCodec(_ *codec.LegacyAmino) {
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations(
 		(*sdk.Msg)(nil),
-		&MsgSignerReady{},
-		&MsgRegisterCosmosSigner{},
-		&MsgRegisterEVMSigner{},
+		&MsgRegisterVault{},
+		&MsgClearVault{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

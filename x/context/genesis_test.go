@@ -19,7 +19,7 @@ func TestGenesis(t *testing.T) {
 
 	k, ctx, _, _, _ := keepertest.ContextKeeper(t)
 	context.InitGenesis(ctx, k, genesisState)
-	got := context.ExportGenesis(ctx, k)
+	got := context.ExportGenesis(ctx, k, []string{})
 	require.NotNil(t, got)
 
 	nullify.Fill(&genesisState)

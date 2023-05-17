@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/context/hook"
 
 	"github.com/many-things/mitosis/x/context/server"
@@ -102,6 +104,7 @@ type AppModule struct {
 	keeper         keeper.Keeper
 	accountKeeper  types.AccountKeeper
 	bankKeeper     types.BankKeeper
+	eventKeeper    types.EventKeeper
 	multisigKeeper types.MultisigKeeper
 }
 
@@ -110,6 +113,7 @@ func NewAppModule(
 	keeper keeper.Keeper,
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
+	eventKeeper types.EventKeeper,
 	multisigKeeper types.MultisigKeeper,
 ) AppModule {
 	return AppModule{
@@ -117,6 +121,7 @@ func NewAppModule(
 		keeper:         keeper,
 		accountKeeper:  accountKeeper,
 		bankKeeper:     bankKeeper,
+		eventKeeper:    eventKeeper,
 		multisigKeeper: multisigKeeper,
 	}
 }
@@ -154,7 +159,12 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 
 // ExportGenesis returns the module's exported genesis state as raw JSON bytes.
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	genState := ExportGenesis(ctx, am.keeper)
+	chains, _, err := am.eventKeeper.QueryChains(ctx, &query.PageRequest{Limit: query.MaxLimit})
+	if err != nil {
+		panic(err)
+	}
+
+	genState := ExportGenesis(ctx, am.keeper, mitotypes.Keys(chains))
 	return cdc.MustMarshalJSON(genState)
 }
 
