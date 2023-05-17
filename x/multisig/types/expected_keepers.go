@@ -74,7 +74,8 @@ type GenesisKeeper interface {
 }
 
 type ContextKeeper interface {
-	FinishSignOperation(ctx sdk.Context, id uint64) error
+	// TODO: Remove Signature
+	FinishSignOperation(ctx sdk.Context, id uint64, signature []byte) error
 }
 
 type EventKeeper interface {

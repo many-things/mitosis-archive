@@ -31,6 +31,7 @@ message EventOperationSigningFinished {
   uint64 operation_id = 1 [(gogoproto.customname) = "OperationID"];
   uint64 sign_id = 2 [(gogoproto.customname) = "SignID"];
   bytes signer = 3;
+  bytes signature = 4;
 }
 
 // Event for OperationKeeper.FinishOperation

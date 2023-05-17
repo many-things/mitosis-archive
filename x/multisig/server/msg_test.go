@@ -20,7 +20,7 @@ import (
 type MockContextKeeper struct {
 }
 
-func (m MockContextKeeper) FinishSignOperation(_ sdk.Context, _ uint64) error {
+func (m MockContextKeeper) FinishSignOperation(_ sdk.Context, _ uint64, _ []byte) error {
 	return nil
 }
 

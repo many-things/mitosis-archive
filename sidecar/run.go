@@ -6,22 +6,25 @@ import (
 	"flag"
 	"fmt"
 	golog "log"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
 	"github.com/many-things/mitosis/sidecar/mitosis"
+	"github.com/many-things/mitosis/sidecar/storage"
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/tofnd/session"
 	"github.com/many-things/mitosis/sidecar/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
+	multisigserver "github.com/many-things/mitosis/x/multisig/server"
 	multisigtypes "github.com/many-things/mitosis/x/multisig/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmclient "github.com/tendermint/tendermint/rpc/client"
@@ -82,15 +85,11 @@ func createKeygenHandler(cfg config.SidecarConfig, log log.Logger) func(msg *mul
 			return err
 		}
 
-		// if err := storage.SaveKey(keyUID, ""); err != nil {
-		//	return err
-		// }
-
 		return nil
 	}
 }
 
-func createSignHandler(cfg config.SidecarConfig, log log.Logger, ctx context.Context) func(msg *multisigtypes.EventSigningStart) error {
+func createTssSignHandler(cfg config.SidecarConfig, log log.Logger, ctx context.Context) func(msg *multisigtypes.EventSigningStart) error {
 	return func(msg *multisigtypes.EventSigningStart) error {
 		mgr := session.GetSignMgrInstance(ctx)
 
@@ -121,6 +120,35 @@ func createSignHandler(cfg config.SidecarConfig, log log.Logger, ctx context.Con
 	}
 }
 
+func createSignHandler(cfg config.SidecarConfig, storage storage.Storage, mitoWallet tendermint.Wallet, log log.Logger) func(msg *multisigtypes.EventSigningStart) error {
+	return func(msg *multisigtypes.EventSigningStart) error {
+		privKeyBytes, err := storage.GetKey(msg.GetKeyId())
+		if err != nil {
+			log.Error("signHandler: key not found: %x", err)
+			return err
+		}
+
+		privKey := secp256k1.PrivKey{Key: privKeyBytes}
+		signature, err := privKey.Sign(msg.MessageToSign)
+
+		sender, _ := mitoWallet.GetAddress()
+		mitoMsg := &multisigserver.MsgSubmitSignature{
+			Module:      "sidecar",
+			SigID:       exported.SigID(msg.SigId),
+			Participant: sdk.ValAddress(cfg.TofNConfig.Validator),
+			Signature:   signature,
+			Sender:      sdk.AccAddress(sender),
+		}
+
+		if err := mitoWallet.BroadcastMsg(mitoMsg); err != nil {
+			log.Error("signHandler: fail broadcast: %x", err)
+			return err
+		}
+
+		return nil
+	}
+}
+
 func main() {
 	homeEnvDir, _ := os.LookupEnv("HOME")
 	homeDir := flag.String("home", homeEnvDir+"/.sidecar", "setting for home")
@@ -131,19 +159,16 @@ func main() {
 		golog.Fatal(err)
 		return
 	}
-	golog.Println("configuration")
+	cfg.Home = *homeDir
+
 	ctx, cancel := context.WithCancel(context.Background())
 	eGroup, ctx := errgroup.WithContext(ctx)
 	logger := log.NewTMLogger(os.Stdout)
 
-	fmt.Println(cfg.TofNConfig.Nodes)
+	store := storage.GetStorage(&cfg)
+	sdk.GetConfig().SetBech32PrefixForAccount(cfg.MitoConfig.Prefix, "")
+	sdk.GetConfig().SetBech32PrefixForValidator(cfg.MitoConfig.ValidatorPrefix, "")
 
-	// TODO: apply Storage on use
-	// store := storage.GetStorage(&cfg)
-	sdk.GetConfig().SetBech32PrefixForAccount("mito", "")
-	sdk.GetConfig().SetBech32PrefixForValidator("mitovaloper", "")
-
-	// TODO: implement block getter
 	golog.Println("Set Robust Tendermint Client")
 	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
 		mitoDialURL := fmt.Sprintf("http://%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
@@ -171,9 +196,15 @@ func main() {
 	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
 	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.EventSigningStart]())
 
+	wallet, err := mitosis.NewWalletFromConfig(cfg.MitoConfig)
+	if err != nil {
+		golog.Fatal("wallet generate", err)
+		return
+	}
+
 	jobs := []mitosis.Job{
 		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
-		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, logger, ctx), cancel, logger),
+		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, store, wallet, logger), cancel, logger),
 	}
 
 	utils.ForEach(jobs, func(j mitosis.Job) {
@@ -191,20 +222,20 @@ func main() {
 		}
 	}()
 
-	lis, err := net.Listen("tcp", ":9999")
-	if err != nil {
-		logger.Error(err.Error())
-		return
-	}
-
-	grpcServer := grpc.NewServer()
-	go func() {
-		golog.Println("Run sidecar server")
-		types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
-		if err := grpcServer.Serve(lis); err != nil {
-			logger.Error(err.Error())
-		}
-	}()
+	//lis, err := net.Listen("tcp", ":9999")
+	//if err != nil {
+	//	logger.Error(err.Error())
+	//	return
+	//}
+	//
+	//grpcServer := grpc.NewServer()
+	//go func() {
+	//	golog.Println("Run sidecar server")
+	//	types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
+	//	if err := grpcServer.Serve(lis); err != nil {
+	//		logger.Error(err.Error())
+	//	}
+	//}()
 
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
@@ -212,7 +243,7 @@ func main() {
 	golog.Println("Sidecar started successfully")
 	<-exit
 
-	grpcServer.GracefulStop()
+	//grpcServer.GracefulStop()
 	_, timeout := context.WithTimeout(context.Background(), time.Second*3)
 	defer cancel()
 	defer timeout()

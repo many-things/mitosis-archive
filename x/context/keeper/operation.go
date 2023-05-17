@@ -105,7 +105,7 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
 	return nil
 }
 
-func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
+func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64, signature []byte) error {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	op, err := opRepo.Load(id)
@@ -127,6 +127,7 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 			OperationID: op.ID,
 			SignID:      op.SigID,
 			Signer:      op.SignerPubkey,
+			Signature:   signature,
 		},
 	)
 	if err != nil {

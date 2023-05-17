@@ -25,7 +25,7 @@ type OperationKeeper interface {
 
 	StartSignOperation(ctx sdk.Context, id, sigID uint64) error
 
-	FinishSignOperation(ctx sdk.Context, id uint64) error
+	FinishSignOperation(ctx sdk.Context, id uint64, signature []byte) error
 
 	FinishOperation(ctx sdk.Context, id uint64, poll *evttypes.Poll) error
 
