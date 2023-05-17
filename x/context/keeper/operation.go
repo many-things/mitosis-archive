@@ -63,6 +63,8 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		&types.EventOperationInitialized{
 			PollID:      poll.Id,
 			OperationID: opID,
+			ChainID:     poll.GetChain(),
+			TxHash:      string(poll.GetPayload().TxHash),
 		},
 	)
 	if err != nil {
@@ -128,6 +130,7 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64, signature []byte
 			SignID:      op.SigID,
 			Signer:      op.SignerPubkey,
 			Signature:   signature,
+			ChainID:     op.Chain,
 		},
 	)
 	if err != nil {
