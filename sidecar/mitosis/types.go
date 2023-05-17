@@ -60,6 +60,6 @@ func NewEventMgr(ctx context.Context, cfg config.TmConfig, logger log.Logger) (E
 }
 
 func NewWalletFromConfig(cfg config.TmConfig) (tendermint.Wallet, error) {
-	dialURL := fmt.Sprintf("%s:%d", cfg.Host, 9090)
+	dialURL := fmt.Sprintf("%s:%d", cfg.Host, cfg.WalletPort)
 	return tendermint.NewWallet(cfg.PrivKey, cfg.Prefix, cfg.ChainID, dialURL, nil)
 }
