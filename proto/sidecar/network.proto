@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package manythings.sidecar;
+package tofnd;
 
 import "sidecar/common.proto";
 import "sidecar/grpc.proto";

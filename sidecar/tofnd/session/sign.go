@@ -27,10 +27,12 @@ type SignSession interface {
 }
 
 type signSessionMgr struct {
+	ctx      context.Context
 	sessions map[string]SignSession
 }
 
 type signSession struct {
+	ctx       context.Context
 	config    config.TofNConfig
 	msg       types.SignInit
 	sessions  map[string]*grpc.ClientConn
@@ -42,7 +44,7 @@ type signSession struct {
 var signMgrInstance *signSessionMgr
 var signLock = &sync.Mutex{}
 
-func GetSignMgrInstance() *signSessionMgr { //nolint: revive
+func GetSignMgrInstance(ctx context.Context) *signSessionMgr { //nolint: revive
 	if signMgrInstance == nil {
 		signLock.Lock()
 		defer signLock.Unlock()
@@ -50,6 +52,7 @@ func GetSignMgrInstance() *signSessionMgr { //nolint: revive
 		// Is still nil after get Lock
 		if signMgrInstance == nil {
 			signMgrInstance = &signSessionMgr{
+				ctx:      ctx,
 				sessions: map[string]SignSession{},
 			}
 		}
@@ -65,6 +68,7 @@ func (m *signSessionMgr) CreateSession(cfg config.SidecarConfig, msg types.SignI
 	}
 
 	m.sessions[msg.NewSigUid] = &signSession{
+		ctx:      m.ctx,
 		config:   cfg.TofNConfig,
 		msg:      msg,
 		sessions: map[string]*grpc.ClientConn{},
@@ -139,10 +143,12 @@ func (s *signSession) StartSession() error {
 	}
 
 	cli := types.NewGG20Client(conn)
-	stream, err := cli.Sign(context.Background())
+	stream, err := cli.Sign(s.ctx)
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("SignInit", s.msg)
 
 	fmt.Println("Try to send")
 	if err := stream.Send(&types.MessageIn{Data: &types.MessageIn_SignInit{SignInit: &s.msg}}); err != nil {

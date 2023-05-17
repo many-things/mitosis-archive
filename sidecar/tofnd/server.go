@@ -31,7 +31,7 @@ func (s *TrafficServer) ShareKeygenRequest(_ context.Context, msg *types.ShareKe
 }
 
 func (s *TrafficServer) ShareSignTraffic(_ context.Context, msg *types.ShareSignRequest) (*types.ShareSignResponse, error) {
-	mgr := session.GetSignMgrInstance()
+	mgr := session.GetSignMgrInstance(context.Background())
 
 	session, ok := mgr.GetSession(msg.NewSigUid)
 	if !ok {

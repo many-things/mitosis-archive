@@ -3,25 +3,13 @@ package main
 import (
 	"context"
 	"crypto/sha256"
-	"flag"
 	"fmt"
-	golog "log"
-	"net"
-	"os"
-	"os/signal"
-	"syscall"
-
-	"github.com/many-things/mitosis/sidecar/mitosis"
-	mitotmclient "github.com/many-things/mitosis/sidecar/tendermint/client"
-	tmclient "github.com/tendermint/tendermint/rpc/client"
-	"golang.org/x/sync/errgroup"
 
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
-	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/tofnd"
 	"github.com/many-things/mitosis/sidecar/tofnd/session"
 	"github.com/many-things/mitosis/sidecar/types"
@@ -91,9 +79,9 @@ func createKeygenHandler(cfg config.SidecarConfig, log log.Logger) func(msg *mul
 	}
 }
 
-func createSignHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multisigtypes.EventSigningStart) error {
+func createSignHandler(cfg config.SidecarConfig, log log.Logger, ctx context.Context) func(msg *multisigtypes.EventSigningStart) error {
 	return func(msg *multisigtypes.EventSigningStart) error {
-		mgr := session.GetSignMgrInstance()
+		mgr := session.GetSignMgrInstance(ctx)
 
 		fmt.Println("get createSignHandler", msg)
 
@@ -122,101 +110,161 @@ func createSignHandler(cfg config.SidecarConfig, log log.Logger) func(msg *multi
 	}
 }
 
+//func main() {
+//	homeEnvDir, _ := os.LookupEnv("HOME")
+//	homeDir := flag.String("home", homeEnvDir+"/.sidecar", "setting for home")
+//	flag.Parse()
+//
+//	cfg, err := config.GetConfigFromFile(*homeDir + "/config.yaml")
+//	if err != nil {
+//		golog.Fatal(err)
+//		return
+//	}
+//	golog.Println("configuration")
+//	ctx, cancel := context.WithCancel(context.Background())
+//	eGroup, ctx := errgroup.WithContext(ctx)
+//	logger := log.NewTMLogger(os.Stdout)
+//
+//	fmt.Println(cfg.TofNConfig.Nodes)
+//
+//	// TODO: apply Storage on use
+//	// store := storage.GetStorage(&cfg)
+//	sdk.GetConfig().SetBech32PrefixForAccount("mito", "")
+//	sdk.GetConfig().SetBech32PrefixForValidator("mitovaloper", "")
+//
+//	// TODO: implement block getter
+//	golog.Println("Set Robust Tendermint Client")
+//	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
+//		mitoDialURL := fmt.Sprintf("http://%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
+//		golog.Println(mitoDialURL)
+//		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
+//		if err != nil {
+//			golog.Fatal(err)
+//			return nil, err
+//		}
+//
+//		err = fetcher.Start()
+//		if err != nil {
+//			golog.Fatal(err)
+//			return nil, err
+//		}
+//
+//		return fetcher, err
+//	})
+//
+//	fmt.Println("try to sign")
+//	payloadHash := sha256.Sum256([]byte("Hello World"))
+//
+//	signInit := types.SignInit{
+//		NewSigUid:     "test",
+//		KeyUid:        "evm-5-0",
+//		PartyUids:     []string{"mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn"},
+//		MessageToSign: payloadHash[:],
+//	}
+//
+//	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	tofnServ := types.NewGG20Client(conn)
+//	stream, err := tofnServ.Sign(ctx)
+//	if err != nil {
+//		fmt.Println(err)
+//		panic(err)
+//	}
+//
+//	err = stream.Send(&types.MessageIn{Data: &types.MessageIn_SignInit{SignInit: &signInit}})
+//	if err != nil {
+//		fmt.Println(err)
+//		panic(err)
+//	}
+//
+//	golog.Println("Set Tendermint BlockListener")
+//	listener := tendermint.NewBlockListener(ctx, robustClient, time.Second*5)
+//	pubSub := tendermint.NewPubSub[*tendermint.TmEvent]()
+//	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
+//
+//	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
+//	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.EventSigningStart]())
+//
+//	jobs := []mitosis.Job{
+//		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
+//		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, logger, ctx), cancel, logger),
+//	}
+//
+//	utils.ForEach(jobs, func(j mitosis.Job) {
+//		eGroup.Go(func() error { return j(ctx) })
+//	})
+//
+//	go func() {
+//		<-eventBus.ListenEvents(ctx)
+//	}()
+//
+//	go func() {
+//		golog.Println("Register Tendermint Jobs")
+//		if err := eGroup.Wait(); err != nil {
+//			logger.Error(err.Error())
+//		}
+//	}()
+//
+//	lis, err := net.Listen("tcp", ":9999")
+//	if err != nil {
+//		logger.Error(err.Error())
+//		return
+//	}
+//
+//	grpcServer := grpc.NewServer()
+//	go func() {
+//		golog.Println("Run sidecar server")
+//		types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
+//		if err := grpcServer.Serve(lis); err != nil {
+//			logger.Error(err.Error())
+//		}
+//	}()
+//
+//	exit := make(chan os.Signal, 1)
+//	signal.Notify(exit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+//
+//	golog.Println("Sidecar started successfully")
+//	<-exit
+//
+//	grpcServer.GracefulStop()
+//	_, timeout := context.WithTimeout(context.Background(), time.Second*3)
+//	defer cancel()
+//	defer timeout()
+//
+//	fmt.Println("Gracefully shutdown")
+//}
+
 func main() {
-	homeEnvDir, _ := os.LookupEnv("HOME")
-	homeDir := flag.String("home", homeEnvDir+"/.sidecar", "setting for home")
-	flag.Parse()
+	fmt.Println("try to sign")
+	payloadHash := sha256.Sum256([]byte("Hello World"))
 
-	cfg, err := config.GetConfigFromFile(*homeDir + "/config.yaml")
+	signInit := types.SignInit{
+		NewSigUid:     "test-test",
+		KeyUid:        "evm-5-0",
+		PartyUids:     []string{"mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn"},
+		MessageToSign: payloadHash[:],
+	}
+
+	conn, err := grpc.Dial("127.0.0.1:50051", grpc.WithInsecure())
+	defer conn.Close()
 	if err != nil {
-		golog.Fatal(err)
-		return
-	}
-	golog.Println("configuration")
-	ctx, cancel := context.WithCancel(context.Background())
-	eGroup, ctx := errgroup.WithContext(ctx)
-	logger := log.NewTMLogger(os.Stdout)
-
-	fmt.Println(cfg.TofNConfig.Nodes)
-
-	// TODO: apply Storage on use
-	// store := storage.GetStorage(&cfg)
-	sdk.GetConfig().SetBech32PrefixForAccount("mito", "")
-	sdk.GetConfig().SetBech32PrefixForValidator("mitovaloper", "")
-
-	// TODO: implement block getter
-	golog.Println("Set Robust Tendermint Client")
-	robustClient := mitotmclient.NewRobustTmClient(func() (tmclient.Client, error) {
-		mitoDialURL := fmt.Sprintf("http://%s:%d", cfg.MitoConfig.Host, cfg.MitoConfig.Port)
-		golog.Println(mitoDialURL)
-		fetcher, err := sdkclient.NewClientFromNode(mitoDialURL)
-		if err != nil {
-			golog.Fatal(err)
-			return nil, err
-		}
-
-		err = fetcher.Start()
-		if err != nil {
-			golog.Fatal(err)
-			return nil, err
-		}
-
-		return fetcher, err
-	})
-
-	golog.Println("Set Tendermint BlockListener")
-	listener := tendermint.NewBlockListener(ctx, robustClient, time.Second*5)
-	pubSub := tendermint.NewPubSub[*tendermint.TmEvent]()
-	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
-
-	keygenEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.Keygen]())
-	signEventRecv := eventBus.Subscribe(tendermint.Filter[*multisigtypes.EventSigningStart]())
-
-	jobs := []mitosis.Job{
-		mitosis.CreateTypedJob(keygenEventRecv, createKeygenHandler(cfg, logger), cancel, logger),
-		mitosis.CreateTypedJob(signEventRecv, createSignHandler(cfg, logger), cancel, logger),
+		fmt.Println("dial", err)
+		panic(err)
 	}
 
-	utils.ForEach(jobs, func(j mitosis.Job) {
-		eGroup.Go(func() error { return j(ctx) })
-	})
-
-	go func() {
-		<-eventBus.ListenEvents(ctx)
-	}()
-
-	go func() {
-		golog.Println("Register Tendermint Jobs")
-		if err := eGroup.Wait(); err != nil {
-			logger.Error(err.Error())
-		}
-	}()
-
-	lis, err := net.Listen("tcp", ":9999")
+	cli := types.NewGG20Client(conn)
+	stream, err := cli.Sign(context.Background())
 	if err != nil {
-		logger.Error(err.Error())
-		return
+		fmt.Println("stream", err)
+		panic(err)
 	}
 
-	grpcServer := grpc.NewServer()
-	go func() {
-		golog.Println("Run sidecar server")
-		types.RegisterSidecarServer(grpcServer, &tofnd.TrafficServer{})
-		if err := grpcServer.Serve(lis); err != nil {
-			logger.Error(err.Error())
-		}
-	}()
-
-	exit := make(chan os.Signal, 1)
-	signal.Notify(exit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
-	golog.Println("Sidecar started successfully")
-	<-exit
-
-	grpcServer.GracefulStop()
-	_, timeout := context.WithTimeout(context.Background(), time.Second*3)
-	defer cancel()
-	defer timeout()
-
-	fmt.Println("Gracefully shutdown")
+	err = stream.Send(&types.MessageIn{Data: &types.MessageIn_SignInit{SignInit: &signInit}})
+	if err != nil {
+		fmt.Println("send", err)
+		panic(err)
+	}
 }
