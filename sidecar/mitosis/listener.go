@@ -63,9 +63,9 @@ func recovery(errChan chan<- error) {
 }
 
 // CreateTypedJob is make handler for applied events. One subscription channel must be matched one job.
-func CreateTypedJob[T proto.Message](sub <-chan tendermint.TmEvent, handler func(event T) error, cancel context.CancelFunc, logger log.Logger) Job {
+func CreateTypedJob[T proto.Message](sub <-chan *tendermint.TmEvent, handler func(event T) error, cancel context.CancelFunc, logger log.Logger) Job {
 	return func(ctx context.Context) error {
-		handleWithLog := func(e tendermint.TmEvent) {
+		handleWithLog := func(e *tendermint.TmEvent) {
 			event := utils.Must(sdk.ParseTypedEvent(e.Event)).(T)
 			err := handler(event)
 			if err != nil {

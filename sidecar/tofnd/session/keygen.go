@@ -227,6 +227,7 @@ func (s *keygenSession) CloseSession() error {
 
 func (s *keygenSession) BroadcastMsg(msg types.TrafficIn) error {
 	for _, v := range s.sessions {
+
 		serv := types.NewSidecarClient(v)
 		_, err := serv.ShareKeygenTraffic(context.Background(), &types.ShareKeygenRequest{
 			NewKeyUid: s.msg.GetNewKeyUid(),

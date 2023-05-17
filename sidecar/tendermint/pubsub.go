@@ -19,6 +19,7 @@ type PubSub[T any] interface {
 	Subscribe(filter func(T) bool) <-chan T
 	Close()
 	Done() <-chan struct{}
+	Run()
 }
 
 type pubSub[T any] struct {
@@ -90,22 +91,27 @@ func (p *pubSub[T]) Done() <-chan struct{} {
 }
 
 // run iterate whole subscriptions every published T and send to each subscription's channel
-func (p *pubSub[T]) run() {
-	for item := range p.buffer.Out {
-		p.subscribeMutex.Lock()
-		for _, sub := range p.subscriptions {
-			if sub.filter(item) {
-				sub.buffer.In <- item
+func (p *pubSub[T]) Run() {
+	go func() {
+		for {
+			select {
+			case item := <-p.buffer.Out:
+				p.subscribeMutex.Lock()
+				for _, sub := range p.subscriptions {
+					if sub.filter(item) {
+						sub.buffer.In <- item
+					}
+				}
+				p.subscribeMutex.Unlock()
+			case <-p.done:
+				p.subscribeMutex.Lock()
+				for _, sub := range p.subscriptions {
+					close(sub.buffer.In)
+				}
+				p.subscribeMutex.Unlock()
+				p.Close()
+				return
 			}
 		}
-		p.subscribeMutex.Unlock()
-	}
-
-	p.subscribeMutex.Lock()
-	for _, sub := range p.subscriptions {
-		close(sub.buffer.In)
-	}
-	p.subscribeMutex.Unlock()
-
-	close(p.done)
+	}()
 }

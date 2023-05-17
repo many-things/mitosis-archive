@@ -2,6 +2,7 @@ package storage
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"sync"
 
@@ -10,8 +11,8 @@ import (
 )
 
 type Storage interface {
-	SaveKey(keyID string, value string) error
-	GetKey(keyID string) (string, error)
+	SaveKey(keyID string, value []byte) error
+	GetKey(keyID string) ([]byte, error)
 	GetValidator() types.ValAddress
 
 	IsTarget(validator types.ValAddress) bool
@@ -28,8 +29,16 @@ var (
 	initConfig sync.Once
 )
 
-func newStorage(_ *config.SidecarConfig) Storage {
-	mgr := NewLocalFileMgr("")
+func convertBase64ToByte(value string) ([]byte, error) {
+	return base64.StdEncoding.DecodeString(value)
+}
+
+func convertByteToBase64(value []byte) string {
+	return base64.StdEncoding.EncodeToString(value)
+}
+
+func newStorage(cfg *config.SidecarConfig) Storage {
+	mgr := NewLocalFileMgr(cfg.Home + "/storage")
 	savedKey, err := mgr.ImportKeyMap()
 	if err != nil {
 		panic(err) // if this method is not executed, must not be runnable for sidecar logics
@@ -53,10 +62,11 @@ func GetStorage(cfg *config.SidecarConfig) Storage {
 }
 
 // SaveKey save key, value on map and storage
-func (s keyStorage) SaveKey(keyID, value string) error {
-	s.Keys[keyID] = value
+func (s keyStorage) SaveKey(keyID string, value []byte) error {
+	conv := convertByteToBase64(value)
+	s.Keys[keyID] = conv
 
-	err := s.fileMgr.ExportKey(keyID, value)
+	err := s.fileMgr.ExportKey(keyID, conv)
 	if err != nil {
 		return err
 	}
@@ -65,12 +75,12 @@ func (s keyStorage) SaveKey(keyID, value string) error {
 }
 
 // GetKey returns target key in storage
-func (s keyStorage) GetKey(keyID string) (string, error) {
+func (s keyStorage) GetKey(keyID string) ([]byte, error) {
 	if val, ok := s.Keys[keyID]; ok {
-		return val, nil
+		return convertBase64ToByte(val)
 	}
 
-	return "", fmt.Errorf("cannot found key: %s", keyID)
+	return nil, fmt.Errorf("cannot found key: %s", keyID)
 }
 
 // IsTarget returns given address is matches with storage Validator

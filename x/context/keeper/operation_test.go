@@ -3,8 +3,9 @@ package keeper_test
 import (
 	crand "crypto/rand"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/app"
@@ -183,7 +184,8 @@ func TestKeeper_FinishSignOperation(t *testing.T) {
 	opRepo := state.NewKVOperationRepo(cdc, ctx.KVStore(storeKey))
 
 	// No Operation Exists
-	err := k.FinishSignOperation(ctx, 1)
+	signature := []byte("signature")
+	err := k.FinishSignOperation(ctx, 1, signature)
 	assert.Error(t, err, "operation not found")
 
 	bz := make([]byte, 32)
@@ -203,7 +205,7 @@ func TestKeeper_FinishSignOperation(t *testing.T) {
 	}
 
 	opID, _ := opRepo.Create(op)
-	err = k.FinishSignOperation(ctx, opID)
+	err = k.FinishSignOperation(ctx, opID, signature)
 	assert.NilError(t, err)
 
 	changedOp, _ := opRepo.Load(opID)
@@ -215,6 +217,7 @@ func TestKeeper_FinishSignOperation(t *testing.T) {
 		OperationID: opID,
 		SignID:      1,
 		Signer:      op.SignerPubkey,
+		Signature:   signature,
 	})
 	assert.NilError(t, err)
 	assert.DeepEqual(t, emitEvt, expectEvt)

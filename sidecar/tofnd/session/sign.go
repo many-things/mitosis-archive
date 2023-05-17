@@ -3,7 +3,6 @@ package session
 import (
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"sync"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/many-things/mitosis/sidecar/tendermint"
 	"github.com/many-things/mitosis/sidecar/types"
 	multisigserver "github.com/many-things/mitosis/x/multisig/server"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
@@ -26,10 +24,12 @@ type SignSession interface {
 }
 
 type signSessionMgr struct {
+	ctx      context.Context
 	sessions map[string]SignSession
 }
 
 type signSession struct {
+	ctx       context.Context
 	config    config.TofNConfig
 	msg       types.SignInit
 	sessions  map[string]*grpc.ClientConn
@@ -41,14 +41,17 @@ type signSession struct {
 var signMgrInstance *signSessionMgr
 var signLock = &sync.Mutex{}
 
-func GetSignMgrInstance() *signSessionMgr { //nolint: revive
+func GetSignMgrInstance(ctx context.Context) *signSessionMgr { //nolint: revive
 	if signMgrInstance == nil {
 		signLock.Lock()
 		defer signLock.Unlock()
 
 		// Is still nil after get Lock
 		if signMgrInstance == nil {
-			signMgrInstance = &signSessionMgr{}
+			signMgrInstance = &signSessionMgr{
+				ctx:      ctx,
+				sessions: map[string]SignSession{},
+			}
 		}
 	}
 
@@ -62,6 +65,7 @@ func (m *signSessionMgr) CreateSession(cfg config.SidecarConfig, msg types.SignI
 	}
 
 	m.sessions[msg.NewSigUid] = &signSession{
+		ctx:      m.ctx,
 		config:   cfg.TofNConfig,
 		msg:      msg,
 		sessions: map[string]*grpc.ClientConn{},
@@ -129,23 +133,7 @@ func (s *signSession) StartSession() error {
 		s.sessions[p] = conn
 	}
 
-	dialURL := fmt.Sprintf("%s:%d", s.config.Host, s.config.Port)
-	conn, err := grpc.Dial(dialURL, grpc.WithInsecure()) // nolint: staticcheck
-	if err != nil {
-		return err
-	}
-
-	cli := types.NewGG20Client(conn)
-	stream, err := cli.Sign(context.Background())
-	if err != nil {
-		return err
-	}
-
-	s.stream = &GG20StreamSession{
-		conn:   conn,
-		stream: stream,
-	}
-	s.isRunning = true
+	s.spawnReceiver()
 
 	return nil
 }
@@ -153,15 +141,43 @@ func (s *signSession) StartSession() error {
 func (s *signSession) spawnReceiver() error {
 	// TODO: handle go routine errs
 
-	go func() {
+	go func() error {
+		defer func() { s.isRunning = false }()
+		dialURL := fmt.Sprintf("%s:%d", s.config.Host, s.config.Port)
+		conn, err := grpc.Dial(dialURL, grpc.WithInsecure())
+		if err != nil {
+			return err
+		}
+
+		cli := types.NewGG20Client(conn)
+		stream, err := cli.Sign(s.ctx)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("SignInit", s.msg)
+
+		s.stream = &GG20StreamSession{
+			conn:   conn,
+			stream: stream,
+		}
+		s.isRunning = true
+
+		if err := stream.Send(&types.MessageIn{Data: &types.MessageIn_SignInit{SignInit: &s.msg}}); err != nil {
+			fmt.Println("stream.Send", err)
+			return err
+		}
+
 		for {
 			res, err := s.stream.stream.Recv()
-			if errors.Is(err, io.EOF) {
-				return
+			if err != nil {
+				log.Fatal(err)
+				return err
 			}
 
 			switch v := res.GetData().(type) {
 			case *types.MessageOut_Traffic:
+				fmt.Println(v)
 				bMsg := types.TrafficIn{
 					FromPartyUid: s.config.Validator,
 					Payload:      v.Traffic.Payload,
@@ -170,19 +186,18 @@ func (s *signSession) spawnReceiver() error {
 				if err := s.BroadcastMsg(bMsg); err != nil {
 					log.Fatal(err)
 				}
-				return
 			case *types.MessageOut_SignResult_:
 				switch k := v.SignResult.GetSignResultData().(type) {
 				case *types.MessageOut_SignResult_Signature:
 					addr, err := s.wallet.GetAddress()
 					if err != nil {
 						log.Fatal(err)
-						return
+						return err
 					}
 					accAddress, err := sdk.AccAddressFromBech32(addr)
 					if err != nil {
 						log.Fatal(err)
-						return
+						return err
 					}
 
 					msg := &multisigserver.MsgSubmitSignature{
@@ -199,13 +214,17 @@ func (s *signSession) spawnReceiver() error {
 						log.Fatal(err)
 					}
 
-					return
+					s.stream.stream.CloseSend()
+					s.stream.conn.Close()
+					return nil
 				case *types.MessageOut_SignResult_Criminals:
 					// TODO: handle jail function
 					log.Fatal(fmt.Errorf("criminal"))
+					return nil
 				}
 			case *types.MessageOut_NeedRecover:
 				fmt.Println(v)
+				return nil
 			}
 		}
 	}()
@@ -228,6 +247,9 @@ func (s *signSession) CloseSession() error {
 }
 
 func (s *signSession) BroadcastMsg(msg types.TrafficIn) error {
+	// to self
+	s.stream.stream.Send(&types.MessageIn{&types.MessageIn_Traffic{Traffic: &msg}})
+
 	for _, v := range s.sessions {
 		serv := types.NewSidecarClient(v)
 		_, err := serv.ShareSignTraffic(context.Background(), &types.ShareSignRequest{
