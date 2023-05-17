@@ -24,6 +24,7 @@ type TofNConfig struct {
 type TmConfig struct {
 	Host            string `mapstructure:"host" yaml:"host"`
 	Port            int    `mapstructure:"port" yaml:"port"`
+	WalletPort      int    `mapstructure:"wallet-port" yaml:"wallet-port"`
 	Denom           string `mapstructure:"denom" yaml:"denom"`
 	Prefix          string `mapstructure:"prefix" yaml:"prefix"`
 	ValidatorPrefix string `mapstructure:"validator-prefix" yaml:"validator-prefix"`
