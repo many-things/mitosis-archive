@@ -17,6 +17,8 @@ message EventSignerRegistered {
 message EventOperationInitialized {
   uint64 poll_id = 1 [(gogoproto.customname) = "PollID"];
   uint64 operation_id = 2 [(gogoproto.customname) = "OperationID"];
+  string chain_id = 3 [(gogoproto.customname) = "ChainID"];
+  string tx_hash = 4 [(gogoproto.customname) = "TxHash"];
 }
 
 // Event for OperationKeeper.StartSignOperation
@@ -31,6 +33,8 @@ message EventOperationSigningFinished {
   uint64 operation_id = 1 [(gogoproto.customname) = "OperationID"];
   uint64 sign_id = 2 [(gogoproto.customname) = "SignID"];
   bytes signer = 3;
+  bytes signature = 4;
+  string chain_id = 5 [(gogoproto.customname) = "ChainID"];
 }
 
 // Event for OperationKeeper.FinishOperation

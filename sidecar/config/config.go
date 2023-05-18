@@ -22,16 +22,19 @@ type TofNConfig struct {
 }
 
 type TmConfig struct {
-	Host    string `mapstructure:"host" yaml:"host"`
-	Port    int    `mapstructure:"port" yaml:"port"`
-	Denom   string `mapstructure:"denom" yaml:"denom"`
-	Prefix  string `mapstructure:"prefix" yaml:"prefix"`
-	ChainID string `mapstructure:"chain-id" yaml:"chain-id"`
-	PrivKey string `mapstructure:"privkey" yaml:"priv-key"`
+	Host            string `mapstructure:"host" yaml:"host"`
+	Port            int    `mapstructure:"port" yaml:"port"`
+	WalletPort      int    `mapstructure:"wallet-port" yaml:"wallet-port"`
+	Denom           string `mapstructure:"denom" yaml:"denom"`
+	Prefix          string `mapstructure:"prefix" yaml:"prefix"`
+	ValidatorPrefix string `mapstructure:"validator-prefix" yaml:"validator-prefix"`
+	ChainID         string `mapstructure:"chain-id" yaml:"chain-id"`
+	PrivKey         string `mapstructure:"privkey" yaml:"priv-key"`
 }
 
 // SidecarConfig contains configuration for all Sidecar Program
 type SidecarConfig struct {
+	Home       string     `mapstructure:"home" yaml:"home"`
 	TofNConfig TofNConfig `mapstructure:"tofn" yaml:"tofn"`
 	MitoConfig TmConfig   `mapstructure:"mito" yaml:"mitosis"`
 }
@@ -58,7 +61,9 @@ func DefaultMitoConfig() TmConfig {
 }
 
 func DefaultSidecarConfig() SidecarConfig {
+	homeEnvDir, _ := os.LookupEnv("HOME")
 	return SidecarConfig{
+		Home:       homeEnvDir + "/.sidecar",
 		TofNConfig: DefaultTofNConfig(),
 		MitoConfig: DefaultMitoConfig(),
 	}

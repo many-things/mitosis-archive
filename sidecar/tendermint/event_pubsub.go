@@ -2,9 +2,7 @@ package tendermint
 
 import (
 	"context"
-	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -21,10 +19,10 @@ type TmEventBus struct {
 	client   *tmHttp.HTTP
 	listener BlockListener
 	logger   log.Logger
-	pubSub   PubSub[TmEvent]
+	pubSub   PubSub[*TmEvent]
 }
 
-func NewTmEventBus(listener BlockListener, pubSub PubSub[TmEvent], logger log.Logger) *TmEventBus {
+func NewTmEventBus(listener BlockListener, pubSub PubSub[*TmEvent], logger log.Logger) *TmEventBus {
 	return &TmEventBus{
 		listener: listener,
 		pubSub:   pubSub,
@@ -49,9 +47,29 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 					return
 				}
 
-				for _, item := range block.TxsResults {
-					fmt.Println(item)
-				}
+				//if len(block.TxsResults) > 0 {
+				//	fmt.Println("========= TxResults =========")
+				//	for _, item := range block.TxsResults {
+				//		fmt.Println(item)
+				//	}
+				//	fmt.Println("========= TxResults =========")
+				//}
+
+				//if len(block.BeginBlockEvents) > 0 {
+				//	fmt.Println("========= BeginBlockEvents =========")
+				//	for _, item := range block.BeginBlockEvents {
+				//		fmt.Println(item)
+				//	}
+				//	fmt.Println("========= BeginBlockEvents =========")
+				//}
+
+				//if len(block.EndBlockEvents) > 0 {
+				//	fmt.Println("========= EndBlockEvents =========")
+				//	for _, item := range block.EndBlockEvents {
+				//		fmt.Println(item)
+				//	}
+				//	fmt.Println("========= EndBlockEvents =========")
+				//}
 
 				blockResultChan <- *block
 			case blockHeightErr := <-heightErrChan:
@@ -68,10 +86,20 @@ func (tb *TmEventBus) ListenBlock(ctx context.Context) (<-chan coretypes.ResultB
 
 // publish iterate blockEvent and send to pubSub.Publish
 func (tb *TmEventBus) publish(block *coretypes.ResultBlockResults) error {
-	blockEvents := append(block.BeginBlockEvents, block.EndBlockEvents...) // nolint: gocritic
+	//blockEvents := append(block.BeginBlockEvents, block.EndBlockEvents...) // nolint: gocritic
+	//for _, event := range block.BeginBlockEvents {
+	//	err := tb.pubSub.Publish(&TmEvent{
+	//		BlockHeight: block.Height,
+	//		Event:       event,
+	//	})
+	//
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
 
-	for _, event := range blockEvents {
-		err := tb.pubSub.Publish(TmEvent{
+	for _, event := range block.EndBlockEvents {
+		err := tb.pubSub.Publish(&TmEvent{
 			BlockHeight: block.Height,
 			Event:       event,
 		})
@@ -83,7 +111,7 @@ func (tb *TmEventBus) publish(block *coretypes.ResultBlockResults) error {
 
 	for _, txRes := range block.TxsResults {
 		for _, event := range txRes.Events {
-			err := tb.pubSub.Publish(TmEvent{
+			err := tb.pubSub.Publish(&TmEvent{
 				block.Height,
 				event,
 			})
@@ -102,6 +130,8 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 
 	ctx, ctxCancel := context.WithCancel(ctx)
 	blockResultChan, blockErr := tb.ListenBlock(ctx)
+
+	tb.pubSub.Run()
 
 	go func() {
 		for {
@@ -130,17 +160,16 @@ func (tb *TmEventBus) ListenEvents(ctx context.Context) <-chan error {
 	return errChan
 }
 
-func (tb *TmEventBus) Subscribe(filter func(TmEvent) bool) <-chan TmEvent {
+func (tb *TmEventBus) Subscribe(filter func(*TmEvent) bool) <-chan *TmEvent {
 	return tb.pubSub.Subscribe(filter)
 }
 
-func Filter[T proto.Message]() func(e TmEvent) bool {
-	return func(e TmEvent) bool {
-		typedEvent, err := sdk.ParseTypedEvent(e.Event)
-		if err != nil {
+func Filter[T proto.Message]() func(e *TmEvent) bool {
+	return func(e *TmEvent) bool {
+		if e == nil {
 			return false
 		}
 
-		return proto.MessageName(typedEvent) == proto.MessageName(*new(T)) // nolint: gocritic
+		return e.Event.Type == proto.MessageName(*new(T)) // nolint: gocritic
 	}
 }

@@ -61,6 +61,8 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		&types.EventOperationInitialized{
 			PollID:      poll.Id,
 			OperationID: opID,
+			ChainID:     poll.GetChain(),
+			TxHash:      string(poll.GetPayload().TxHash),
 		},
 	)
 	if err != nil {
@@ -104,7 +106,7 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64, pubkey exp
 	return nil
 }
 
-func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
+func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64, signature []byte) error {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	op, err := opRepo.Load(id)
@@ -126,6 +128,8 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64) error {
 			OperationID: op.ID,
 			SignID:      op.SigID,
 			Signer:      op.SignerPubkey,
+			Signature:   signature,
+			ChainID:     op.Chain,
 		},
 	)
 	if err != nil {

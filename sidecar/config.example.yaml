@@ -1,8 +1,11 @@
+home: ""
 mitosis:
   host: 127.0.0.1
-  port: 9090
-  denom: mito
+  port: 26657
+  wallet-port: 9090
+  denom: umito
   prefix: mito
+  validator-prefix: mitovaloper
   chain-id: ""
   priv-key: ""
 tofn:

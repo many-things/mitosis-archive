@@ -6,6 +6,7 @@ import (
 	mitosistype "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/many-things/mitosis/x/multisig/keeper/state"
+	"github.com/many-things/mitosis/x/multisig/types"
 )
 
 // RegisterSignEvent is register new SignEvent
@@ -14,6 +15,18 @@ func (k keeper) RegisterSignEvent(ctx sdk.Context, chainID string, sign *exporte
 
 	sigID, err := signRepo.Create(sign)
 	if err != nil {
+		return 0, err
+	}
+
+	event := types.EventSigningStart{
+		Chain:         sign.Chain,
+		SigId:         sign.SigID,
+		KeyId:         sign.KeyID,
+		OpId:          sign.OpId,
+		Participants:  sign.Participants,
+		MessageToSign: sign.MessageToSign,
+	}
+	if err := ctx.EventManager().EmitTypedEvent(&event); err != nil {
 		return 0, err
 	}
 

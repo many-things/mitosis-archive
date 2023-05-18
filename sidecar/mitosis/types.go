@@ -44,7 +44,7 @@ func NewEventMgr(ctx context.Context, cfg config.TmConfig, logger log.Logger) (E
 	}
 
 	listener := tendermint.NewBlockListener(ctx, fetcher, time.Second*5)
-	pubSub := tendermint.NewPubSub[tendermint.TmEvent]()
+	pubSub := tendermint.NewPubSub[*tendermint.TmEvent]()
 	eventBus := tendermint.NewTmEventBus(listener, pubSub, logger)
 
 	errGroup, eventCtx := errgroup.WithContext(ctx)
@@ -60,6 +60,6 @@ func NewEventMgr(ctx context.Context, cfg config.TmConfig, logger log.Logger) (E
 }
 
 func NewWalletFromConfig(cfg config.TmConfig) (tendermint.Wallet, error) {
-	dialURL := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	dialURL := fmt.Sprintf("%s:%d", cfg.Host, cfg.WalletPort)
 	return tendermint.NewWallet(cfg.PrivKey, cfg.Prefix, cfg.ChainID, dialURL, nil)
 }

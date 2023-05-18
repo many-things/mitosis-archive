@@ -2,10 +2,11 @@ package tendermint
 
 import (
 	"context"
-	"github.com/smallnest/chanx"
-	"gotest.tools/assert"
 	"sync"
 	"testing"
+
+	"github.com/smallnest/chanx"
+	"gotest.tools/assert"
 )
 
 func mockPubSub() pubSub[int] {
@@ -41,7 +42,7 @@ func Test_Publish(t *testing.T) {
 		i++
 	}
 
-	pubsub.run()
+	pubsub.Run()
 	err := pubsub.Publish(1)
 	assert.Error(t, err, "[Pubsub] Not Started")
 }
@@ -65,7 +66,7 @@ func Test_Subscribe(t *testing.T) {
 		assert.NilError(t, err)
 	}
 	pubsub.Close() // Do not wait
-	pubsub.run()
+	pubsub.Run()
 
 	oddExpectData := []int{1, 3, 5, 7, 9}
 	i := 0
