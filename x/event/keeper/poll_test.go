@@ -60,9 +60,9 @@ func mockEvent(t *testing.T) *types.Event {
 	} else {
 		evt.Event = &types.Event_Res{
 			Res: &types.TxResEvent{
-				ReqEvtId: rand.Uint64(),
-				Ok:       rand.Int()%2 == 0,
-				Result:   bz,
+				ReqOpId: rand.Uint64(),
+				Ok:      rand.Int()%2 == 0,
+				Result:  bz,
 			},
 		}
 	}

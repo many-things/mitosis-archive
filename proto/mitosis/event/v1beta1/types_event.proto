@@ -20,7 +20,7 @@ message TxReqEvent {
 // TxResEvent Message
 message TxResEvent {
   // Request Event id correspond to given response
-  uint64 req_evt_id = 1;
+  uint64 req_op_id = 1;
   bool ok = 2;
   bytes result = 3;
 }

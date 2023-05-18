@@ -79,7 +79,7 @@ func EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock, baseKeeper keeper.Keepe
 				log.Println("init operation", opID, "for poll", pollID)
 				poll.OpId = opID
 			case *types.Event_Res:
-				originPoll, err := baseKeeper.QueryPoll(ctx, chain.Key, v.Res.ReqEvtId)
+				originPoll, err := baseKeeper.QueryPoll(ctx, chain.Key, v.Res.ReqOpId)
 				if err != nil {
 					panic(err.Error())
 				}
