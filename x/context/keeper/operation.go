@@ -5,6 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/many-things/mitosis/pkg/msgconv"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/context/keeper/state"
 	"github.com/many-things/mitosis/x/context/types"
@@ -30,10 +31,10 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		return 0, errors.Wrap(err, "load vault")
 	}
 
-	// TODO: convert (vault, op_id, op_args) to (tx_bytes_to_sign, tx_payload)
-	_ = vault
-	var txBytesToSign []byte
-	var txPayload []byte
+	txPayload, txBytesToSign, err := msgconv.ToMsgs(req.DestChain, vault, req.OpId, req.OpArgs...)
+	if err != nil {
+		return 0, errors.Wrap(err, "convert to msgs")
+	}
 
 	op := types.Operation{
 		Chain:         chain,

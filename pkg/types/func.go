@@ -9,6 +9,17 @@ func Map[T, U any](ts []T, f func(t T, i int) U) []U {
 	return rs
 }
 
+func MapErr[T, U any](ts []T, f func(t T, i int) (U, error)) (rs []U, err error) {
+	rs = make([]U, len(ts))
+	for i := range ts {
+		rs[i], err = f(ts[i], i)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return rs, nil
+}
+
 func Ref[T any](t T) *T {
 	return &t
 }
