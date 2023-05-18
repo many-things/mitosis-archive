@@ -51,9 +51,9 @@ func mockEvent(t *testing.T, isReq bool) *types.Event {
 	} else {
 		evt.Event = &types.Event_Res{
 			Res: &types.TxResEvent{
-				ReqEvtId: 0,
-				Ok:       true,
-				Result:   bz,
+				ReqOpId: 0,
+				Ok:      true,
+				Result:  bz,
 			},
 		}
 	}
