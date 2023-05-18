@@ -1,0 +1,12 @@
+{
+  "chain_set": [
+    {
+      "chain": "osmo-test-5",
+      "vault": "osmo1m3eaz8gw6564emky3rg5pzyc898r2d30jrgelnwkwncqgurr25rsdaqhlu"
+    },
+    {
+      "chain": "evm-5",
+      "vault": "0x40ff9DAB86b006C05bA7F45c3C3eCd6360080BcC"
+    }
+  ]
+}

@@ -32,7 +32,9 @@ sed -i '' 's/timeout_commit = \"5s\"/timeout_commit = \"'$BLOCK_INTERVAL'\"/g' "
 
 tmp=$(mktemp)
 MULTISIG_GENESIS=$(cat $(genesis "multisig.json") | jq -c)
+CONTEXT_VAULT_GENESIS=$(cat $(genesis "context_vault.json") | jq -c)
 jq '.app_state.multisig.keygen = '$MULTISIG_GENESIS'' "$MITO_HOME/config/genesis.json" \
+  | jq '.app_state.context.vault = '$CONTEXT_VAULT_GENESIS'' \
   | jq '.app_state.multisig.sign.chain_set = []' \
   > "$tmp" \
   && mv "$tmp" "$MITO_HOME/config/genesis.json"
