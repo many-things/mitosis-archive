@@ -2,6 +2,9 @@ package server
 
 import (
 	"context"
+	sdkerrutils "cosmossdk.io/errors"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/x/context/keeper"
@@ -71,5 +74,35 @@ func (k queryServer) OperationByHash(goCtx context.Context, req *QueryOperationH
 
 	return &QueryOperationHashResponse{
 		Operation: op,
+	}, nil
+}
+
+func (k queryServer) Vault(ctx context.Context, req *QueryVault) (*QueryVaultResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	vault, err := k.Keeper.QueryVault(wctx, req.Chain)
+	if err != nil {
+		return nil, sdkerrutils.Wrapf(sdkerrors.ErrConflict, "failed to query vault. err=%v", err)
+	}
+
+	return &QueryVaultResponse{Chain: req.Chain, Vault: vault}, nil
+}
+
+func (k queryServer) Vaults(ctx context.Context, req *QueryVaults) (*QueryVaultsResponse, error) {
+	wctx := sdk.UnwrapSDKContext(ctx)
+
+	vaults, pageResp, err := k.Keeper.QueryVaults(wctx, req.Pagination)
+	if err != nil {
+		return nil, sdkerrutils.Wrapf(sdkerrors.ErrConflict, "failed to query vaults. err=%v", err)
+	}
+
+	return &QueryVaultsResponse{
+		Vaults: mitotypes.MapKV(
+			vaults,
+			func(k string, v string, i int) *QueryVaultResponse {
+				return &QueryVaultResponse{Chain: k, Vault: v}
+			},
+		),
+		Page: pageResp,
 	}, nil
 }

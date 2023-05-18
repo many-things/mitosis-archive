@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	evttypes "github.com/many-things/mitosis/x/event/types"
 	"github.com/many-things/mitosis/x/multisig/exported"
 )
@@ -13,12 +14,14 @@ type BaseKeeper interface {
 	SetParams(ctx sdk.Context, params Params)
 }
 
-type SignerKeeper interface {
-	SetReadyToSigner(ctx sdk.Context, chain string) error
+type VaultKeeper interface {
+	RegisterVault(ctx sdk.Context, chain string, vault string) error
 
-	RegisterCosmosSigner(ctx sdk.Context, chain string, pubKey []byte, accountNumber uint64) error
+	ClearVault(ctx sdk.Context, chain string) error
 
-	RegisterEVMSigner(ctx sdk.Context, chain string, pubKey []byte) error
+	QueryVault(ctx sdk.Context, chain string) (string, error)
+
+	QueryVaults(ctx sdk.Context, page *query.PageRequest) ([]mitotypes.KV[string, string], *query.PageResponse, error)
 }
 
 type OperationKeeper interface {

@@ -38,4 +38,14 @@ service Query {
   rpc OperationByHash(QueryOperationHash) returns (QueryOperationHashResponse) {
     option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}/hash/{tx_hash}"};
   }
+
+  // Get vault for a chain
+  rpc Vault(QueryVault) returns (QueryVaultResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/vault/{chain}"};
+  }
+
+  // List multiple vaults
+  rpc Vaults(QueryVaults) returns (QueryVaultsResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/vault"};
+  }
 }

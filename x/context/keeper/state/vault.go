@@ -5,13 +5,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/context/types"
 	"github.com/pkg/errors"
 )
 
 type VaultRepo interface {
 	Load(chain string) (string, error)
-
+	List(page *query.PageRequest) ([]mitotypes.KV[string, string], *query.PageResponse, error)
+	Clear(chain string) error
 	Save(chain, address string) error
 
 	ExportGenesis() (genState *types.GenesisVault, err error)
@@ -44,6 +46,28 @@ func (k kvVaultRepo) Load(chain string) (string, error) {
 	}
 
 	return string(bz), nil
+}
+
+func (k kvVaultRepo) List(page *query.PageRequest) ([]mitotypes.KV[string, string], *query.PageResponse, error) {
+	var kvs []mitotypes.KV[string, string]
+
+	pageResp, err := query.Paginate(
+		k.items(),
+		page,
+		func(chainBz []byte, vaultAddrBz []byte) error {
+			kvs = append(kvs, mitotypes.NewKV(string(chainBz), string(vaultAddrBz)))
+
+			return nil
+		},
+	)
+
+	return kvs, pageResp, err
+}
+
+func (k kvVaultRepo) Clear(chain string) error {
+	k.items().Delete([]byte(chain))
+
+	return nil
 }
 
 func (k kvVaultRepo) Save(chain, address string) error {
