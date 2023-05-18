@@ -4,6 +4,7 @@ import (
 	"context"
 	sdkerrutils "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/many-things/mitosis/x/context/keeper"
 )
 
@@ -19,38 +20,26 @@ func NewMsgServer(keeper keeper.Keeper) MsgServer {
 
 var _ MsgServer = msgServer{}
 
-func (m msgServer) SignerReady(ctx context.Context, msg *MsgSignerReady) (*MsgSignerReadyResponse, error) {
+func (m msgServer) RegisterVault(ctx context.Context, msg *MsgRegisterVault) (*MsgRegisterVaultResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	// TODO: validate sender
+	// TODO: verify sender
 
-	if err := m.Keeper.SetReadyToSigner(wctx, msg.GetChain()); err != nil {
-		return nil, sdkerrutils.Wrap(err, "internal")
+	if err := m.Keeper.RegisterVault(wctx, msg.Chain, msg.VaultAddr); err != nil {
+		return nil, sdkerrutils.Wrapf(sdkerrors.ErrConflict, "failed to register vault. err=%v", err)
 	}
 
-	return &MsgSignerReadyResponse{}, nil
+	return &MsgRegisterVaultResponse{}, nil
 }
 
-func (m msgServer) RegisterCosmosSigner(ctx context.Context, msg *MsgRegisterCosmosSigner) (*MsgRegisterCosmosSignerResponse, error) {
+func (m msgServer) ClearVault(ctx context.Context, msg *MsgClearVault) (*MsgClearVaultResponse, error) {
 	wctx := sdk.UnwrapSDKContext(ctx)
 
-	// TODO: validate sender
+	// TODO: verify sender
 
-	if err := m.Keeper.RegisterCosmosSigner(wctx, msg.GetChain(), msg.GetPubKey(), msg.GetAccountNumber()); err != nil {
-		return nil, sdkerrutils.Wrap(err, "internal")
+	if err := m.Keeper.ClearVault(wctx, msg.Chain); err != nil {
+		return nil, sdkerrutils.Wrapf(sdkerrors.ErrConflict, "failed to clear vault. err=%v", err)
 	}
 
-	return &MsgRegisterCosmosSignerResponse{}, nil
-}
-
-func (m msgServer) RegisterEVMSigner(ctx context.Context, msg *MsgRegisterEVMSigner) (*MsgRegisterEVMSignerResponse, error) {
-	wctx := sdk.UnwrapSDKContext(ctx)
-
-	// TODO: validate sender
-
-	if err := m.Keeper.RegisterEVMSigner(wctx, msg.GetChain(), msg.GetPubKey()); err != nil {
-		return nil, sdkerrutils.Wrap(err, "internal")
-	}
-
-	return &MsgRegisterEVMSignerResponse{}, nil
+	return &MsgClearVaultResponse{}, nil
 }

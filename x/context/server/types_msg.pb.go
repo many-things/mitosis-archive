@@ -24,24 +24,24 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgSignerReady notifies mitosis chain that the initialized signer is ready to use
-type MsgSignerReady struct {
-	Sender github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	Chain  string                                        `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain,omitempty"`
+type MsgRegisterVault struct {
+	Sender    github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
+	Chain     string                                        `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain,omitempty"`
+	VaultAddr string                                        `protobuf:"bytes,3,opt,name=vault_addr,json=vaultAddr,proto3" json:"vault_addr,omitempty"`
 }
 
-func (m *MsgSignerReady) Reset()         { *m = MsgSignerReady{} }
-func (m *MsgSignerReady) String() string { return proto.CompactTextString(m) }
-func (*MsgSignerReady) ProtoMessage()    {}
-func (*MsgSignerReady) Descriptor() ([]byte, []int) {
+func (m *MsgRegisterVault) Reset()         { *m = MsgRegisterVault{} }
+func (m *MsgRegisterVault) String() string { return proto.CompactTextString(m) }
+func (*MsgRegisterVault) ProtoMessage()    {}
+func (*MsgRegisterVault) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d3dc66b8b1d363cb, []int{0}
 }
-func (m *MsgSignerReady) XXX_Unmarshal(b []byte) error {
+func (m *MsgRegisterVault) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSignerReady) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRegisterVault) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSignerReady.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRegisterVault.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -51,48 +51,55 @@ func (m *MsgSignerReady) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *MsgSignerReady) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSignerReady.Merge(m, src)
+func (m *MsgRegisterVault) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRegisterVault.Merge(m, src)
 }
-func (m *MsgSignerReady) XXX_Size() int {
+func (m *MsgRegisterVault) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSignerReady) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSignerReady.DiscardUnknown(m)
+func (m *MsgRegisterVault) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRegisterVault.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSignerReady proto.InternalMessageInfo
+var xxx_messageInfo_MsgRegisterVault proto.InternalMessageInfo
 
-func (m *MsgSignerReady) GetSender() github_com_cosmos_cosmos_sdk_types.AccAddress {
+func (m *MsgRegisterVault) GetSender() github_com_cosmos_cosmos_sdk_types.AccAddress {
 	if m != nil {
 		return m.Sender
 	}
 	return nil
 }
 
-func (m *MsgSignerReady) GetChain() string {
+func (m *MsgRegisterVault) GetChain() string {
 	if m != nil {
 		return m.Chain
 	}
 	return ""
 }
 
-// Response of [MsgSignerReady]
-type MsgSignerReadyResponse struct {
+func (m *MsgRegisterVault) GetVaultAddr() string {
+	if m != nil {
+		return m.VaultAddr
+	}
+	return ""
 }
 
-func (m *MsgSignerReadyResponse) Reset()         { *m = MsgSignerReadyResponse{} }
-func (m *MsgSignerReadyResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgSignerReadyResponse) ProtoMessage()    {}
-func (*MsgSignerReadyResponse) Descriptor() ([]byte, []int) {
+// Response of [MsgRegisterVault]
+type MsgRegisterVaultResponse struct {
+}
+
+func (m *MsgRegisterVaultResponse) Reset()         { *m = MsgRegisterVaultResponse{} }
+func (m *MsgRegisterVaultResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRegisterVaultResponse) ProtoMessage()    {}
+func (*MsgRegisterVaultResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d3dc66b8b1d363cb, []int{1}
 }
-func (m *MsgSignerReadyResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgRegisterVaultResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgSignerReadyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgRegisterVaultResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgSignerReadyResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgRegisterVaultResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -102,152 +109,35 @@ func (m *MsgSignerReadyResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *MsgSignerReadyResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgSignerReadyResponse.Merge(m, src)
+func (m *MsgRegisterVaultResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRegisterVaultResponse.Merge(m, src)
 }
-func (m *MsgSignerReadyResponse) XXX_Size() int {
+func (m *MsgRegisterVaultResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgSignerReadyResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgSignerReadyResponse.DiscardUnknown(m)
+func (m *MsgRegisterVaultResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRegisterVaultResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgSignerReadyResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgRegisterVaultResponse proto.InternalMessageInfo
 
-// MsgRegisterCosmosSigner initializes signer for a cosmos sdk based chains
-type MsgRegisterCosmosSigner struct {
-	Sender        github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
-	Chain         string                                        `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain,omitempty"`
-	PubKey        []byte                                        `protobuf:"bytes,3,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
-	AccountNumber uint64                                        `protobuf:"varint,4,opt,name=account_number,json=accountNumber,proto3" json:"account_number,omitempty"`
-	Sequence      uint64                                        `protobuf:"varint,5,opt,name=sequence,proto3" json:"sequence,omitempty"`
-}
-
-func (m *MsgRegisterCosmosSigner) Reset()         { *m = MsgRegisterCosmosSigner{} }
-func (m *MsgRegisterCosmosSigner) String() string { return proto.CompactTextString(m) }
-func (*MsgRegisterCosmosSigner) ProtoMessage()    {}
-func (*MsgRegisterCosmosSigner) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d3dc66b8b1d363cb, []int{2}
-}
-func (m *MsgRegisterCosmosSigner) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgRegisterCosmosSigner) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgRegisterCosmosSigner.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgRegisterCosmosSigner) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRegisterCosmosSigner.Merge(m, src)
-}
-func (m *MsgRegisterCosmosSigner) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgRegisterCosmosSigner) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRegisterCosmosSigner.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgRegisterCosmosSigner proto.InternalMessageInfo
-
-func (m *MsgRegisterCosmosSigner) GetSender() github_com_cosmos_cosmos_sdk_types.AccAddress {
-	if m != nil {
-		return m.Sender
-	}
-	return nil
-}
-
-func (m *MsgRegisterCosmosSigner) GetChain() string {
-	if m != nil {
-		return m.Chain
-	}
-	return ""
-}
-
-func (m *MsgRegisterCosmosSigner) GetPubKey() []byte {
-	if m != nil {
-		return m.PubKey
-	}
-	return nil
-}
-
-func (m *MsgRegisterCosmosSigner) GetAccountNumber() uint64 {
-	if m != nil {
-		return m.AccountNumber
-	}
-	return 0
-}
-
-func (m *MsgRegisterCosmosSigner) GetSequence() uint64 {
-	if m != nil {
-		return m.Sequence
-	}
-	return 0
-}
-
-// Response of [MsgRegisterCosmosSigner]
-type MsgRegisterCosmosSignerResponse struct {
-}
-
-func (m *MsgRegisterCosmosSignerResponse) Reset()         { *m = MsgRegisterCosmosSignerResponse{} }
-func (m *MsgRegisterCosmosSignerResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgRegisterCosmosSignerResponse) ProtoMessage()    {}
-func (*MsgRegisterCosmosSignerResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d3dc66b8b1d363cb, []int{3}
-}
-func (m *MsgRegisterCosmosSignerResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgRegisterCosmosSignerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgRegisterCosmosSignerResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgRegisterCosmosSignerResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRegisterCosmosSignerResponse.Merge(m, src)
-}
-func (m *MsgRegisterCosmosSignerResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgRegisterCosmosSignerResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRegisterCosmosSignerResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgRegisterCosmosSignerResponse proto.InternalMessageInfo
-
-// MsgRegisterEVMSigner initializes signer for a evm based chains
-type MsgRegisterEVMSigner struct {
+type MsgClearVault struct {
 	Sender github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=sender,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"sender,omitempty"`
 	Chain  string                                        `protobuf:"bytes,2,opt,name=chain,proto3" json:"chain,omitempty"`
-	PubKey []byte                                        `protobuf:"bytes,3,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
-	Nonce  uint64                                        `protobuf:"varint,5,opt,name=nonce,proto3" json:"nonce,omitempty"`
 }
 
-func (m *MsgRegisterEVMSigner) Reset()         { *m = MsgRegisterEVMSigner{} }
-func (m *MsgRegisterEVMSigner) String() string { return proto.CompactTextString(m) }
-func (*MsgRegisterEVMSigner) ProtoMessage()    {}
-func (*MsgRegisterEVMSigner) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d3dc66b8b1d363cb, []int{4}
+func (m *MsgClearVault) Reset()         { *m = MsgClearVault{} }
+func (m *MsgClearVault) String() string { return proto.CompactTextString(m) }
+func (*MsgClearVault) ProtoMessage()    {}
+func (*MsgClearVault) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d3dc66b8b1d363cb, []int{2}
 }
-func (m *MsgRegisterEVMSigner) XXX_Unmarshal(b []byte) error {
+func (m *MsgClearVault) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgRegisterEVMSigner) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgClearVault) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgRegisterEVMSigner.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgClearVault.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -257,62 +147,48 @@ func (m *MsgRegisterEVMSigner) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return b[:n], nil
 	}
 }
-func (m *MsgRegisterEVMSigner) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRegisterEVMSigner.Merge(m, src)
+func (m *MsgClearVault) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgClearVault.Merge(m, src)
 }
-func (m *MsgRegisterEVMSigner) XXX_Size() int {
+func (m *MsgClearVault) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgRegisterEVMSigner) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRegisterEVMSigner.DiscardUnknown(m)
+func (m *MsgClearVault) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgClearVault.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgRegisterEVMSigner proto.InternalMessageInfo
+var xxx_messageInfo_MsgClearVault proto.InternalMessageInfo
 
-func (m *MsgRegisterEVMSigner) GetSender() github_com_cosmos_cosmos_sdk_types.AccAddress {
+func (m *MsgClearVault) GetSender() github_com_cosmos_cosmos_sdk_types.AccAddress {
 	if m != nil {
 		return m.Sender
 	}
 	return nil
 }
 
-func (m *MsgRegisterEVMSigner) GetChain() string {
+func (m *MsgClearVault) GetChain() string {
 	if m != nil {
 		return m.Chain
 	}
 	return ""
 }
 
-func (m *MsgRegisterEVMSigner) GetPubKey() []byte {
-	if m != nil {
-		return m.PubKey
-	}
-	return nil
+// Response of [MsgClearVault]
+type MsgClearVaultResponse struct {
 }
 
-func (m *MsgRegisterEVMSigner) GetNonce() uint64 {
-	if m != nil {
-		return m.Nonce
-	}
-	return 0
+func (m *MsgClearVaultResponse) Reset()         { *m = MsgClearVaultResponse{} }
+func (m *MsgClearVaultResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgClearVaultResponse) ProtoMessage()    {}
+func (*MsgClearVaultResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d3dc66b8b1d363cb, []int{3}
 }
-
-// Response of [MsgRegisterEVMSigner]
-type MsgRegisterEVMSignerResponse struct {
-}
-
-func (m *MsgRegisterEVMSignerResponse) Reset()         { *m = MsgRegisterEVMSignerResponse{} }
-func (m *MsgRegisterEVMSignerResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgRegisterEVMSignerResponse) ProtoMessage()    {}
-func (*MsgRegisterEVMSignerResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d3dc66b8b1d363cb, []int{5}
-}
-func (m *MsgRegisterEVMSignerResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgClearVaultResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgRegisterEVMSignerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgClearVaultResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgRegisterEVMSignerResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgClearVaultResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -322,25 +198,23 @@ func (m *MsgRegisterEVMSignerResponse) XXX_Marshal(b []byte, deterministic bool)
 		return b[:n], nil
 	}
 }
-func (m *MsgRegisterEVMSignerResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgRegisterEVMSignerResponse.Merge(m, src)
+func (m *MsgClearVaultResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgClearVaultResponse.Merge(m, src)
 }
-func (m *MsgRegisterEVMSignerResponse) XXX_Size() int {
+func (m *MsgClearVaultResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgRegisterEVMSignerResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgRegisterEVMSignerResponse.DiscardUnknown(m)
+func (m *MsgClearVaultResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgClearVaultResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgRegisterEVMSignerResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgClearVaultResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgSignerReady)(nil), "manythings.mitosis.v1beta1.context.server.MsgSignerReady")
-	proto.RegisterType((*MsgSignerReadyResponse)(nil), "manythings.mitosis.v1beta1.context.server.MsgSignerReadyResponse")
-	proto.RegisterType((*MsgRegisterCosmosSigner)(nil), "manythings.mitosis.v1beta1.context.server.MsgRegisterCosmosSigner")
-	proto.RegisterType((*MsgRegisterCosmosSignerResponse)(nil), "manythings.mitosis.v1beta1.context.server.MsgRegisterCosmosSignerResponse")
-	proto.RegisterType((*MsgRegisterEVMSigner)(nil), "manythings.mitosis.v1beta1.context.server.MsgRegisterEVMSigner")
-	proto.RegisterType((*MsgRegisterEVMSignerResponse)(nil), "manythings.mitosis.v1beta1.context.server.MsgRegisterEVMSignerResponse")
+	proto.RegisterType((*MsgRegisterVault)(nil), "manythings.mitosis.v1beta1.context.server.MsgRegisterVault")
+	proto.RegisterType((*MsgRegisterVaultResponse)(nil), "manythings.mitosis.v1beta1.context.server.MsgRegisterVaultResponse")
+	proto.RegisterType((*MsgClearVault)(nil), "manythings.mitosis.v1beta1.context.server.MsgClearVault")
+	proto.RegisterType((*MsgClearVaultResponse)(nil), "manythings.mitosis.v1beta1.context.server.MsgClearVaultResponse")
 }
 
 func init() {
@@ -348,35 +222,30 @@ func init() {
 }
 
 var fileDescriptor_d3dc66b8b1d363cb = []byte{
-	// 390 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x92, 0xc1, 0xea, 0xd3, 0x40,
-	0x10, 0xc6, 0xbb, 0xda, 0x56, 0x5d, 0xb4, 0x87, 0x10, 0x6c, 0x28, 0x92, 0xd6, 0x80, 0x50, 0x0f,
-	0xcd, 0x52, 0x7c, 0x82, 0x56, 0x3c, 0x14, 0xa9, 0x87, 0x08, 0x1e, 0xbc, 0x94, 0x64, 0x33, 0x6c,
-	0x43, 0xc9, 0x6e, 0xba, 0xb3, 0x29, 0xcd, 0x5b, 0xf8, 0x14, 0x3e, 0x8b, 0xc7, 0x9e, 0xc4, 0x93,
-	0x48, 0xfb, 0x16, 0x9e, 0xa4, 0xd9, 0xb4, 0x56, 0xd0, 0xa3, 0xfc, 0x4f, 0xbb, 0x33, 0xcc, 0x37,
-	0xf3, 0x7d, 0xf0, 0xa3, 0x61, 0x9e, 0x19, 0x85, 0x19, 0x32, 0xae, 0xa4, 0x81, 0xbd, 0x61, 0xbb,
-	0x69, 0x02, 0x26, 0x9e, 0x32, 0x04, 0xbd, 0x03, 0xcd, 0x4c, 0x55, 0x00, 0xae, 0x72, 0x14, 0x61,
-	0xa1, 0x95, 0x51, 0xce, 0xcb, 0x3c, 0x96, 0x95, 0x59, 0x67, 0x52, 0xe0, 0x45, 0x1a, 0x36, 0x92,
-	0xb0, 0x59, 0x11, 0x5a, 0xe9, 0xc0, 0x15, 0x4a, 0xa8, 0x5a, 0xc5, 0xce, 0x3f, 0xbb, 0x20, 0xd8,
-	0xd2, 0xde, 0x12, 0xc5, 0xfb, 0x4c, 0x48, 0xd0, 0x11, 0xc4, 0x69, 0xe5, 0x2c, 0x68, 0x17, 0x41,
-	0xa6, 0xa0, 0x3d, 0x32, 0x22, 0xe3, 0xc7, 0xf3, 0xe9, 0xcf, 0xef, 0xc3, 0x89, 0xc8, 0xcc, 0xba,
-	0x4c, 0x42, 0xae, 0x72, 0xc6, 0x15, 0xe6, 0x0a, 0x9b, 0x67, 0x82, 0xe9, 0xc6, 0x9a, 0x0a, 0x67,
-	0x9c, 0xcf, 0xd2, 0x54, 0x03, 0x62, 0xd4, 0x2c, 0x70, 0x5c, 0xda, 0xe1, 0xeb, 0x38, 0x93, 0xde,
-	0xbd, 0x11, 0x19, 0x3f, 0x8a, 0x6c, 0x11, 0x78, 0xf4, 0xe9, 0x9f, 0x27, 0x23, 0xc0, 0x42, 0x49,
-	0x84, 0xe0, 0x2b, 0xa1, 0xfd, 0x25, 0x8a, 0x08, 0x44, 0x86, 0x06, 0xf4, 0xeb, 0xfa, 0x84, 0x1d,
-	0xfc, 0xef, 0xb6, 0x9c, 0x3e, 0x7d, 0x50, 0x94, 0xc9, 0x6a, 0x03, 0x95, 0x77, 0xff, 0x7c, 0x21,
-	0xea, 0x16, 0x65, 0xf2, 0x16, 0x2a, 0xe7, 0x05, 0xed, 0xc5, 0x9c, 0xab, 0x52, 0x9a, 0x95, 0x2c,
-	0xf3, 0x04, 0xb4, 0xd7, 0x1e, 0x91, 0x71, 0x3b, 0x7a, 0xd2, 0x74, 0xdf, 0xd5, 0x4d, 0x67, 0x40,
-	0x1f, 0x22, 0x6c, 0x4b, 0x90, 0x1c, 0xbc, 0x4e, 0x3d, 0x70, 0xad, 0x83, 0xe7, 0x74, 0xf8, 0x8f,
-	0x5c, 0xd7, 0xec, 0x9f, 0x09, 0x75, 0x6f, 0x66, 0xde, 0x7c, 0x58, 0xde, 0x79, 0x70, 0x97, 0x76,
-	0xa4, 0xfa, 0x1d, 0xc7, 0x16, 0x81, 0x4f, 0x9f, 0xfd, 0xcd, 0xe7, 0x25, 0xc8, 0x7c, 0xf1, 0xe5,
-	0xe8, 0x93, 0xc3, 0xd1, 0x27, 0x3f, 0x8e, 0x3e, 0xf9, 0x74, 0xf2, 0x5b, 0x87, 0x93, 0xdf, 0xfa,
-	0x76, 0xf2, 0x5b, 0x1f, 0xd9, 0x8d, 0xeb, 0x33, 0xb7, 0x13, 0x0b, 0x2e, 0xbb, 0x30, 0xbf, 0xbf,
-	0x52, 0x6f, 0x91, 0x4d, 0xba, 0x35, 0xa3, 0xaf, 0x7e, 0x05, 0x00, 0x00, 0xff, 0xff, 0xe9, 0xcc,
-	0xa6, 0x7a, 0x16, 0x03, 0x00, 0x00,
+	// 311 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x91, 0xc1, 0x4a, 0xfb, 0x30,
+	0x1c, 0xc7, 0x97, 0xff, 0x1f, 0x07, 0x0b, 0x0a, 0x52, 0x26, 0x96, 0x81, 0x75, 0xf4, 0x34, 0x0f,
+	0x4b, 0x18, 0x3e, 0xc1, 0xe6, 0x69, 0x87, 0x5d, 0x7a, 0xf0, 0xe0, 0x65, 0x74, 0xcd, 0x8f, 0x2c,
+	0xb8, 0x26, 0x25, 0xbf, 0x6c, 0x6c, 0x6f, 0x21, 0x3e, 0x95, 0xc7, 0x1d, 0x3d, 0x89, 0x6c, 0x6f,
+	0xe1, 0x49, 0xda, 0xb4, 0xa2, 0x3e, 0x80, 0xa7, 0x36, 0x09, 0x9f, 0xef, 0xf7, 0x0b, 0x1f, 0xca,
+	0x72, 0xe5, 0x0c, 0x2a, 0xe4, 0x99, 0xd1, 0x0e, 0xb6, 0x8e, 0x6f, 0x46, 0x0b, 0x70, 0xe9, 0x88,
+	0x23, 0xd8, 0x0d, 0x58, 0xee, 0x76, 0x05, 0xe0, 0x3c, 0x47, 0xc9, 0x0a, 0x6b, 0x9c, 0x09, 0x6e,
+	0xf2, 0x54, 0xef, 0xdc, 0x52, 0x69, 0x89, 0x0d, 0xca, 0x6a, 0x84, 0xd5, 0x11, 0xcc, 0xa3, 0xbd,
+	0xae, 0x34, 0xd2, 0x54, 0x14, 0x2f, 0xff, 0x7c, 0x40, 0xfc, 0x4c, 0xe8, 0xf9, 0x0c, 0x65, 0x02,
+	0x52, 0xa1, 0x03, 0x7b, 0x9f, 0xae, 0x57, 0x2e, 0x98, 0xd2, 0x36, 0x82, 0x16, 0x60, 0x43, 0xd2,
+	0x27, 0x83, 0xd3, 0xc9, 0xe8, 0xe3, 0xed, 0x7a, 0x28, 0x95, 0x5b, 0xae, 0x17, 0x2c, 0x33, 0x39,
+	0xcf, 0x0c, 0xe6, 0x06, 0xeb, 0xcf, 0x10, 0xc5, 0xa3, 0xdf, 0xc5, 0xc6, 0x59, 0x36, 0x16, 0xc2,
+	0x02, 0x62, 0x52, 0x07, 0x04, 0x5d, 0x7a, 0x92, 0x2d, 0x53, 0xa5, 0xc3, 0x7f, 0x7d, 0x32, 0xe8,
+	0x24, 0xfe, 0x10, 0x5c, 0x51, 0xba, 0x29, 0x9b, 0xe6, 0xa9, 0x10, 0x36, 0xfc, 0x5f, 0x3d, 0x75,
+	0xaa, 0x9b, 0x92, 0x8f, 0x7b, 0x34, 0xfc, 0xbd, 0x29, 0x01, 0x2c, 0x8c, 0x46, 0x88, 0x0b, 0x7a,
+	0x36, 0x43, 0x79, 0xb7, 0x82, 0xf4, 0x8f, 0xc6, 0xc6, 0x97, 0xf4, 0xe2, 0x47, 0x63, 0x33, 0x65,
+	0x32, 0x7d, 0x39, 0x44, 0x64, 0x7f, 0x88, 0xc8, 0xfb, 0x21, 0x22, 0x4f, 0xc7, 0xa8, 0xb5, 0x3f,
+	0x46, 0xad, 0xd7, 0x63, 0xd4, 0x7a, 0xe0, 0xdf, 0xfa, 0x4b, 0x43, 0x43, 0xaf, 0x88, 0x37, 0x76,
+	0xb7, 0x5f, 0x7e, 0xbd, 0x9c, 0x45, 0xbb, 0xb2, 0x71, 0xfb, 0x19, 0x00, 0x00, 0xff, 0xff, 0x1d,
+	0x21, 0x7e, 0x7b, 0x00, 0x02, 0x00, 0x00,
 }
 
-func (m *MsgSignerReady) Marshal() (dAtA []byte, err error) {
+func (m *MsgRegisterVault) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -386,90 +255,20 @@ func (m *MsgSignerReady) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgSignerReady) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRegisterVault) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgSignerReady) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRegisterVault) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Chain) > 0 {
-		i -= len(m.Chain)
-		copy(dAtA[i:], m.Chain)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.Chain)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Sender) > 0 {
-		i -= len(m.Sender)
-		copy(dAtA[i:], m.Sender)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.Sender)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgSignerReadyResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgSignerReadyResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgSignerReadyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgRegisterCosmosSigner) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgRegisterCosmosSigner) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgRegisterCosmosSigner) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Sequence != 0 {
-		i = encodeVarintTypesMsg(dAtA, i, uint64(m.Sequence))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.AccountNumber != 0 {
-		i = encodeVarintTypesMsg(dAtA, i, uint64(m.AccountNumber))
-		i--
-		dAtA[i] = 0x20
-	}
-	if len(m.PubKey) > 0 {
-		i -= len(m.PubKey)
-		copy(dAtA[i:], m.PubKey)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.PubKey)))
+	if len(m.VaultAddr) > 0 {
+		i -= len(m.VaultAddr)
+		copy(dAtA[i:], m.VaultAddr)
+		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.VaultAddr)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -490,7 +289,7 @@ func (m *MsgRegisterCosmosSigner) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRegisterCosmosSignerResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgRegisterVaultResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -500,12 +299,12 @@ func (m *MsgRegisterCosmosSignerResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRegisterCosmosSignerResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgRegisterVaultResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRegisterCosmosSignerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgRegisterVaultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -513,7 +312,7 @@ func (m *MsgRegisterCosmosSignerResponse) MarshalToSizedBuffer(dAtA []byte) (int
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRegisterEVMSigner) Marshal() (dAtA []byte, err error) {
+func (m *MsgClearVault) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -523,28 +322,16 @@ func (m *MsgRegisterEVMSigner) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRegisterEVMSigner) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgClearVault) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRegisterEVMSigner) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgClearVault) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Nonce != 0 {
-		i = encodeVarintTypesMsg(dAtA, i, uint64(m.Nonce))
-		i--
-		dAtA[i] = 0x28
-	}
-	if len(m.PubKey) > 0 {
-		i -= len(m.PubKey)
-		copy(dAtA[i:], m.PubKey)
-		i = encodeVarintTypesMsg(dAtA, i, uint64(len(m.PubKey)))
-		i--
-		dAtA[i] = 0x1a
-	}
 	if len(m.Chain) > 0 {
 		i -= len(m.Chain)
 		copy(dAtA[i:], m.Chain)
@@ -562,7 +349,7 @@ func (m *MsgRegisterEVMSigner) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgRegisterEVMSignerResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgClearVaultResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -572,12 +359,12 @@ func (m *MsgRegisterEVMSignerResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgRegisterEVMSignerResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgClearVaultResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgRegisterEVMSignerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgClearVaultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -596,7 +383,37 @@ func encodeVarintTypesMsg(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgSignerReady) Size() (n int) {
+func (m *MsgRegisterVault) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Sender)
+	if l > 0 {
+		n += 1 + l + sovTypesMsg(uint64(l))
+	}
+	l = len(m.Chain)
+	if l > 0 {
+		n += 1 + l + sovTypesMsg(uint64(l))
+	}
+	l = len(m.VaultAddr)
+	if l > 0 {
+		n += 1 + l + sovTypesMsg(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRegisterVaultResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgClearVault) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -613,76 +430,7 @@ func (m *MsgSignerReady) Size() (n int) {
 	return n
 }
 
-func (m *MsgSignerReadyResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgRegisterCosmosSigner) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Sender)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	l = len(m.Chain)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	l = len(m.PubKey)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	if m.AccountNumber != 0 {
-		n += 1 + sovTypesMsg(uint64(m.AccountNumber))
-	}
-	if m.Sequence != 0 {
-		n += 1 + sovTypesMsg(uint64(m.Sequence))
-	}
-	return n
-}
-
-func (m *MsgRegisterCosmosSignerResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgRegisterEVMSigner) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Sender)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	l = len(m.Chain)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	l = len(m.PubKey)
-	if l > 0 {
-		n += 1 + l + sovTypesMsg(uint64(l))
-	}
-	if m.Nonce != 0 {
-		n += 1 + sovTypesMsg(uint64(m.Nonce))
-	}
-	return n
-}
-
-func (m *MsgRegisterEVMSignerResponse) Size() (n int) {
+func (m *MsgClearVaultResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -697,7 +445,7 @@ func sovTypesMsg(x uint64) (n int) {
 func sozTypesMsg(x uint64) (n int) {
 	return sovTypesMsg(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgSignerReady) Unmarshal(dAtA []byte) error {
+func (m *MsgRegisterVault) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -720,176 +468,10 @@ func (m *MsgSignerReady) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSignerReady: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRegisterVault: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSignerReady: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sender", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sender = append(m.Sender[:0], dAtA[iNdEx:postIndex]...)
-			if m.Sender == nil {
-				m.Sender = []byte{}
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Chain", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Chain = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypesMsg(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgSignerReadyResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypesMsg
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgSignerReadyResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgSignerReadyResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypesMsg(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgRegisterCosmosSigner) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypesMsg
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRegisterCosmosSigner: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRegisterCosmosSigner: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRegisterVault: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -960,9 +542,9 @@ func (m *MsgRegisterCosmosSigner) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PubKey", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field VaultAddr", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypesMsg
@@ -972,64 +554,24 @@ func (m *MsgRegisterCosmosSigner) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypesMsg
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypesMsg
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PubKey = append(m.PubKey[:0], dAtA[iNdEx:postIndex]...)
-			if m.PubKey == nil {
-				m.PubKey = []byte{}
-			}
+			m.VaultAddr = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AccountNumber", wireType)
-			}
-			m.AccountNumber = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.AccountNumber |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
-			}
-			m.Sequence = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Sequence |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypesMsg(dAtA[iNdEx:])
@@ -1051,7 +593,7 @@ func (m *MsgRegisterCosmosSigner) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgRegisterCosmosSignerResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgRegisterVaultResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1074,10 +616,10 @@ func (m *MsgRegisterCosmosSignerResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRegisterCosmosSignerResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgRegisterVaultResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRegisterCosmosSignerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgRegisterVaultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -1101,7 +643,7 @@ func (m *MsgRegisterCosmosSignerResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgRegisterEVMSigner) Unmarshal(dAtA []byte) error {
+func (m *MsgClearVault) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1124,10 +666,10 @@ func (m *MsgRegisterEVMSigner) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRegisterEVMSigner: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgClearVault: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRegisterEVMSigner: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgClearVault: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1196,59 +738,6 @@ func (m *MsgRegisterEVMSigner) Unmarshal(dAtA []byte) error {
 			}
 			m.Chain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PubKey", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypesMsg
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PubKey = append(m.PubKey[:0], dAtA[iNdEx:postIndex]...)
-			if m.PubKey == nil {
-				m.PubKey = []byte{}
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
-			}
-			m.Nonce = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypesMsg
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Nonce |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTypesMsg(dAtA[iNdEx:])
@@ -1270,7 +759,7 @@ func (m *MsgRegisterEVMSigner) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgRegisterEVMSignerResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgClearVaultResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1293,10 +782,10 @@ func (m *MsgRegisterEVMSignerResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgRegisterEVMSignerResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgClearVaultResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgRegisterEVMSignerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgClearVaultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

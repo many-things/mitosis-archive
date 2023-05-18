@@ -76,7 +76,7 @@ func (r kvOperationHashIndexRepo) Create(hash []byte, opID uint64) error {
 
 func (r kvOperationHashIndexRepo) ExportGenesis() (*types.GenesisOperationHashIndex_ChainSet, error) {
 	genState := &types.GenesisOperationHashIndex_ChainSet{
-		ChainID: []byte(r.chainID),
+		ChainID: r.chainID,
 	}
 
 	var state []*types.GenesisOperationHashIndex_ItemSet

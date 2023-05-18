@@ -3,31 +3,22 @@ package server
 import sdk "github.com/cosmos/cosmos-sdk/types"
 
 var (
-	_ sdk.Msg = (*MsgSignerReady)(nil)
-	_ sdk.Msg = (*MsgRegisterCosmosSigner)(nil)
-	_ sdk.Msg = (*MsgRegisterEVMSigner)(nil)
+	_ sdk.Msg = (*MsgRegisterVault)(nil)
+	_ sdk.Msg = (*MsgClearVault)(nil)
 )
 
-func (m *MsgSignerReady) ValidateBasic() error {
+func (m *MsgRegisterVault) ValidateBasic() error {
 	return nil
 }
 
-func (m *MsgSignerReady) GetSigners() []sdk.AccAddress {
+func (m *MsgRegisterVault) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Sender}
 }
 
-func (m *MsgRegisterCosmosSigner) ValidateBasic() error {
+func (m *MsgClearVault) ValidateBasic() error {
 	return nil
 }
 
-func (m *MsgRegisterCosmosSigner) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Sender}
-}
-
-func (m *MsgRegisterEVMSigner) ValidateBasic() error {
-	return nil
-}
-
-func (m *MsgRegisterEVMSigner) GetSigners() []sdk.AccAddress {
+func (m *MsgClearVault) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Sender}
 }

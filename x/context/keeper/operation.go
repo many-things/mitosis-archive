@@ -5,11 +5,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/many-things/mitosis/pkg/txconv"
+	"github.com/many-things/mitosis/pkg/msgconv"
 	mitotypes "github.com/many-things/mitosis/pkg/types"
 	"github.com/many-things/mitosis/x/context/keeper/state"
 	"github.com/many-things/mitosis/x/context/types"
 	evttypes "github.com/many-things/mitosis/x/event/types"
+	"github.com/many-things/mitosis/x/multisig/exported"
 	"github.com/pkg/errors"
 )
 
@@ -18,24 +19,21 @@ var _ types.OperationKeeper = &keeper{}
 func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll) (uint64, error) {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 	opHashIndexRepo := state.NewKVOperationHashIndexRepo(k.cdc, ctx.KVStore(k.storeKey), poll.Chain)
-	signerRepo := state.NewKVSignerRepo(k.cdc, ctx.KVStore(k.storeKey))
+	vaultRepo := state.NewKVVaultRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	req := poll.GetPayload().GetReq()
 	if req == nil {
 		return 0, sdkerrutils.Wrap(sdkerrors.ErrPanic, "invalid event payload type")
 	}
 
-	signer, err := signerRepo.Load(req.DestChain)
+	vault, err := vaultRepo.Load(req.DestChain)
 	if err != nil {
-		return 0, sdkerrutils.Wrapf(sdkerrors.ErrNotFound, "signer not found for chain %s. err=%v", chain, err)
+		return 0, errors.Wrap(err, "load vault")
 	}
 
-	txPayload, txBytesToSign, err := txconv.Converter.Convert(
-		signer.TxConvSigner(),
-		req.DestChain, req.OpId, req.OpArgs...,
-	)
+	txPayload, txBytesToSign, err := msgconv.ToMsgs(req.DestChain, vault, req.OpId, req.OpArgs...)
 	if err != nil {
-		return 0, sdkerrutils.Wrapf(sdkerrors.ErrPanic, "convert event to sign target %v", err)
+		return 0, errors.Wrap(err, "convert to msgs")
 	}
 
 	op := types.Operation{
@@ -43,7 +41,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		ID:            0, // go filled by Load
 		PollID:        poll.GetId(),
 		Status:        types.Operation_StatusPending,
-		SignerPubkey:  signer.PubKey,
+		SignerPubkey:  nil,
 		TxPayload:     txPayload,
 		TxBytesToSign: txBytesToSign,
 		Result:        nil,
@@ -74,7 +72,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 	return opID, nil
 }
 
-func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
+func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64, pubkey exported.PublicKey) error {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 
 	op, err := opRepo.Load(id)
@@ -87,6 +85,7 @@ func (k keeper) StartSignOperation(ctx sdk.Context, id, sigID uint64) error {
 	}
 
 	op.Status = types.Operation_StatusInitSign
+	op.SignerPubkey = pubkey
 	op.SigID = sigID
 
 	if err := opRepo.Save(op); err != nil {

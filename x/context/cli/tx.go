@@ -35,15 +35,14 @@ func GetTxCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		SignerReadyCmd(),
-		RegisterCosmosSignerCmd(),
-		RegisterEVMSignerCmd(),
+		RegisterVaultCmd(),
+		ClearVaultCmd(),
 	)
 
 	return cmd
 }
 
-func SignerReadyCmd() *cobra.Command {
+func RegisterVaultCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "signer-ready [event payload]",
 		Short: "notifies signer is ready",
@@ -54,7 +53,7 @@ func SignerReadyCmd() *cobra.Command {
 				return err
 			}
 
-			msg := new(server.MsgSignerReady)
+			msg := new(server.MsgRegisterVault)
 			clientCtx.Codec.MustUnmarshalJSON(os.MustReadFile(args[0]), msg)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
@@ -69,7 +68,7 @@ func SignerReadyCmd() *cobra.Command {
 	return cmd
 }
 
-func RegisterCosmosSignerCmd() *cobra.Command {
+func ClearVaultCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "register-cosmos-signer [event payload]",
 		Short: "Registers Cosmos Signer",
@@ -80,33 +79,7 @@ func RegisterCosmosSignerCmd() *cobra.Command {
 				return err
 			}
 
-			msg := new(server.MsgRegisterCosmosSigner)
-			clientCtx.Codec.MustUnmarshalJSON(os.MustReadFile(args[0]), msg)
-			if err = msg.ValidateBasic(); err != nil {
-				return err
-			}
-
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-		SilenceUsage: true,
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
-	return cmd
-}
-
-func RegisterEVMSignerCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "register-evm-signer [event payload]",
-		Short: "Register EVM Signer",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := new(server.MsgRegisterEVMSigner)
+			msg := new(server.MsgClearVault)
 			clientCtx.Codec.MustUnmarshalJSON(os.MustReadFile(args[0]), msg)
 			if err = msg.ValidateBasic(); err != nil {
 				return err

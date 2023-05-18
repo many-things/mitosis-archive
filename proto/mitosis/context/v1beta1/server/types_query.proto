@@ -49,3 +49,25 @@ message QueryOperationHash {
 message QueryOperationHashResponse {
   Operation operation = 1;
 }
+
+// QueryVault queries registered vault for a chain
+message QueryVault {
+  string chain = 1;
+}
+
+// Response of [QueryVault]
+message QueryVaultResponse {
+  string chain = 1;
+  string vault = 2;
+}
+
+// QueryVaults queries the list of vaults registered
+message QueryVaults {
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// Response of [QueryVaults]
+message QueryVaultsResponse {
+  repeated QueryVaultResponse vaults = 1;
+  cosmos.base.query.v1beta1.PageResponse page = 2;
+}

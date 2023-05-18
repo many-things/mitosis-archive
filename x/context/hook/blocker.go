@@ -50,7 +50,12 @@ func EndBlocker(
 			panic(errors.Wrap(err, "failed to register sign event"))
 		}
 
-		if err := baseKeeper.StartSignOperation(ctx, op.ID, sigID); err != nil {
+		keygenRes, err := multisigKeeper.QueryKeygenResult(ctx, op.Chain, keygenResp[0].Value.KeyID)
+		if err != nil {
+			panic(errors.Wrap(err, "failed to query keygen result"))
+		}
+
+		if err := baseKeeper.StartSignOperation(ctx, op.ID, sigID, keygenRes.Items[0].PubKey); err != nil {
 			panic(errors.Wrap(err, "failed to start sign operation"))
 		}
 	}

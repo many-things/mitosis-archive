@@ -10,14 +10,11 @@ option go_package = "github.com/many-things/mitosis/x/context/server";
 
 // Msg defines the Msg service.
 service Msg {
-  // notify the server that a new signer is ready
-  rpc SignerReady(MsgSignerReady) returns (MsgSignerReadyResponse);
+  // RegisterVault registers vault address for a chain
+  rpc RegisterVault(MsgRegisterVault) returns (MsgRegisterVaultResponse);
 
-  // registers a new Cosmos signer
-  rpc RegisterCosmosSigner(MsgRegisterCosmosSigner) returns (MsgRegisterCosmosSignerResponse);
-
-  // registers a new EVM signer
-  rpc RegisterEVMSigner(MsgRegisterEVMSigner) returns (MsgRegisterEVMSignerResponse);
+  // ClearVault clears vault address from a chain
+  rpc ClearVault(MsgClearVault) returns (MsgClearVaultResponse);
 }
 
 // Query defines the gRPC querier service.
@@ -40,5 +37,15 @@ service Query {
   // Get Operation by TxHash
   rpc OperationByHash(QueryOperationHash) returns (QueryOperationHashResponse) {
     option (google.api.http) = {get: "/mitosis/context/v1beta1/operation/{chain}/hash/{tx_hash}"};
+  }
+
+  // Get vault for a chain
+  rpc Vault(QueryVault) returns (QueryVaultResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/vault/{chain}"};
+  }
+
+  // List multiple vaults
+  rpc Vaults(QueryVaults) returns (QueryVaultsResponse) {
+    option (google.api.http) = {get: "/mitosis/context/v1beta1/vault"};
   }
 }
