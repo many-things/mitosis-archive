@@ -10,6 +10,17 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
+		Operation: &GenesisOperation{
+			LastId:   0,
+			ItemSet:  []*GenesisOperation_ItemSet{},
+			IndexSet: []*GenesisOperation_IndexSet{},
+		},
+		OperationIdx: &GenesisOperationHashIndex{
+			ChainSet: []*GenesisOperationHashIndex_ChainSet{},
+		},
+		Vault: &GenesisVault{
+			ChainSet: []*GenesisVault_ChainSet{},
+		},
 	}
 }
 
