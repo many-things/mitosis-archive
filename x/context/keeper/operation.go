@@ -30,6 +30,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		return 0, errors.Wrap(err, "load vault")
 	}
 
+	// TODO: convert (vault, op_id, op_args) to (tx_bytes_to_sign, tx_payload)
 	_ = vault
 	var txBytesToSign []byte
 	var txPayload []byte
