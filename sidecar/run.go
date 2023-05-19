@@ -122,6 +122,7 @@ func createTssSignHandler(cfg config.SidecarConfig, log log.Logger, ctx context.
 
 func createSignHandler(cfg config.SidecarConfig, storage storage.Storage, mitoWallet tendermint.Wallet, log log.Logger) func(msg *multisigtypes.EventSigningStart) error {
 	return func(msg *multisigtypes.EventSigningStart) error {
+		log.Info("signHandler: new sign event observed")
 		privKeyBytes, err := storage.GetKey(msg.GetKeyId())
 		if err != nil {
 			log.Error("signHandler: key not found: %x", err)

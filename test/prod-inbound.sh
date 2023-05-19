@@ -28,7 +28,7 @@ MITO2_ADDR=$(echo "mitomito" | $KEYRING_DAEMON keys show $MITO2_NAME -a --keyrin
 MITO3_ADDR=$(echo "mitomito" | $KEYRING_DAEMON keys show $MITO3_NAME -a --keyring-backend file)
 
 
- ------- register proxy ---------
+# ------- register proxy ---------
 
  cat $(payload "register-proxy.json") \
    | jq '.validator="'$MITO1_VALI'"' \
@@ -53,7 +53,7 @@ MITO3_ADDR=$(echo "mitomito" | $KEYRING_DAEMON keys show $MITO3_NAME -a --keyrin
    | jq '.proxy_account="'$MITO3_ADDR'"' \
    > $tmp_payload
 
- ------- register chain ---------
+# ------- register chain ---------
 
  $DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
  $(file prod-broadcast.sh) $MITO3_NAME "register-proxy" $tmp_tx
