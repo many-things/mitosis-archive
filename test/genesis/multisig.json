@@ -9,12 +9,20 @@
           "key_id": 0,
           "participants": [
             {
-              "address": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "address": "mitovaloper1gr29n72snrcuyq8wyln6kunpe66zt5uccknn9x",
+              "share": 1
+            },
+            {
+              "address": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "share": 1
+            },
+            {
+              "address": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
               "share": 1
             }
           ],
           "status": 3,
-          "threshold": 1
+          "threshold": 2
         }
       ],
       "result_set": [
@@ -23,8 +31,16 @@
           "key_id": 0,
           "items": [
             {
-              "participant": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
-              "pub_key": "At6mMjViaVgca7h7nTakQM+W72+9zYP/h/9oGXd5oa2P"
+              "participant": "mitovaloper1gr29n72snrcuyq8wyln6kunpe66zt5uccknn9x",
+              "pub_key": "AmG0jyJRK9hYsf3KF0HTmqu8OBKN05BBqTAX6+mIw6Wz"
+            },
+            {
+              "participant": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "pub_key": "AmG0jyJRK9hYsf3KF0HTmqu8OBKN05BBqTAX6+mIw6Wz"
+            },
+            {
+              "participant": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
+              "pub_key": "AmG0jyJRK9hYsf3KF0HTmqu8OBKN05BBqTAX6+mIw6Wz"
             }
           ]
         }
@@ -39,12 +55,20 @@
           "key_id": 0,
           "participants": [
             {
-              "address": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "address": "mitovaloper1gr29n72snrcuyq8wyln6kunpe66zt5uccknn9x",
+              "share": 1
+            },
+            {
+              "address": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "share": 1
+            },
+            {
+              "address": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
               "share": 1
             }
           ],
           "status": 3,
-          "threshold": 1
+          "threshold": 2
         }
       ],
       "result_set": [
@@ -53,8 +77,16 @@
           "key_id": 0,
           "items": [
             {
-              "participant": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
-              "pub_key": "AswaHM5UYuj4BzTRTt1ZJms14lWxoZbE0AZgmwxqokYH"
+              "participant": "mitovaloper1gr29n72snrcuyq8wyln6kunpe66zt5uccknn9x",
+              "pub_key": "AmG0jyJRK9hYsf3KF0HTmqu8OBKN05BBqTAX6+mIw6Wz"
+            },
+            {
+              "participant": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "pub_key": "AmG0jyJRK9hYsf3KF0HTmqu8OBKN05BBqTAX6+mIw6Wz"
+            },
+            {
+              "participant": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
+              "pub_key": "AmG0jyJRK9hYsf3KF0HTmqu8OBKN05BBqTAX6+mIw6Wz"
             }
           ]
         }
