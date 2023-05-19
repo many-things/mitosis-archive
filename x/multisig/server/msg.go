@@ -170,8 +170,8 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 		}
 	}
 
-	// Check validator
-	if sign.Status == exported.Sign_StatusExecute {
+	// TODO: Handle
+	if sign.Status == exported.Sign_StatusExecute || sign.Status == exported.Sign_StatusAssign {
 		sigThresh := map[string]uint64{}
 		sigValue := map[string][]byte{}
 		partySize := map[string]uint64{}

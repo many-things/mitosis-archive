@@ -28,59 +28,59 @@ MITO2_ADDR=$(echo "mitomito" | $KEYRING_DAEMON keys show $MITO2_NAME -a --keyrin
 MITO3_ADDR=$(echo "mitomito" | $KEYRING_DAEMON keys show $MITO3_NAME -a --keyring-backend file)
 
 
-# ------- register proxy ---------
+ ------- register proxy ---------
 
-cat $(payload "register-proxy.json") \
-  | jq '.validator="'$MITO1_VALI'"' \
-  | jq '.proxy_account="'$MITO1_ADDR'"' \
-  > $tmp_payload
+ cat $(payload "register-proxy.json") \
+   | jq '.validator="'$MITO1_VALI'"' \
+   | jq '.proxy_account="'$MITO1_ADDR'"' \
+   > $tmp_payload
 
-$DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
-$(file prod-broadcast.sh) $MITO1_NAME "register-proxy" $tmp_tx
-echo "proxy registered: mito1"
+ $DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
+ $(file prod-broadcast.sh) $MITO1_NAME "register-proxy" $tmp_tx
+ echo "proxy registered: mito1"
 
-cat $(payload "register-proxy.json") \
-  | jq '.validator="'$MITO2_VALI'"' \
-  | jq '.proxy_account="'$MITO2_ADDR'"' \
-  > $tmp_payload
+ cat $(payload "register-proxy.json") \
+   | jq '.validator="'$MITO2_VALI'"' \
+   | jq '.proxy_account="'$MITO2_ADDR'"' \
+   > $tmp_payload
 
-$DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
-$(file prod-broadcast.sh) $MITO2_NAME "register-proxy" $tmp_tx
-echo "proxy registered: mito2"
+ $DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
+ $(file prod-broadcast.sh) $MITO2_NAME "register-proxy" $tmp_tx
+ echo "proxy registered: mito2"
 
-cat $(payload "register-proxy.json") \
-  | jq '.validator="'$MITO3_VALI'"' \
-  | jq '.proxy_account="'$MITO3_ADDR'"' \
-  > $tmp_payload
+ cat $(payload "register-proxy.json") \
+   | jq '.validator="'$MITO3_VALI'"' \
+   | jq '.proxy_account="'$MITO3_ADDR'"' \
+   > $tmp_payload
 
-# ------- register chain ---------
+ ------- register chain ---------
 
-# $DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
-# $(file prod-broadcast.sh) $MITO3_NAME "register-proxy" $tmp_tx
-# echo "proxy registered: mito3"
+ $DAEMON tx event register-proxy $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
+ $(file prod-broadcast.sh) $MITO3_NAME "register-proxy" $tmp_tx
+ echo "proxy registered: mito3"
 
 
-# cat $(payload "register-chain.json") \
-#   | jq '.sender = "'$MITO1_ADDR'"' \
-#   | jq '.chain="osmo-test-5"' \
-#   > $tmp_payload
+ cat $(payload "register-chain.json") \
+   | jq '.sender = "'$MITO1_ADDR'"' \
+   | jq '.chain="osmo-test-5"' \
+   > $tmp_payload
 
-# $DAEMON tx event register-chain $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
-# $(file prod-broadcast.sh) $MITO1_NAME "register-chain-osmosis" $tmp_tx
-# echo "osmosis chain registered"
+ $DAEMON tx event register-chain $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
+ $(file prod-broadcast.sh) $MITO1_NAME "register-chain-osmosis" $tmp_tx
+ echo "osmosis chain registered"
 
-# cat $(payload "register-chain.json") \
-#   | jq '.sender = "'$MITO1_ADDR'"' \
-#   | jq '.chain="evm-5"' \
-#   > $tmp_payload
+ cat $(payload "register-chain.json") \
+   | jq '.sender = "'$MITO1_ADDR'"' \
+   | jq '.chain="evm-5"' \
+   > $tmp_payload
 
-# $DAEMON tx event register-chain $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
-# $(file prod-broadcast.sh) $MITO1_NAME "register-chain-ethereum" $tmp_tx
-# echo "ethereum chain registered"
+ $DAEMON tx event register-chain $tmp_payload --fees 2000umito --generate-only | jq > $tmp_tx
+ $(file prod-broadcast.sh) $MITO1_NAME "register-chain-ethereum" $tmp_tx
+ echo "ethereum chain registered"
 
-# cat $(payload "submit-event-req.json") \
-#   | jq '.sender = "'$MITO1_ADDR'"' \
-#   > $tmp_payload
+ cat $(payload "submit-event-req.json") \
+   | jq '.sender = "'$MITO1_ADDR'"' \
+   > $tmp_payload
 
 
 # ------- send ---------
