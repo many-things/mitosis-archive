@@ -151,7 +151,12 @@ func (m msgServer) SubmitSignature(ctx context.Context, msg *MsgSubmitSignature)
 		return nil, sdkerrors.Wrap(err, "query sign result")
 	}
 
-	keygen, err := m.baseKeeper.QueryKeygen(wctx, chainID, sigID)
+	keygenChain, keygenID, err := exported.KeyID(sign.KeyID).ToInternalVariables()
+	if err != nil {
+		return nil, sdkerrors.Wrap(err, "malformed keyID")
+	}
+
+	keygen, err := m.baseKeeper.QueryKeygen(wctx, keygenChain, keygenID)
 	if err != nil {
 		return nil, sdkerrors.Wrap(err, "query keygen")
 	}
