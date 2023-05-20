@@ -115,6 +115,11 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64, signature []byte
 		return err
 	}
 
+	op.Status = types.Operation_StatusFinishSign
+
+	if err := opRepo.Save(op); err != nil {
+		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
+	}
 	if err := opRepo.Shift(op.ID, types.Operation_StatusFinishSign); err != nil {
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
