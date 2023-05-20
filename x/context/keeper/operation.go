@@ -31,7 +31,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 		return 0, errors.Wrap(err, "load vault")
 	}
 
-	txPayload, txBytesToSign, err := msgconv.ToMsgs(req.DestChain, vault, req.OpId, req.OpArgs...)
+	txPayload, txBytesToSign, err := msgconv.ToMsgs(req.DestChain, vault, req.OpId, req.OpArgs, req.Funds)
 	if err != nil {
 		return 0, errors.Wrap(err, "convert to msgs")
 	}
