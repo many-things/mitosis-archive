@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/cosmos/cosmos-sdk/types"
@@ -30,6 +31,7 @@ var (
 )
 
 func convertBase64ToByte(value string) ([]byte, error) {
+	value = strings.Trim(value, " ")
 	return base64.StdEncoding.DecodeString(value)
 }
 
@@ -77,6 +79,7 @@ func (s keyStorage) SaveKey(keyID string, value []byte) error {
 // GetKey returns target key in storage
 func (s keyStorage) GetKey(keyID string) ([]byte, error) {
 	if val, ok := s.Keys[keyID]; ok {
+		fmt.Printf("Called GetKey: %s\n", val)
 		return convertBase64ToByte(val)
 	}
 
