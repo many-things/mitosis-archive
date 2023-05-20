@@ -131,9 +131,12 @@ func createSignHandler(cfg config.SidecarConfig, storage storage.Storage, mitoWa
 
 		privKey := secp256k1.PrivKey{Key: privKeyBytes}
 		signature, err := privKey.Sign(msg.MessageToSign)
+		if err != nil {
+			log.Error("signHandler: wrong signature: %x", err)
+			return err
+		}
 
 		sender, _ := mitoWallet.GetAddress()
-
 		valAddr, err := sdk.ValAddressFromBech32(cfg.TofNConfig.Validator)
 
 		if err != nil {
