@@ -124,16 +124,14 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64, signature []byte
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
-	err = ctx.EventManager().EmitTypedEvent(
-		&types.EventOperationSigningFinished{
-			OperationID: op.ID,
-			SignID:      op.SigID,
-			Signer:      op.SignerPubkey,
-			Signature:   signature,
-			ChainID:     op.Chain,
-		},
-	)
-	if err != nil {
+	emitEvent := &types.EventOperationSigningFinished{
+		OperationID: op.ID,
+		SignID:      op.SigID,
+		Signer:      op.SignerPubkey,
+		Signature:   signature,
+		ChainID:     op.Chain,
+	}
+	if err := ctx.EventManager().EmitTypedEvent(emitEvent); err != nil {
 		return errors.Wrap(err, "emit event")
 	}
 

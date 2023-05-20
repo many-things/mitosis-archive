@@ -11,6 +11,14 @@
             {
               "address": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
               "share": 1
+            },
+            {
+              "address": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "share": 1
+            },
+            {
+              "address": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
+              "share": 1
             }
           ],
           "status": 3,
@@ -24,6 +32,14 @@
           "items": [
             {
               "participant": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "pub_key": "ArVogl2Oa9JxkUZyhnLz7OcvLCrgeNh7dkaGRrCRuZ3w"
+            },
+            {
+              "participant": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "pub_key": "ArVogl2Oa9JxkUZyhnLz7OcvLCrgeNh7dkaGRrCRuZ3w"
+            },
+            {
+              "participant": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
               "pub_key": "ArVogl2Oa9JxkUZyhnLz7OcvLCrgeNh7dkaGRrCRuZ3w"
             }
           ]
@@ -41,6 +57,14 @@
             {
               "address": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
               "share": 1
+            },
+            {
+              "address": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "share": 1
+            },
+            {
+              "address": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
+              "share": 1
             }
           ],
           "status": 3,
@@ -54,6 +78,14 @@
           "items": [
             {
               "participant": "mitovaloper127rnkklgkc5alfgtzlv2mk4capr4kdc30a36tn",
+              "pub_key": "ArVogl2Oa9JxkUZyhnLz7OcvLCrgeNh7dkaGRrCRuZ3w"
+            },
+            {
+              "participant": "mitovaloper1rkcgv25m6mzmj985e6j5mkhkl53533nrp57v3w",
+              "pub_key": "ArVogl2Oa9JxkUZyhnLz7OcvLCrgeNh7dkaGRrCRuZ3w"
+            },
+            {
+              "participant": "mitovaloper1hfawqqvj5fqn0gpputhqy549uwxmvn0kzfh35l",
               "pub_key": "ArVogl2Oa9JxkUZyhnLz7OcvLCrgeNh7dkaGRrCRuZ3w"
             }
           ]
