@@ -22,7 +22,7 @@
             }
           ],
           "status": 3,
-          "threshold": 2
+          "threshold": 1
         }
       ],
       "result_set": [
@@ -68,7 +68,7 @@
             }
           ],
           "status": 3,
-          "threshold": 2
+          "threshold": 1
         }
       ],
       "result_set": [

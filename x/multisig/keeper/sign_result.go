@@ -76,7 +76,7 @@ func (k keeper) AddParticipantSignResult(ctx sdk.Context, chainID string, sigID 
 	}
 
 	if !signature.Verify(sign.GetMessageToSign(), pubKey) {
-		return errors.New("verification failed")
+		return fmt.Errorf("verification failed. message_to_sign: %v, pubKey: %v", sign.GetParticipants(), pubKey)
 	}
 
 	if err := signatureRepo.AddParticipantSignResult(sigID, participant, signature); err != nil {
