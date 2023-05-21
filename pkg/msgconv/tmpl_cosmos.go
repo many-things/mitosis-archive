@@ -144,11 +144,11 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 		return nil, errors.Wrap(err, "execute op1 template")
 	}
 
-	renderedBz := rendered.Bytes()
-	rendered.Reset()
-	if err := json.Compact(rendered, renderedBz); err != nil {
-		return nil, errors.Wrap(err, "compact json")
-	}
+	// renderedBz := rendered.Bytes()
+	// rendered.Reset()
+	// if err := json.Compact(rendered, renderedBz); err != nil {
+	// 	return nil, errors.Wrap(err, "compact json")
+	// }
 
 	return rendered.Bytes(), nil
 }
