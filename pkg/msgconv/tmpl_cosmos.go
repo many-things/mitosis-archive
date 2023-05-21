@@ -108,8 +108,8 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 
 	// FIXME: insufficient
 	osmoTokenIn := &osmo.Coin{
-		Denom:  "uosmo",
-		Amount: "1",
+		Denom:  "factory/osmo109ns4u04l44kqdkvp876hukd3hxz8zzm7809el/uusdc",
+		Amount: "1000000",
 	}
 	if len(funds) > 0 {
 		osmoTokenIn = &osmo.Coin{
