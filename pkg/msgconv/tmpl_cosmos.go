@@ -106,7 +106,11 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 		return nil, err
 	}
 
-	var osmoTokenIn *osmo.Coin
+	// FIXME: insufficient
+	osmoTokenIn := &osmo.Coin{
+		Denom:  "uosmo",
+		Amount: "1",
+	}
 	if len(funds) > 0 {
 		osmoTokenIn = &osmo.Coin{
 			Denom:  AssetMappingReverse[funds[0].Denom][chain],
