@@ -3,6 +3,7 @@ package keeper_test
 import (
 	crand "crypto/rand"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"log"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,7 +31,6 @@ func mockEvent(t *testing.T, isReq bool) *types.Event {
 	if isReq {
 		args := [][]byte{
 			[]byte(testutils.GenAccAddress(t).String()),
-			[]byte("100000uosmo"),
 		}
 
 		evt.Event = &types.Event_Req{
@@ -101,6 +101,12 @@ func Test_InitOperation(t *testing.T) {
 
 	assert.NilError(t, err)
 	assert.Equal(t, opID, hashIndex)
+
+	op, err := k.QueryOperation(ctx, opID)
+	require.Nil(t, err)
+
+	log.Println(op.TxPayload)
+	log.Println(op.TxBytesToSign)
 
 	//  Check typed event emitted
 	evt := ctx.EventManager().Events()[0]

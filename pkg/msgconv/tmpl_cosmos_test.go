@@ -14,7 +14,6 @@ func TestCosmosOp0(t *testing.T) {
 		"vault",
 		types.Join(
 			[]byte("vaultvault"),
-			[]byte("1000000000stake"),
 		),
 		[]*types.Coin{},
 	)
@@ -39,5 +38,5 @@ func TestCosmosOp1(t *testing.T) {
 		}},
 	)
 	require.Nil(t, err)
-	require.Contains(t, string(rendered), "0a057661756c7412071205756f736d6f1a0f0a05757573646312063130303030302206353030303030")
+	require.Contains(t, string(rendered), "0a057661756c74120908101205756f736d6f1a0812063130303030302206353030303030")
 }
