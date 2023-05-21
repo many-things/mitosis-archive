@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"text/template"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -105,8 +104,14 @@ var CosmosOp1Tmpl = MustParse("cosmos-op-1", `[
 func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, CosmosOp1RequiredArgsCount); err != nil {
 		return nil, err
-	} else if len(funds) == 0 {
-		return nil, fmt.Errorf("CosmoOp1: must request with funds")
+	}
+
+	var osmoTokenIn *osmo.Coin
+	if len(funds) > 0 {
+		osmoTokenIn = &osmo.Coin{
+			Denom:  AssetMappingReverse[funds[0].Denom][chain],
+			Amount: funds[0].Amount.String(),
+		}
 	}
 
 	msgSwap := osmo.MsgSwapExactAmountIn{
@@ -115,10 +120,7 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 			PoolId:        16, // FIXME: hardcoded
 			TokenOutDenom: string(args[1]),
 		}},
-		TokenIn: &osmo.Coin{
-			Denom:  AssetMappingReverse[funds[0].Denom][chain],
-			Amount: funds[0].Amount.String(),
-		},
+		TokenIn:           osmoTokenIn,
 		TokenOutMinAmount: string(args[2]),
 	}
 	marshaled, err := proto.Marshal(&msgSwap)
