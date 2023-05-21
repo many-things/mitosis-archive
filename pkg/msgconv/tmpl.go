@@ -22,7 +22,13 @@ func wrapTmplFKeccak256(f ptmplf) ntmplf {
 		if err != nil {
 			return nil, nil, err
 		}
-		return payload, sha3.NewLegacyKeccak256().Sum(payload), nil
+
+		var digest [32]byte
+		hasher := sha3.NewLegacyKeccak256()
+		hasher.Write(payload)
+		hasher.Sum(digest[:0])
+
+		return payload, digest[:], nil
 	}
 }
 
@@ -32,7 +38,9 @@ func wrapTmplFSha256(f ptmplf) ntmplf {
 		if err != nil {
 			return nil, nil, err
 		}
-		return payload, sha3.New256().Sum(payload), nil
+
+		hash := sha3.Sum256(payload)
+		return payload, hash[:], nil
 	}
 }
 
