@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"encoding/base64"
+
 	sdkerrutils "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -58,12 +60,13 @@ func (k keeper) InitOperation(ctx sdk.Context, _ string, poll *evttypes.Poll) (u
 		return 0, sdkerrutils.Wrapf(err, "create operation index. err=%v", err)
 	}
 
+	txHash := base64.StdEncoding.EncodeToString(poll.GetPayload().TxHash)
 	err = ctx.EventManager().EmitTypedEvent(
 		&types.EventOperationInitialized{
 			PollID:      poll.Id,
 			OperationID: opID,
 			ChainID:     poll.GetChain(),
-			TxHash:      string(poll.GetPayload().TxHash),
+			TxHash:      txHash,
 		},
 	)
 	if err != nil {
