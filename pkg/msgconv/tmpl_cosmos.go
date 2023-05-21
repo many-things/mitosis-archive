@@ -2,7 +2,7 @@ package msgconv
 
 import (
 	"bytes"
-	"encoding/hex"
+	"encoding/base64"
 	"encoding/json"
 	"text/template"
 
@@ -178,7 +178,7 @@ func CosmosOp1(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]b
 	if err := CosmosOp1Tmpl.Execute(rendered, cosmosPayload{
 		Vault: vault,
 		Args: []string{
-			hex.EncodeToString(marshaled),
+			base64.StdEncoding.EncodeToString(marshaled),
 			string(args[0]),
 			string(returnAmountBz), // FIXME: return only the minimum amount
 		},
