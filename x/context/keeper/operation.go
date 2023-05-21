@@ -16,7 +16,8 @@ import (
 
 var _ types.OperationKeeper = &keeper{}
 
-func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll) (uint64, error) {
+// ctx, chainID, poll
+func (k keeper) InitOperation(ctx sdk.Context, _ string, poll *evttypes.Poll) (uint64, error) {
 	opRepo := state.NewKVOperationRepo(k.cdc, ctx.KVStore(k.storeKey))
 	opHashIndexRepo := state.NewKVOperationHashIndexRepo(k.cdc, ctx.KVStore(k.storeKey), poll.Chain)
 	vaultRepo := state.NewKVVaultRepo(k.cdc, ctx.KVStore(k.storeKey))
@@ -37,7 +38,7 @@ func (k keeper) InitOperation(ctx sdk.Context, chain string, poll *evttypes.Poll
 	}
 
 	op := types.Operation{
-		Chain:         chain,
+		Chain:         req.DestChain,
 		ID:            0, // go filled by Load
 		PollID:        poll.GetId(),
 		Status:        types.Operation_StatusPending,
@@ -123,16 +124,14 @@ func (k keeper) FinishSignOperation(ctx sdk.Context, id uint64, signature []byte
 		return sdkerrutils.Wrap(sdkerrors.ErrPanic, "save operation")
 	}
 
-	err = ctx.EventManager().EmitTypedEvent(
-		&types.EventOperationSigningFinished{
-			OperationID: op.ID,
-			SignID:      op.SigID,
-			Signer:      op.SignerPubkey,
-			Signature:   signature,
-			ChainID:     op.Chain,
-		},
-	)
-	if err != nil {
+	emitEvent := &types.EventOperationSigningFinished{
+		OperationID: op.ID,
+		SignID:      op.SigID,
+		Signer:      op.SignerPubkey,
+		Signature:   signature,
+		ChainID:     op.Chain,
+	}
+	if err := ctx.EventManager().EmitTypedEvent(emitEvent); err != nil {
 		return errors.Wrap(err, "emit event")
 	}
 

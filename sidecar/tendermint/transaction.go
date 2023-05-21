@@ -156,13 +156,14 @@ func (w wallet) CreateSignedRawTx(msg sdk.Msg, accountInfo AccountInfo) ([]byte,
 	payer, _ := w.GetAddress()
 
 	if err := txBuilder.SetMsgs(msg); err != nil {
+
 		return nil, err
 	}
-	txBuilder.SetGasLimit(100000)
+	txBuilder.SetGasLimit(200000)
 	txBuilder.SetFeePayer(sdk.MustAccAddressFromBech32(payer))
 	txBuilder.SetFeeAmount(sdk.Coins{{
 		Denom:  "umito",
-		Amount: sdk.NewInt(1000),
+		Amount: sdk.NewInt(2000),
 	}})
 
 	signerData := authsigning.SignerData{

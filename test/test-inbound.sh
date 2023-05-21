@@ -17,8 +17,8 @@ DAEMON=${DAEMON:-"./build/mitosisd --home ./test/localnet"}
 
 SIGNER_ADDR=$(echo "mitomito" | $DAEMON keys show $SIGNER_NAME -a --keyring-backend file)
 
-$DAEMON tx bank send $SIGNER_ADDR $SIGNER_ADDR 1umito --fees 2000umito --generate-only | jq > $tmp_tx
-$(file broadcast.sh) $SIGNER_NAME "self-send" $tmp_tx
+# $DAEMON tx bank send $SIGNER_ADDR $SIGNER_ADDR 1umito --fees 2000umito --generate-only | jq > $tmp_tx
+# $(file broadcast.sh) $SIGNER_NAME "self-send" $tmp_tx
 
 SIGNER_INFO=$($DAEMON q account $SIGNER_ADDR --output json | jq -c)
 VALIDATOR_ADDR=$(echo "mitomito" | $DAEMON keys show $VALIDATOR_NAME -a --keyring-backend file)
