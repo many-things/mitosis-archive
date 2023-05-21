@@ -1,14 +1,15 @@
 package msgconv
 
 import (
-	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/many-things/mitosis/pkg/types"
 	"github.com/pkg/errors"
 	"math/big"
-	"strings"
 )
+
+const EvmOp0RequiredArgsCount = 1
+const EvmOp1RequiredArgsCount = 1
 
 type evmFund struct {
 	Token common.Address
@@ -37,46 +38,48 @@ func (p evmPayload) Pack() ([]byte, error) {
 // EvmOp0 has the following arguments:
 // 0 - recipient address
 // 1 - funds (formatted like `10xdeadbeefdeadbeef,20xdeadbeefdeadbeef`)
-func EvmOp0(_ string, args ...[]byte) ([]byte, error) {
-	recipient := common.HexToAddress(string(args[0]))
-	funds, err := types.MapErr(
-		strings.Split(string(args[1]), ","),
-		func(t string, i int) (evmFund, error) {
-			ts := strings.Split(t, "0x")
-
-			token := common.HexToAddress(fmt.Sprintf("0x%s", ts[1]))
-			amount, ok := new(big.Int).SetString(ts[0], 10)
-			if !ok {
-				return evmFund{}, errors.New("invalid amount")
-			}
-
-			return evmFund{Token: token, Value: amount}, nil
-		},
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "parse funds")
+func EvmOp0(_, _ string, args [][]byte, funds []*types.Coin) ([]byte, error) {
+	if err := assertArgs(args, EvmOp0RequiredArgsCount); err != nil {
+		return nil, err
 	}
+
+	recipient := common.HexToAddress(string(args[0]))
+
+	conv := func(c *types.Coin, _ int) evmFund {
+		return evmFund{
+			Token: common.HexToAddress(c.Denom),
+			Value: c.Amount.BigInt(),
+		}
+	}
+	coins := types.Map(funds, conv)
 
 	transferABI, err := sigToABI("transfer(address,uint256)")
 	if err != nil {
 		return nil, errors.Wrap(err, "get transfer abi")
 	}
 
-	calldata, err := types.MapErr(
-		funds,
+	inners, err := types.MapErr(
+		coins,
 		func(t evmFund, i int) (evmInner, error) {
-			calldata, err := transferABI.Pack("transfer", recipient, t.Value)
+			transferCalldata, err := transferABI.Pack("transfer", recipient, t.Value)
 			if err != nil {
 				return evmInner{}, err
 			}
-			return evmInner{To: t.Token, Data: calldata, Value: big.NewInt(0)}, nil
+
+			inner := evmInner{
+				To:    t.Token,
+				Data:  transferCalldata,
+				Value: big.NewInt(0),
+			}
+
+			return inner, nil
 		},
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "make calldata")
 	}
 
-	payload, err := evmPayload{Funds: funds, Inner: calldata}.Pack()
+	payload, err := evmPayload{Funds: coins, Inner: inners}.Pack()
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +87,12 @@ func EvmOp0(_ string, args ...[]byte) ([]byte, error) {
 	return payload, nil
 }
 
-func EvmOp1(_ string, _ ...[]byte) ([]byte, error) {
+func EvmOp1(_, _ string, args [][]byte, _ []*types.Coin) ([]byte, error) {
+	if err := assertArgs(args, EvmOp1RequiredArgsCount); err != nil {
+		return nil, err
+	}
+
+	// TODO: uniswap v2 usdc -> eth
+
 	return nil, nil
 }

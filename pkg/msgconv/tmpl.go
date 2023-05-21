@@ -2,15 +2,23 @@ package msgconv
 
 import (
 	"github.com/many-things/mitosis/pkg/types"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/sha3"
 )
 
-type ptmplf func(vault string, args ...[]byte) ([]byte, error)
-type ntmplf func(vault string, args ...[]byte) ([]byte, []byte, error)
+func assertArgs(args [][]byte, required int) error {
+	if len(args) != required {
+		return errors.Errorf("invalid op_args length. it needs to be %d", required)
+	}
+	return nil
+}
+
+type ptmplf func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error)
+type ntmplf func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error)
 
 func wrapTmplFKeccak256(f ptmplf) ntmplf {
-	return func(vault string, args ...[]byte) ([]byte, []byte, error) {
-		payload, err := f(vault, args...)
+	return func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error) {
+		payload, err := f(chain, vault, args, funds)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -19,8 +27,8 @@ func wrapTmplFKeccak256(f ptmplf) ntmplf {
 }
 
 func wrapTmplFSha256(f ptmplf) ntmplf {
-	return func(vault string, args ...[]byte) ([]byte, []byte, error) {
-		payload, err := f(vault, args...)
+	return func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error) {
+		payload, err := f(chain, vault, args, funds)
 		if err != nil {
 			return nil, nil, err
 		}

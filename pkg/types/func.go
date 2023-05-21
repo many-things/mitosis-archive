@@ -20,10 +20,6 @@ func MapErr[T, U any](ts []T, f func(t T, i int) (U, error)) (rs []U, err error)
 	return rs, nil
 }
 
-func Ref[T any](t T) *T {
-	return &t
-}
-
-func Deref[T any](t *T) T {
-	return *t
-}
+func Ref[T any](t T) *T       { return &t }
+func Deref[T any](t *T) T     { return *t }
+func Join[T any](ts ...T) []T { return ts }
