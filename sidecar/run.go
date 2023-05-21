@@ -10,9 +10,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/btcsuite/btcd/btcec"
+
 	sdkerrors "cosmossdk.io/errors"
 	sdkclient "github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/utils"
 	"github.com/many-things/mitosis/sidecar/config"
@@ -129,12 +130,13 @@ func createSignHandler(cfg config.SidecarConfig, storage storage.Storage, mitoWa
 			return err
 		}
 
-		privKey := secp256k1.PrivKey{Key: privKeyBytes}
-		signature, err := privKey.Sign(msg.MessageToSign)
+		privKey, _ := btcec.PrivKeyFromBytes(btcec.S256(), privKeyBytes)
+		rawSignature, err := privKey.Sign(msg.MessageToSign)
 		if err != nil {
 			log.Error("signHandler: wrong signature: %x", err)
 			return err
 		}
+		signature := append(rawSignature.R.Bytes(), rawSignature.S.Bytes()...)
 
 		sender, _ := mitoWallet.GetAddress()
 		valAddr, err := sdk.ValAddressFromBech32(cfg.TofNConfig.Validator)
