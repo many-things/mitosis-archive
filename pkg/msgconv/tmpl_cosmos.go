@@ -147,13 +147,26 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 		return nil, errors.Wrap(err, "marshal swap msg")
 	}
 
+	minAmount, ok := sdk.NewIntFromString(string(args[2]))
+	if !ok {
+		return nil, errors.New("invalid min amount")
+	}
+	returnAmount := sdk.Coins{{
+		Denom:  string(args[1]),
+		Amount: minAmount,
+	}}
+	returnAmountBz, err := returnAmount.MarshalJSON()
+	if err != nil {
+		return nil, errors.Wrap(err, "marshal return amount")
+	}
+
 	rendered := new(bytes.Buffer)
 	if err := CosmosOp1Tmpl.Execute(rendered, cosmosPayload{
 		Vault: vault,
 		Args: []string{
 			hex.EncodeToString(marshaled),
 			string(args[0]),
-			string(args[2]), // FIXME: return only the minimum amount
+			string(returnAmountBz), // FIXME: return only the minimum amount
 		},
 	}); err != nil {
 		return nil, errors.Wrap(err, "execute op1 template")
