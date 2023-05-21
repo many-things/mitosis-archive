@@ -38,7 +38,7 @@ func (p evmPayload) Pack() ([]byte, error) {
 // EvmOp0 has the following arguments:
 // 0 - recipient address
 // 1 - funds (formatted like `10xdeadbeefdeadbeef,20xdeadbeefdeadbeef`)
-func EvmOp0(_, _ string, args [][]byte, funds []*types.Coin) ([]byte, error) {
+func EvmOp0(_, _, _ string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, EvmOp0RequiredArgsCount); err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func EvmOp0(_, _ string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	return payload, nil
 }
 
-func EvmOp1(_, _ string, args [][]byte, _ []*types.Coin) ([]byte, error) {
+func EvmOp1(_, _, _ string, args [][]byte, _ []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, EvmOp1RequiredArgsCount); err != nil {
 		return nil, err
 	}

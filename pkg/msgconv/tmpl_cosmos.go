@@ -42,7 +42,7 @@ var CosmosOp0Tmpl = MustParse("cosmos-op-0", `[
 
 // CosmosOp0 has the following arguments:
 // 0 - recipient address
-func CosmosOp0(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
+func CosmosOp0(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, CosmosOp0RequiredArgsCount); err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func CosmosOp0(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 
 	deref := func(c *types.Coin, _ int) (sdk.Coin, error) {
 		cc := c.ToSDK()
-		convDenom, err := convertDenomIO(chain, funds[0].Denom)
+		convDenom, err := convertDenomIO(src, dest, funds[0].Denom)
 		if err != nil {
 			return sdk.Coin{}, errors.Wrap(err, "convert denom")
 		}
@@ -115,7 +115,7 @@ var CosmosOp1Tmpl = MustParse("cosmos-op-1", `[
 // 0 - recipient address
 // 1 - swap target denom
 // 2 - swap minimum amount
-func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
+func CosmosOp1(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, CosmosOp1RequiredArgsCount); err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 		return nil, errors.New("expected exactly one fund")
 	}
 
-	convDenom, err := convertDenomIO(chain, funds[0].Denom)
+	convDenom, err := convertDenomIO(src, dest, funds[0].Denom)
 	if err != nil {
 		return nil, errors.Wrap(err, "convert denom")
 	}

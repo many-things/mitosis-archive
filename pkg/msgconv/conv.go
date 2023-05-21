@@ -57,5 +57,5 @@ func ToMsgs(src, dest string, vault string, opID uint64, opArgs [][]byte, funds 
 		return nil, nil, errors.New("unknown dest chain type")
 	}
 
-	return tmpl[destChainType][opID](dest, vault, opArgs, funds)
+	return tmpl[destChainType][opID](src, dest, vault, opArgs, funds)
 }

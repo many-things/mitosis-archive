@@ -23,16 +23,16 @@ func init() {
 	}
 }
 
-func convertDenomIO(chain, in string) (string, error) {
+func convertDenomIO(src, dest, in string) (string, error) {
 	perChain, ok := AssetMappingReverse[in]
 	if !ok {
 		return "", errors.Errorf("unknown asset %s", in)
 	}
 
-	asset, ok := perChain[chain]
+	asset, ok := perChain[src]
 	if !ok {
-		return "", errors.Errorf("unknown asset %s for chain %s", in, chain)
+		return "", errors.Errorf("unknown asset %s for chain %s", in, src)
 	}
 
-	return AssetMapping[asset][chain], nil
+	return AssetMapping[asset][dest], nil
 }

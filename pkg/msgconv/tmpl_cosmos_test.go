@@ -11,6 +11,7 @@ import (
 func TestCosmosOp0(t *testing.T) {
 	rendered, err := CosmosOp0(
 		"evm-5",
+		"osmo-test-5",
 		"vault",
 		types.Join(
 			[]byte("vaultvault"),
@@ -29,6 +30,7 @@ func TestCosmosOp0(t *testing.T) {
 func TestCosmosOp1(t *testing.T) {
 	rendered, err := CosmosOp1(
 		"evm-5",
+		"osmo-test-5",
 		"vault",
 		types.Join(
 			[]byte("osmo1pe6llrv0y5vz0c9msdg2kndes9eh6jf620hjll"),
@@ -45,7 +47,8 @@ func TestCosmosOp1(t *testing.T) {
 	require.Contains(t, string(rendered), "0a057661756c74120908101205756f736d6f1a340a2a30783543626232463966374535346335423436353643334235363366663536353061303836364133454612063130303030302206353030303030")
 
 	_, err = CosmosOp1(
-		"chain",
+		"evm-5",
+		"osmo-test-5",
 		"vault",
 		types.Join(
 			[]byte("osmo1pe6llrv0y5vz0c9msdg2kndes9eh6jf620hjll"),
