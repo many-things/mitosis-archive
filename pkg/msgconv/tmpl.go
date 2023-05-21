@@ -13,12 +13,12 @@ func assertArgs(args [][]byte, required int) error {
 	return nil
 }
 
-type ptmplf func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error)
-type ntmplf func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error)
+type ptmplf func(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]byte, error)
+type ntmplf func(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error)
 
 func wrapTmplFKeccak256(f ptmplf) ntmplf {
-	return func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error) {
-		payload, err := f(chain, vault, args, funds)
+	return func(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error) {
+		payload, err := f(src, dest, vault, args, funds)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -33,8 +33,8 @@ func wrapTmplFKeccak256(f ptmplf) ntmplf {
 }
 
 func wrapTmplFSha256(f ptmplf) ntmplf {
-	return func(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error) {
-		payload, err := f(chain, vault, args, funds)
+	return func(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]byte, []byte, error) {
+		payload, err := f(src, dest, vault, args, funds)
 		if err != nil {
 			return nil, nil, err
 		}
