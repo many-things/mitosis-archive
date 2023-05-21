@@ -1,5 +1,7 @@
 package msgconv
 
+import "github.com/pkg/errors"
+
 var (
 	AssetMapping = map[string]map[string]string{
 		"usdc": {
@@ -19,4 +21,18 @@ func init() {
 			AssetMappingReverse[addr][chain] = asset
 		}
 	}
+}
+
+func convertDenomIO(chain, in string) (string, error) {
+	perChain, ok := AssetMappingReverse[in]
+	if !ok {
+		return "", errors.Errorf("unknown asset %s", in)
+	}
+
+	asset, ok := perChain[chain]
+	if !ok {
+		return "", errors.Errorf("unknown asset %s for chain %s", in, chain)
+	}
+
+	return AssetMapping[asset][chain], nil
 }

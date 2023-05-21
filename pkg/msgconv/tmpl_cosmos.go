@@ -46,15 +46,29 @@ func CosmosOp0(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 	if err := assertArgs(args, CosmosOp0RequiredArgsCount); err != nil {
 		return nil, err
 	}
+	if len(funds) == 0 {
+		return nil, errors.New("expected at least one fund")
+	}
 
 	toAddr := string(args[0])
 
-	deref := func(c *types.Coin, _ int) sdk.Coin {
+	deref := func(c *types.Coin, _ int) (sdk.Coin, error) {
 		cc := c.ToSDK()
-		cc.Denom = AssetMappingReverse[cc.Denom][chain]
-		return cc
+		convDenom, err := convertDenomIO(chain, funds[0].Denom)
+		if err != nil {
+			return sdk.Coin{}, errors.Wrap(err, "convert denom")
+		}
+
+		cc.Denom = convDenom
+		return cc, nil
 	}
-	fundsBz, err := sdk.Coins(types.Map(funds, deref)).MarshalJSON()
+
+	coins, err := types.MapErr(funds, deref)
+	if err != nil {
+		return nil, errors.Wrap(err, "map coins")
+	}
+
+	coinsBz, err := sdk.Coins(coins).MarshalJSON()
 	if err != nil {
 		return nil, errors.Wrap(err, "marshal coins to json")
 	}
@@ -64,7 +78,7 @@ func CosmosOp0(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 		Vault: vault,
 		Args: []string{
 			toAddr,
-			string(fundsBz),
+			string(coinsBz),
 		},
 	})
 	if err != nil {
@@ -105,23 +119,24 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 	if err := assertArgs(args, CosmosOp1RequiredArgsCount); err != nil {
 		return nil, err
 	}
-
-	// FIXME: insufficient
-	osmoTokenIn := &osmo.Coin{
-		Denom:  "factory/osmo109ns4u04l44kqdkvp876hukd3hxz8zzm7809el/uusdc",
-		Amount: "1000000",
+	if len(funds) != 1 {
+		return nil, errors.New("expected exactly one fund")
 	}
-	if len(funds) > 0 {
-		osmoTokenIn = &osmo.Coin{
-			Denom:  AssetMappingReverse[funds[0].Denom][chain],
-			Amount: funds[0].Amount.String(),
-		}
+
+	convDenom, err := convertDenomIO(chain, funds[0].Denom)
+	if err != nil {
+		return nil, errors.Wrap(err, "convert denom")
+	}
+
+	osmoTokenIn := &osmo.Coin{
+		Denom:  convDenom,
+		Amount: funds[0].Amount.String(),
 	}
 
 	msgSwap := osmo.MsgSwapExactAmountIn{
 		Sender: vault,
 		Routes: []*osmo.SwapAmountInRoute{{
-			PoolId:        16, // FIXME: hardcoded
+			PoolId:        16,
 			TokenOutDenom: string(args[1]),
 		}},
 		TokenIn:           osmoTokenIn,
@@ -132,23 +147,36 @@ func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte,
 		return nil, errors.Wrap(err, "marshal swap msg")
 	}
 
+	minAmount, ok := sdk.NewIntFromString(string(args[2]))
+	if !ok {
+		return nil, errors.New("invalid min amount")
+	}
+	returnAmount := sdk.Coins{{
+		Denom:  string(args[1]),
+		Amount: minAmount,
+	}}
+	returnAmountBz, err := returnAmount.MarshalJSON()
+	if err != nil {
+		return nil, errors.Wrap(err, "marshal return amount")
+	}
+
 	rendered := new(bytes.Buffer)
 	if err := CosmosOp1Tmpl.Execute(rendered, cosmosPayload{
 		Vault: vault,
 		Args: []string{
 			hex.EncodeToString(marshaled),
 			string(args[0]),
-			string(args[2]), // FIXME: return only the minimum amount
+			string(returnAmountBz), // FIXME: return only the minimum amount
 		},
 	}); err != nil {
 		return nil, errors.Wrap(err, "execute op1 template")
 	}
 
-	// renderedBz := rendered.Bytes()
-	// rendered.Reset()
-	// if err := json.Compact(rendered, renderedBz); err != nil {
-	// 	return nil, errors.Wrap(err, "compact json")
-	// }
+	renderedBz := rendered.Bytes()
+	rendered.Reset()
+	if err := json.Compact(rendered, renderedBz); err != nil {
+		return nil, errors.Wrapf(err, "compact json. raw=%s", string(renderedBz))
+	}
 
 	return rendered.Bytes(), nil
 }
