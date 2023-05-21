@@ -3,9 +3,9 @@
   "chain": "osmo-test-5",
   "events": [
     {
-      "height": 121,
+      "height": 122,
       "tx_hash": "ENj90hNy9IRwJMeUbjqksGfiTQLJ/VOiZjC+sV9jVwU=",
-      "evt_idx": 21,
+      "evt_idx": 22,
       "req": {
         "dest_chain": "osmo-test-5",
         "dest_addr": "MTAw",

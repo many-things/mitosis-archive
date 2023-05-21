@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"text/template"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/msgconv/osmo"
 	"github.com/many-things/mitosis/pkg/types"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/proto"
-	"text/template"
 )
 
 type cosmosPayload struct {
@@ -103,6 +105,8 @@ var CosmosOp1Tmpl = MustParse("cosmos-op-1", `[
 func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, CosmosOp1RequiredArgsCount); err != nil {
 		return nil, err
+	} else if len(funds) == 0 {
+		return nil, fmt.Errorf("CosmoOp1: must request with funds")
 	}
 
 	msgSwap := osmo.MsgSwapExactAmountIn{
