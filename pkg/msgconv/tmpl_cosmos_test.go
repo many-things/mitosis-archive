@@ -1,11 +1,12 @@
 package msgconv
 
 import (
+	"log"
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/many-things/mitosis/pkg/types"
 	"github.com/stretchr/testify/require"
-	"log"
-	"testing"
 )
 
 func TestCosmosOp0(t *testing.T) {
@@ -50,7 +51,7 @@ func TestCosmosOp1(t *testing.T) {
 	require.Nil(t, err)
 	require.Contains(t, string(rendered), "0a057661756c74120908101205756f736d6f1a430a39666163746f72792f6f736d6f3130396e73347530346c34346b71646b767038373668756b643368787a387a7a6d37383039656c2f757573646312063130303030302206353030303030")
 
-	//_, err = CosmosOp1(
+	// _, err = CosmosOp1(
 	//	"evm-5",
 	//	"osmo-test-5",
 	//	"vault",
@@ -60,6 +61,6 @@ func TestCosmosOp1(t *testing.T) {
 	//		[]byte("500000"),
 	//	),
 	//	[]*types.Coin{},
-	//)
-	//require.Error(t, err, "expected exactly one fund")
+	// )
+	// require.Error(t, err, "expected exactly one fund")
 }
