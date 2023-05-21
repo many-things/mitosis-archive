@@ -39,4 +39,16 @@ func TestCosmosOp1(t *testing.T) {
 	)
 	require.Nil(t, err)
 	require.Contains(t, string(rendered), "0a057661756c74120908101205756f736d6f1a0812063130303030302206353030303030")
+
+	_, err = CosmosOp1(
+		"chain",
+		"vault",
+		types.Join(
+			[]byte("osmo1pe6llrv0y5vz0c9msdg2kndes9eh6jf620hjll"),
+			[]byte("uosmo"),
+			[]byte("500000"),
+		),
+		[]*types.Coin{},
+	)
+	require.Error(t, err, "expected exactly one fund")
 }
