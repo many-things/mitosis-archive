@@ -10,6 +10,7 @@ import (
 
 func TestCosmosOp0(t *testing.T) {
 	rendered, err := CosmosOp0(
+		"chain",
 		"vault",
 		types.Join(
 			[]byte("vaultvault"),
@@ -24,6 +25,7 @@ func TestCosmosOp0(t *testing.T) {
 
 func TestCosmosOp1(t *testing.T) {
 	rendered, err := CosmosOp1(
+		"chain",
 		"vault",
 		types.Join(
 			[]byte("osmo1pe6llrv0y5vz0c9msdg2kndes9eh6jf620hjll"),

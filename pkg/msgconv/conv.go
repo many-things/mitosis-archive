@@ -17,5 +17,5 @@ func ToMsgs(chain string, vault string, opID uint64, opArgs [][]byte, funds []*t
 		return nil, nil, errors.Errorf("unknown chain type: %s", chain)
 	}
 
-	return tmpl[chainType][opID](vault, opArgs, funds)
+	return tmpl[chainType][opID](chain, vault, opArgs, funds)
 }

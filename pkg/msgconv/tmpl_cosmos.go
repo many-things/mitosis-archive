@@ -41,14 +41,18 @@ var CosmosOp0Tmpl = MustParse("cosmos-op-0", `[
 
 // CosmosOp0 has the following arguments:
 // 0 - recipient address
-func CosmosOp0(vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
+func CosmosOp0(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, CosmosOp0RequiredArgsCount); err != nil {
 		return nil, err
 	}
 
 	toAddr := string(args[0])
 
-	deref := func(c *types.Coin, _ int) sdk.Coin { return c.ToSDK() }
+	deref := func(c *types.Coin, _ int) sdk.Coin {
+		cc := c.ToSDK()
+		cc.Denom = AssetMappingReverse[cc.Denom][chain]
+		return cc
+	}
 	fundsBz, err := sdk.Coins(types.Map(funds, deref)).MarshalJSON()
 	if err != nil {
 		return nil, errors.Wrap(err, "marshal coins to json")
@@ -96,7 +100,7 @@ var CosmosOp1Tmpl = MustParse("cosmos-op-1", `[
 // 0 - recipient address
 // 1 - swap target denom
 // 2 - swap minimum amount
-func CosmosOp1(vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
+func CosmosOp1(chain, vault string, args [][]byte, funds []*types.Coin) ([]byte, error) {
 	if err := assertArgs(args, CosmosOp1RequiredArgsCount); err != nil {
 		return nil, err
 	}
@@ -104,11 +108,11 @@ func CosmosOp1(vault string, args [][]byte, funds []*types.Coin) ([]byte, error)
 	msgSwap := osmo.MsgSwapExactAmountIn{
 		Sender: vault,
 		Routes: []*osmo.SwapAmountInRoute{{
-			PoolId:        16,
+			PoolId:        16, // FIXME: hardcoded
 			TokenOutDenom: string(args[1]),
 		}},
 		TokenIn: &osmo.Coin{
-			Denom:  funds[0].Denom,
+			Denom:  AssetMappingReverse[funds[0].Denom][chain],
 			Amount: funds[0].Amount.String(),
 		},
 		TokenOutMinAmount: string(args[2]),
