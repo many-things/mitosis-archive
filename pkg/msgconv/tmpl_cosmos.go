@@ -104,7 +104,7 @@ func CosmosOp0(src, dest, vault string, args [][]byte, funds []*types.Coin) ([]b
 var CosmosOp1Tmpl = MustParse("cosmos-op-1", `[
 	{
 		"stargate": {
-			"type_url": "/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn",
+			"type_url": "osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn",
 			"value": "{{index .Args 0}}"
 		}
 	},
