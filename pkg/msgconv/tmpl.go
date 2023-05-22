@@ -1,6 +1,7 @@
 package msgconv
 
 import (
+	"crypto/sha256"
 	"github.com/many-things/mitosis/pkg/types"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/sha3"
@@ -39,7 +40,7 @@ func wrapTmplFSha256(f ptmplf) ntmplf {
 			return nil, nil, err
 		}
 
-		hash := sha3.Sum256(payload)
+		hash := sha256.Sum256(payload)
 		return payload, hash[:], nil
 	}
 }
